@@ -15,23 +15,26 @@ echo "⚙️ Setting up .env file..."
 if [ ! -f .env ]; then
   cp .env.example .env
   echo "✅ Copied .env.example to .env."
-  
-  # Interactive Prompt for Database URL
-  # (Temporarily bypass 'set -e' for the read prompt in case of interruptions)
-  set +e
-  read -p "🎯 Enter your PostgreSQL Database URL (or press Enter to keep default): " DB_URL
-  set -e
-
-  if [ ! -z "$DB_URL" ]; then
-    # Use sed to replace the dummy DATABASE_URL line with the user input
-    sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"$DB_URL\"|" .env
-    echo "✅ Injected custom Database URL into .env!"
-  else
-    echo "⏭️  Kept default Database URL."
-  fi
-  
 else
-  echo "✅ .env file already exists, skipping copy and prompt."
+  echo "✅ .env file already exists."
+fi
+
+# Interactive Prompt for Database Password
+# (Temporarily bypass 'set -e' for the read prompt in case of interruptions)
+set +e
+echo ""
+echo "Current DATABASE_URL in .env will be used by default."
+read -p "🎯 Enter your Local PostgreSQL Password (or press Enter to keep current): " DB_PASS
+set -e
+
+if [ ! -z "$DB_PASS" ]; then
+  # Construct the full connection string
+  DB_URL="postgresql://postgres:${DB_PASS}@localhost:5432/Platform"
+  # Use sed to replace the dummy DATABASE_URL line with the dynamically built URL
+  sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"$DB_URL\"|" .env
+  echo "✅ Injected custom Database URL into .env!"
+else
+  echo "⏭️  Kept existing Database URL."
 fi
 
 # 3. Prisma Database Setup

@@ -1,5 +1,5 @@
 {
-  "name": "Platform",
+  "name": "unifeed",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -17,6 +17,7 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
+    "setup": "bash ./scripts/setup-local.sh",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
