@@ -1,0 +1,15 @@
+* text=auto eol=lf
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout.
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+
+# Ensure PNG/JPG/WEBP are treated as binary to prevent corruption
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
