@@ -1,4 +1,4 @@
-"use client";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
@@ -9,14 +9,12 @@ export function Hero() {
         Welcome to UniFeed
       </h1>
       <p className="text-zinc-400 text-lg mb-8 max-w-sm">
-        The functional social platform for your campus life. Connect, share, and stay organized.
+        The functional social platform for your campus life. Connect, share,
+        and stay organized.
       </p>
-      
-      <Button 
-        onClick={() => console.log("Auth coming in Story 1.3")}
-        className="w-full text-lg py-4"
-      >
-        Connect University Email
+
+      <Button asChild className="w-full text-lg py-4">
+        <Link href="/login">Connect University Email</Link>
       </Button>
     </div>
   );
