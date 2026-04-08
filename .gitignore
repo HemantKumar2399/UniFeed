@@ -45,10 +45,3 @@ yarn-error.log*
 # idea files
 .idea
 
-# bmad planning files
-# We ignore the _bmad-output directory to avoid polluting our clean repo,
-# as the real docs are moved to docs/ and stories are synchronized as GitHub issues.
-_bmad-output/
-_bmad/
-.agent/
-.windsurf/
