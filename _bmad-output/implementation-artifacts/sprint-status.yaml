@@ -45,7 +45,7 @@ development_status:
   epic-1: in-progress
   1-1-project-initialization-base-theme-shell: done
   1-2-unauthenticated-landing-page: done
-  1-3-restricted-domain-authentication: in-progress
+  1-3-restricted-domain-authentication: done
   1-4-protected-app-shell-navigation: ready-for-dev
   epic-1-retrospective: optional
 

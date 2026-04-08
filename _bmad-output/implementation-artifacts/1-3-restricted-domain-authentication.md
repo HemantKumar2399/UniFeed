@@ -1,6 +1,6 @@
 # Story 1.3: Restricted Domain Authentication
 
-Status: in-progress
+Status: done
 
 ## Story
 
