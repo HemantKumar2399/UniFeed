@@ -3,4 +3,11 @@
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-brand-rose: #e11d48;
+}
+
+@layer base {
+  body {
+    @apply bg-black text-white;
+  }
 }
