@@ -50,7 +50,7 @@ development_status:
   epic-1-retrospective: done
 
   epic-2: backlog
-  2-1-feed-database-seeding-mock-api: ready-for-dev
+  2-1-feed-database-seeding-mock-api: done
   2-2-minimalist-event-cards-static-geometry: ready-for-dev
   2-3-event-card-interactions-tap-to-expand: ready-for-dev
   2-4-ephemeral-story-bar-component: ready-for-dev

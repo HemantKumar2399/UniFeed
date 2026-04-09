@@ -129,6 +129,27 @@ exports.Prisma.PostScalarFieldEnum = {
   createdById: 'createdById'
 };
 
+exports.Prisma.ClubScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  logoUrl: 'logoUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EventScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  date: 'date',
+  capacity: 'capacity',
+  location: 'location',
+  imageUrl: 'imageUrl',
+  clubId: 'clubId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.AccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -185,6 +206,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   Post: 'Post',
+  Club: 'Club',
+  Event: 'Event',
   Account: 'Account',
   Session: 'Session',
   User: 'User',
