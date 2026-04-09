@@ -16,9 +16,10 @@ const AUTH_ERRORS: Record<string, string> = {
 
 /** Prevents open-redirect attacks by ensuring callbackUrl is always a relative internal path. */
 function sanitizeCallbackUrl(raw: string | null): string {
-  if (!raw) return "/feed";
+  if (!raw) return "/home";
+  if (raw === "/feed") return "/home";
   // Must start with "/" and must not start with "//" (protocol-relative URL)
-  return raw.startsWith("/") && !raw.startsWith("//") ? raw : "/feed";
+  return raw.startsWith("/") && !raw.startsWith("//") ? raw : "/home";
 }
 
 function LoginForm() {

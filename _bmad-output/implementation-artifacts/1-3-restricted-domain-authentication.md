@@ -1,11 +1,11 @@
 # Story 1.3: Restricted Domain Authentication
 
-Status: in-progress
+Status: done
 
 ## Story
 
 As a University Student,
-I want to authenticate securely using my university email address via Google OAuth,
+I want to authenticate securely using my university email address and password,
 So that I know the network is exclusive and safe.
 
 ## Dependencies
@@ -14,7 +14,7 @@ So that I know the network is exclusive and safe.
 ## Acceptance Criteria
 
 1. **Given** the login flow
-   **When** a user attempts to sign in via Google OAuth with an email outside the allowed university domains (e.g., `@gmail.com`)
+  **When** a user attempts to sign in with an email outside the allowed university domains (e.g., `@gmail.com`)
    **Then** the system rejects the auth and displays an error message
 2. **And When** a user authenticates with an allowed university domain (e.g., `@jecrc.ac.in`)
    **Then** the NextAuth session is created and the user is redirected to the protected dashboard zone.
@@ -26,7 +26,7 @@ So that I know the network is exclusive and safe.
   - [x] Add CredentialsProvider (email + password) replacing Google OAuth per user direction.
 - [x] Task 2: Domain Validation Logic (AC: 1)
   - [x] In the NextAuth `authorize` callback, inspect email domain against `ALLOWED_DOMAINS` env var.
-  - [x] Reject non-JECRC domains — returns null (triggers CredentialsSignin error).
+  - [x] Reject non-JECRC domains — throw `AccessDenied` for domain mismatch.
   - [x] Wire error redirect to `/error?error=AccessDenied` via `pages` config.
 - [x] Task 3: Attach UI Login hook (AC: 2)
   - [x] Hero CTA now links to `/login` page via Next.js `Link` (no `console.log`).
@@ -51,7 +51,7 @@ So that I know the network is exclusive and safe.
 
 ### Completion Notes
 ✅ Task 1: `src/server/auth/config.ts` — CredentialsProvider with Prisma adapter + JWT strategy.
-✅ Task 2: `isAllowedDomain()` utility reads `ALLOWED_DOMAINS` env var; returns null on mismatch; `/error` page wired.
+✅ Task 2: `isAllowedDomain()` utility reads `ALLOWED_DOMAINS` env var; domain mismatches raise `AccessDenied`; `/error` page wired.
 ✅ Task 3: Hero CTA → `/login` page; login page calls `signIn("credentials")` from next-auth/react.
 ✅ Registration: `/api/auth/register` route with duplicate check and bcrypt hashing.
 ✅ Prisma migration: `add_user_password` — adds `password String?` to User model.
@@ -80,16 +80,16 @@ So that I know the network is exclusive and safe.
 ### Review Findings
 
 **Patches (must fix):**
-- [ ] [Review][Patch] Domain rejection at login shows wrong error code — `authorize()` returning `null` fires `CredentialsSignin`, not `AccessDenied`; throw `new Error("AccessDenied")` for domain rejection instead [src/server/auth/config.ts:62-64]
-- [ ] [Review][Patch] `isAllowedDomain()` duplicated across `config.ts` and `register/route.ts` — extract to shared utility [src/server/auth/config.ts:32, src/app/api/auth/register/route.ts:14]
-- [ ] [Review][Patch] Auto-login after register silently swallows `signIn` failures — show error if `result?.ok` is false [src/app/login/page.tsx:86-88]
-- [ ] [Review][Patch] `error/page.tsx` h1 hardcoded "Access Denied" for all error codes — use dynamic heading per error type [src/app/error/page.tsx:26]
-- [ ] [Review][Patch] `Hero.tsx` marked `"use client"` unnecessarily — no hooks or browser APIs used [src/features/landing/components/Hero.tsx:1]
-- [ ] [Review][Patch] No bcrypt 72-byte password truncation guard — enforce `maxLength={72}` on password input and ≤72 byte check in route [src/app/api/auth/register/route.ts:36, src/app/login/page.tsx:158]
-- [ ] [Review][Patch] `email.split("@")[1]` fails on multi-`@` emails — use `.split("@").pop()` or validate email format explicitly [src/server/auth/config.ts:33, src/app/api/auth/register/route.ts:15]
-- [ ] [Review][Patch] No max-length on `name` field — add a reasonable cap (e.g., 100 chars) in the register route [src/app/api/auth/register/route.ts:68]
-- [ ] [Review][Patch] Race condition on duplicate email check — catch Prisma P2002 error and return 409 instead of 500 [src/app/api/auth/register/route.ts:74-79]
-- [ ] [Review][Patch] Open redirect via unvalidated `callbackUrl` — validate it is an internal path before calling `router.push` [src/app/login/page.tsx:20, 52, 87]
+- [x] [Review][Patch] Domain rejection at login shows wrong error code — `authorize()` returning `null` fires `CredentialsSignin`, not `AccessDenied`; throw `new Error("AccessDenied")` for domain rejection instead [src/server/auth/config.ts:62-64]
+- [x] [Review][Patch] `isAllowedDomain()` duplicated across `config.ts` and `register/route.ts` — extract to shared utility [src/server/auth/config.ts:32, src/app/api/auth/register/route.ts:14]
+- [x] [Review][Patch] Auto-login after register silently swallows `signIn` failures — show error if `result?.ok` is false [src/app/login/page.tsx:86-88]
+- [x] [Review][Patch] `error/page.tsx` h1 hardcoded "Access Denied" for all error codes — use dynamic heading per error type [src/app/error/page.tsx:26]
+- [x] [Review][Patch] `Hero.tsx` marked `"use client"` unnecessarily — no hooks or browser APIs used [src/features/landing/components/Hero.tsx:1]
+- [x] [Review][Patch] No bcrypt 72-byte password truncation guard — enforce `maxLength={72}` on password input and ≤72 byte check in route [src/app/api/auth/register/route.ts:36, src/app/login/page.tsx:158]
+- [x] [Review][Patch] `email.split("@")[1]` fails on multi-`@` emails — use `.split("@").pop()` or validate email format explicitly [src/server/auth/config.ts:33, src/app/api/auth/register/route.ts:15]
+- [x] [Review][Patch] No max-length on `name` field — add a reasonable cap (e.g., 100 chars) in the register route [src/app/api/auth/register/route.ts:68]
+- [x] [Review][Patch] Race condition on duplicate email check — catch Prisma P2002 error and return 409 instead of 500 [src/app/api/auth/register/route.ts:74-79]
+- [x] [Review][Patch] Open redirect via unvalidated `callbackUrl` — validate it is an internal path before calling `router.push` [src/app/login/page.tsx:20, 52, 87]
 
 **Deferred (pre-existing, not caused by this change):**
 - [x] [Review][Defer] `email String?` nullable in Prisma schema but validated non-null at app layer — schema inconsistency [prisma/schema.prisma:61] — deferred, pre-existing schema from NextAuth scaffold
