@@ -29,6 +29,9 @@ export async function createRsvpPessimistic(userId: string, eventId: number) {
     }
 
     const event = events[0];
+    if (!event) {
+      throw new Error("Event not found");
+    }
 
     // Check how many RSVPs currently exist
     const rsvpCount = await tx.rSVP.count({
