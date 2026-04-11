@@ -49,14 +49,14 @@ development_status:
   1-4-protected-app-shell-navigation: done
   epic-1-retrospective: done
 
-  epic-2: backlog
+  epic-2: done
   2-1-feed-database-seeding-mock-api: done
-  2-2-minimalist-event-cards-static-geometry: ready-for-dev
-  2-3-event-card-interactions-tap-to-expand: ready-for-dev
-  2-4-ephemeral-story-bar-component: ready-for-dev
-  2-5-story-bar-deep-linking-logic: ready-for-dev
-  2-6-high-fidelity-skeleton-loaders: ready-for-dev
-  epic-2-retrospective: optional
+  2-2-minimalist-event-cards-static-geometry: done
+  2-3-event-card-interactions-tap-to-expand: done
+  2-4-ephemeral-story-bar-component: done
+  2-5-story-bar-deep-linking-logic: done
+  2-6-high-fidelity-skeleton-loaders: done
+  epic-2-retrospective: done
 
   epic-3: backlog
   3-1-rsvp-database-transaction-pessimistic-locking: ready-for-dev

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import type { RouterOutputs } from "@/trpc/react";
 
@@ -15,9 +15,26 @@ type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
 export function EventCard({ event }: { event: EventFeedItem }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const descriptionId = `event-description-${event.id}`;
+  const eventId = `event-${event.id}`;
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === `#${eventId}`) {
+        setIsExpanded(true);
+      }
+    };
+    
+    // Check initial hash
+    if (window.location.hash === `#${eventId}`) {
+      setIsExpanded(true);
+    }
+    
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [eventId]);
 
   return (
-    <article className="w-full max-w-md overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+    <article id={eventId} className="w-full max-w-md overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
       <button
         type="button"
         aria-expanded={isExpanded}
