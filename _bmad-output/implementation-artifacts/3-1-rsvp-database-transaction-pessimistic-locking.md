@@ -2,7 +2,7 @@
 
 # Story 3.1: RSVP Database Transaction & Pessimistic Locking
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -21,12 +21,12 @@ So that the system guarantees no overbooking, even if 500 students click simulta
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Setup Prisma RSVP Model (AC: 1)
-  - [ ] Hook `RSVP` relational join mapping `User` to `Event` in `schema.prisma`.
-  - [ ] Define the crucial `@@unique([userId, eventId])` compound constraint to prevent double-booking at the DB layer.
-- [ ] Task 2: Pessimistic Logic Construction (AC: 1)
-  - [ ] Standard Prisma updates are vulnerable to race conditions for capacity checks. Write a raw SQL query hook or utilizing Prisma `$executeRaw` that issues a `SELECT ... FOR UPDATE` lock on the event row.
-  - [ ] If `capacity - RSVP_Count <= 0`, cleanly rollback the transaction.
+- [x] Task 1: Setup Prisma RSVP Model (AC: 1)
+  - [x] Hook `RSVP` relational join mapping `User` to `Event` in `schema.prisma`.
+  - [x] Define the crucial `@@unique([userId, eventId])` compound constraint to prevent double-booking at the DB layer.
+- [x] Task 2: Pessimistic Logic Construction (AC: 1)
+  - [x] Standard Prisma updates are vulnerable to race conditions for capacity checks. Write a raw SQL query hook or utilizing Prisma `$executeRaw` that issues a `SELECT ... FOR UPDATE` lock on the event row.
+  - [x] If `capacity - RSVP_Count <= 0`, cleanly rollback the transaction.
 
 ## Dev Notes
 
@@ -39,3 +39,18 @@ So that the system guarantees no overbooking, even if 500 students click simulta
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### File List
+- `prisma/schema.prisma`
+- `src/server/services/rsvp.ts`
+
+### Change Log
+- Added `RSVP` model to `schema.prisma`.
+- Built raw sql function `createRsvpPessimistic` utilizing `FOR UPDATE` lock.
+
+### Completion Notes
+✅ All subtasks completed successfully. 
+✅ Added robust locking to guarantees no overbookings.
+✅ Typechecks completed successfully.
+### Review Findings
+- [x] [Review][Patch] Duplicate/Uneeded check on `event` object in service [`src/server/services/rsvp.ts`:38]

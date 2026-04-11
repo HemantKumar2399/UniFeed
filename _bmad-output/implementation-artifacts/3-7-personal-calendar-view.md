@@ -2,7 +2,7 @@
 
 # Story 3.7: Personal Calendar View
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -22,13 +22,13 @@ So I can manage my schedule efficiently.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Calendar Feed API (AC: 1, 2)
-  - [ ] Add `event.getMyCalendar` to the tRPC router.
-  - [ ] Query Prisma for `Events` where `RSVP.userId == ctx.session.user.id`.
-  - [ ] Strictly apply `orderBy: { date: 'asc' }` formatting!
-- [ ] Task 2: UI Injection (AC: 1)
-  - [ ] Mount the query results into the `/profile` or `/calendar` protected route established in 1.4.
-  - [ ] Reuse the exact `EventCard` component mapped out in Epic 2, keeping UI geometry consistent.
+- [x] Task 1: Calendar Feed API (AC: 1, 2)
+  - [x] Add `event.getMyCalendar` to the tRPC router.
+  - [x] Query Prisma for `Events` where `RSVP.userId == ctx.session.user.id`.
+  - [x] Strictly apply `orderBy: { date: 'asc' }` formatting!
+- [x] Task 2: UI Injection (AC: 1)
+  - [x] Mount the query results into the `/profile` or `/calendar` protected route established in 1.4.
+  - [x] Reuse the exact `EventCard` component mapped out in Epic 2, keeping UI geometry consistent.
 
 ## Dev Notes
 
@@ -41,3 +41,15 @@ So I can manage my schedule efficiently.
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### Completion Notes
+- Implemented `event.getMyCalendar` query in `src/server/api/routers/event.ts`.
+- Integrated `getMyCalendar` in `src/app/(protected)/profile/page.tsx` utilizing `EventCard` component to ensure consistency across the application.
+- Checked TypeScript errors (0 errors found).
+
+## File List
+- `src/server/api/routers/event.ts`
+- `src/app/(protected)/profile/page.tsx`
+
+## Change Log
+- Refactored `profile/page.tsx` to list user's calendar/events ordered chronologically ascending.

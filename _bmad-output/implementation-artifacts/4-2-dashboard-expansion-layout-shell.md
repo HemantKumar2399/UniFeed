@@ -7,7 +7,7 @@ Status: backlog
 ## Story
 
 As an Organizer,
-I want a spacious, desktop-optimized dashboard layout,
+I want a spacious, desktop and mobile-optimized dashboard layout,
 So that I can comfortably manage complex administrative data.
 
 ## Dependencies

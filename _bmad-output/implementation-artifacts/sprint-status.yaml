@@ -58,15 +58,15 @@ development_status:
   2-6-high-fidelity-skeleton-loaders: done
   epic-2-retrospective: done
 
-  epic-3: backlog
-  3-1-rsvp-database-transaction-pessimistic-locking: ready-for-dev
-  3-2-rsvp-api-mutation-layer: ready-for-dev
-  3-3-real-time-websocket-subscription-sync: ready-for-dev
-  3-4-long-press-gesture-ui-component: ready-for-dev
-  3-5-transient-ui-state-machine-integration: ready-for-dev
-  3-6-live-capacity-progress-bar: ready-for-dev
-  3-7-personal-calendar-view: ready-for-dev
-  epic-3-retrospective: optional
+  epic-3: done
+  3-1-rsvp-database-transaction-pessimistic-locking: done
+  3-2-rsvp-api-mutation-layer: done
+  3-3-real-time-websocket-subscription-sync: done
+  3-4-long-press-gesture-ui-component: done
+  3-5-transient-ui-state-machine-integration: done
+  3-6-live-capacity-progress-bar: done
+  3-7-personal-calendar-view: done
+  epic-3-retrospective: done
 
   epic-4: backlog
   4-1-organizer-role-guarding: ready-for-dev
