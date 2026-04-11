@@ -1,22 +1,15 @@
 "use client";
 
 import { EventCard } from "@/features/feed/components/EventCard";
+import { FeedSkeleton } from "@/features/feed/components/FeedSkeleton";
+import { StoryBar } from "@/features/feed/components/StoryBar";
 import { api } from "@/trpc/react";
 
 export default function HomePage() {
   const { data: events, isLoading, isError } = api.event.getFeed.useQuery();
 
   if (isLoading) {
-    return (
-      <div className="mx-auto flex w-full max-w-md flex-col gap-8 px-2 py-6">
-        {[1, 2, 3].map((key) => (
-          <div
-            key={key}
-            className="h-[560px] w-full animate-pulse rounded-3xl border border-zinc-800 bg-zinc-900"
-          />
-        ))}
-      </div>
-    );
+    return <FeedSkeleton />;
   }
 
   if (isError) {
@@ -41,9 +34,32 @@ export default function HomePage() {
     );
   }
 
+  // Mock club extraction from events for the StoryBar
+  const uniqueClubsMap = new Map();
+  events?.forEach((e) => {
+    // We'll use the event owner or organizer ID, but mock it as a club for now
+    const clubId = e.id + "-club"; 
+    if (!uniqueClubsMap.has(clubId)) {
+      uniqueClubsMap.set(clubId, {
+        id: clubId,
+        name: e.title.substring(0, 10),
+        imageUrl: e.imageUrl,
+        isWatched: false,
+        eventId: e.id,
+      });
+    }
+  });
+
+  const activeClubs = Array.from(uniqueClubsMap.values()).slice(0, 8);
+
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-8 px-2 py-6">
-      {events?.map((event) => <EventCard key={event.id} event={event} />)}
+    <div className="mx-auto flex w-full flex-col gap-8 py-6">
+      <div className="w-full">
+        <StoryBar clubs={activeClubs} />
+      </div>
+      <div className="mx-auto flex w-full max-w-md flex-col gap-8 px-2">
+        {events?.map((event) => <EventCard key={event.id} event={event} />)}
+      </div>
     </div>
   );
 }
