@@ -2,7 +2,7 @@
 
 # Story 3.4: Long-Press Gesture UI Component
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -23,15 +23,15 @@ So that I don't accidentally register for events I didn't mean to.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Pointer Hook & Timing Math (AC: 1, 2)
-  - [ ] Extract an isolated component `<LongPressButton />`.
-  - [ ] Utilize `onPointerDown`/`onPointerUp`/`onPointerLeave` DOM events (native pointer events are vastly superior to onClick for this).
-  - [ ] Fire a `setTimeout` for 1500ms; clear it accurately if pointer leaves the radius or is lifted early.
-- [ ] Task 2: Haptic Visuality (AC: 1)
-  - [ ] Overlay a `<div className="bg-rose-600">` inside the button filling from `width: 0%` to `width: 100%` during the drag.
-  - [ ] Tie the CSS transition duration natively to match exactly `1.5s linear` triggered on press.
-- [ ] Task 3: Trigger Output (AC: 3)
-  - [ ] Execute `props.onComplete()` passing intent up.
+- [x] Task 1: Pointer Hook & Timing Math (AC: 1, 2)
+  - [x] Extract an isolated component `<LongPressButton />`.
+  - [x] Utilize `onPointerDown`/`onPointerUp`/`onPointerLeave` DOM events (native pointer events are vastly superior to onClick for this).
+  - [x] Fire a `setTimeout` for 1500ms; clear it accurately if pointer leaves the radius or is lifted early.
+- [x] Task 2: Haptic Visuality (AC: 1)
+  - [x] Overlay a `<div className="bg-rose-600">` inside the button filling from `width: 0%` to `width: 100%` during the drag.
+  - [x] Tie the CSS transition duration natively to match exactly `1.5s linear` triggered on press.
+- [x] Task 3: Trigger Output (AC: 3)
+  - [x] Execute `props.onComplete()` passing intent up.
 
 ## Dev Notes
 
@@ -44,3 +44,17 @@ So that I don't accidentally register for events I didn't mean to.
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### File List
+- `src/components/ui/LongPressButton.tsx`
+
+### Change Log
+- Created `LongPressButton.tsx` exposing a generic `<LongPressButton>` component.
+- Handled iOS text selection/hijacking via `-webkit-touch-callout: none` and `userSelect: none`.
+- Tied `pointerDown`, `pointerUp`, and `pointerLeave` events to accurately map the `duration` linear background fill.
+- Emits `onComplete()` ONLY when pressed for exactly `duration` ms.
+
+### Completion Notes
+✅ Long press interactions behave linearly and stop immediately on disruption.
+✅ Component isolated correctly to `<LongPressButton>`.
+✅ Passes type verifications.

@@ -27,7 +27,7 @@ export function StoryTeaserModal({ clubId, clubName, eventId, imageUrl, onClose 
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black/95">
-      <style dangerouslySetInlineStyle={{
+      <style dangerouslySetInnerHTML={{
         __html: `
           @keyframes storyProgress {
             from { width: 0%; }

@@ -48,6 +48,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  * 
  */
 export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTokenPayload>
+/**
+ * Model RSVP
+ * 
+ */
+export type RSVP = $Result.DefaultSelection<Prisma.$RSVPPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -236,6 +241,16 @@ export class PrismaClient<
     * ```
     */
   get verificationToken(): Prisma.VerificationTokenDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.rSVP`: Exposes CRUD operations for the **RSVP** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RSVPS
+    * const rSVPS = await prisma.rSVP.findMany()
+    * ```
+    */
+  get rSVP(): Prisma.RSVPDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -683,7 +698,8 @@ export namespace Prisma {
     Account: 'Account',
     Session: 'Session',
     User: 'User',
-    VerificationToken: 'VerificationToken'
+    VerificationToken: 'VerificationToken',
+    RSVP: 'RSVP'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -702,7 +718,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "club" | "event" | "account" | "session" | "user" | "verificationToken"
+      modelProps: "post" | "club" | "event" | "account" | "session" | "user" | "verificationToken" | "rSVP"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1224,6 +1240,80 @@ export namespace Prisma {
           }
         }
       }
+      RSVP: {
+        payload: Prisma.$RSVPPayload<ExtArgs>
+        fields: Prisma.RSVPFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RSVPFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RSVPFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>
+          }
+          findFirst: {
+            args: Prisma.RSVPFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RSVPFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>
+          }
+          findMany: {
+            args: Prisma.RSVPFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>[]
+          }
+          create: {
+            args: Prisma.RSVPCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>
+          }
+          createMany: {
+            args: Prisma.RSVPCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RSVPCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>[]
+          }
+          delete: {
+            args: Prisma.RSVPDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>
+          }
+          update: {
+            args: Prisma.RSVPUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>
+          }
+          deleteMany: {
+            args: Prisma.RSVPDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RSVPUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RSVPUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>[]
+          }
+          upsert: {
+            args: Prisma.RSVPUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RSVPPayload>
+          }
+          aggregate: {
+            args: Prisma.RSVPAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRSVP>
+          }
+          groupBy: {
+            args: Prisma.RSVPGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RSVPGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RSVPCountArgs<ExtArgs>
+            result: $Utils.Optional<RSVPCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1327,6 +1417,7 @@ export namespace Prisma {
     session?: SessionOmit
     user?: UserOmit
     verificationToken?: VerificationTokenOmit
+    rSVP?: RSVPOmit
   }
 
   /* Types for Logging */
@@ -1434,6 +1525,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type EventCountOutputType
+   */
+
+  export type EventCountOutputType = {
+    rsvps: number
+  }
+
+  export type EventCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    rsvps?: boolean | EventCountOutputTypeCountRsvpsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * EventCountOutputType without action
+   */
+  export type EventCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventCountOutputType
+     */
+    select?: EventCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * EventCountOutputType without action
+   */
+  export type EventCountOutputTypeCountRsvpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RSVPWhereInput
+  }
+
+
+  /**
    * Count Type UserCountOutputType
    */
 
@@ -1441,12 +1563,14 @@ export namespace Prisma {
     accounts: number
     sessions: number
     posts: number
+    rsvps: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     posts?: boolean | UserCountOutputTypeCountPostsArgs
+    rsvps?: boolean | UserCountOutputTypeCountRsvpsArgs
   }
 
   // Custom InputTypes
@@ -1479,6 +1603,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PostWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRsvpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RSVPWhereInput
   }
 
 
@@ -3929,6 +4060,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     club?: boolean | ClubDefaultArgs<ExtArgs>
+    rsvps?: boolean | Event$rsvpsArgs<ExtArgs>
+    _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
   export type EventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3975,6 +4108,8 @@ export namespace Prisma {
   export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "date" | "capacity" | "location" | "imageUrl" | "clubId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     club?: boolean | ClubDefaultArgs<ExtArgs>
+    rsvps?: boolean | Event$rsvpsArgs<ExtArgs>
+    _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     club?: boolean | ClubDefaultArgs<ExtArgs>
@@ -3987,6 +4122,7 @@ export namespace Prisma {
     name: "Event"
     objects: {
       club: Prisma.$ClubPayload<ExtArgs>
+      rsvps: Prisma.$RSVPPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4394,6 +4530,7 @@ export namespace Prisma {
   export interface Prisma__EventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     club<T extends ClubDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClubDefaultArgs<ExtArgs>>): Prisma__ClubClient<$Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    rsvps<T extends Event$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, Event$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4826,6 +4963,30 @@ export namespace Prisma {
      * Limit how many Events to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Event.rsvps
+   */
+  export type Event$rsvpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    where?: RSVPWhereInput
+    orderBy?: RSVPOrderByWithRelationInput | RSVPOrderByWithRelationInput[]
+    cursor?: RSVPWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RSVPScalarFieldEnum | RSVPScalarFieldEnum[]
   }
 
   /**
@@ -7267,6 +7428,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     posts?: boolean | User$postsArgs<ExtArgs>
+    rsvps?: boolean | User$rsvpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -7302,6 +7464,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     posts?: boolean | User$postsArgs<ExtArgs>
+    rsvps?: boolean | User$rsvpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -7313,6 +7476,7 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       posts: Prisma.$PostPayload<ExtArgs>[]
+      rsvps: Prisma.$RSVPPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7718,6 +7882,7 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     posts<T extends User$postsArgs<ExtArgs> = {}>(args?: Subset<T, User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    rsvps<T extends User$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, User$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8210,6 +8375,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PostScalarFieldEnum | PostScalarFieldEnum[]
+  }
+
+  /**
+   * User.rsvps
+   */
+  export type User$rsvpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    where?: RSVPWhereInput
+    orderBy?: RSVPOrderByWithRelationInput | RSVPOrderByWithRelationInput[]
+    cursor?: RSVPWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RSVPScalarFieldEnum | RSVPScalarFieldEnum[]
   }
 
   /**
@@ -9201,6 +9390,1110 @@ export namespace Prisma {
 
 
   /**
+   * Model RSVP
+   */
+
+  export type AggregateRSVP = {
+    _count: RSVPCountAggregateOutputType | null
+    _avg: RSVPAvgAggregateOutputType | null
+    _sum: RSVPSumAggregateOutputType | null
+    _min: RSVPMinAggregateOutputType | null
+    _max: RSVPMaxAggregateOutputType | null
+  }
+
+  export type RSVPAvgAggregateOutputType = {
+    id: number | null
+    eventId: number | null
+  }
+
+  export type RSVPSumAggregateOutputType = {
+    id: number | null
+    eventId: number | null
+  }
+
+  export type RSVPMinAggregateOutputType = {
+    id: number | null
+    userId: string | null
+    eventId: number | null
+    status: string | null
+    createdAt: Date | null
+  }
+
+  export type RSVPMaxAggregateOutputType = {
+    id: number | null
+    userId: string | null
+    eventId: number | null
+    status: string | null
+    createdAt: Date | null
+  }
+
+  export type RSVPCountAggregateOutputType = {
+    id: number
+    userId: number
+    eventId: number
+    status: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RSVPAvgAggregateInputType = {
+    id?: true
+    eventId?: true
+  }
+
+  export type RSVPSumAggregateInputType = {
+    id?: true
+    eventId?: true
+  }
+
+  export type RSVPMinAggregateInputType = {
+    id?: true
+    userId?: true
+    eventId?: true
+    status?: true
+    createdAt?: true
+  }
+
+  export type RSVPMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    eventId?: true
+    status?: true
+    createdAt?: true
+  }
+
+  export type RSVPCountAggregateInputType = {
+    id?: true
+    userId?: true
+    eventId?: true
+    status?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RSVPAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RSVP to aggregate.
+     */
+    where?: RSVPWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RSVPS to fetch.
+     */
+    orderBy?: RSVPOrderByWithRelationInput | RSVPOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RSVPWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RSVPS from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RSVPS.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RSVPS
+    **/
+    _count?: true | RSVPCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RSVPAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RSVPSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RSVPMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RSVPMaxAggregateInputType
+  }
+
+  export type GetRSVPAggregateType<T extends RSVPAggregateArgs> = {
+        [P in keyof T & keyof AggregateRSVP]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRSVP[P]>
+      : GetScalarType<T[P], AggregateRSVP[P]>
+  }
+
+
+
+
+  export type RSVPGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RSVPWhereInput
+    orderBy?: RSVPOrderByWithAggregationInput | RSVPOrderByWithAggregationInput[]
+    by: RSVPScalarFieldEnum[] | RSVPScalarFieldEnum
+    having?: RSVPScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RSVPCountAggregateInputType | true
+    _avg?: RSVPAvgAggregateInputType
+    _sum?: RSVPSumAggregateInputType
+    _min?: RSVPMinAggregateInputType
+    _max?: RSVPMaxAggregateInputType
+  }
+
+  export type RSVPGroupByOutputType = {
+    id: number
+    userId: string
+    eventId: number
+    status: string
+    createdAt: Date
+    _count: RSVPCountAggregateOutputType | null
+    _avg: RSVPAvgAggregateOutputType | null
+    _sum: RSVPSumAggregateOutputType | null
+    _min: RSVPMinAggregateOutputType | null
+    _max: RSVPMaxAggregateOutputType | null
+  }
+
+  type GetRSVPGroupByPayload<T extends RSVPGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RSVPGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RSVPGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RSVPGroupByOutputType[P]>
+            : GetScalarType<T[P], RSVPGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RSVPSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    eventId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    event?: boolean | EventDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rSVP"]>
+
+  export type RSVPSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    eventId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    event?: boolean | EventDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rSVP"]>
+
+  export type RSVPSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    eventId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    event?: boolean | EventDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rSVP"]>
+
+  export type RSVPSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    eventId?: boolean
+    status?: boolean
+    createdAt?: boolean
+  }
+
+  export type RSVPOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "eventId" | "status" | "createdAt", ExtArgs["result"]["rSVP"]>
+  export type RSVPInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    event?: boolean | EventDefaultArgs<ExtArgs>
+  }
+  export type RSVPIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    event?: boolean | EventDefaultArgs<ExtArgs>
+  }
+  export type RSVPIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    event?: boolean | EventDefaultArgs<ExtArgs>
+  }
+
+  export type $RSVPPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RSVP"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      event: Prisma.$EventPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      userId: string
+      eventId: number
+      status: string
+      createdAt: Date
+    }, ExtArgs["result"]["rSVP"]>
+    composites: {}
+  }
+
+  type RSVPGetPayload<S extends boolean | null | undefined | RSVPDefaultArgs> = $Result.GetResult<Prisma.$RSVPPayload, S>
+
+  type RSVPCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RSVPFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RSVPCountAggregateInputType | true
+    }
+
+  export interface RSVPDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RSVP'], meta: { name: 'RSVP' } }
+    /**
+     * Find zero or one RSVP that matches the filter.
+     * @param {RSVPFindUniqueArgs} args - Arguments to find a RSVP
+     * @example
+     * // Get one RSVP
+     * const rSVP = await prisma.rSVP.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RSVPFindUniqueArgs>(args: SelectSubset<T, RSVPFindUniqueArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RSVP that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RSVPFindUniqueOrThrowArgs} args - Arguments to find a RSVP
+     * @example
+     * // Get one RSVP
+     * const rSVP = await prisma.rSVP.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RSVPFindUniqueOrThrowArgs>(args: SelectSubset<T, RSVPFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RSVP that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPFindFirstArgs} args - Arguments to find a RSVP
+     * @example
+     * // Get one RSVP
+     * const rSVP = await prisma.rSVP.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RSVPFindFirstArgs>(args?: SelectSubset<T, RSVPFindFirstArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RSVP that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPFindFirstOrThrowArgs} args - Arguments to find a RSVP
+     * @example
+     * // Get one RSVP
+     * const rSVP = await prisma.rSVP.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RSVPFindFirstOrThrowArgs>(args?: SelectSubset<T, RSVPFindFirstOrThrowArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RSVPS that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RSVPS
+     * const rSVPS = await prisma.rSVP.findMany()
+     * 
+     * // Get first 10 RSVPS
+     * const rSVPS = await prisma.rSVP.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const rSVPWithIdOnly = await prisma.rSVP.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RSVPFindManyArgs>(args?: SelectSubset<T, RSVPFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RSVP.
+     * @param {RSVPCreateArgs} args - Arguments to create a RSVP.
+     * @example
+     * // Create one RSVP
+     * const RSVP = await prisma.rSVP.create({
+     *   data: {
+     *     // ... data to create a RSVP
+     *   }
+     * })
+     * 
+     */
+    create<T extends RSVPCreateArgs>(args: SelectSubset<T, RSVPCreateArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RSVPS.
+     * @param {RSVPCreateManyArgs} args - Arguments to create many RSVPS.
+     * @example
+     * // Create many RSVPS
+     * const rSVP = await prisma.rSVP.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RSVPCreateManyArgs>(args?: SelectSubset<T, RSVPCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RSVPS and returns the data saved in the database.
+     * @param {RSVPCreateManyAndReturnArgs} args - Arguments to create many RSVPS.
+     * @example
+     * // Create many RSVPS
+     * const rSVP = await prisma.rSVP.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RSVPS and only return the `id`
+     * const rSVPWithIdOnly = await prisma.rSVP.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RSVPCreateManyAndReturnArgs>(args?: SelectSubset<T, RSVPCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RSVP.
+     * @param {RSVPDeleteArgs} args - Arguments to delete one RSVP.
+     * @example
+     * // Delete one RSVP
+     * const RSVP = await prisma.rSVP.delete({
+     *   where: {
+     *     // ... filter to delete one RSVP
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RSVPDeleteArgs>(args: SelectSubset<T, RSVPDeleteArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RSVP.
+     * @param {RSVPUpdateArgs} args - Arguments to update one RSVP.
+     * @example
+     * // Update one RSVP
+     * const rSVP = await prisma.rSVP.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RSVPUpdateArgs>(args: SelectSubset<T, RSVPUpdateArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RSVPS.
+     * @param {RSVPDeleteManyArgs} args - Arguments to filter RSVPS to delete.
+     * @example
+     * // Delete a few RSVPS
+     * const { count } = await prisma.rSVP.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RSVPDeleteManyArgs>(args?: SelectSubset<T, RSVPDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RSVPS.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RSVPS
+     * const rSVP = await prisma.rSVP.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RSVPUpdateManyArgs>(args: SelectSubset<T, RSVPUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RSVPS and returns the data updated in the database.
+     * @param {RSVPUpdateManyAndReturnArgs} args - Arguments to update many RSVPS.
+     * @example
+     * // Update many RSVPS
+     * const rSVP = await prisma.rSVP.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RSVPS and only return the `id`
+     * const rSVPWithIdOnly = await prisma.rSVP.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RSVPUpdateManyAndReturnArgs>(args: SelectSubset<T, RSVPUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RSVP.
+     * @param {RSVPUpsertArgs} args - Arguments to update or create a RSVP.
+     * @example
+     * // Update or create a RSVP
+     * const rSVP = await prisma.rSVP.upsert({
+     *   create: {
+     *     // ... data to create a RSVP
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RSVP we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RSVPUpsertArgs>(args: SelectSubset<T, RSVPUpsertArgs<ExtArgs>>): Prisma__RSVPClient<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RSVPS.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPCountArgs} args - Arguments to filter RSVPS to count.
+     * @example
+     * // Count the number of RSVPS
+     * const count = await prisma.rSVP.count({
+     *   where: {
+     *     // ... the filter for the RSVPS we want to count
+     *   }
+     * })
+    **/
+    count<T extends RSVPCountArgs>(
+      args?: Subset<T, RSVPCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RSVPCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RSVP.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RSVPAggregateArgs>(args: Subset<T, RSVPAggregateArgs>): Prisma.PrismaPromise<GetRSVPAggregateType<T>>
+
+    /**
+     * Group by RSVP.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RSVPGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RSVPGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RSVPGroupByArgs['orderBy'] }
+        : { orderBy?: RSVPGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RSVPGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRSVPGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RSVP model
+   */
+  readonly fields: RSVPFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RSVP.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RSVPClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    event<T extends EventDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventDefaultArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RSVP model
+   */
+  interface RSVPFieldRefs {
+    readonly id: FieldRef<"RSVP", 'Int'>
+    readonly userId: FieldRef<"RSVP", 'String'>
+    readonly eventId: FieldRef<"RSVP", 'Int'>
+    readonly status: FieldRef<"RSVP", 'String'>
+    readonly createdAt: FieldRef<"RSVP", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RSVP findUnique
+   */
+  export type RSVPFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * Filter, which RSVP to fetch.
+     */
+    where: RSVPWhereUniqueInput
+  }
+
+  /**
+   * RSVP findUniqueOrThrow
+   */
+  export type RSVPFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * Filter, which RSVP to fetch.
+     */
+    where: RSVPWhereUniqueInput
+  }
+
+  /**
+   * RSVP findFirst
+   */
+  export type RSVPFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * Filter, which RSVP to fetch.
+     */
+    where?: RSVPWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RSVPS to fetch.
+     */
+    orderBy?: RSVPOrderByWithRelationInput | RSVPOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RSVPS.
+     */
+    cursor?: RSVPWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RSVPS from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RSVPS.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RSVPS.
+     */
+    distinct?: RSVPScalarFieldEnum | RSVPScalarFieldEnum[]
+  }
+
+  /**
+   * RSVP findFirstOrThrow
+   */
+  export type RSVPFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * Filter, which RSVP to fetch.
+     */
+    where?: RSVPWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RSVPS to fetch.
+     */
+    orderBy?: RSVPOrderByWithRelationInput | RSVPOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RSVPS.
+     */
+    cursor?: RSVPWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RSVPS from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RSVPS.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RSVPS.
+     */
+    distinct?: RSVPScalarFieldEnum | RSVPScalarFieldEnum[]
+  }
+
+  /**
+   * RSVP findMany
+   */
+  export type RSVPFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * Filter, which RSVPS to fetch.
+     */
+    where?: RSVPWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RSVPS to fetch.
+     */
+    orderBy?: RSVPOrderByWithRelationInput | RSVPOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RSVPS.
+     */
+    cursor?: RSVPWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RSVPS from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RSVPS.
+     */
+    skip?: number
+    distinct?: RSVPScalarFieldEnum | RSVPScalarFieldEnum[]
+  }
+
+  /**
+   * RSVP create
+   */
+  export type RSVPCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RSVP.
+     */
+    data: XOR<RSVPCreateInput, RSVPUncheckedCreateInput>
+  }
+
+  /**
+   * RSVP createMany
+   */
+  export type RSVPCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RSVPS.
+     */
+    data: RSVPCreateManyInput | RSVPCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RSVP createManyAndReturn
+   */
+  export type RSVPCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * The data used to create many RSVPS.
+     */
+    data: RSVPCreateManyInput | RSVPCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RSVP update
+   */
+  export type RSVPUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RSVP.
+     */
+    data: XOR<RSVPUpdateInput, RSVPUncheckedUpdateInput>
+    /**
+     * Choose, which RSVP to update.
+     */
+    where: RSVPWhereUniqueInput
+  }
+
+  /**
+   * RSVP updateMany
+   */
+  export type RSVPUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RSVPS.
+     */
+    data: XOR<RSVPUpdateManyMutationInput, RSVPUncheckedUpdateManyInput>
+    /**
+     * Filter which RSVPS to update
+     */
+    where?: RSVPWhereInput
+    /**
+     * Limit how many RSVPS to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RSVP updateManyAndReturn
+   */
+  export type RSVPUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * The data used to update RSVPS.
+     */
+    data: XOR<RSVPUpdateManyMutationInput, RSVPUncheckedUpdateManyInput>
+    /**
+     * Filter which RSVPS to update
+     */
+    where?: RSVPWhereInput
+    /**
+     * Limit how many RSVPS to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RSVP upsert
+   */
+  export type RSVPUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RSVP to update in case it exists.
+     */
+    where: RSVPWhereUniqueInput
+    /**
+     * In case the RSVP found by the `where` argument doesn't exist, create a new RSVP with this data.
+     */
+    create: XOR<RSVPCreateInput, RSVPUncheckedCreateInput>
+    /**
+     * In case the RSVP was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RSVPUpdateInput, RSVPUncheckedUpdateInput>
+  }
+
+  /**
+   * RSVP delete
+   */
+  export type RSVPDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+    /**
+     * Filter which RSVP to delete.
+     */
+    where: RSVPWhereUniqueInput
+  }
+
+  /**
+   * RSVP deleteMany
+   */
+  export type RSVPDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RSVPS to delete
+     */
+    where?: RSVPWhereInput
+    /**
+     * Limit how many RSVPS to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RSVP without action
+   */
+  export type RSVPDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RSVP
+     */
+    select?: RSVPSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RSVP
+     */
+    omit?: RSVPOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RSVPInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -9300,6 +10593,17 @@ export namespace Prisma {
   };
 
   export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+  export const RSVPScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    eventId: 'eventId',
+    status: 'status',
+    createdAt: 'createdAt'
+  };
+
+  export type RSVPScalarFieldEnum = (typeof RSVPScalarFieldEnum)[keyof typeof RSVPScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -9519,6 +10823,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+    rsvps?: RSVPListRelationFilter
   }
 
   export type EventOrderByWithRelationInput = {
@@ -9533,6 +10838,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     club?: ClubOrderByWithRelationInput
+    rsvps?: RSVPOrderByRelationAggregateInput
   }
 
   export type EventWhereUniqueInput = Prisma.AtLeast<{
@@ -9550,6 +10856,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+    rsvps?: RSVPListRelationFilter
   }, "id">
 
   export type EventOrderByWithAggregationInput = {
@@ -9747,6 +11054,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     posts?: PostListRelationFilter
+    rsvps?: RSVPListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9759,6 +11067,7 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     posts?: PostOrderByRelationAggregateInput
+    rsvps?: RSVPOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9774,6 +11083,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     posts?: PostListRelationFilter
+    rsvps?: RSVPListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -9841,6 +11151,67 @@ export namespace Prisma {
     identifier?: StringWithAggregatesFilter<"VerificationToken"> | string
     token?: StringWithAggregatesFilter<"VerificationToken"> | string
     expires?: DateTimeWithAggregatesFilter<"VerificationToken"> | Date | string
+  }
+
+  export type RSVPWhereInput = {
+    AND?: RSVPWhereInput | RSVPWhereInput[]
+    OR?: RSVPWhereInput[]
+    NOT?: RSVPWhereInput | RSVPWhereInput[]
+    id?: IntFilter<"RSVP"> | number
+    userId?: StringFilter<"RSVP"> | string
+    eventId?: IntFilter<"RSVP"> | number
+    status?: StringFilter<"RSVP"> | string
+    createdAt?: DateTimeFilter<"RSVP"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    event?: XOR<EventScalarRelationFilter, EventWhereInput>
+  }
+
+  export type RSVPOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    eventId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    event?: EventOrderByWithRelationInput
+  }
+
+  export type RSVPWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    userId_eventId?: RSVPUserIdEventIdCompoundUniqueInput
+    AND?: RSVPWhereInput | RSVPWhereInput[]
+    OR?: RSVPWhereInput[]
+    NOT?: RSVPWhereInput | RSVPWhereInput[]
+    userId?: StringFilter<"RSVP"> | string
+    eventId?: IntFilter<"RSVP"> | number
+    status?: StringFilter<"RSVP"> | string
+    createdAt?: DateTimeFilter<"RSVP"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    event?: XOR<EventScalarRelationFilter, EventWhereInput>
+  }, "id" | "userId_eventId">
+
+  export type RSVPOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    eventId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    _count?: RSVPCountOrderByAggregateInput
+    _avg?: RSVPAvgOrderByAggregateInput
+    _max?: RSVPMaxOrderByAggregateInput
+    _min?: RSVPMinOrderByAggregateInput
+    _sum?: RSVPSumOrderByAggregateInput
+  }
+
+  export type RSVPScalarWhereWithAggregatesInput = {
+    AND?: RSVPScalarWhereWithAggregatesInput | RSVPScalarWhereWithAggregatesInput[]
+    OR?: RSVPScalarWhereWithAggregatesInput[]
+    NOT?: RSVPScalarWhereWithAggregatesInput | RSVPScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"RSVP"> | number
+    userId?: StringWithAggregatesFilter<"RSVP"> | string
+    eventId?: IntWithAggregatesFilter<"RSVP"> | number
+    status?: StringWithAggregatesFilter<"RSVP"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"RSVP"> | Date | string
   }
 
   export type PostCreateInput = {
@@ -9962,6 +11333,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     club: ClubCreateNestedOneWithoutEventsInput
+    rsvps?: RSVPCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateInput = {
@@ -9975,6 +11347,7 @@ export namespace Prisma {
     clubId: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventUpdateInput = {
@@ -9987,6 +11360,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     club?: ClubUpdateOneRequiredWithoutEventsNestedInput
+    rsvps?: RSVPUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateInput = {
@@ -10000,6 +11374,7 @@ export namespace Prisma {
     clubId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventCreateManyInput = {
@@ -10208,6 +11583,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10220,6 +11596,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -10232,6 +11609,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10244,6 +11622,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10313,6 +11692,57 @@ export namespace Prisma {
     identifier?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPCreateInput = {
+    status?: string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutRsvpsInput
+    event: EventCreateNestedOneWithoutRsvpsInput
+  }
+
+  export type RSVPUncheckedCreateInput = {
+    id?: number
+    userId: string
+    eventId: number
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RSVPUpdateInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutRsvpsNestedInput
+    event?: EventUpdateOneRequiredWithoutRsvpsNestedInput
+  }
+
+  export type RSVPUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    eventId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPCreateManyInput = {
+    id?: number
+    userId: string
+    eventId: number
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RSVPUpdateManyMutationInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    eventId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -10482,6 +11912,16 @@ export namespace Prisma {
   export type ClubScalarRelationFilter = {
     is?: ClubWhereInput
     isNot?: ClubWhereInput
+  }
+
+  export type RSVPListRelationFilter = {
+    every?: RSVPWhereInput
+    some?: RSVPWhereInput
+    none?: RSVPWhereInput
+  }
+
+  export type RSVPOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type EventCountOrderByAggregateInput = {
@@ -10789,6 +12229,50 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type EventScalarRelationFilter = {
+    is?: EventWhereInput
+    isNot?: EventWhereInput
+  }
+
+  export type RSVPUserIdEventIdCompoundUniqueInput = {
+    userId: string
+    eventId: number
+  }
+
+  export type RSVPCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    eventId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RSVPAvgOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+  }
+
+  export type RSVPMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    eventId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RSVPMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    eventId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RSVPSumOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+  }
+
   export type UserCreateNestedOneWithoutPostsInput = {
     create?: XOR<UserCreateWithoutPostsInput, UserUncheckedCreateWithoutPostsInput>
     connectOrCreate?: UserCreateOrConnectWithoutPostsInput
@@ -10867,12 +12351,54 @@ export namespace Prisma {
     connect?: ClubWhereUniqueInput
   }
 
+  export type RSVPCreateNestedManyWithoutEventInput = {
+    create?: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput> | RSVPCreateWithoutEventInput[] | RSVPUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
+    createMany?: RSVPCreateManyEventInputEnvelope
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
+  export type RSVPUncheckedCreateNestedManyWithoutEventInput = {
+    create?: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput> | RSVPCreateWithoutEventInput[] | RSVPUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
+    createMany?: RSVPCreateManyEventInputEnvelope
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
   export type ClubUpdateOneRequiredWithoutEventsNestedInput = {
     create?: XOR<ClubCreateWithoutEventsInput, ClubUncheckedCreateWithoutEventsInput>
     connectOrCreate?: ClubCreateOrConnectWithoutEventsInput
     upsert?: ClubUpsertWithoutEventsInput
     connect?: ClubWhereUniqueInput
     update?: XOR<XOR<ClubUpdateToOneWithWhereWithoutEventsInput, ClubUpdateWithoutEventsInput>, ClubUncheckedUpdateWithoutEventsInput>
+  }
+
+  export type RSVPUpdateManyWithoutEventNestedInput = {
+    create?: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput> | RSVPCreateWithoutEventInput[] | RSVPUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
+    upsert?: RSVPUpsertWithWhereUniqueWithoutEventInput | RSVPUpsertWithWhereUniqueWithoutEventInput[]
+    createMany?: RSVPCreateManyEventInputEnvelope
+    set?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    disconnect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    delete?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    update?: RSVPUpdateWithWhereUniqueWithoutEventInput | RSVPUpdateWithWhereUniqueWithoutEventInput[]
+    updateMany?: RSVPUpdateManyWithWhereWithoutEventInput | RSVPUpdateManyWithWhereWithoutEventInput[]
+    deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+  }
+
+  export type RSVPUncheckedUpdateManyWithoutEventNestedInput = {
+    create?: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput> | RSVPCreateWithoutEventInput[] | RSVPUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
+    upsert?: RSVPUpsertWithWhereUniqueWithoutEventInput | RSVPUpsertWithWhereUniqueWithoutEventInput[]
+    createMany?: RSVPCreateManyEventInputEnvelope
+    set?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    disconnect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    delete?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    update?: RSVPUpdateWithWhereUniqueWithoutEventInput | RSVPUpdateWithWhereUniqueWithoutEventInput[]
+    updateMany?: RSVPUpdateManyWithWhereWithoutEventInput | RSVPUpdateManyWithWhereWithoutEventInput[]
+    deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -10936,6 +12462,13 @@ export namespace Prisma {
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
   }
 
+  export type RSVPCreateNestedManyWithoutUserInput = {
+    create?: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput> | RSVPCreateWithoutUserInput[] | RSVPUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
+    createMany?: RSVPCreateManyUserInputEnvelope
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -10955,6 +12488,13 @@ export namespace Prisma {
     connectOrCreate?: PostCreateOrConnectWithoutCreatedByInput | PostCreateOrConnectWithoutCreatedByInput[]
     createMany?: PostCreateManyCreatedByInputEnvelope
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
+  }
+
+  export type RSVPUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput> | RSVPCreateWithoutUserInput[] | RSVPUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
+    createMany?: RSVPCreateManyUserInputEnvelope
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -11003,6 +12543,20 @@ export namespace Prisma {
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
   }
 
+  export type RSVPUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput> | RSVPCreateWithoutUserInput[] | RSVPUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
+    upsert?: RSVPUpsertWithWhereUniqueWithoutUserInput | RSVPUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RSVPCreateManyUserInputEnvelope
+    set?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    disconnect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    delete?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    update?: RSVPUpdateWithWhereUniqueWithoutUserInput | RSVPUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RSVPUpdateManyWithWhereWithoutUserInput | RSVPUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -11043,6 +12597,48 @@ export namespace Prisma {
     update?: PostUpdateWithWhereUniqueWithoutCreatedByInput | PostUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: PostUpdateManyWithWhereWithoutCreatedByInput | PostUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
+  }
+
+  export type RSVPUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput> | RSVPCreateWithoutUserInput[] | RSVPUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
+    upsert?: RSVPUpsertWithWhereUniqueWithoutUserInput | RSVPUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RSVPCreateManyUserInputEnvelope
+    set?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    disconnect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    delete?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+    update?: RSVPUpdateWithWhereUniqueWithoutUserInput | RSVPUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RSVPUpdateManyWithWhereWithoutUserInput | RSVPUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutRsvpsInput = {
+    create?: XOR<UserCreateWithoutRsvpsInput, UserUncheckedCreateWithoutRsvpsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRsvpsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EventCreateNestedOneWithoutRsvpsInput = {
+    create?: XOR<EventCreateWithoutRsvpsInput, EventUncheckedCreateWithoutRsvpsInput>
+    connectOrCreate?: EventCreateOrConnectWithoutRsvpsInput
+    connect?: EventWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutRsvpsNestedInput = {
+    create?: XOR<UserCreateWithoutRsvpsInput, UserUncheckedCreateWithoutRsvpsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRsvpsInput
+    upsert?: UserUpsertWithoutRsvpsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRsvpsInput, UserUpdateWithoutRsvpsInput>, UserUncheckedUpdateWithoutRsvpsInput>
+  }
+
+  export type EventUpdateOneRequiredWithoutRsvpsNestedInput = {
+    create?: XOR<EventCreateWithoutRsvpsInput, EventUncheckedCreateWithoutRsvpsInput>
+    connectOrCreate?: EventCreateOrConnectWithoutRsvpsInput
+    upsert?: EventUpsertWithoutRsvpsInput
+    connect?: EventWhereUniqueInput
+    update?: XOR<XOR<EventUpdateToOneWithWhereWithoutRsvpsInput, EventUpdateWithoutRsvpsInput>, EventUncheckedUpdateWithoutRsvpsInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -11242,6 +12838,7 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -11253,6 +12850,7 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -11280,6 +12878,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -11291,6 +12890,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventCreateWithoutClubInput = {
@@ -11302,6 +12902,7 @@ export namespace Prisma {
     imageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    rsvps?: RSVPCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateWithoutClubInput = {
@@ -11314,6 +12915,7 @@ export namespace Prisma {
     imageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventCreateOrConnectWithoutClubInput = {
@@ -11378,6 +12980,29 @@ export namespace Prisma {
     create: XOR<ClubCreateWithoutEventsInput, ClubUncheckedCreateWithoutEventsInput>
   }
 
+  export type RSVPCreateWithoutEventInput = {
+    status?: string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutRsvpsInput
+  }
+
+  export type RSVPUncheckedCreateWithoutEventInput = {
+    id?: number
+    userId: string
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RSVPCreateOrConnectWithoutEventInput = {
+    where: RSVPWhereUniqueInput
+    create: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput>
+  }
+
+  export type RSVPCreateManyEventInputEnvelope = {
+    data: RSVPCreateManyEventInput | RSVPCreateManyEventInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ClubUpsertWithoutEventsInput = {
     update: XOR<ClubUpdateWithoutEventsInput, ClubUncheckedUpdateWithoutEventsInput>
     create: XOR<ClubCreateWithoutEventsInput, ClubUncheckedCreateWithoutEventsInput>
@@ -11404,6 +13029,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RSVPUpsertWithWhereUniqueWithoutEventInput = {
+    where: RSVPWhereUniqueInput
+    update: XOR<RSVPUpdateWithoutEventInput, RSVPUncheckedUpdateWithoutEventInput>
+    create: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput>
+  }
+
+  export type RSVPUpdateWithWhereUniqueWithoutEventInput = {
+    where: RSVPWhereUniqueInput
+    data: XOR<RSVPUpdateWithoutEventInput, RSVPUncheckedUpdateWithoutEventInput>
+  }
+
+  export type RSVPUpdateManyWithWhereWithoutEventInput = {
+    where: RSVPScalarWhereInput
+    data: XOR<RSVPUpdateManyMutationInput, RSVPUncheckedUpdateManyWithoutEventInput>
+  }
+
+  export type RSVPScalarWhereInput = {
+    AND?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+    OR?: RSVPScalarWhereInput[]
+    NOT?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+    id?: IntFilter<"RSVP"> | number
+    userId?: StringFilter<"RSVP"> | string
+    eventId?: IntFilter<"RSVP"> | number
+    status?: StringFilter<"RSVP"> | string
+    createdAt?: DateTimeFilter<"RSVP"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     name?: string | null
@@ -11413,6 +13065,7 @@ export namespace Prisma {
     password?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -11424,6 +13077,7 @@ export namespace Prisma {
     password?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -11451,6 +13105,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -11462,6 +13117,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -11473,6 +13129,7 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -11484,6 +13141,7 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -11511,6 +13169,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -11522,6 +13181,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -11606,6 +13266,29 @@ export namespace Prisma {
 
   export type PostCreateManyCreatedByInputEnvelope = {
     data: PostCreateManyCreatedByInput | PostCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RSVPCreateWithoutUserInput = {
+    status?: string
+    createdAt?: Date | string
+    event: EventCreateNestedOneWithoutRsvpsInput
+  }
+
+  export type RSVPUncheckedCreateWithoutUserInput = {
+    id?: number
+    eventId: number
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RSVPCreateOrConnectWithoutUserInput = {
+    where: RSVPWhereUniqueInput
+    create: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput>
+  }
+
+  export type RSVPCreateManyUserInputEnvelope = {
+    data: RSVPCreateManyUserInput | RSVPCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -11697,6 +13380,152 @@ export namespace Prisma {
     createdById?: StringFilter<"Post"> | string
   }
 
+  export type RSVPUpsertWithWhereUniqueWithoutUserInput = {
+    where: RSVPWhereUniqueInput
+    update: XOR<RSVPUpdateWithoutUserInput, RSVPUncheckedUpdateWithoutUserInput>
+    create: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput>
+  }
+
+  export type RSVPUpdateWithWhereUniqueWithoutUserInput = {
+    where: RSVPWhereUniqueInput
+    data: XOR<RSVPUpdateWithoutUserInput, RSVPUncheckedUpdateWithoutUserInput>
+  }
+
+  export type RSVPUpdateManyWithWhereWithoutUserInput = {
+    where: RSVPScalarWhereInput
+    data: XOR<RSVPUpdateManyMutationInput, RSVPUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type UserCreateWithoutRsvpsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutRsvpsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutRsvpsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRsvpsInput, UserUncheckedCreateWithoutRsvpsInput>
+  }
+
+  export type EventCreateWithoutRsvpsInput = {
+    title: string
+    description: string
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    club: ClubCreateNestedOneWithoutEventsInput
+  }
+
+  export type EventUncheckedCreateWithoutRsvpsInput = {
+    id?: number
+    title: string
+    description: string
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    clubId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventCreateOrConnectWithoutRsvpsInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutRsvpsInput, EventUncheckedCreateWithoutRsvpsInput>
+  }
+
+  export type UserUpsertWithoutRsvpsInput = {
+    update: XOR<UserUpdateWithoutRsvpsInput, UserUncheckedUpdateWithoutRsvpsInput>
+    create: XOR<UserCreateWithoutRsvpsInput, UserUncheckedCreateWithoutRsvpsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRsvpsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRsvpsInput, UserUncheckedUpdateWithoutRsvpsInput>
+  }
+
+  export type UserUpdateWithoutRsvpsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRsvpsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type EventUpsertWithoutRsvpsInput = {
+    update: XOR<EventUpdateWithoutRsvpsInput, EventUncheckedUpdateWithoutRsvpsInput>
+    create: XOR<EventCreateWithoutRsvpsInput, EventUncheckedCreateWithoutRsvpsInput>
+    where?: EventWhereInput
+  }
+
+  export type EventUpdateToOneWithWhereWithoutRsvpsInput = {
+    where?: EventWhereInput
+    data: XOR<EventUpdateWithoutRsvpsInput, EventUncheckedUpdateWithoutRsvpsInput>
+  }
+
+  export type EventUpdateWithoutRsvpsInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    club?: ClubUpdateOneRequiredWithoutEventsNestedInput
+  }
+
+  export type EventUncheckedUpdateWithoutRsvpsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EventCreateManyClubInput = {
     id?: number
     title: string
@@ -11718,6 +13547,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rsvps?: RSVPUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateWithoutClubInput = {
@@ -11730,6 +13560,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateManyWithoutClubInput = {
@@ -11742,6 +13573,33 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPCreateManyEventInput = {
+    id?: number
+    userId: string
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RSVPUpdateWithoutEventInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutRsvpsNestedInput
+  }
+
+  export type RSVPUncheckedUpdateWithoutEventInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPUncheckedUpdateManyWithoutEventInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountCreateManyUserInput = {
@@ -11770,6 +13628,13 @@ export namespace Prisma {
     name: string
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type RSVPCreateManyUserInput = {
+    id?: number
+    eventId: number
+    status?: string
+    createdAt?: Date | string
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -11853,6 +13718,26 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPUpdateWithoutUserInput = {
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    event?: EventUpdateOneRequiredWithoutRsvpsNestedInput
+  }
+
+  export type RSVPUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RSVPUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

@@ -2,7 +2,7 @@
 
 # Story 3.6: Live Capacity Progress Bar
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -23,16 +23,16 @@ So I feel the urgency to register before spots run out.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Live Hook Binding (AC: 1)
-  - [ ] Inject `trpc.rsvp.onCapacityChange.useSubscription` into the EventCard.
-  - [ ] Update card's local capacity state reacting directly to the WS payload.
-- [ ] Task 2: Math and UI Bar (AC: 1)
-  - [ ] Calculate `(rsvpCount / totalCapacity) * 100`.
-  - [ ] Render a `<div style={{width: \`\${percent}%\`}}>` progress bar. 
-- [ ] Task 3: Color Breakpoint Thresholds (AC: 2)
-  - [ ] If < 75%: Neutral (`bg-zinc-300`).
-  - [ ] If >= 75% & < 95%: Warning Theme (e.g. `bg-amber-500`).
-  - [ ] If >= 95%: Critical Theme (`bg-rose-600` or deep red).
+- [x] Task 1: Live Hook Binding (AC: 1)
+  - [x] Inject `trpc.rsvp.onCapacityChange.useSubscription` into the EventCard (via micro-component).
+  - [x] Update card's local capacity state reacting directly to the WS payload.
+- [x] Task 2: Math and UI Bar (AC: 1)
+  - [x] Calculate `(rsvpCount / totalCapacity) * 100`.
+  - [x] Render a `<div style={{width: \`\${percent}%\`}}>` progress bar. 
+- [x] Task 3: Color Breakpoint Thresholds (AC: 2)
+  - [x] If < 75%: Neutral (`bg-zinc-300`).
+  - [x] If >= 75% & < 95%: Warning Theme (e.g. `bg-amber-500`).
+  - [x] If >= 95%: Critical Theme (`bg-rose-600` or deep red).
 
 ## Dev Notes
 
@@ -45,3 +45,17 @@ So I feel the urgency to register before spots run out.
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### Completion Notes
+- Updated `getFeed` resolver output to include `_count: { rsvps: true }`.
+- Created `<CapacityBar />` as an isolated micro-component.
+- Listens to `onCapacityChange` tRPC websocket hook.
+- Implemented warning thresholds (75% -> amber, 95% -> rose) for the visual indicator.
+
+## File List
+- `src/features/feed/components/CapacityBar.tsx`
+- `src/features/feed/components/EventCard.tsx`
+- `src/server/api/routers/event.ts`
+
+## Change Log
+- EventCard now shows a real-time progress bar of how full an event is based on RSVPs count.

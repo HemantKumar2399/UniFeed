@@ -46,6 +46,7 @@ model Event {
   imageUrl    String
   clubId      Int
   club        Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  rsvps       RSVP[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -91,6 +92,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
+  rsvps         RSVP[]
 }
 
 model VerificationToken {
@@ -99,4 +101,19 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model RSVP {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  eventId   Int
+  status    String   @default("GOING")
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([eventId])
+  @@index([userId])
 }
