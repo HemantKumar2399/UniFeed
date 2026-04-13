@@ -15,7 +15,12 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      role: "USER" | "ORGANIZER";
     } & DefaultSession["user"];
+  }
+
+  interface User {
+    role?: "USER" | "ORGANIZER";
   }
 }
 
@@ -63,7 +68,12 @@ export const authConfig = {
         }
 
         // AC-2: Session will be created for valid, allowed-domain users.
-        return { id: user.id, email: user.email, name: user.name };
+        return { 
+          id: user.id, 
+          email: user.email, 
+          name: user.name,
+          role: user.role
+        };
       },
     }),
   ],
@@ -72,12 +82,16 @@ export const authConfig = {
       // On first sign-in, `user` is populated — persist id into the JWT.
       if (user) {
         token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     session({ session, token }) {
       if (typeof token.id === "string") {
         session.user.id = token.id;
+      }
+      if (typeof token.role === "string") {
+        session.user.role = token.role as "USER" | "ORGANIZER";
       }
       return session;
     },

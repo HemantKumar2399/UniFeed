@@ -45,6 +45,8 @@ model Event {
   location    String
   imageUrl    String
   clubId      Int
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   club        Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   rsvps       RSVP[]
   createdAt   DateTime @default(now())
@@ -83,16 +85,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String? // hashed — only set for credentials-based accounts
-  accounts      Account[]
-  sessions      Session[]
-  posts         Post[]
-  rsvps         RSVP[]
+  role           Role      @default(USER)
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  password       String? // hashed — only set for credentials-based accounts
+  accounts       Account[]
+  sessions       Session[]
+  posts          Post[]
+  authoredEvents Event[]
+  rsvps          RSVP[]
 }
 
 model VerificationToken {
@@ -116,4 +120,9 @@ model RSVP {
   @@unique([userId, eventId])
   @@index([eventId])
   @@index([userId])
+}
+
+enum Role {
+  USER
+  ORGANIZER
 }

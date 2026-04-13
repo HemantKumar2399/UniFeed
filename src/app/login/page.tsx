@@ -31,6 +31,7 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState<"USER" | "ORGANIZER">("USER");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -59,6 +60,16 @@ function LoginForm() {
     }
 
     if (result?.ok) {
+      if (callbackUrl === "/home") {
+        try {
+          const sessionRes = await fetch("/api/auth/session");
+          const sessionData = (await sessionRes.json()) as { user?: { role?: string } };
+          if (sessionData?.user?.role === "ORGANIZER") {
+            router.push("/dashboard");
+            return;
+          }
+        } catch {}
+      }
       router.push(callbackUrl);
     }
   }
@@ -72,7 +83,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, name, role }),
       });
 
       const data = (await res.json()) as { error?: string };
@@ -94,6 +105,16 @@ function LoginForm() {
       setLoading(false);
 
       if (result?.ok) {
+        if (callbackUrl === "/home") {
+          try {
+            const sessionRes = await fetch("/api/auth/session");
+            const sessionData = (await sessionRes.json()) as { user?: { role?: string } };
+            if (sessionData?.user?.role === "ORGANIZER") {
+              router.push("/dashboard");
+              return;
+            }
+          } catch {}
+        }
         router.push(callbackUrl);
         return;
       }
@@ -135,23 +156,58 @@ function LoginForm() {
         className="flex flex-col gap-4"
       >
         {mode === "register" && (
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="name"
-              className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
-            >
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
-              maxLength={100}
-              className="rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-rose transition"
-            />
-          </div>
+          <>
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="role"
+                className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+              >
+                I am a...
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 text-sm text-zinc-300">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="USER"
+                    checked={role === "USER"}
+                    onChange={() => setRole("USER")}
+                    className="text-brand-rose focus:ring-brand-rose"
+                  />
+                  Student
+                </label>
+                <label className="flex items-center gap-2 text-sm text-zinc-300">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="ORGANIZER"
+                    checked={role === "ORGANIZER"}
+                    onChange={() => setRole("ORGANIZER")}
+                    className="text-brand-rose focus:ring-brand-rose"
+                  />
+                  Event Organizer
+                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="name"
+                className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+              >
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                maxLength={100}
+                className="rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-rose transition"
+              />
+            </div>
+          </>
         )}
 
         <div className="flex flex-col gap-1">

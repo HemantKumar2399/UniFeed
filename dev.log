@@ -1,0 +1,12 @@
+
+> unifeed@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use by process 7060, using available port 3001 instead.
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3001
+   - Network:      http://172.16.22.23:3001
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 3.1s

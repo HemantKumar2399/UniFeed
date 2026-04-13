@@ -131,3 +131,21 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Protected Organizer procedure
+ *
+ * Use this to restrict access to users with the 'ORGANIZER' role.
+ */
+export const protectedOrganizerProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (ctx.session?.user?.role !== "ORGANIZER") {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Only organizers can access this procedure." });
+    }
+    return next({
+      ctx: {
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });

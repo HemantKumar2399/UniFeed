@@ -55,6 +55,23 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
 export type RSVP = $Result.DefaultSelection<Prisma.$RSVPPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const Role: {
+  USER: 'USER',
+  ORGANIZER: 'ORGANIZER'
+};
+
+export type Role = (typeof Role)[keyof typeof Role]
+
+}
+
+export type Role = $Enums.Role
+
+export const Role: typeof $Enums.Role
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -1563,6 +1580,7 @@ export namespace Prisma {
     accounts: number
     sessions: number
     posts: number
+    authoredEvents: number
     rsvps: number
   }
 
@@ -1570,6 +1588,7 @@ export namespace Prisma {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     posts?: boolean | UserCountOutputTypeCountPostsArgs
+    authoredEvents?: boolean | UserCountOutputTypeCountAuthoredEventsArgs
     rsvps?: boolean | UserCountOutputTypeCountRsvpsArgs
   }
 
@@ -1603,6 +1622,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PostWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAuthoredEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventWhereInput
   }
 
   /**
@@ -3846,6 +3872,7 @@ export namespace Prisma {
     location: string | null
     imageUrl: string | null
     clubId: number | null
+    authorId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3859,6 +3886,7 @@ export namespace Prisma {
     location: string | null
     imageUrl: string | null
     clubId: number | null
+    authorId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3872,6 +3900,7 @@ export namespace Prisma {
     location: number
     imageUrl: number
     clubId: number
+    authorId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -3899,6 +3928,7 @@ export namespace Prisma {
     location?: true
     imageUrl?: true
     clubId?: true
+    authorId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3912,6 +3942,7 @@ export namespace Prisma {
     location?: true
     imageUrl?: true
     clubId?: true
+    authorId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3925,6 +3956,7 @@ export namespace Prisma {
     location?: true
     imageUrl?: true
     clubId?: true
+    authorId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4025,6 +4057,7 @@ export namespace Prisma {
     location: string
     imageUrl: string
     clubId: number
+    authorId: string
     createdAt: Date
     updatedAt: Date
     _count: EventCountAggregateOutputType | null
@@ -4057,8 +4090,10 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     clubId?: boolean
+    authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
     rsvps?: boolean | Event$rsvpsArgs<ExtArgs>
     _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
@@ -4073,8 +4108,10 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     clubId?: boolean
+    authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
@@ -4087,8 +4124,10 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     clubId?: boolean
+    authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
@@ -4101,26 +4140,31 @@ export namespace Prisma {
     location?: boolean
     imageUrl?: boolean
     clubId?: boolean
+    authorId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "date" | "capacity" | "location" | "imageUrl" | "clubId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "date" | "capacity" | "location" | "imageUrl" | "clubId" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
     rsvps?: boolean | Event$rsvpsArgs<ExtArgs>
     _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
   }
   export type EventIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
   }
 
   export type $EventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Event"
     objects: {
+      author: Prisma.$UserPayload<ExtArgs>
       club: Prisma.$ClubPayload<ExtArgs>
       rsvps: Prisma.$RSVPPayload<ExtArgs>[]
     }
@@ -4133,6 +4177,7 @@ export namespace Prisma {
       location: string
       imageUrl: string
       clubId: number
+      authorId: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["event"]>
@@ -4529,6 +4574,7 @@ export namespace Prisma {
    */
   export interface Prisma__EventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     club<T extends ClubDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClubDefaultArgs<ExtArgs>>): Prisma__ClubClient<$Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     rsvps<T extends Event$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, Event$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -4568,6 +4614,7 @@ export namespace Prisma {
     readonly location: FieldRef<"Event", 'String'>
     readonly imageUrl: FieldRef<"Event", 'String'>
     readonly clubId: FieldRef<"Event", 'Int'>
+    readonly authorId: FieldRef<"Event", 'String'>
     readonly createdAt: FieldRef<"Event", 'DateTime'>
     readonly updatedAt: FieldRef<"Event", 'DateTime'>
   }
@@ -7264,6 +7311,7 @@ export namespace Prisma {
   }
 
   export type UserMinAggregateOutputType = {
+    role: $Enums.Role | null
     id: string | null
     name: string | null
     email: string | null
@@ -7273,6 +7321,7 @@ export namespace Prisma {
   }
 
   export type UserMaxAggregateOutputType = {
+    role: $Enums.Role | null
     id: string | null
     name: string | null
     email: string | null
@@ -7282,6 +7331,7 @@ export namespace Prisma {
   }
 
   export type UserCountAggregateOutputType = {
+    role: number
     id: number
     name: number
     email: number
@@ -7293,6 +7343,7 @@ export namespace Prisma {
 
 
   export type UserMinAggregateInputType = {
+    role?: true
     id?: true
     name?: true
     email?: true
@@ -7302,6 +7353,7 @@ export namespace Prisma {
   }
 
   export type UserMaxAggregateInputType = {
+    role?: true
     id?: true
     name?: true
     email?: true
@@ -7311,6 +7363,7 @@ export namespace Prisma {
   }
 
   export type UserCountAggregateInputType = {
+    role?: true
     id?: true
     name?: true
     email?: true
@@ -7393,6 +7446,7 @@ export namespace Prisma {
   }
 
   export type UserGroupByOutputType = {
+    role: $Enums.Role
     id: string
     name: string | null
     email: string | null
@@ -7419,6 +7473,7 @@ export namespace Prisma {
 
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    role?: boolean
     id?: boolean
     name?: boolean
     email?: boolean
@@ -7428,11 +7483,13 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     posts?: boolean | User$postsArgs<ExtArgs>
+    authoredEvents?: boolean | User$authoredEventsArgs<ExtArgs>
     rsvps?: boolean | User$rsvpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    role?: boolean
     id?: boolean
     name?: boolean
     email?: boolean
@@ -7442,6 +7499,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    role?: boolean
     id?: boolean
     name?: boolean
     email?: boolean
@@ -7451,6 +7509,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
+    role?: boolean
     id?: boolean
     name?: boolean
     email?: boolean
@@ -7459,11 +7518,12 @@ export namespace Prisma {
     password?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "password", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"role" | "id" | "name" | "email" | "emailVerified" | "image" | "password", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     posts?: boolean | User$postsArgs<ExtArgs>
+    authoredEvents?: boolean | User$authoredEventsArgs<ExtArgs>
     rsvps?: boolean | User$rsvpsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -7476,9 +7536,11 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       posts: Prisma.$PostPayload<ExtArgs>[]
+      authoredEvents: Prisma.$EventPayload<ExtArgs>[]
       rsvps: Prisma.$RSVPPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
+      role: $Enums.Role
       id: string
       name: string | null
       email: string | null
@@ -7882,6 +7944,7 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     posts<T extends User$postsArgs<ExtArgs> = {}>(args?: Subset<T, User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    authoredEvents<T extends User$authoredEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$authoredEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     rsvps<T extends User$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, User$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -7912,6 +7975,7 @@ export namespace Prisma {
    * Fields of the User model
    */
   interface UserFieldRefs {
+    readonly role: FieldRef<"User", 'Role'>
     readonly id: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
@@ -8375,6 +8439,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PostScalarFieldEnum | PostScalarFieldEnum[]
+  }
+
+  /**
+   * User.authoredEvents
+   */
+  export type User$authoredEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event
+     */
+    select?: EventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Event
+     */
+    omit?: EventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventInclude<ExtArgs> | null
+    where?: EventWhereInput
+    orderBy?: EventOrderByWithRelationInput | EventOrderByWithRelationInput[]
+    cursor?: EventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventScalarFieldEnum | EventScalarFieldEnum[]
   }
 
   /**
@@ -10538,6 +10626,7 @@ export namespace Prisma {
     location: 'location',
     imageUrl: 'imageUrl',
     clubId: 'clubId',
+    authorId: 'authorId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -10575,6 +10664,7 @@ export namespace Prisma {
 
 
   export const UserScalarFieldEnum: {
+    role: 'role',
     id: 'id',
     name: 'name',
     email: 'email',
@@ -10674,6 +10764,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role'
+   */
+  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role[]'
+   */
+  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
     
 
 
@@ -10820,8 +10924,10 @@ export namespace Prisma {
     location?: StringFilter<"Event"> | string
     imageUrl?: StringFilter<"Event"> | string
     clubId?: IntFilter<"Event"> | number
+    authorId?: StringFilter<"Event"> | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
     rsvps?: RSVPListRelationFilter
   }
@@ -10835,8 +10941,10 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     clubId?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    author?: UserOrderByWithRelationInput
     club?: ClubOrderByWithRelationInput
     rsvps?: RSVPOrderByRelationAggregateInput
   }
@@ -10853,8 +10961,10 @@ export namespace Prisma {
     location?: StringFilter<"Event"> | string
     imageUrl?: StringFilter<"Event"> | string
     clubId?: IntFilter<"Event"> | number
+    authorId?: StringFilter<"Event"> | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
     rsvps?: RSVPListRelationFilter
   }, "id">
@@ -10868,6 +10978,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     clubId?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: EventCountOrderByAggregateInput
@@ -10889,6 +11000,7 @@ export namespace Prisma {
     location?: StringWithAggregatesFilter<"Event"> | string
     imageUrl?: StringWithAggregatesFilter<"Event"> | string
     clubId?: IntWithAggregatesFilter<"Event"> | number
+    authorId?: StringWithAggregatesFilter<"Event"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
   }
@@ -11045,6 +11157,7 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    role?: EnumRoleFilter<"User"> | $Enums.Role
     id?: StringFilter<"User"> | string
     name?: StringNullableFilter<"User"> | string | null
     email?: StringNullableFilter<"User"> | string | null
@@ -11054,10 +11167,12 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     posts?: PostListRelationFilter
+    authoredEvents?: EventListRelationFilter
     rsvps?: RSVPListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
+    role?: SortOrder
     id?: SortOrder
     name?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
@@ -11067,6 +11182,7 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     posts?: PostOrderByRelationAggregateInput
+    authoredEvents?: EventOrderByRelationAggregateInput
     rsvps?: RSVPOrderByRelationAggregateInput
   }
 
@@ -11076,6 +11192,7 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    role?: EnumRoleFilter<"User"> | $Enums.Role
     name?: StringNullableFilter<"User"> | string | null
     emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     image?: StringNullableFilter<"User"> | string | null
@@ -11083,10 +11200,12 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     posts?: PostListRelationFilter
+    authoredEvents?: EventListRelationFilter
     rsvps?: RSVPListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
+    role?: SortOrder
     id?: SortOrder
     name?: SortOrderInput | SortOrder
     email?: SortOrderInput | SortOrder
@@ -11102,6 +11221,7 @@ export namespace Prisma {
     AND?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
+    role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     id?: StringWithAggregatesFilter<"User"> | string
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
     email?: StringNullableWithAggregatesFilter<"User"> | string | null
@@ -11332,6 +11452,7 @@ export namespace Prisma {
     imageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutAuthoredEventsInput
     club: ClubCreateNestedOneWithoutEventsInput
     rsvps?: RSVPCreateNestedManyWithoutEventInput
   }
@@ -11345,6 +11466,7 @@ export namespace Prisma {
     location: string
     imageUrl: string
     clubId: number
+    authorId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
@@ -11359,6 +11481,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
     club?: ClubUpdateOneRequiredWithoutEventsNestedInput
     rsvps?: RSVPUpdateManyWithoutEventNestedInput
   }
@@ -11372,6 +11495,7 @@ export namespace Prisma {
     location?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     clubId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
@@ -11386,6 +11510,7 @@ export namespace Prisma {
     location: string
     imageUrl: string
     clubId: number
+    authorId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11410,6 +11535,7 @@ export namespace Prisma {
     location?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     clubId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11574,6 +11700,7 @@ export namespace Prisma {
   }
 
   export type UserCreateInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -11583,10 +11710,12 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -11596,10 +11725,12 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11609,10 +11740,12 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11622,10 +11755,12 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -11635,6 +11770,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateManyMutationInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11644,6 +11780,7 @@ export namespace Prisma {
   }
 
   export type UserUncheckedUpdateManyInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11933,6 +12070,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     clubId?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11952,6 +12090,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     clubId?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11965,6 +12104,7 @@ export namespace Prisma {
     location?: SortOrder
     imageUrl?: SortOrder
     clubId?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -12124,6 +12264,13 @@ export namespace Prisma {
     expires?: SortOrder
   }
 
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
   export type DateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -12166,6 +12313,7 @@ export namespace Prisma {
   }
 
   export type UserCountOrderByAggregateInput = {
+    role?: SortOrder
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
@@ -12175,6 +12323,7 @@ export namespace Prisma {
   }
 
   export type UserMaxOrderByAggregateInput = {
+    role?: SortOrder
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
@@ -12184,12 +12333,23 @@ export namespace Prisma {
   }
 
   export type UserMinOrderByAggregateInput = {
+    role?: SortOrder
     id?: SortOrder
     name?: SortOrder
     email?: SortOrder
     emailVerified?: SortOrder
     image?: SortOrder
     password?: SortOrder
+  }
+
+  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -12345,6 +12505,12 @@ export namespace Prisma {
     deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutAuthoredEventsInput = {
+    create?: XOR<UserCreateWithoutAuthoredEventsInput, UserUncheckedCreateWithoutAuthoredEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthoredEventsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ClubCreateNestedOneWithoutEventsInput = {
     create?: XOR<ClubCreateWithoutEventsInput, ClubUncheckedCreateWithoutEventsInput>
     connectOrCreate?: ClubCreateOrConnectWithoutEventsInput
@@ -12363,6 +12529,14 @@ export namespace Prisma {
     connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
     createMany?: RSVPCreateManyEventInputEnvelope
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutAuthoredEventsNestedInput = {
+    create?: XOR<UserCreateWithoutAuthoredEventsInput, UserUncheckedCreateWithoutAuthoredEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthoredEventsInput
+    upsert?: UserUpsertWithoutAuthoredEventsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthoredEventsInput, UserUpdateWithoutAuthoredEventsInput>, UserUncheckedUpdateWithoutAuthoredEventsInput>
   }
 
   export type ClubUpdateOneRequiredWithoutEventsNestedInput = {
@@ -12462,6 +12636,13 @@ export namespace Prisma {
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
   }
 
+  export type EventCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<EventCreateWithoutAuthorInput, EventUncheckedCreateWithoutAuthorInput> | EventCreateWithoutAuthorInput[] | EventUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutAuthorInput | EventCreateOrConnectWithoutAuthorInput[]
+    createMany?: EventCreateManyAuthorInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
   export type RSVPCreateNestedManyWithoutUserInput = {
     create?: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput> | RSVPCreateWithoutUserInput[] | RSVPUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
@@ -12490,11 +12671,22 @@ export namespace Prisma {
     connect?: PostWhereUniqueInput | PostWhereUniqueInput[]
   }
 
+  export type EventUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<EventCreateWithoutAuthorInput, EventUncheckedCreateWithoutAuthorInput> | EventCreateWithoutAuthorInput[] | EventUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutAuthorInput | EventCreateOrConnectWithoutAuthorInput[]
+    createMany?: EventCreateManyAuthorInputEnvelope
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
   export type RSVPUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<RSVPCreateWithoutUserInput, RSVPUncheckedCreateWithoutUserInput> | RSVPCreateWithoutUserInput[] | RSVPUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
     createMany?: RSVPCreateManyUserInputEnvelope
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
+  export type EnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -12541,6 +12733,20 @@ export namespace Prisma {
     update?: PostUpdateWithWhereUniqueWithoutCreatedByInput | PostUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: PostUpdateManyWithWhereWithoutCreatedByInput | PostUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
+  }
+
+  export type EventUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<EventCreateWithoutAuthorInput, EventUncheckedCreateWithoutAuthorInput> | EventCreateWithoutAuthorInput[] | EventUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutAuthorInput | EventCreateOrConnectWithoutAuthorInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutAuthorInput | EventUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: EventCreateManyAuthorInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutAuthorInput | EventUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutAuthorInput | EventUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
   }
 
   export type RSVPUpdateManyWithoutUserNestedInput = {
@@ -12597,6 +12803,20 @@ export namespace Prisma {
     update?: PostUpdateWithWhereUniqueWithoutCreatedByInput | PostUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: PostUpdateManyWithWhereWithoutCreatedByInput | PostUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: PostScalarWhereInput | PostScalarWhereInput[]
+  }
+
+  export type EventUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<EventCreateWithoutAuthorInput, EventUncheckedCreateWithoutAuthorInput> | EventCreateWithoutAuthorInput[] | EventUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventCreateOrConnectWithoutAuthorInput | EventCreateOrConnectWithoutAuthorInput[]
+    upsert?: EventUpsertWithWhereUniqueWithoutAuthorInput | EventUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: EventCreateManyAuthorInputEnvelope
+    set?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    disconnect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    delete?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+    update?: EventUpdateWithWhereUniqueWithoutAuthorInput | EventUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: EventUpdateManyWithWhereWithoutAuthorInput | EventUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
   }
 
   export type RSVPUncheckedUpdateManyWithoutUserNestedInput = {
@@ -12804,6 +13024,13 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -12813,6 +13040,16 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -12830,6 +13067,7 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutPostsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -12838,10 +13076,12 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -12850,6 +13090,7 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -12870,6 +13111,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutPostsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12878,10 +13120,12 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12890,6 +13134,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -12902,6 +13147,7 @@ export namespace Prisma {
     imageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutAuthoredEventsInput
     rsvps?: RSVPCreateNestedManyWithoutEventInput
   }
 
@@ -12913,6 +13159,7 @@ export namespace Prisma {
     capacity: number
     location: string
     imageUrl: string
+    authorId: string
     createdAt?: Date | string
     updatedAt?: Date | string
     rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
@@ -12956,8 +13203,42 @@ export namespace Prisma {
     location?: StringFilter<"Event"> | string
     imageUrl?: StringFilter<"Event"> | string
     clubId?: IntFilter<"Event"> | number
+    authorId?: StringFilter<"Event"> | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
+  }
+
+  export type UserCreateWithoutAuthoredEventsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuthoredEventsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuthoredEventsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuthoredEventsInput, UserUncheckedCreateWithoutAuthoredEventsInput>
   }
 
   export type ClubCreateWithoutEventsInput = {
@@ -13001,6 +13282,45 @@ export namespace Prisma {
   export type RSVPCreateManyEventInputEnvelope = {
     data: RSVPCreateManyEventInput | RSVPCreateManyEventInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutAuthoredEventsInput = {
+    update: XOR<UserUpdateWithoutAuthoredEventsInput, UserUncheckedUpdateWithoutAuthoredEventsInput>
+    create: XOR<UserCreateWithoutAuthoredEventsInput, UserUncheckedCreateWithoutAuthoredEventsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAuthoredEventsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAuthoredEventsInput, UserUncheckedUpdateWithoutAuthoredEventsInput>
+  }
+
+  export type UserUpdateWithoutAuthoredEventsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuthoredEventsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubUpsertWithoutEventsInput = {
@@ -13057,6 +13377,7 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutAccountsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -13065,10 +13386,12 @@ export namespace Prisma {
     password?: string | null
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -13077,6 +13400,7 @@ export namespace Prisma {
     password?: string | null
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -13097,6 +13421,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutAccountsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13105,10 +13430,12 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13117,10 +13444,12 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -13129,10 +13458,12 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -13141,6 +13472,7 @@ export namespace Prisma {
     password?: string | null
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -13161,6 +13493,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutSessionsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13169,10 +13502,12 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13181,6 +13516,7 @@ export namespace Prisma {
     password?: NullableStringFieldUpdateOperationsInput | string | null
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -13266,6 +13602,43 @@ export namespace Prisma {
 
   export type PostCreateManyCreatedByInputEnvelope = {
     data: PostCreateManyCreatedByInput | PostCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EventCreateWithoutAuthorInput = {
+    title: string
+    description: string
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    club: ClubCreateNestedOneWithoutEventsInput
+    rsvps?: RSVPCreateNestedManyWithoutEventInput
+  }
+
+  export type EventUncheckedCreateWithoutAuthorInput = {
+    id?: number
+    title: string
+    description: string
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    clubId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
+  }
+
+  export type EventCreateOrConnectWithoutAuthorInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutAuthorInput, EventUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type EventCreateManyAuthorInputEnvelope = {
+    data: EventCreateManyAuthorInput | EventCreateManyAuthorInput[]
     skipDuplicates?: boolean
   }
 
@@ -13380,6 +13753,22 @@ export namespace Prisma {
     createdById?: StringFilter<"Post"> | string
   }
 
+  export type EventUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: EventWhereUniqueInput
+    update: XOR<EventUpdateWithoutAuthorInput, EventUncheckedUpdateWithoutAuthorInput>
+    create: XOR<EventCreateWithoutAuthorInput, EventUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type EventUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: EventWhereUniqueInput
+    data: XOR<EventUpdateWithoutAuthorInput, EventUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type EventUpdateManyWithWhereWithoutAuthorInput = {
+    where: EventScalarWhereInput
+    data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutAuthorInput>
+  }
+
   export type RSVPUpsertWithWhereUniqueWithoutUserInput = {
     where: RSVPWhereUniqueInput
     update: XOR<RSVPUpdateWithoutUserInput, RSVPUncheckedUpdateWithoutUserInput>
@@ -13397,6 +13786,7 @@ export namespace Prisma {
   }
 
   export type UserCreateWithoutRsvpsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -13406,9 +13796,11 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutRsvpsInput = {
+    role?: $Enums.Role
     id?: string
     name?: string | null
     email?: string | null
@@ -13418,6 +13810,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutRsvpsInput = {
@@ -13434,6 +13827,7 @@ export namespace Prisma {
     imageUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutAuthoredEventsInput
     club: ClubCreateNestedOneWithoutEventsInput
   }
 
@@ -13446,6 +13840,7 @@ export namespace Prisma {
     location: string
     imageUrl: string
     clubId: number
+    authorId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13467,6 +13862,7 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutRsvpsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13476,9 +13872,11 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRsvpsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     id?: StringFieldUpdateOperationsInput | string
     name?: NullableStringFieldUpdateOperationsInput | string | null
     email?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13488,6 +13886,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type EventUpsertWithoutRsvpsInput = {
@@ -13510,6 +13909,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
     club?: ClubUpdateOneRequiredWithoutEventsNestedInput
   }
 
@@ -13522,6 +13922,7 @@ export namespace Prisma {
     location?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
     clubId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13534,6 +13935,7 @@ export namespace Prisma {
     capacity: number
     location: string
     imageUrl: string
+    authorId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13547,6 +13949,7 @@ export namespace Prisma {
     imageUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
     rsvps?: RSVPUpdateManyWithoutEventNestedInput
   }
 
@@ -13558,6 +13961,7 @@ export namespace Prisma {
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
@@ -13571,6 +13975,7 @@ export namespace Prisma {
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
     imageUrl?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13626,6 +14031,19 @@ export namespace Prisma {
   export type PostCreateManyCreatedByInput = {
     id?: number
     name: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventCreateManyAuthorInput = {
+    id?: number
+    title: string
+    description: string
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    clubId: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13716,6 +14134,46 @@ export namespace Prisma {
   export type PostUncheckedUpdateManyWithoutCreatedByInput = {
     id?: IntFieldUpdateOperationsInput | number
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventUpdateWithoutAuthorInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    club?: ClubUpdateOneRequiredWithoutEventsNestedInput
+    rsvps?: RSVPUpdateManyWithoutEventNestedInput
+  }
+
+  export type EventUncheckedUpdateWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
+  }
+
+  export type EventUncheckedUpdateManyWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
