@@ -10,7 +10,7 @@ interface StoryTeaserModalProps {
   onClose: () => void;
 }
 
-export function StoryTeaserModal({ clubId, clubName, eventId, imageUrl, onClose }: StoryTeaserModalProps) {
+export function StoryTeaserModal({ clubName, eventId, imageUrl, onClose }: Omit<StoryTeaserModalProps, 'clubId'>) {
   const router = useRouter();
 
   useEffect(() => {

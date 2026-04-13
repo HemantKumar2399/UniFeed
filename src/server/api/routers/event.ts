@@ -73,6 +73,7 @@ export const eventRouter = createTRPCRouter({
           code: "FORBIDDEN",
           message: "Unauthorized to view attendees for this event",
         });
+      }
 
       return event.rsvps;
     }),

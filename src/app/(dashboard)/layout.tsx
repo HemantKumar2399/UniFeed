@@ -11,7 +11,7 @@ export default async function DashboardLayout({
 
   // If we don't have a session, or not an organizer, redirect
   // Middleware should technically catch this first, but defense-in-depth UI protection.
-  if (!session?.user || session.user.role !== "ORGANIZER") {
+  if (session?.user?.role !== "ORGANIZER") {
     redirect("/unauthorized");
   }
 

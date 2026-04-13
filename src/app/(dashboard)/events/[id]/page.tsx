@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { type NextPage } from "next";
+import { use, useState } from "react";
 import { api } from "@/trpc/react";
 import Link from "next/link";
 import { ArrowLeft, Check, Download, AlertCircle } from "lucide-react";
@@ -9,9 +8,10 @@ import { ArrowLeft, Check, Download, AlertCircle } from "lucide-react";
 export default function EventAttendeesPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const eventId = parseInt(params.id, 10);
+  const resolvedParams = use(params);
+  const eventId = parseInt(resolvedParams.id, 10);
   const [checkedInIds, setCheckedInIds] = useState<Set<string>>(new Set());
 
   const { data: attendees, isLoading, error } = api.event.getAttendees.useQuery(
@@ -30,15 +30,17 @@ export default function EventAttendeesPage({
       
       // Prevent formula injection
       const sanitizeCsvField = (value: string | null | undefined) => {
-        const str = String(value || "N/A");
+        const str = String(value ?? "N/A");
         if (/^[=+\-@\t]/.test(str)) return `'${str}`;
         return `"${str.replace(/"/g, '""')}"`;
       };
 
       // Data rows
       const rows = attendees.map((rsvp) => {
-        const prn = (rsvp.user as any).prn ? String((rsvp.user as any).prn) : `PRN-${rsvp.user.id.substring(0, 6).padEnd(6, '0')}`;
-        const branch = (rsvp.user as any).branch ? String((rsvp.user as any).branch) : "N/A";
+        // @ts-expect-error - Fallbacks for fields not strictly typed yet
+        const prn = rsvp.user.prn ? String(rsvp.user.prn) : `PRN-${rsvp.user.id.substring(0, 6).padEnd(6, '0')}`;
+        // @ts-expect-error - Fallbacks for fields not strictly typed yet
+        const branch = rsvp.user.branch ? String(rsvp.user.branch) : "N/A";
         const isCheckedIn = checkedInIds.has(rsvp.user.id) ? "Yes" : "No";       
         
         return [
@@ -66,6 +68,7 @@ export default function EventAttendeesPage({
     } catch (err) {
       console.error("Export failed", err);
     }
+  };
 
   const toggleCheckIn = (userId: string) => {
     const next = new Set(checkedInIds);
@@ -179,10 +182,10 @@ export default function EventAttendeesPage({
               ) : (
                 attendeesList.map((rsvp) => {
                   const isCheckedIn = checkedInIds.has(rsvp.user.id);
-                  // Since User model doesn't explicitly store PRN/Branch yet, use fallbacks
-                  // or derived values if they become available.
-                  const prn = (rsvp.user as any).prn ? String((rsvp.user as any).prn) : `PRN-${rsvp.user.id.substring(0, 6).padEnd(6, '0')}`;
-                  const branch = (rsvp.user as any).branch ? String((rsvp.user as any).branch) : "N/A";
+                  // @ts-expect-error - Use fallbacks
+                  const prn = rsvp.user.prn ? String(rsvp.user.prn) : `PRN-${rsvp.user.id.substring(0, 6).padEnd(6, '0')}`;
+                  // @ts-expect-error - Use fallbacks
+                  const branch = rsvp.user.branch ? String(rsvp.user.branch) : "N/A";
 
                   return (
                     <tr 
@@ -191,7 +194,7 @@ export default function EventAttendeesPage({
                     >
                       <td className="px-4 py-3 align-middle">
                         <div className="font-medium text-foreground">
-                          {rsvp.user.name || rsvp.user.email?.split('@')[0] || "Unknown User"}
+                          {rsvp.user.name ?? rsvp.user.email?.split('@')[0] ?? "Unknown User"}
                         </div>
                         {rsvp.user.email && (
                           <div className="text-xs text-muted-foreground">{rsvp.user.email}</div>

@@ -140,7 +140,7 @@ export const protectedProcedure = t.procedure
 export const protectedOrganizerProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user || ctx.session.user.role !== "ORGANIZER") {
+    if (ctx.session?.user?.role !== "ORGANIZER") {
       throw new TRPCError({ code: "UNAUTHORIZED", message: "Only organizers can access this procedure." });
     }
     return next({
