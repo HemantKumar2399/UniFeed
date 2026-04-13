@@ -152,6 +152,18 @@ async function main() {
       clubs.map((club) => tx.club.create({ data: club })),
     );
 
+    // Find or create an admin user for the seeded events
+    const adminUser = await tx.user.upsert({
+      where: { email: "admin@university.edu" },
+      update: {},
+      create: {
+        email: "admin@university.edu",
+        name: "Admin User",
+        // Setting a dummy password or leaving it null is fine for seeding if not testing auth
+        password: "hashed_password_here" 
+      }
+    });
+
     await Promise.all(
       eventDrafts.map((event, index) => {
         const club = createdClubs[index % createdClubs.length];
@@ -168,6 +180,7 @@ async function main() {
             location: event.location,
             imageUrl: event.imageUrl,
             clubId: club!.id,
+            authorId: adminUser.id, // Add authorId here
           },
         });
       }),

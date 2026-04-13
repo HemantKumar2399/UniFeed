@@ -68,16 +68,16 @@ development_status:
   3-7-personal-calendar-view: done
   epic-3-retrospective: done
 
-  epic-4: backlog
-  4-1-organizer-role-guarding: ready-for-dev
-  4-2-dashboard-expansion-layout-shell: ready-for-dev
-  4-3-the-multi-step-form-state-machine: ready-for-dev
-  4-4-strict-onblur-zod-validation: ready-for-dev
-  4-5-secure-image-upload-pipeline: ready-for-dev
-  4-6-organizer-event-list-panel: ready-for-dev
-  4-7-live-attendee-data-table: ready-for-dev
-  4-8-1-click-csv-export-utility: ready-for-dev
-  epic-4-retrospective: optional
+  epic-4: done
+  4-1-organizer-role-guarding: done
+  4-2-dashboard-expansion-layout-shell: done
+  4-3-the-multi-step-form-state-machine: done
+  4-4-strict-onblur-zod-validation: done
+  4-5-secure-image-upload-pipeline: done
+  4-6-organizer-event-list-panel: done
+  4-7-live-attendee-data-table: done
+  4-8-1-click-csv-export-utility: done
+  epic-4-retrospective: done
 
   epic-5: backlog
   5-1-the-command-menu-cmdk: ready-for-dev

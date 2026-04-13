@@ -2,7 +2,7 @@
 
 # Story 4.6: Organizer Event List Panel
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -22,11 +22,11 @@ So I can manage my portfolio.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: API Segregation Context (AC: 1)
-  - [ ] Provide `event.getOrganizerDrafts` within TRPC.
-  - [ ] Safely add a strict `where: { authorId: ctx.session.user.id }` modifier protecting visibility.
-- [ ] Task 2: Management Views Mapping (AC: 1)
-  - [ ] Mount queried payload arrays into an HTML table (mapping standard Title, Status, Date fields) or visually distinct management widgets inside `/dashboard` layout bounds natively.
+- [x] Task 1: API Segregation Context (AC: 1)
+  - [x] Provide `event.getOrganizerDrafts` within TRPC.
+  - [x] Safely add a strict `where: { authorId: ctx.session.user.id }` modifier protecting visibility.
+- [x] Task 2: Management Views Mapping (AC: 1)
+  - [x] Mount queried payload arrays into an HTML table (mapping standard Title, Status, Date fields) or visually distinct management widgets inside `/dashboard` layout bounds natively.
 
 ## Dev Notes
 
@@ -38,3 +38,12 @@ So I can manage my portfolio.
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### Review Findings
+
+- [x] [Review][Patch] Syntax error: `imprt { env }` instead of `import` [src/server/api/routers/upload.ts:4]
+- [x] [Review][Patch] Middleware improperly instantiates an empty `NextAuth({ providers: [] })` instead of reusing configured `auth` [src/middleware.ts:4]
+- [x] [Review][Patch] Hardcoded `role: "ORGANIZER"` overrides DB user role for all logins via credentials [src/server/auth/config.ts:74]
+- [x] [Review][Patch] `protectedOrganizerProcedure` accesses `ctx.session.user` blindly without verifying `ctx.session` exists, leading to 500 TypeError [src/server/api/trpc.ts:143]
+- [x] [Review][Patch] Hardcoded `0 / {event.capacity}` capacity UI string; needs `_count: { rsvps: true }` dynamically queried [src/app/(dashboard)/page.tsx:61]
+- [x] [Review][Patch] Filename sanitization could yield an empty string (`filename.replace(/[^a-zA-Z0-9.-]/g, "")`) creating invalid S3 keys [src/server/api/routers/upload.ts:27]

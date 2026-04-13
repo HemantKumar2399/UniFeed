@@ -2,7 +2,7 @@
 
 # Story 4.5: Secure Image Upload Pipeline
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -22,13 +22,13 @@ So that they look attractive in the Student Feed.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: TRPC URL Generation (AC: 1)
-  - [ ] Configure `upload.getPresignedUrl` in the backend leveraging `protectedOrganizerProcedure` from 4.1.
-  - [ ] Initialize AWS SDK or specific object-store utilities to vend the PUT url with strict 5MB size policies.
-- [ ] Task 2: Front-end Direct PUT Injection (AC: 2)
-  - [ ] Attach `<input type="file" accept="image/*" />` to step 2 of the form widget.
-  - [ ] Utilize vanilla `fetch` or Axios to `PUT` the local blob precisely to the vended pre-signed URL upon selection.
-  - [ ] Bind the finished URL output into the NextJS Form payload logic directly securely.
+- [x] Task 1: TRPC URL Generation (AC: 1)
+  - [x] Configure `upload.getPresignedUrl` in the backend leveraging `protectedOrganizerProcedure` from 4.1.
+  - [x] Initialize AWS SDK or specific object-store utilities to vend the PUT url with strict 5MB size policies.
+- [x] Task 2: Front-end Direct PUT Injection (AC: 2)
+  - [x] Attach `<input type="file" accept="image/*" />` to step 2 of the form widget.
+  - [x] Utilize vanilla `fetch` or Axios to `PUT` the local blob precisely to the vended pre-signed URL upon selection.
+  - [x] Bind the finished URL output into the NextJS Form payload logic directly securely.
 
 ## Dev Notes
 
@@ -40,3 +40,19 @@ So that they look attractive in the Student Feed.
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### Completion Notes
+- Added `@aws-sdk/client-s3` and `@aws-sdk/s3-request-presigner` to handle server-side S3 URL generation.
+- Created an `upload` TRPC router with `getPresignedUrl` using `protectedOrganizerProcedure`. Enforced 5MB size rules and `image/*` MIME mapping.
+- Updated `src/env.js` to ensure the required S3 bucket environment bounds are available statically.
+- Rewrote the client side `<StepMedia />` view. We now `mutateAsync` the file info, extract the signed URL, execute a frontend `fetch` using `PUT`, and pipe the result back up natively into `react-hook-form` via the `setValue` schema. No base64 node-crashing issues!
+
+## File List
+- package.json
+- src/env.js
+- src/server/api/root.ts
+- src/server/api/routers/upload.ts
+- src/features/events/components/StepMedia.tsx
+
+## Change Log
+- 2026-04-13: Scaffolding frontend-to-S3 direct PUT upload pipeline for Event Card images.

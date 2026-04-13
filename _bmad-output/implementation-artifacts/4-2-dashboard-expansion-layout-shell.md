@@ -2,7 +2,7 @@
 
 # Story 4.2: Dashboard Expansion Layout Shell
 
-Status: backlog
+Status: done
 
 ## Story
 
@@ -22,13 +22,13 @@ So that I can comfortably manage complex administrative data.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Desktop Route Group Container (AC: 1)
-  - [ ] Scaffold `app/(dashboard)/layout.tsx`.
-  - [ ] Omit the hard `max-w-md` class from this layout loop entirely.
-  - [ ] Provide a `w-full` 3-column responsive flex or grid architecture (e.g. `grid-cols-[250px_1fr_300px]`).
-- [ ] Task 2: Sidebar Components (AC: 2)
-  - [ ] Abstract a fixed `Sidebar.tsx` rendering navigational icons to /dashboard, /dashboard/events, and /dashboard/metrics.
-  - [ ] Persist the exact `bg-black text-white` monochromatic properties as designed in 1.1.
+- [x] Task 1: Desktop Route Group Container (AC: 1)
+  - [x] Scaffold `app/(dashboard)/layout.tsx`.
+  - [x] Omit the hard `max-w-md` class from this layout loop entirely.
+  - [x] Provide a `w-full` 3-column responsive flex or grid architecture (e.g. `grid-cols-[250px_1fr_300px]`).
+- [x] Task 2: Sidebar Components (AC: 2)
+  - [x] Abstract a fixed `Sidebar.tsx` rendering navigational icons to /dashboard, /dashboard/events, and /dashboard/metrics.
+  - [x] Persist the exact `bg-black text-white` monochromatic properties as designed in 1.1.
 
 ## Dev Notes
 
@@ -40,3 +40,14 @@ So that I can comfortably manage complex administrative data.
 
 ## Dev Agent Record
 - Agent: Antigravity
+
+### Implementation Notes
+- Created `app/(dashboard)/layout.tsx` applying a `w-full` max width breaking standard flow. Using grid layout (`grid-cols-[250px_1fr_300px]`) via flex container and grid overrides on lg screens. 
+- Created `src/components/navigation/Sidebar.tsx` containing links to expected routing paths. Included generic branding text for now.
+
+## File List
+- src/app/(dashboard)/layout.tsx
+- src/components/navigation/Sidebar.tsx
+
+## Change Log
+- **2026-04-11**: Finished scaffolding dashboard layout boundary and implementing Sidebar for organizer views.
