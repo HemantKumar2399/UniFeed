@@ -7,7 +7,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-6 p-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Events Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
         <Link
           href="/dashboard/events/new"
           className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700"
@@ -67,9 +67,9 @@ export default async function DashboardPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                      <a href={`/dashboard/events/${event.id}/edit`} className="text-rose-600 hover:text-rose-900">
+                      <Link href={`/dashboard/events/${event.id}/edit`} className="text-rose-600 hover:text-rose-900">
                         Edit
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 );
