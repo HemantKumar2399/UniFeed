@@ -79,11 +79,11 @@ development_status:
   4-8-1-click-csv-export-utility: done
   epic-4-retrospective: done
 
-  epic-5: backlog
+  epic-5: done
   5-1-the-command-menu-cmdk: done
   5-2-server-side-algorithmic-search: done
   5-3-global-search-overlay: done
   5-4-personal-profile-shell: done
   5-5-active-expired-ticket-sorting: done
   5-6-dark-mode-settings-toggle: done
-  epic-5-retrospective: optional
+  epic-5-retrospective: done
