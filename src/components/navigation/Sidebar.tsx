@@ -19,10 +19,10 @@ export function Sidebar({ className }: { className?: string }) {
     <aside className={cn("flex flex-col gap-6 pt-8", className)}>
       <div className="flex px-4 items-center gap-2">
          {/* Simple textual logo, since no specific logo provided in reqs */}
-         <div className="flex items-center justify-center h-8 w-8 bg-zinc-800 rounded-full">
-           <UserCircle className="h-5 w-5 text-rose-500" />
+         <div className="flex items-center justify-center h-8 w-8 bg-pure-white border border-[var(--border-whisper)] rounded-circle shadow-[var(--shadow-card)]">
+           <UserCircle className="h-5 w-5 text-notion-blue" />
          </div>
-         <span className="text-xl font-semibold text-rose-50 tracking-tight">Organizer</span>
+         <span className="text-xl font-semibold text-notion-black tracking-tight">Organizer</span>
       </div>
       
       <nav className="flex flex-1 flex-col gap-1 px-3">
@@ -35,13 +35,13 @@ export function Sidebar({ className }: { className?: string }) {
               key={item.name}
               href={item.href}
               className={cn(
-                "group flex items-center justify-start gap-4 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                "group flex items-center justify-start gap-4 rounded-subtle px-4 py-3 text-sm font-medium transition-colors duration-transition active:scale-95",
                 isActive
-                  ? "bg-rose-500/10 text-rose-500"
-                  : "text-zinc-400 hover:bg-zinc-800/50 hover:text-rose-400 font-normal"
+                  ? "bg-pure-white text-notion-blue shadow-[var(--shadow-card)] border-[var(--border-whisper)]"
+                  : "text-warm-gray-500 hover:bg-pure-white hover:text-notion-black border border-transparent font-normal"
               )}
             >
-              <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-rose-500" : "text-zinc-500 group-hover:text-rose-400")} />
+              <Icon className={cn("h-5 w-5 shrink-0 transition-colors duration-transition", isActive ? "text-notion-blue" : "text-warm-gray-300 group-hover:text-notion-black")} />
               {item.name}
             </Link>
           );

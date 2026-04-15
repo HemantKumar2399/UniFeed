@@ -18,7 +18,7 @@ export function StoryBar({ clubs }: StoryBarProps) {
       <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 px-4 py-2 hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {clubs.map((club) => (
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          <button key={club.id} type="button" className="outline-none focus:ring-2 focus:ring-zinc-400 rounded-full" onClick={() => setActiveStory(club)}>
+          <button key={club.id} type="button" className="outline-none focus:ring-2 focus:ring-[var(--color-focus-blue)] rounded-circle active:scale-95 transition-transform duration-haptic" onClick={() => setActiveStory(club)}>
             <StoryAvatar
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
               name={club.name}

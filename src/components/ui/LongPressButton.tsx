@@ -63,9 +63,10 @@ export function LongPressButton({
       }}
       aria-pressed={isPressing}
     >
+      {/* Progress fill: Notion Blue tint — design-system aligned */}
       <div
         className={cn(
-          "absolute left-0 top-0 bottom-0 bg-rose-600/30 opacity-0 pointer-events-none will-change-[width]",
+          "absolute left-0 top-0 bottom-0 bg-[#0075de]/20 opacity-0 pointer-events-none will-change-[width]",
           progressClassName
         )}
         style={{

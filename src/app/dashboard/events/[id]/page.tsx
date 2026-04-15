@@ -132,19 +132,20 @@ export default function EventAttendeesPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
+        <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 mb-2">
             <Link 
-              href="/dashboard" 
-              className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center transition-colors"
+              href="/dashboard/events" 
+              className="text-sm font-semibold tracking-badge uppercase text-warm-gray-500 hover:text-notion-black inline-flex items-center transition-colors duration-haptic active:scale-95"
             >
-              <ArrowLeft className="mr-1 h-3 w-3" />
-              Dashboard
+              <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
+              Back to Events
             </Link>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Attendees</h1>
-          <p className="text-muted-foreground mt-1">
-            {attendeesList.length} {attendeesList.length === 1 ? 'person' : 'people'} registered for this event.
+          <h1 className="text-3xl font-bold tracking-tight text-notion-black">Attendees</h1>
+          <p className="text-warm-gray-500 mt-1 text-base">
+            <span className="font-semibold text-notion-black mr-1">{attendeesList.length}</span> 
+            {attendeesList.length === 1 ? 'person' : 'people'} registered for this event.
           </p>
         </div>
         
@@ -152,7 +153,7 @@ export default function EventAttendeesPage({
           <button
             onClick={handleExportCsv}
             disabled={attendeesList.length === 0}
-            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+            className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-pure-white transition-colors duration-haptic active:scale-95 shadow-none hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] focus-visible:border-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50"
           >
             <Download className="mr-2 h-4 w-4" />
             Export CSV
@@ -160,23 +161,23 @@ export default function EventAttendeesPage({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-md border border-border shadow-sm">
+      <div className="overflow-hidden rounded-[var(--radius-comfortable)] border border-[var(--border-whisper)] shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left">
+            <thead className="bg-warm-white text-left border-b border-[var(--border-whisper)]">
               <tr>
-                <th className="px-4 py-3 font-medium text-muted-foreground">Name</th>
-                <th className="px-4 py-3 font-medium text-muted-foreground truncate">PRN</th>
-                <th className="px-4 py-3 font-medium text-muted-foreground truncate">Branch</th>
-                <th className="px-4 py-3 font-medium text-muted-foreground">Status</th>
-                <th className="px-4 py-3 font-medium text-muted-foreground text-center">Check In</th>
+                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs">Name</th>
+                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs truncate">PRN</th>
+                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs truncate">Branch</th>
+                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs">Status</th>
+                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs text-center">Check In</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border bg-card">
+            <tbody className="divide-y divide-[var(--border-whisper)] bg-pure-white">
               {attendeesList.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground bg-card/50">
-                    <p>No attendees have registered yet.</p>
+                  <td colSpan={5} className="px-6 py-12 text-center text-warm-gray-500 bg-pure-white">
+                    <p className="font-medium">No attendees have registered yet.</p>
                   </td>
                 </tr>
               ) : (
@@ -190,30 +191,30 @@ export default function EventAttendeesPage({
                   return (
                     <tr 
                       key={rsvp.userId} 
-                      className={`hover:bg-muted/50 transition-colors ${isCheckedIn ? 'bg-primary/5' : ''}`}
+                      className={`hover:bg-warm-white/50 transition-colors duration-200 ${isCheckedIn ? 'bg-teal-50/50' : ''}`}
                     >
-                      <td className="px-4 py-3 align-middle">
-                        <div className="font-medium text-foreground">
+                      <td className="px-6 py-4 align-middle">
+                        <div className="font-semibold text-notion-black">
                           {rsvp.user.name ?? rsvp.user.email?.split('@')[0] ?? "Unknown User"}
                         </div>
                         {rsvp.user.email && (
-                          <div className="text-xs text-muted-foreground">{rsvp.user.email}</div>
+                          <div className="text-xs text-warm-gray-500 mt-0.5">{rsvp.user.email}</div>
                         )}
                       </td>
-                      <td className="px-4 py-3 align-middle font-mono text-xs">{prn}</td>
-                      <td className="px-4 py-3 align-middle">{branch}</td>
-                      <td className="px-4 py-3 align-middle">
-                        <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+                      <td className="px-6 py-4 align-middle font-mono text-xs text-notion-black">{prn}</td>
+                      <td className="px-6 py-4 align-middle text-warm-gray-500 font-medium">{branch}</td>
+                      <td className="px-6 py-4 align-middle">
+                        <span className="inline-flex items-center rounded-pill bg-green-50 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge text-green-700">
                           {rsvp.status}
                         </span>
                       </td>
-                      <td className="px-4 py-3 align-middle text-center">
+                      <td className="px-6 py-4 align-middle text-center">
                         <button
                           onClick={() => toggleCheckIn(rsvp.user.id)}
-                          className={`inline-flex h-8 w-8 items-center justify-center rounded-sm border transition-colors ${
+                          className={`inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-micro)] border transition-all duration-haptic active:scale-95 ${
                             isCheckedIn 
-                              ? 'bg-primary border-primary text-primary-foreground shadow-sm' 
-                              : 'bg-background border-input text-foreground hover:bg-accent hover:text-accent-foreground'
+                              ? 'bg-notion-blue border-notion-blue text-pure-white shadow-none' 
+                              : 'bg-pure-white border-[var(--border-input)] text-notion-black hover:bg-warm-white'
                           }`}
                           aria-label={isCheckedIn ? "Undo check-in" : "Check in"}
                         >

@@ -4,6 +4,7 @@ import {
   BottomNav,
   DesktopSidebarNav,
 } from "@/components/navigation/BottomNav";
+import { MobileHeader } from "@/components/navigation/MobileHeader";
 import { CommandMenu } from "@/components/CommandMenu";
 
 export default async function ProtectedLayout({
@@ -18,22 +19,27 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-warm-white text-notion-black">
       <CommandMenu />
-      <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 md:px-6 lg:gap-8 lg:px-8">
-        <DesktopSidebarNav />
+      <MobileHeader />
+      {/* 3-column layout constraints: Sidebar Nav, Central Feed max-w-lg, Right Panel on > 1024px (lg) */}
+      <div className="mx-auto flex w-full max-w-7xl justify-center gap-6 px-4 md:px-6 lg:gap-8 lg:px-8">
+        {/* Left Sidebar overrides: show on md */}
+        <DesktopSidebarNav className="hidden md:flex" />
 
-        <div className="relative w-full max-w-md pb-20 md:max-w-2xl md:pb-0">
-          <main className="min-h-[calc(100vh-80px)] md:min-h-screen">{children}</main>
+        {/* Central Feed locked to max-w-lg */}
+        <div className="relative w-full max-w-md pb-20 md:pb-0 md:max-w-lg">    
+          <main className="min-h-[calc(100vh-[56px])] md:min-h-screen">{children}</main>
           <BottomNav />
         </div>
 
-        <aside className="hidden xl:block xl:w-[320px] xl:pt-8">
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-5">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-zinc-400">
+        {/* Right Contextual/Analytics Panel */}
+        <aside className="hidden lg:block lg:w-[320px] lg:pt-8 xl:w-[320px]">
+          <div className="card-surface p-5">
+            <h2 className="text-sm font-bold uppercase text-warm-gray-500 tracking-badge">
               Campus Snapshot
             </h2>
-            <p className="mt-3 text-sm leading-6 text-zinc-300">
+            <p className="mt-3 text-sm leading-6 text-warm-gray-500">
               Desktop mode is optimized for scanning updates quickly. Use the left
               navigation to switch views while keeping your main feed centered.
             </p>

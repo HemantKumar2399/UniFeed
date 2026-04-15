@@ -5,6 +5,9 @@ import { FeedSkeleton } from "@/features/feed/components/FeedSkeleton";
 import { StoryBar } from "@/features/feed/components/StoryBar";
 import { api } from "@/trpc/react";
 
+import { EmptyState } from "@/components/EmptyState";
+import { FolderHeart } from "lucide-react";
+
 export default function HomePage() {
   const { data: events, isLoading, isError } = api.event.getFeed.useQuery();
 
@@ -15,8 +18,8 @@ export default function HomePage() {
   if (isError) {
     return (
       <div className="flex h-full min-h-[calc(100vh-80px)] flex-col items-center justify-center px-4 text-center">
-        <h1 className="text-xl font-semibold">Feed unavailable</h1>
-        <p className="mt-2 text-sm text-zinc-400">
+        <h1 className="text-xl font-bold tracking-card-title text-notion-black">Feed unavailable</h1>
+        <p className="mt-2 text-sm text-warm-gray-500">
           We could not load events right now. Please try again in a moment.
         </p>
       </div>
@@ -25,11 +28,13 @@ export default function HomePage() {
 
   if (!events?.length) {
     return (
-      <div className="flex h-full min-h-[calc(100vh-80px)] flex-col items-center justify-center px-4 text-center">
-        <h1 className="text-xl font-semibold">No events yet</h1>
-        <p className="mt-2 text-sm text-zinc-400">
-          New campus events will appear here as soon as they are published.
-        </p>
+      <div className="flex h-full min-h-[calc(100vh-120px)] w-full flex-col items-center justify-center p-4">
+        <EmptyState
+          title="No events right now"
+          description="It's quiet on campus. Organizers haven't published any public events yet."
+          icon={<FolderHeart className="h-8 w-8" />}
+          className="mx-auto max-w-lg"
+        />
       </div>
     );
   }

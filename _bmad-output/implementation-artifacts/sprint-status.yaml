@@ -1,5 +1,5 @@
 # generated: 2026-04-03
-# last_updated: 2026-04-08
+# last_updated: 2026-04-15
 # project: Platform
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-03
-last_updated: 2026-04-09
+last_updated: 2026-04-15
 project: Platform
 project_key: NOKEY
 tracking_system: file-system
@@ -87,3 +87,66 @@ development_status:
   5-5-active-expired-ticket-sorting: done
   5-6-dark-mode-settings-toggle: done
   epic-5-retrospective: done
+
+  epic-6: done
+  6-1-typography-color-token-definition: done
+  6-2-tactile-utility-component-variations: done
+  6-3-typography-implementation-and-text-styles: done
+  6-4-the-3-tier-button-and-badge-interactive-system: done
+  6-5-cards-containers-and-semantic-shadows: done
+  epic-6-retrospective: optional
+
+  epic-7: done
+  7-1-the-3-tier-dashboard-expansion-layout: done
+  7-2-edge-case-empty-state-polish: done
+  7-3-campus-pulse-event-card-design-refactor: done
+  7-4-organizer-dashboard-distraction-free-refactor: done
+  7-5-contextual-capacity-bar-visual-rewrite: done
+  7-6-digital-certificate-skills-builder-redesign: done
+  7-7-unified-bottom-navigation-header-dynamics: done
+  epic-7-retrospective: optional
+
+  epic-8: backlog
+  8-1-university-domain-authentication: ready-for-dev
+  8-2-digital-passport-profile-view: ready-for-dev
+  epic-8-retrospective: optional
+
+  epic-9: backlog
+  9-1-campus-pulse-mobile-feed: ready-for-dev
+  9-2-minimalist-event-cards: ready-for-dev
+  9-3-bottom-sheet-event-details: ready-for-dev
+  epic-9-retrospective: optional
+
+  epic-10: backlog
+  10-1-one-tap-rsvp-with-locking-state: ready-for-dev
+  10-2-live-capacity-momentum-progress-bar: ready-for-dev
+  10-3-database-pessimistic-locking: ready-for-dev
+  epic-10-retrospective: optional
+
+  epic-11: backlog
+  11-1-distraction-free-block-editor: ready-for-dev
+  11-2-real-time-attendee-heatmap-table: ready-for-dev
+  11-3-one-click-csv-export: ready-for-dev
+  epic-11-retrospective: optional
+
+  epic-12: backlog
+  12-1-dynamic-digital-ticket-qr: ready-for-dev
+  12-2-organizer-scan-only-pipeline: ready-for-dev
+  12-3-manual-entry-fallback: ready-for-dev
+  epic-12-retrospective: optional
+
+  epic-13: backlog
+  13-1-club-public-profiles-and-follow-mechanism: ready-for-dev
+  13-2-static-resource-and-faq-blocks: ready-for-dev
+  epic-13-retrospective: optional
+
+  epic-14: backlog
+  14-1-event-qa-board-implementation: ready-for-dev
+  14-2-organizer-thread-resolution-and-highlights: ready-for-dev
+  epic-14-retrospective: optional
+
+  epic-15: backlog
+  15-1-database-scoring-weight-adjustments: ready-for-dev
+  15-2-the-happening-this-week-carousel: ready-for-dev
+  epic-15-retrospective: optional
+

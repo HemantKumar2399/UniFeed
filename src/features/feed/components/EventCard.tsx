@@ -8,6 +8,7 @@ import { CapacityBar } from "./CapacityBar";
 
 import { api } from "@/trpc/react";
 import type { RouterOutputs } from "@/trpc/react";
+import { MapPin, Calendar } from "lucide-react";
 
 import {
   formatEventDateMeta,
@@ -70,15 +71,15 @@ export function EventCard({ event }: { event: EventFeedItem }) {
   }, [eventId]);
 
   return (
-    <article id={eventId} className="w-full max-w-md overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+    <article id={eventId} className="w-full max-w-md bg-pure-white rounded-comfortable border border-[var(--border-whisper)] shadow-[var(--shadow-card)] overflow-hidden transition-all duration-transition">
       <button
         type="button"
         aria-expanded={isExpanded}
         aria-controls={descriptionId}
         onClick={() => setIsExpanded((prev) => !prev)}
-        className="relative block w-full cursor-pointer text-left"
+        className="w-full text-left active:scale-[0.99] transition-transform duration-haptic bg-pure-white"
       >
-        <div className="relative aspect-[4/5] w-full overflow-hidden">
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-warm-white border-b border-[var(--border-whisper)]">
           <Image
             src={event.imageUrl}
             alt={event.title}
@@ -87,36 +88,43 @@ export function EventCard({ event }: { event: EventFeedItem }) {
             sizes="(max-width: 768px) 100vw, 448px"
             priority={false}
           />
+        </div>
 
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent px-4 pb-4 pt-12">
-            <h2 className="line-clamp-2 text-lg font-semibold text-white">{event.title}</h2>
-            <div className="flex justify-between items-center mt-1">
-              <p className="text-sm text-zinc-100">{formatEventDateMeta(event.date)}</p>
-              <p className="text-sm text-zinc-200">{event.location}</p>
+        <div className="p-4 bg-pure-white">
+          <h2 className="text-xl font-bold tracking-card-title text-notion-black line-clamp-2">{event.title}</h2>
+          
+          <div className="flex flex-col gap-1.5 mt-3 mb-4">
+            <div className="flex items-center gap-2 text-sm text-warm-gray-500 font-medium">
+              <Calendar className="h-4 w-4 text-notion-blue shrink-0" />
+              <span>{formatEventDateMeta(event.date)}</span>
             </div>
-            
-            <div className="mt-3">
-              <CapacityBar 
-                eventId={event.id} 
-                initialCount={event._count.rsvps} 
-                totalCapacity={event.capacity} 
-              />
+            <div className="flex items-center gap-2 text-sm text-warm-gray-500">
+              <MapPin className="h-4 w-4 text-notion-blue shrink-0" />
+              <span className="truncate">{event.location}</span>
             </div>
+          </div>
+          
+          <div className="w-full mt-1">
+            <CapacityBar 
+              eventId={event.id} 
+              initialCount={event._count.rsvps} 
+              totalCapacity={event.capacity} 
+            />
           </div>
         </div>
       </button>
 
       <div id={descriptionId} className={getDescriptionRevealClasses(isExpanded)}>
-        <div className="min-h-0 px-4 pb-4 pt-3 flex flex-col gap-4">
-          <p className="text-sm leading-6 text-zinc-200">
+        <div className="min-h-0 px-4 pb-4 pt-1 flex flex-col gap-4 bg-pure-white border-t border-transparent">
+          <p className="text-sm leading-6 text-warm-gray-500 pt-2 border-t border-[var(--border-whisper)]">
             {event.description || "No description provided."}
           </p>
 
-          <footer className="mt-auto flex justify-end items-center">
+          <footer className="mt-2 flex justify-end items-center">
             <LongPressButton
               onComplete={() => handleRegister()}
               disabled={registerState === "LOCKING" || registerState === "SECURED"}
-              className="w-36 h-10 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-white font-medium text-sm flex items-center justify-center transition-colors whitespace-nowrap"
+              className="w-36 h-11 bg-notion-blue hover:bg-[var(--color-notion-blue-hover)] disabled:opacity-50 disabled:cursor-not-allowed rounded-micro text-white font-semibold text-sm flex items-center justify-center transition-colors whitespace-nowrap shadow-[var(--shadow-card)]"
             >
               {registerState === "IDLE" || registerState === "ERROR" ? (
                 "Reserve"
@@ -129,7 +137,7 @@ export function EventCard({ event }: { event: EventFeedItem }) {
                   Locking...
                 </span>
               ) : (
-                "Secured ✅"
+                "Secured"
               )}
             </LongPressButton>
           </footer>

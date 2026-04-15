@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // Constants
 const AUTH_ERRORS: Record<string, string> = {
@@ -132,11 +133,11 @@ function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md rounded-2xl bg-zinc-900 border border-zinc-800 p-8 shadow-xl">
-      <h1 className="text-2xl font-extrabold text-white mb-1">
+    <div className="w-full max-w-md card-surface p-8 shadow-deep">
+      <h1 className="text-subheading mb-1">
         {mode === "login" ? "Welcome back" : "Create account"}
       </h1>
-      <p className="text-zinc-400 text-sm mb-6">
+      <p className="text-body text-warm-gray mb-6">
         {mode === "login"
           ? "Sign in with your university email."
           : "Register with your university email."}
@@ -145,7 +146,7 @@ function LoginForm() {
       {(error ?? urlError) && (
         <div
           role="alert"
-          className="mb-4 rounded-lg bg-red-950 border border-red-800 px-4 py-3 text-sm text-red-300"
+          className="mb-4 rounded-[4px] bg-[#ff64c8]/10 border border-[#ff64c8]/20 px-4 py-3 text-body-medium text-[#ff64c8]"
         >
           {error ?? urlError}
         </div>
@@ -160,30 +161,30 @@ function LoginForm() {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="role"
-                className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+                className="text-badge text-warm-gray uppercase tracking-wider mb-2"
               >
                 I am a...
               </label>
               <div className="flex gap-4">
-                <label className="flex items-center gap-2 text-sm text-zinc-300">
+                <label className="flex items-center gap-2 text-body">
                   <input
                     type="radio"
                     name="role"
                     value="USER"
                     checked={role === "USER"}
                     onChange={() => setRole("USER")}
-                    className="text-brand-rose focus:ring-brand-rose"
+                    className="text-notion-blue focus:ring-focus-blue"
                   />
                   Student
                 </label>
-                <label className="flex items-center gap-2 text-sm text-zinc-300">
+                <label className="flex items-center gap-2 text-body">
                   <input
                     type="radio"
                     name="role"
                     value="ORGANIZER"
                     checked={role === "ORGANIZER"}
                     onChange={() => setRole("ORGANIZER")}
-                    className="text-brand-rose focus:ring-brand-rose"
+                    className="text-notion-blue focus:ring-focus-blue"
                   />
                   Event Organizer
                 </label>
@@ -193,18 +194,18 @@ function LoginForm() {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="name"
-                className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+                className="text-badge text-warm-gray uppercase tracking-wider mb-2"
               >
                 Name
               </label>
-              <input
+              <Input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
                 maxLength={100}
-                className="rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-rose transition"
+                required
               />
             </div>
           </>
@@ -213,29 +214,28 @@ function LoginForm() {
         <div className="flex flex-col gap-1">
           <label
             htmlFor="email"
-            className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+            className="text-badge text-warm-gray uppercase tracking-wider mb-2"
           >
             University Email
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@jecrc.ac.in"
             required
-            className="rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-rose transition"
           />
         </div>
 
         <div className="flex flex-col gap-1">
           <label
             htmlFor="password"
-            className="text-xs font-semibold text-zinc-400 uppercase tracking-wider"
+            className="text-badge text-warm-gray uppercase tracking-wider mb-2"
           >
             Password
           </label>
-          <input
+          <Input
             id="password"
             type="password"
             value={password}
@@ -244,7 +244,6 @@ function LoginForm() {
             required
             minLength={8}
             maxLength={72}
-            className="rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-brand-rose transition"
           />
         </div>
 
@@ -257,7 +256,7 @@ function LoginForm() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-zinc-500">
+      <p className="mt-6 text-center text-body text-warm-gray">
         {mode === "login" ? (
           <>
             No account?{" "}
@@ -266,7 +265,7 @@ function LoginForm() {
                 setMode("register");
                 setError(null);
               }}
-              className="text-brand-rose hover:underline font-semibold"
+              className="text-notion-blue hover:underline font-semibold"
             >
               Register
             </button>
@@ -279,7 +278,7 @@ function LoginForm() {
                 setMode("login");
                 setError(null);
               }}
-              className="text-brand-rose hover:underline font-semibold"
+              className="text-notion-blue hover:underline font-semibold"
             >
               Sign In
             </button>
