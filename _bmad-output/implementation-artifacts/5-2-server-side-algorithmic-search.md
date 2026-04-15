@@ -23,12 +23,27 @@ So I can find specific things I heard about without scrolling endlessly.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: ILIKE Query Logic (AC: 1)
-  - [ ] Expose `event.search` within the TRPC router precisely.
-  - [ ] Implement Prisma `where: { OR: [{ title: { contains: input.query, mode: 'insensitive' } }] }`.
-- [ ] Task 2: Network Debouncing (AC: 2)
-  - [ ] Expose a strict `useDebounce` hook inside React globally.
-  - [ ] Run the TRPC fetch *only* off the debounced string payload value preventing character-by-character DB querying.
+- [x] Task 1: ILIKE Query Logic (AC: 1)
+  - [x] Expose `event.search` within the TRPC router precisely.
+  - [x] Implement Prisma `where: { OR: [{ title: { contains: input.query, mode: 'insensitive' } }] }`.
+- [x] Task 2: Network Debouncing (AC: 2)
+  - [x] Expose a strict `useDebounce` hook inside React globally.
+  - [x] Run the TRPC fetch *only* off the debounced string payload value preventing character-by-character DB querying.
+### Review Findings
+- [x] [Review][Patch] Fix Typescript `no-misused-promises` error where `runCommand()` was typed synchronously, but `signOut()` returns a Promise. [src/components/CommandMenu.tsx:21]
+## File List
+- src/server/api/routers/event.ts
+- src/hooks/useDebounce.ts
+- src/components/CommandMenu.tsx
+
+## Change Log
+- Added `event.search` TRPC endpoint handling title and description searches with mode: "insensitive"
+- Created standard `useDebounce` React hook in src/hooks/useDebounce.ts
+- Connected the CommandMenu input parameter with 300ms debouncing directly mapped to TRPC event searches.
+
+## Status
+done
+
 
 ## Dev Notes
 

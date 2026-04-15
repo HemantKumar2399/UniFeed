@@ -22,11 +22,28 @@ So I can instantly search for events or navigate the app without taking my hands
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Component Shell (AC: 1)
-  - [ ] Initialize `cmdk` (or equivalent accessible modal primitive).
-  - [ ] Mount `<CommandMenu>` globally within the `app/(protected)/layout.tsx` so it persists securely across feed/profile bounds.
-- [ ] Task 2: Event Listener Hook (AC: 2)
-  - [ ] Attach `useEffect` mapping the keypress combination to a `[isOpen, setIsOpen]` boolean toggle natively bounding to standard browser standards perfectly.
+- [x] Task 1: Component Shell (AC: 1)
+  - [x] Initialize `cmdk` (or equivalent accessible modal primitive).
+  - [x] Mount `<CommandMenu>` globally within the `app/(protected)/layout.tsx` so it persists securely across feed/profile bounds.
+- [x] Task 2: Event Listener Hook (AC: 2)
+  - [x] Attach `useEffect` mapping the keypress combination to a `[isOpen, setIsOpen]` boolean toggle natively bounding to standard browser standards perfectly.
+
+### Review Findings
+- [x] [Review][Patch] Use `<Command.Dialog>` instead of a manual div for better accessibility and focus trapping as per cmdk documentation. [src/components/CommandMenu.tsx:32]
+
+## File List
+- src/components/CommandMenu.tsx
+- src/app/(protected)/layout.tsx
+
+## Change Log
+- Initialized cmdk and lucide-react dependencies
+- Added CommandMenu interactive client component in src/components/CommandMenu.tsx
+- Injected CommandMenu globally in src/app/(protected)/layout.tsx using the Command modal design
+- Attached standard useEffect hook for toggling `[open, setOpen]` on metaKey+K combination.
+
+## Status
+done
+
 
 ## Dev Notes
 

@@ -65,11 +65,23 @@ export namespace $Enums {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const EventStatus: {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+};
+
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+
 }
 
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type EventStatus = $Enums.EventStatus
+
+export const EventStatus: typeof $Enums.EventStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -3867,6 +3879,7 @@ export namespace Prisma {
     id: number | null
     title: string | null
     description: string | null
+    status: $Enums.EventStatus | null
     date: Date | null
     capacity: number | null
     location: string | null
@@ -3881,6 +3894,7 @@ export namespace Prisma {
     id: number | null
     title: string | null
     description: string | null
+    status: $Enums.EventStatus | null
     date: Date | null
     capacity: number | null
     location: string | null
@@ -3895,6 +3909,7 @@ export namespace Prisma {
     id: number
     title: number
     description: number
+    status: number
     date: number
     capacity: number
     location: number
@@ -3923,6 +3938,7 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
+    status?: true
     date?: true
     capacity?: true
     location?: true
@@ -3937,6 +3953,7 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
+    status?: true
     date?: true
     capacity?: true
     location?: true
@@ -3951,6 +3968,7 @@ export namespace Prisma {
     id?: true
     title?: true
     description?: true
+    status?: true
     date?: true
     capacity?: true
     location?: true
@@ -4052,6 +4070,7 @@ export namespace Prisma {
     id: number
     title: string
     description: string
+    status: $Enums.EventStatus
     date: Date
     capacity: number
     location: string
@@ -4085,6 +4104,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    status?: boolean
     date?: boolean
     capacity?: boolean
     location?: boolean
@@ -4103,6 +4123,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    status?: boolean
     date?: boolean
     capacity?: boolean
     location?: boolean
@@ -4119,6 +4140,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    status?: boolean
     date?: boolean
     capacity?: boolean
     location?: boolean
@@ -4135,6 +4157,7 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     description?: boolean
+    status?: boolean
     date?: boolean
     capacity?: boolean
     location?: boolean
@@ -4145,7 +4168,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "date" | "capacity" | "location" | "imageUrl" | "clubId" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "status" | "date" | "capacity" | "location" | "imageUrl" | "clubId" | "authorId" | "createdAt" | "updatedAt", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
@@ -4172,6 +4195,7 @@ export namespace Prisma {
       id: number
       title: string
       description: string
+      status: $Enums.EventStatus
       date: Date
       capacity: number
       location: string
@@ -4609,6 +4633,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Event", 'Int'>
     readonly title: FieldRef<"Event", 'String'>
     readonly description: FieldRef<"Event", 'String'>
+    readonly status: FieldRef<"Event", 'EventStatus'>
     readonly date: FieldRef<"Event", 'DateTime'>
     readonly capacity: FieldRef<"Event", 'Int'>
     readonly location: FieldRef<"Event", 'String'>
@@ -10621,6 +10646,7 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     description: 'description',
+    status: 'status',
     date: 'date',
     capacity: 'capacity',
     location: 'location',
@@ -10764,6 +10790,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'EventStatus'
+   */
+  export type EnumEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'EventStatus[]'
+   */
+  export type ListEnumEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventStatus[]'>
     
 
 
@@ -10919,6 +10959,7 @@ export namespace Prisma {
     id?: IntFilter<"Event"> | number
     title?: StringFilter<"Event"> | string
     description?: StringFilter<"Event"> | string
+    status?: EnumEventStatusFilter<"Event"> | $Enums.EventStatus
     date?: DateTimeFilter<"Event"> | Date | string
     capacity?: IntFilter<"Event"> | number
     location?: StringFilter<"Event"> | string
@@ -10936,6 +10977,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    status?: SortOrder
     date?: SortOrder
     capacity?: SortOrder
     location?: SortOrder
@@ -10956,6 +10998,7 @@ export namespace Prisma {
     NOT?: EventWhereInput | EventWhereInput[]
     title?: StringFilter<"Event"> | string
     description?: StringFilter<"Event"> | string
+    status?: EnumEventStatusFilter<"Event"> | $Enums.EventStatus
     date?: DateTimeFilter<"Event"> | Date | string
     capacity?: IntFilter<"Event"> | number
     location?: StringFilter<"Event"> | string
@@ -10973,6 +11016,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    status?: SortOrder
     date?: SortOrder
     capacity?: SortOrder
     location?: SortOrder
@@ -10995,6 +11039,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Event"> | number
     title?: StringWithAggregatesFilter<"Event"> | string
     description?: StringWithAggregatesFilter<"Event"> | string
+    status?: EnumEventStatusWithAggregatesFilter<"Event"> | $Enums.EventStatus
     date?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     capacity?: IntWithAggregatesFilter<"Event"> | number
     location?: StringWithAggregatesFilter<"Event"> | string
@@ -11446,6 +11491,7 @@ export namespace Prisma {
   export type EventCreateInput = {
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -11461,6 +11507,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -11475,6 +11522,7 @@ export namespace Prisma {
   export type EventUpdateInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -11490,6 +11538,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -11505,6 +11554,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -11518,6 +11568,7 @@ export namespace Prisma {
   export type EventUpdateManyMutationInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -11530,6 +11581,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -12046,6 +12098,13 @@ export namespace Prisma {
     id?: SortOrder
   }
 
+  export type EnumEventStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventStatusFilter<$PrismaModel> | $Enums.EventStatus
+  }
+
   export type ClubScalarRelationFilter = {
     is?: ClubWhereInput
     isNot?: ClubWhereInput
@@ -12065,6 +12124,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    status?: SortOrder
     date?: SortOrder
     capacity?: SortOrder
     location?: SortOrder
@@ -12085,6 +12145,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    status?: SortOrder
     date?: SortOrder
     capacity?: SortOrder
     location?: SortOrder
@@ -12099,6 +12160,7 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    status?: SortOrder
     date?: SortOrder
     capacity?: SortOrder
     location?: SortOrder
@@ -12113,6 +12175,16 @@ export namespace Prisma {
     id?: SortOrder
     capacity?: SortOrder
     clubId?: SortOrder
+  }
+
+  export type EnumEventStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.EventStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEventStatusFilter<$PrismaModel>
+    _max?: NestedEnumEventStatusFilter<$PrismaModel>
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -12529,6 +12601,10 @@ export namespace Prisma {
     connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
     createMany?: RSVPCreateManyEventInputEnvelope
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
+  export type EnumEventStatusFieldUpdateOperationsInput = {
+    set?: $Enums.EventStatus
   }
 
   export type UserUpdateOneRequiredWithoutAuthoredEventsNestedInput = {
@@ -12955,6 +13031,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumEventStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventStatusFilter<$PrismaModel> | $Enums.EventStatus
+  }
+
+  export type NestedEnumEventStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.EventStatus | EnumEventStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EventStatus[] | ListEnumEventStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEventStatusWithAggregatesFilter<$PrismaModel> | $Enums.EventStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumEventStatusFilter<$PrismaModel>
+    _max?: NestedEnumEventStatusFilter<$PrismaModel>
+  }
+
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -13141,6 +13234,7 @@ export namespace Prisma {
   export type EventCreateWithoutClubInput = {
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13155,6 +13249,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13198,6 +13293,7 @@ export namespace Prisma {
     id?: IntFilter<"Event"> | number
     title?: StringFilter<"Event"> | string
     description?: StringFilter<"Event"> | string
+    status?: EnumEventStatusFilter<"Event"> | $Enums.EventStatus
     date?: DateTimeFilter<"Event"> | Date | string
     capacity?: IntFilter<"Event"> | number
     location?: StringFilter<"Event"> | string
@@ -13608,6 +13704,7 @@ export namespace Prisma {
   export type EventCreateWithoutAuthorInput = {
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13622,6 +13719,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13821,6 +13919,7 @@ export namespace Prisma {
   export type EventCreateWithoutRsvpsInput = {
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13835,6 +13934,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13903,6 +14003,7 @@ export namespace Prisma {
   export type EventUpdateWithoutRsvpsInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -13917,6 +14018,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -13931,6 +14033,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -13943,6 +14046,7 @@ export namespace Prisma {
   export type EventUpdateWithoutClubInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -13957,6 +14061,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -13971,6 +14076,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -14039,6 +14145,7 @@ export namespace Prisma {
     id?: number
     title: string
     description: string
+    status?: $Enums.EventStatus
     date: Date | string
     capacity: number
     location: string
@@ -14141,6 +14248,7 @@ export namespace Prisma {
   export type EventUpdateWithoutAuthorInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -14155,6 +14263,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string
@@ -14169,6 +14278,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     capacity?: IntFieldUpdateOperationsInput | number
     location?: StringFieldUpdateOperationsInput | string

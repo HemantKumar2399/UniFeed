@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { AuthProvider } from "@/components/AuthProvider";
+import { ThemeProvider } from "./ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -21,13 +22,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <AuthProvider>
-          <TRPCReactProvider>
-            {children}
-          </TRPCReactProvider>
-        </AuthProvider>
+    <html lang="en" className={`${geist.variable} dark`} suppressHydrationWarning>
+      <body className="bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+        <ThemeProvider>
+          <AuthProvider>
+            <TRPCReactProvider>
+              {children}
+            </TRPCReactProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

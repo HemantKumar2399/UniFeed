@@ -4,6 +4,7 @@ import {
   BottomNav,
   DesktopSidebarNav,
 } from "@/components/navigation/BottomNav";
+import { CommandMenu } from "@/components/CommandMenu";
 
 export default async function ProtectedLayout({
   children,
@@ -18,6 +19,7 @@ export default async function ProtectedLayout({
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <CommandMenu />
       <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 md:px-6 lg:gap-8 lg:px-8">
         <DesktopSidebarNav />
 

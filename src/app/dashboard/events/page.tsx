@@ -1,5 +1,6 @@
 import { api } from "@/trpc/server";
 import Link from "next/link";
+import { EventActions } from "./EventActions";
 
 export default async function EventsPage() {
   const events = await api.event.getOrganizerDrafts();
@@ -52,7 +53,12 @@ export default async function EventsPage() {
                 return (
                   <tr key={event.id}>
                     <td className="whitespace-nowrap px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{event.title}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2 mb-1">
+                        {event.title}
+                        {event.status === "DRAFT" && (
+                          <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Draft</span>
+                        )}
+                      </div>
                       <div className="text-sm text-gray-500">{event.location}</div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
@@ -66,10 +72,8 @@ export default async function EventsPage() {
                         {status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                      <Link href={`/dashboard/events/${event.id}/edit`} className="text-rose-600 hover:text-rose-900">
-                        Edit
-                      </Link>
+                    <td className="whitespace-nowrap px-6 py-4">
+                      <EventActions eventId={event.id} status={event.status as "DRAFT" | "PUBLISHED"} />
                     </td>
                   </tr>
                 );

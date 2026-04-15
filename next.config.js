@@ -6,14 +6,26 @@ import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
-	images: {
-		remotePatterns: [
-			{
-				protocol: "https",
-				hostname: "images.unsplash.com",
-			},
-		],
-	},
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      }
+    ],
+  },
 };
 
 export default config;

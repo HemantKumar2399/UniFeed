@@ -141,6 +141,7 @@ exports.Prisma.EventScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
+  status: 'status',
   date: 'date',
   capacity: 'capacity',
   location: 'location',
@@ -212,6 +213,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.EventStatus = exports.$Enums.EventStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+};
+
 exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   ORGANIZER: 'ORGANIZER'

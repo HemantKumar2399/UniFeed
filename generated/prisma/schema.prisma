@@ -37,20 +37,21 @@ model Club {
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
   description String
+  status      EventStatus @default(PUBLISHED)
   date        DateTime
   capacity    Int
   location    String
   imageUrl    String
   clubId      Int
   authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  club        Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  club        Club        @relation(fields: [clubId], references: [id], onDelete: Cascade)
   rsvps       RSVP[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([date])
   @@index([clubId])
@@ -125,4 +126,9 @@ model RSVP {
 enum Role {
   USER
   ORGANIZER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
 }
