@@ -63,24 +63,24 @@ export function StepMedia() {
       <h2 className="text-xl font-semibold">Media & Styling</h2>
       <p className="text-sm text-gray-500">Upload images and set the card styling here.</p>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="imageFile" className="text-sm font-medium">Upload Cover Image</label>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="imageFile" className="text-sm font-medium text-notion-black">Upload Cover Image</label>
         <input
           id="imageFile"
           type="file"
           accept="image/*"
           onChange={handleFileChange}
           disabled={isUploading}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900"
+          className="rounded-[var(--radius-micro)] border border-[var(--border-input)] bg-pure-white px-4 py-2 text-base text-notion-black min-h-[44px] shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] focus-visible:border-[var(--color-focus-blue)]"
         />
-        {isUploading && <p className="text-xs text-blue-600">Uploading...</p>}
+        {isUploading && <p className="text-xs text-notion-blue">Uploading...</p>}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="imageUrl" className="text-sm font-medium">Cover Image URL</label>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="imageUrl" className="text-sm font-medium text-notion-black">Cover Image URL</label>
         <input
           id="imageUrl"
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-900"
+          className="rounded-[var(--radius-micro)] border border-[var(--border-input)] bg-pure-white px-4 py-2 text-base text-notion-black min-h-[44px] shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] focus-visible:border-[var(--color-focus-blue)]"
           placeholder="https://example.com/image.jpg"
           readOnly
           {...register("imageUrl")}

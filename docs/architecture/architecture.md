@@ -2,12 +2,12 @@
 stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 inputDocuments: ['prd.md', 'campus-platform-idea.md', 'brainstorming-session-20260401-1637.md', 'ux-design-specification.md']
 workflowType: 'architecture'
-project_name: 'UniFeed'
+project_name: 'Campus Platform'
 user_name: 'Hemant'
-date: '2026-04-03'
+date: '2026-04-15'
 lastStep: 8
 status: 'complete'
-completedAt: '2026-04-03'
+completedAt: '2026-04-15'
 ---
 
 # Architecture Decision Document
@@ -19,23 +19,24 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 ### Requirements Overview
 
 **Functional Requirements:**
-The application demands a multi-tenant identity foundation (university boundaries via email validation), high-fidelity media processing (ephemeral stories and multi-step uploads), high-availability transactional workflows ("One-Tap" registration), and real-time visualization (live capacity bars and organizer dashboards). The addition of the UX spec mandates strict adherence to Optimistic UI/Pessimistic Locking states for RSVPs, dynamic QR code rendering for Digital Passports, and a scan-only pipeline for event check-ins. Architecturally, this requires strong data integrity mixed with scalable media delivery and WebSocket coordination, while strictly supporting "Mobile-First" rendering behavior.
+The application demands a multi-tenant identity foundation (university boundaries via email validation), high-fidelity media processing (ephemeral stories and multi-step uploads), high-availability transactional workflows ("One-Tap" registration), and real-time visualization (live capacity bars and organizer dashboards). The recent pivot to a **"Tactile Utility"** design mandates strict adherence to Optimistic UI/Pessimistic Locking states for RSVPs, dynamic QR code rendering for Digital Passports, and a scan-only pipeline for event check-ins. A distraction-free block editor (Notion-style) is required for Organizers. Architecturally, this requires strong data integrity mixed with scalable media delivery and WebSocket coordination, while strictly supporting "Mobile-First" rendering behavior for the student experience and "Dashboard Expansion" for organizers.
 
 **Non-Functional Requirements:**
-Architecture must prioritize strict Row-Level Security (RLS) for tenant isolation, high concurrency (500+ simultaneous transactions), extremely low latency (sub-200ms visual interaction responses), and a responsive Web/mobile-first approach ("Dashboard Expansion" up to 3 columns on desktop, `max-w-md` constraints on mobile feeds). The UX spec also mandates WCAG AA accessibility compliance (specifically `aria-live` usage, `motion-safe` handling, and dynamic text sizing) and robust client-side error handling (e.g., graceful degradation of the QR checking pipeline and network error fallbacks).
+Architecture must prioritize strict Row-Level Security (RLS) for tenant isolation, high concurrency (500+ simultaneous transactions), extremely low latency (sub-200ms visual interaction responses), and a responsive Web/mobile-first approach ("Dashboard Expansion" up to 3 columns on desktop, `max-w-md` constraints on mobile feeds). The UX spec mandates WCAG AA accessibility compliance, fluid **mobile-native physics** (spring physics, active scale-downs), and robust client-side error handling (e.g., graceful degradation of the QR checking pipeline). The aesthetic relies on warm neutrals (`#f6f5f4`, `#31302e`), near-black text, and "whisper borders" (`1px solid rgba(0,0,0,0.1)`).
 
 **Scale & Complexity:**
 The platform bridges consumer-grade social feel with B2B SaaS multi-tenancy, requiring "app-like" performance from a web client.
 
-- Primary domain: Mobile-First Full-Stack Web Application
+- Primary domain: Mobile-First Full-Stack Web Application (Tactile Utility)
 - Complexity level: High
-- Estimated architectural components: Auth, Tenancy, Media Storage, Feed/Algorithm, Transactions, Real-time Sync, Digital Passport/QR Subsystem, Analytics Dashboards.
+- Estimated architectural components: Auth, Tenancy, Media Storage, Campus Pulse Feed, Transactions (RSVPs with locks), Real-time Sync, Digital Passport/QR Subsystem, Block Editor, Analytics Dashboards.
 
 ### Technical Constraints & Dependencies
 
 - Development starts locally using PostgreSQL and Prisma before migrating to managed Supabase.
-- Codebase must adhere to Feature-First Vertical Slicing with strict file size limitations (~200 LOC per file) for AI-agent maintainability.
-- Use of the T3 Stack (Next.js App Router, Prisma, Tailwind, tRPC) mixed with `shadcn/ui` to guarantee strict control over accessibility and presentation logic without fighting predefined libraries.
+- Codebase must adhere to Feature-First Vertical Slicing with strict file size limitations (~200 LOC per file).
+- Use of the T3 Stack (Next.js App Router, Prisma, Tailwind, tRPC) mixed with `shadcn/ui` to guarantee strict control over accessibility and presentation.
+- UI layer mandates the use of Tailwind CSS and `tailwindcss-animate` for physics-based micro-interactions (`active:scale-95`, etc.).
 - Strict enforcement of `next/image` optimization for network responsiveness.
 
 ### Cross-Cutting Concerns Identified
@@ -103,9 +104,10 @@ npx create-t3-app@latest ./ \
 - **Interaction Syncing**: UI uses a "Locking" buffer. An RSVP triggers an optimistic "Locking..." state, fires the tRPC mutation, and upon success changes to "Secured" while the WebSocket subscription globally increments the Capacity Bar.
 
 ### Frontend Architecture
-- **Component Layer**: `shadcn/ui`.
-- **Styling**: Tailwind CSS utilizing strict `max-w-md`/`max-w-xl` constraints on mobile loops, expanding to a 3-column layout via CSS Grid/Flexbox boundaries on Desktop.
-- **State Management**: Zustand for UI; tRPC React Query hooks for Server State.
+- **Component Layer**: `shadcn/ui` configured natively into the app, avoiding immutable dependency conflicts.
+- **Styling**: Tailwind CSS utilizing strict `max-w-md`/`max-w-xl` constraints on mobile feeds, expanding to a 3-column layout via CSS Grid/Flexbox boundaries on Desktop. **Animations**: Relying on built-in native physics and `tailwindcss-animate` for "One-Tap" responses and progress bar easing.
+- **State Management**: Zustand for UI toggles; tRPC React Query hooks for Server State. Optimistic UI is wrapped with a "Locking" buffer state.
+- **Content Creation**: A distraction-free block editor implementation for organizers.
 
 ### Infrastructure & Deployment
 - **Hosting Strategy**: Local development using a managed local PostgreSQL instance. Vercel for frontend. Migration to Supabase for the managed database capability.
@@ -144,9 +146,11 @@ npx create-t3-app@latest ./ \
 
 ### Process Patterns
 
-**UX & Feedback Patterns:**
-*   **Button Hierarchy:** Strict 3-tier: Primary (Action), Secondary (Outline), Ghost (Tertiary).
-*   **Success Feedback:** Inline state changes (e.g. Button turns green). `Toast` is NOT used for primary success loops.
+**UX, Feedback & Tactile Utility Patterns:**
+*   **Design Language:** Notion-inspired Tactile Utility. Warm neutral palettes (`#f6f5f4`, `#31302e`), near-black text (`rgba(0,0,0,0.95)`), and "whisper borders" (`1px solid rgba(0,0,0,0.1)`).
+*   **Typography:** `Inter` or `Geist`, aggressively compressed at display sizes (-2.125px) and relaxed body copy.
+*   **Button Hierarchy:** Strict 3-tier: Primary (Action in Blue/Indigo), Secondary (Outline), Ghost (Tertiary).
+*   **Success Feedback:** Inline state changes (e.g. Button turns green and smoothly scales). `Toast` is NOT used for primary success loops (like RSVPs).
 *   **Error Feedback:** Bottom-anchored `Toast` for network errors.
 *   **Loading States:** Pulsing Skeletons mimicking real card dimensions; sub-200ms visual micro-interactions (`active:scale-95`).
 
@@ -164,7 +168,7 @@ npx create-t3-app@latest ./ \
 ### Complete Project Directory Structure
 
 ```text
-unifeed/
+campus-platform/
 ├── README.md
 ├── package.json
 ├── next.config.mjs
@@ -178,17 +182,18 @@ unifeed/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/
 │   │   ├── (public)/           # Public facing pages (Login)
-│   │   ├── (feed)/             # Main student feed (max-w-md constraint applied here)
+│   │   ├── (feed)/             # Main student feed (Campus Pulse - max-w-md constraint)
 │   │   ├── (admin)/            # Protected organizer dashboard
-│   │   ├── globals.css         # Restricted to core CSS variables
+│   │   ├── globals.css         # Restricted to core CSS variables (Tactile Utility colors)
 │   │   └── layout.tsx          # Dashboard Expansion Layout Root
 │   ├── components/             # Dumb, shared presentation components
 │   │   └── ui/                 # shadcn/ui components (Buttons, inputs, modals)
 │   ├── features/               # ⚠️ VERTICAL FEATURE SLICES
 │   │   ├── identity/           # 'One-Tap' Passport logic & QR generation
-│   │   ├── feed/               # Event algorithms & Feed UI
+│   │   ├── feed/               # Event algorithms, Campus Pulse UI & animations
 │   │   ├── registration/       # Transactional logic & Live Capacity Bars
-│   │   └── admin/              # Organizer Heatmaps & Charts
+│   │   ├── block-editor/       # Distraction-free Notion-style editor
+│   │   └── admin/              # Organizer Heatmaps & CSV Export
 │   ├── server/                 # Strict Server-Side Code
 │   │   ├── api/routers/        # Feature-specific tRPC routers
 │   │   ├── auth.ts             # NextAuth Provider Configurations

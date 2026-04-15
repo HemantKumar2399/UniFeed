@@ -1,14 +1,488 @@
+/* =======================================================================
+   CAMPUS PLATFORM — TACTILE UTILITY DESIGN SYSTEM
+   Story 6.1: Typography & Color Token Definition
+   Reference: DESIGN.md — Notion-inspired warm neutrals + whisper borders
+   ======================================================================= */
+
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
+/* -----------------------------------------------------------------------
+   FONT: Inter from Google Fonts (NotionInter-equivalent characteristics)
+   Loaded via layout.tsx — variable available as --font-inter
+   ----------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------
+   TAILWIND v4 THEME TOKENS
+   All design system tokens defined here as CSS custom properties.
+   Usage: bg-warm-white, text-notion-black, border-whisper, etc.
+   ----------------------------------------------------------------------- */
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --color-brand-rose: #e11d48;
+  /* --- FONT FAMILIES --- */
+  --font-sans: var(--font-inter), Inter, -apple-system, system-ui, "Segoe UI",
+    Helvetica, "Apple Color Emoji", Arial, "Segoe UI Emoji", "Segoe UI Symbol";
+
+  /* --- WARM NEUTRAL PALETTE (Notion-inspired, yellow-brown undertones) --- */
+
+  /* Primary surfaces */
+  --color-pure-white: #ffffff;
+  --color-warm-white: #f6f5f4;
+
+  /* Primary text — near-black, not pure black (micro-warmth) */
+  --color-notion-black: rgba(0, 0, 0, 0.95);
+
+  /* Warm dark surface (dark sections, footer) */
+  --color-warm-dark: #31302e;
+
+  /* Warm gray scale */
+  --color-warm-gray-500: #615d59; /* Secondary text, descriptions */
+  --color-warm-gray-300: #a39e98; /* Placeholder, disabled, captions */
+
+  /* --- BRAND: NOTION BLUE (singular saturated accent) --- */
+  --color-notion-blue: #0075de; /* Primary CTA, links, interactive */
+  --color-notion-blue-hover: #005bab; /* Hover / active-pressed state */
+  --color-deep-navy: #213183; /* Secondary brand, dark emphasis */
+
+  /* Focus ring */
+  --color-focus-blue: #097fe8;
+
+  /* --- BADGE SYSTEM --- */
+  --color-badge-bg: #f2f9ff; /* Pill badge background (tinted blue) */
+  --color-badge-text: #097fe8; /* Pill badge text */
+
+  /* --- SEMANTIC ACCENT COLORS --- */
+  --color-teal: #2a9d99; /* Success / positive */
+  --color-green: #1aae39; /* Confirmation / completion */
+  --color-orange: #dd5b00; /* Warning (capacity > 75%) */
+  --color-critical-pink: #ff64c8; /* Critical (capacity > 95%) */
+  --color-purple: #391c57; /* Premium features */
+  --color-brown: #523410; /* Earthy accent */
+
+  /* --- BORDER TOKENS --- */
+  /* "Whisper Border" — the defining Notion aesthetic element */
+  --border-whisper: 1px solid rgba(0, 0, 0, 0.1);
+  --border-input: 1px solid #dddddd;
+  --border-focus: 2px solid var(--color-focus-blue);
+
+  /* --- BORDER RADIUS SCALE --- */
+  --radius-micro: 4px; /* Buttons, inputs, functional elements */
+  --radius-subtle: 5px; /* Links, list items, menu items */
+  --radius-standard: 8px; /* Small cards, inline elements */
+  --radius-comfortable: 12px; /* Standard cards, feature containers */
+  --radius-large: 16px; /* Hero cards, featured content */
+  --radius-pill: 9999px; /* Badges, status pills (FULL PILL) */
+  --radius-circle: 100%; /* Avatars, circular indicators */
+
+  /* --- TYPOGRAPHY: LETTER-SPACING SCALE (NotionInter compression) --- */
+  /* Compression at scale: tightest at display, relaxes to normal at body */
+  --tracking-display: -2.125px; /* 64px display hero */
+  --tracking-display-secondary: -1.875px; /* 54px display secondary */
+  --tracking-section: -1.5px; /* 48px section heading */
+  --tracking-subheading: -0.625px; /* 26px sub-heading */
+  --tracking-card-title: -0.25px; /* 22px card title */
+  --tracking-body-large: -0.125px; /* 20px body large */
+  --tracking-body: normal; /* 16px standard body */
+  --tracking-badge: 0.125px; /* 12px badge (ONLY positive tracking) */
+
+  /* --- ELEVATION / SHADOW STACKS --- */
+  /* Philosophy: multi-layer, sub-0.05 opacity — depth felt not seen */
+
+  /* Level 1: Whisper (border only, defined above) */
+
+  /* Level 2: Soft Card — 4-layer stack */
+  --shadow-card: rgba(0, 0, 0, 0.04) 0px 4px 18px,
+    rgba(0, 0, 0, 0.027) 0px 2.025px 7.84688px,
+    rgba(0, 0, 0, 0.02) 0px 0.8px 2.925px,
+    rgba(0, 0, 0, 0.01) 0px 0.175px 1.04062px;
+
+  /* Level 3: Deep Card — 5-layer stack (modals, featured panels) */
+  --shadow-deep: rgba(0, 0, 0, 0.01) 0px 1px 3px,
+    rgba(0, 0, 0, 0.02) 0px 3px 7px, rgba(0, 0, 0, 0.02) 0px 7px 15px,
+    rgba(0, 0, 0, 0.04) 0px 14px 28px, rgba(0, 0, 0, 0.05) 0px 23px 52px;
+
+  /* --- SPACING BASE --- */
+  /* 8px base unit organic scale — referenced here for documentation */
+  /* Tailwind's default scale maps well; custom values added where needed */
+  --spacing-base: 8px;
+
+  /* --- ANIMATION DURATIONS --- */
+  --duration-haptic: 200ms; /* Micro-interactions (RSVP scale, button tap) */
+  --duration-transition: 300ms; /* Standard UI state transitions */
+  --duration-skeleton: 1500ms; /* Skeleton loading pulse */
 }
 
+/* -----------------------------------------------------------------------
+   BASE LAYER: Reset & Core HTML element defaults
+   Applies the Tactile Utility aesthetic to all pages globally.
+   ----------------------------------------------------------------------- */
 @layer base {
+  /* Root HTML — warm white page background, NotionInter font stack */
+  html {
+    font-family: var(--font-sans);
+    /* Smooth font rendering (WebKit / macOS subpixel) */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Enable OpenType lining numerals globally */
+    font-feature-settings: "lnum" 1, "locl" 1;
+  }
+
   body {
-    @apply bg-black text-white;
+    background-color: var(--color-pure-white);
+    color: var(--color-notion-black);
+    /* Prevent layout shift from scrollbar appearing */
+    overflow-x: hidden;
+  }
+
+  /* ---- TYPOGRAPHY BASE STYLES ---- */
+  /* NotionInter compression scale — each heading tier is precisely set */
+
+  /* Display Hero: 64px / 700 / lh 1.00 / ls -2.125px */
+  .text-display {
+    font-size: 4rem; /* 64px */
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-display);
+  }
+
+  /* Display Secondary: 54px / 700 / lh 1.04 / ls -1.875px */
+  .text-display-secondary {
+    font-size: 3.375rem; /* 54px */
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: var(--tracking-display-secondary);
+  }
+
+  /* Section Heading: 48px / 700 / lh 1.00 / ls -1.5px */
+  .text-section-heading {
+    font-size: 3rem; /* 48px */
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--tracking-section);
+  }
+
+  /* Sub-heading Large: 40px / 700 / lh 1.50 / ls normal */
+  .text-subheading-lg {
+    font-size: 2.5rem; /* 40px */
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: normal;
+  }
+
+  /* Sub-heading: 26px / 700 / lh 1.23 / ls -0.625px */
+  .text-subheading {
+    font-size: 1.625rem; /* 26px */
+    font-weight: 700;
+    line-height: 1.23;
+    letter-spacing: var(--tracking-subheading);
+  }
+
+  /* Card Title: 22px / 700 / lh 1.27 / ls -0.25px */
+  .text-card-title {
+    font-size: 1.375rem; /* 22px */
+    font-weight: 700;
+    line-height: 1.27;
+    letter-spacing: var(--tracking-card-title);
+  }
+
+  /* Body Large: 20px / 600 / lh 1.40 / ls -0.125px */
+  .text-body-lg {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-body-large);
+  }
+
+  /* Body (Standard): 16px / 400 / lh 1.50 / ls normal */
+  .text-body {
+    font-size: 1rem; /* 16px */
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-body);
+  }
+
+  /* Body Medium (UI text, nav): 16px / 500 */
+  .text-body-medium {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* Body Semibold (strong labels, active states): 16px / 600 */
+  .text-body-semibold {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* Nav / Button: 15px / 600 / lh 1.33 */
+  .text-nav {
+    font-size: 0.9375rem; /* 15px */
+    font-weight: 600;
+    line-height: 1.33;
+  }
+
+  /* Caption: 14px / 500 / lh 1.43 */
+  .text-caption {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    line-height: 1.43;
+  }
+
+  /* Caption Light: 14px / 400 */
+  .text-caption-light {
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.43;
+  }
+
+  /* Badge / Micro Label: 12px / 600 / ls +0.125px (ONLY positive in system) */
+  .text-badge {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    line-height: 1.33;
+    letter-spacing: var(--tracking-badge);
+  }
+
+  /* Micro Label: 12px / 400 */
+  .text-micro {
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.33;
+    letter-spacing: var(--tracking-badge);
+  }
+
+  /* ---- FOCUS SYSTEM ---- */
+  /* WCAG AA: all interactive elements must have visible focus ring */
+  :focus-visible {
+    outline: var(--border-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-micro);
+  }
+
+  /* ---- SCROLLBAR ---- */
+  /* Thin, warm-toned scrollbar on WebKit browsers */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-warm-white);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-warm-gray-300);
+    border-radius: var(--radius-pill);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-warm-gray-500);
+  }
+}
+
+/* -----------------------------------------------------------------------
+   COMPONENTS LAYER: Shared utility-class patterns
+   Reusable classes for the Tactile Utility system — use these in JSX
+   instead of duplicating inline Tailwind chains.
+   ----------------------------------------------------------------------- */
+@layer components {
+  /* ---- WHISPER BORDER ---- */
+  /* The defining element of the Notion aesthetic */
+  .border-whisper {
+    border: var(--border-whisper);
+  }
+
+  .border-t-whisper {
+    border-top: var(--border-whisper);
+  }
+
+  .border-b-whisper {
+    border-bottom: var(--border-whisper);
+  }
+
+  /* ---- CARD CONTAINERS ---- */
+  /* Standard card: white bg, whisper border, comfortable radius, soft shadow */
+  .card-surface {
+    background-color: var(--color-pure-white);
+    border: var(--border-whisper);
+    border-radius: var(--radius-comfortable); /* 12px */
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Featured / hero card: larger radius + deep shadow */
+  .card-surface-featured {
+    background-color: var(--color-pure-white);
+    border: var(--border-whisper);
+    border-radius: var(--radius-large); /* 16px */
+    box-shadow: var(--shadow-deep);
+  }
+
+  /* Dark warm surface (footer, feature sections) */
+  .surface-warm-dark {
+    background-color: var(--color-warm-dark);
+    color: var(--color-pure-white);
+  }
+
+  /* Alternate section background */
+  .surface-warm-white {
+    background-color: var(--color-warm-white);
+  }
+
+  /* ---- PILL BADGE (Status Indicators) ---- */
+  /* Full 9999px radius, tinted blue bg — the ONLY positive letter-spacing */
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--color-badge-bg);
+    color: var(--color-badge-text);
+    padding: 4px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.33;
+    letter-spacing: var(--tracking-badge);
+  }
+
+  /* Semantic badge variants */
+  .badge-pill-success {
+    background-color: rgba(26, 174, 57, 0.1);
+    color: var(--color-green);
+  }
+
+  .badge-pill-warning {
+    background-color: rgba(221, 91, 0, 0.1);
+    color: var(--color-orange);
+  }
+
+  .badge-pill-critical {
+    background-color: rgba(255, 100, 200, 0.12);
+    color: var(--color-critical-pink);
+  }
+
+  /* ---- SECTION LAYOUT ---- */
+  /* Standard section: centered, max-width, generous vertical padding */
+  .section-container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    padding-block: 64px;
+  }
+
+  .section-container-sm {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    padding-block: 48px;
+  }
+
+  /* Mobile feed: strict max-w-md constraint per UX spec */
+  .feed-container {
+    max-width: 28rem; /* ~448px — max-w-md */
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  /* ---- CAPACITY BAR COLORS (used in Epic 10 RSVP) ---- */
+  /* State changes via JS class toggle */
+  .capacity-bar-neutral {
+    background-color: var(--color-notion-blue);
+  }
+
+  .capacity-bar-warning {
+    background-color: var(--color-orange); /* > 75% */
+  }
+
+  .capacity-bar-critical {
+    background-color: var(--color-critical-pink); /* > 95% */
+  }
+}
+
+/* -----------------------------------------------------------------------
+   UTILITIES LAYER: Additional atomic helpers
+   ----------------------------------------------------------------------- */
+@layer utilities {
+  /* Notion Blue text / border / bg helpers */
+  .text-notion-blue {
+    color: var(--color-notion-blue);
+  }
+
+  .bg-notion-blue {
+    background-color: var(--color-notion-blue);
+  }
+
+  .bg-warm-white {
+    background-color: var(--color-warm-white);
+  }
+
+  .text-warm-gray {
+    color: var(--color-warm-gray-500);
+  }
+
+  .text-warm-gray-muted {
+    color: var(--color-warm-gray-300);
+  }
+
+  /* Shadow utility classes */
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-deep {
+    box-shadow: var(--shadow-deep);
+  }
+
+  /* Motion-safe animation guard — use on any animated element */
+  /* Native Tailwind motion-safe: prefix handles this, documented here for clarity */
+
+  /* Skeleton loader animation (referenced by story 2.6 skeleton components) */
+  .skeleton-pulse {
+    animation: skeleton-pulse var(--duration-skeleton) ease-in-out infinite;
+  }
+
+  @keyframes skeleton-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  /* ---- ACCESSIBILITY: Screen Reader Utilities ---- */
+  /* Visually hidden but announced by screen readers */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* sr-only that becomes visible on focus (for skip links) */
+  .sr-only-focusable:focus,
+  .sr-only-focusable:focus-within {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Aria-live region: append to DOM, always present, empty until state changes */
+  /* Usage: <span aria-live="polite" aria-atomic="true" className="aria-live-region"> */
+  .aria-live-region {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
   }
 }

@@ -10,34 +10,22 @@ fi
 # Ensure we are authenticated
 gh auth status || exit 1
 
-# Directory where BMad stories live
 STORIES_DIR="_bmad-output/implementation-artifacts"
-
 if [ ! -d "$STORIES_DIR" ]; then
   echo "Error: Directory $STORIES_DIR does not exist."
   exit 1
 fi
 
-echo "Syncing stories to GitHub Issues..."
+# Fallback basic logic if not using the robust node script
+echo "We recommend using scripts/sync.cjs for a safer, dependency-aware sync with milestones!"
+echo "If you want to just push basic issues, uncomment the lines below."
 
-# Loop through all markdown files in the directory
-for FILE in "$STORIES_DIR"/*.md; do
-  # Exclude non-story files like sprint-status.yaml or readiness reports if they ended up here
-  if [[ "$FILE" == *"readiness"* ]]; then
-    continue
-  fi
-
-  # Extract the filename without the path and extension
-  BASENAME=$(basename "$FILE" .md)
-
-  # Use the filename as the initial title (can be improved to extract first H1)
-  TITLE="Story: $BASENAME"
-
-  echo "Creating issue for: $TITLE"
-  gh issue create --title "$TITLE" --body-file "$FILE" --label "story"
-  
-  # small delay to prevent rate-limiting from GH API
-  sleep 1
-done
-
-echo "✅ All stories successfully pushed to GitHub Issues."
+# for FILE in "$STORIES_DIR"/*.md; do
+#   if [[ "$FILE" == *"readiness"* ]]; then continue; fi
+#   BASENAME=$(basename "$FILE" .md)
+#   TITLE="Story: $BASENAME"
+#   echo "Creating issue for: $TITLE"
+#   gh issue create --title "$TITLE" --body-file "$FILE" --label "story"
+#   sleep 1
+# done
+# echo "✅ All stories successfully pushed to GitHub Issues."

@@ -40,10 +40,10 @@ export function CommandMenu() {
     <Command.Dialog
       open={open}
       onOpenChange={setOpen}
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh] animate-in fade-in duration-150 ease-out"
-      overlayClassName="fixed inset-0 backdrop-blur-md bg-black/80"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] animate-in fade-in duration-150 ease-out"
+      overlayClassName="fixed inset-0 backdrop-blur-md bg-black/80 z-[90]"
     >
-      <div className="relative z-50 w-full max-w-sm rounded-[16px] border border-white/10 bg-zinc-950 p-[12px] shadow-2xl overflow-hidden sm:max-w-md md:max-w-xl animate-in zoom-in-95 duration-150 ease-out">
+      <div className="relative z-[100] w-full max-w-sm rounded-[16px] border border-white/10 bg-zinc-950 p-[12px] shadow-2xl overflow-hidden sm:max-w-md md:max-w-xl animate-in zoom-in-95 duration-150 ease-out">
         <Command
           className="w-full bg-transparent outline-none"
           shouldFilter={false} // Disable internal filtering so we see TRPC results properly

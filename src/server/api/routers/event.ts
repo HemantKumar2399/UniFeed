@@ -153,6 +153,14 @@ club ??= await ctx.db.club.create({
       },
       orderBy: { date: "asc" },
       include: {
+        rsvps: {
+          where: {
+            userId: ctx.session.user.id,
+          },
+          select: {
+            status: true,
+          }
+        },
         club: {
           select: {
             id: true,

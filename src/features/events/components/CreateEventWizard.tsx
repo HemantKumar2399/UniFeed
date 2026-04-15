@@ -80,41 +80,43 @@ export function CreateEventWizard() {
         onKeyDown={handleKeyDown}
         className="flex w-full flex-col gap-6"
       >
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <span className={currentStep === 1 ? "font-bold text-gray-900 dark:text-white" : ""}>Details</span>
-          &gt;
-          <span className={currentStep === 2 ? "font-bold text-gray-900 dark:text-white" : ""}>Media</span>
-          &gt;
-          <span className={currentStep === 3 ? "font-bold text-gray-900 dark:text-white" : ""}>Capacity/Review</span>
-        </div>
+        <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
+          <div className="flex items-center justify-between text-sm font-medium tracking-badge uppercase text-warm-gray-500 mb-2">
+            <span className={currentStep === 1 ? "text-notion-black font-bold" : ""}>1. Details</span>
+            <span className="text-border-whisper">—</span>
+            <span className={currentStep === 2 ? "text-notion-black font-bold" : ""}>2. Media</span>
+            <span className="text-border-whisper">—</span>
+            <span className={currentStep === 3 ? "text-notion-black font-bold" : ""}>3. Capacity</span>
+          </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-black">
-          <div className={currentStep === 1 ? "block" : "hidden"}><StepDetails /></div>
-          <div className={currentStep === 2 ? "block" : "hidden"}><StepMedia /></div>
-          <div className={currentStep === 3 ? "block" : "hidden"}><StepReview /></div>
-        </div>
+          <div className="rounded-[var(--radius-comfortable)] border border-[var(--border-whisper)] bg-pure-white p-8 shadow-none transition-all duration-300">
+            <div className={currentStep === 1 ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}><StepDetails /></div>
+            <div className={currentStep === 2 ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}><StepMedia /></div>
+            <div className={currentStep === 3 ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}><StepReview /></div>
+          </div>
 
-        <div className="flex items-center justify-between">
-          {currentStep > 1 ? (
+          <div className="flex items-center justify-between mt-4">
+            {currentStep > 1 ? (
+              <button
+                type="button"
+                onClick={handlePrev}
+                className="rounded-[var(--radius-micro)] border border-[var(--border-whisper)] bg-pure-white px-5 py-2.5 text-base font-medium text-notion-black hover:bg-warm-white transition-colors duration-haptic active:scale-95"
+              >
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
+
             <button
-              type="button"
-              onClick={handlePrev}
-              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
+              type={currentStep === 3 ? "submit" : "button"}
+              onClick={currentStep < 3 ? handleNext : undefined}
+              disabled={createEvent.isPending}
+              className="rounded-[var(--radius-micro)] bg-notion-black px-5 py-2.5 text-base font-medium text-pure-white hover:bg-notion-black/90 disabled:opacity-50 transition-colors duration-haptic active:scale-95 ml-auto"
             >
-              Prev
+              {createEvent.isPending ? "Saving..." : currentStep === 3 ? "Publish Event" : "Continue"}
             </button>
-          ) : (
-            <div />
-          )}
-
-          <button
-            type={currentStep === 3 ? "submit" : "button"}
-            onClick={currentStep < 3 ? handleNext : undefined}
-            disabled={createEvent.isPending}
-            className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
-          >
-            {createEvent.isPending ? "Submitting..." : currentStep === 3 ? "Submit" : "Next"}
-          </button>
+          </div>
         </div>
       </form>
     </FormProvider>

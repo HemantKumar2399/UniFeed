@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Globe, User } from "lucide-react";
+import { Home, Users, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: "/home", icon: Home, label: "Home" },
-  { href: "/search", icon: Search, label: "Search" },
-  { href: "/global", icon: Globe, label: "Global" },
+  { href: "/home", icon: Home, label: "Pulse" },
+  { href: "/search", icon: Users, label: "Hubs" },
+  { href: "/global", icon: Search, label: "Passport" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
 
@@ -16,9 +16,9 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <div className="fixed bottom-0 border-t left-0 right-0 mx-auto z-50 w-full max-w-md bg-background/80 backdrop-blur-xl md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-50 mx-auto w-full max-w-md border-t border-[var(--border-whisper)] bg-pure-white/90 backdrop-blur-xl md:hidden">
       <nav
-        className="flex h-16 w-full items-center justify-around px-2"
+        className="flex h-14 w-full items-center justify-around px-2"
         aria-label="Bottom Navigation"
       >
         {tabs.map((tab) => {
@@ -30,13 +30,13 @@ export function BottomNav() {
               key={tab.href}
               href={tab.href}
               className={cn(
-                "flex flex-col items-center justify-center w-16 h-full space-y-1 transition-colors",
-                isActive ? "text-rose-600" : "text-muted-foreground hover:text-foreground",
+                "flex h-full w-14 flex-col items-center justify-center space-y-1 transition-colors duration-transition active:scale-95",
+                isActive ? "text-notion-blue" : "text-warm-gray-300 hover:text-notion-black",
               )}
               aria-current={isActive ? "page" : undefined}
             >
               <Icon className="h-5 w-5" strokeWidth={isActive ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{tab.label}</span>
+              <span className="text-[10px] font-medium tracking-badge">{tab.label}</span>
             </Link>
           );
         })}
@@ -45,12 +45,12 @@ export function BottomNav() {
   );
 }
 
-export function DesktopSidebarNav() {
+export function DesktopSidebarNav({ className }: { className?: string }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex md:w-[240px] md:flex-col md:gap-6 md:pr-4 lg:w-[280px] lg:pr-8">
-      <div className="pt-8 text-2xl font-black tracking-tight">UniFeed</div>
+    <aside className={cn("hidden md:flex md:w-[240px] md:flex-col md:gap-6 md:pr-4 lg:w-[280px] lg:pr-8", className)}>
+      <div className="pt-8 text-xl font-bold tracking-tight text-notion-black">Campus Platform</div>
       <nav className="flex flex-col gap-2" aria-label="Desktop Navigation">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -61,10 +61,10 @@ export function DesktopSidebarNav() {
               key={tab.href}
               href={tab.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors",
+                "flex items-center gap-3 rounded-subtle px-4 py-3 text-sm font-semibold transition-colors duration-transition",
                 isActive
-                  ? "bg-zinc-900 text-rose-500 ring-1 ring-zinc-800"
-                  : "text-zinc-300 hover:bg-zinc-950 hover:text-white",
+                  ? "bg-pure-white text-notion-blue active:scale-95 shadow-[var(--shadow-card)] border-[var(--border-whisper)]"
+                  : "text-warm-gray-500 hover:bg-pure-white hover:text-notion-black active:scale-95 border border-transparent",
               )}
               aria-current={isActive ? "page" : undefined}
             >

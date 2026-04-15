@@ -1,13 +1,15 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-lastStep: 14
-inputDocuments: ['prd.md', 'architecture.md', 'brainstorming-session-20260401-1637.md', 'campus-platform-idea.md', 'implementation-readiness-report-2026-04-02.md']
+stepsCompleted: [1, 2, 3]
+inputDocuments:
+  - docs/product/prd.md
+  - DESIGN.md
+  - campus-platform-idea.md
 ---
 
-# UX Design Specification UniFeed
+# UX Design Specification Campus Platform
 
-**Author:** Hemant
-**Date:** 2026-04-03
+**Author:** Hemant Kumar
+**Date:** April 15, 2026
 
 ---
 
@@ -16,20 +18,20 @@ inputDocuments: ['prd.md', 'architecture.md', 'brainstorming-session-20260401-16
 ## Executive Summary
 
 ### Project Vision
-UniFeed is a "Functional Social" platform designed to centralize and secure the campus experience. It modernizes the way university students discover events and engage with clubs by replacing fragmented social media silos with a premium, exclusive, real-time web application with a minimalist, high-fidelity design.
+Campus Platform (UniFeed) is a mobile-native, student-first utility designed to eliminate the fragmentation of campus information. Embracing a "Tactile Utility" philosophy inspired by Notion and Apple Wallet, the platform shifts away from addictive infinite scrolling to focus on intentional discovery and frictionless interactions. It serves as a centralized pulse for university life, enabling bottom-up adoption without requiring university admin buy-in.
 
 ### Target Users
-- **General Students:** Seeking instant access to campus events with zero friction. They value clean aesthetics, speed, and real-time live metrics without visual clutter.
-- **Club Organizers:** Seeking effortless event management, live capacity tracking, and visually intuitive analytics without steep learning curves.
+- **Students (Attendees):** University students seeking a definitive, personalized source for campus events. They value speed, relevant curation based on their major/interests, and interactions that feel effortlessly secure.
+- **Club Organizers:** Community leads needing a fast, structured way to broadcast events and manage attendance. They prioritize speed and visual consistency over complex design tools.
 
 ### Key Design Challenges
-- **App-Like Web Experience:** Ensuring the mobile web interface feels as responsive and premium as a native application while maintaining a clean, balanced aesthetic.
-- **Information Hierarchy:** Balancing the display of rich event data (Live capacities, times, locations, RSVPs) in the "Home Feed" without overwhelming the user.
-- **Accessible Analytics:** Translating complex organizer data into digestible, actionable visualizations.
+- **Frictionless Interactions:** Ensuring the RSVP experience feels satisfying and instantaneous—like a physical ticket sliding into a premium wallet—while safely managing real-time database transactions underneath.
+- **Speed via Constraints:** Providing organizers with an environment that guarantees high-quality aesthetics without overwhelming them. The editor must rely on block/template constraints to maintain the "Tactile Utility" look.
+- **Micro-Interaction Polish:** Achieving Apple/Notion level of polish with subtle, physics-based animations (e.g., spring physics, slight scale-downs) that feel deliberate and elegant, rather than cartoony.
 
 ### Design Opportunities
-- **Interactive Digital Passport:** Elevating the standard login flow into a visually clean, Wallet-style digital identity card.
-- **Balanced Micro-Interactions:** Utilizing real-time data to power subtle, engaging animations (like Live Capacity bars) that feel premium and functional rather than overly futuristic.
+- **Tactile Utility Model:** Moving away from generic "Instagram-clone" UI elements. Using warm neutrals and whisper borders, combined with satisfying haptics and animations to create a premium, engaging utility.
+- **Bottom-Up Scalability:** Designing onboarding and discovery flows so seamlessly that one single club using the platform is enough to generate organic student adoption.
 
 ## Core User Experience
 
@@ -197,6 +199,31 @@ The color palette prioritizes high-contrast readability and limits accent colors
 - The vast majority of standard users (students browsing the feed) will use mobile devices. For them, the interface must remain a strict, clean, single-column vertical feed to prevent cognitive overload.
 - However, "Power Users" (Club Organizers, Event Admins) will utilize desktop environments to parse analytics, export data, and create events. Expanding the layout laterally into a 3-column structure (Navigation / Core Feed / Contextual Widgets) ensures desktop space isn't wasted while preserving the dimensional integrity of the center feed.
 
+## Core User Journeys
+
+### 1. Campus Pulse Discovery (Student)
+- **Trigger:** The student opens the UniFeed web app to find out what's happening on campus today.
+- **Entry Point:** The user lands directly on the "Campus Pulse" home feed. 
+- **Experience:** The feed is already personalized based on their `.edu` profile (course, year, branch). The interface is stripped of noisy social features; instead, they see high-fidelity, minimalist event cards displaying key metadata (Title, Time, Location, Club, capacity).
+- **Outcome:** The student easily digests the information without needing to tap into individual pages or external links.
+
+### 2. The One-Tap RSVP & Digital Passport (Student)
+- **Trigger:** The student sees an interesting ML Workshop and wants to attend.
+- **Action:** They tap the "RSVP" button directly on the event card from the feed.
+- **System Response:** 
+  - A tactile micro-interaction (spring physics scale-down) provides immediate haptic-like visual feedback.
+  - The RSVP button transitions instantly to a "✓ Secured" state.
+  - A real-time WebSocket connection increments the "Live Capacity" progress bar visibly on the card.
+  - The event is automatically slotted into their identity-locked "Digital Passport" wallet and personal calendar view.
+- **Outcome:** The student secures their spot in less than 2 seconds, completely eliminating form-fatigue. 
+
+### 3. Event Creation & Live Management (Organizer)
+- **Trigger:** A club lead needs to announce an upcoming hackathon and track registrations.
+- **Action:** The organizer switches to the "Organizer Dashboard" view.
+- **Creation Flow:** They click "New Event" and draft the details using a distraction-free, Notion-inspired block editor. They set capacity limits and add visual assets.
+- **Publishing & Management:** Upon publishing, the event goes live on the Campus Pulse. The organizer is immediately redirected to their event's live dashboard, featuring a real-time data table of attendees.
+- **Outcome:** The organizer watches their RSVPs climb in real-time and eventually uses the "1-Click CSV Export" to prepare the final attendance sheet for the university gate.
+
 ### Implementation Approach
 - **Mobile (`< md`):** Bottom tab navigation. Full-width header. Full-width event cards with native margins (`px-4`).
 - **Tablet/Desktop (`md` and >):** The bottom bar transitions into a left-side sticky Sidebar navigation. The Home Feed locks to a maximum width (e.g., `max-w-xl`) in the center. An optional right-side contextual panel appears for widgets and analytics metrics.
@@ -352,3 +379,62 @@ UniFeed must be accessible to all students. We are targeting baseline **WCAG AA*
 1. **Never use fixed pixels for widths:** Always use Tailwind percentage utilities (`w-full`) or viewport units (`vw`) to allow the browser to scale the app natively.
 2. **Hit Targets:** Any tappable area (RSVP buttons, link tabs) must have a minimum physical size of `44x44px` to prevent "fat-finger" misclicks on mobile devices.
 3. **Network Responsiveness:** "Responsive" extends to data payloads. `Next/Image` or standard responsive image arrays (`srcset`) *must* be used for Event Posters. Never serve a desktop-resolution image to a mobile device.
+
+## Step 4: Mapping Screens & Views
+
+### 4.1 Mobile Navigation Architecture
+- **Navigation Style:** A persistent bottom tab bar for native-like mobile usability.
+- **Primary Destinations:**
+  1. **Pulse (Home):** The default landing view containing the curated feed of campus events.
+  2. **Hubs (Explore):** A directory for discovering and following university clubs and communities.
+  3. **Passport (My Events):** The digital wallet holding secured event tickets, QR codes, and past attendance history.
+  4. **Profile:** User settings, domain interests, and `.edu` identity management.
+
+### 4.2 Card Expansion & Context Retention
+- **Interaction Model:** Tapping an event card for details must not trigger a full page navigation.
+- **UI Component:** Implement native-feeling bottom sliding drawers (Sheets/Modals) that consume 80-90% of the viewport.
+- **Rationale:** This reinforces the "Tactile Utility" approach. Users can swipe the drawer down to dismiss it, returning instantly to their exact scroll position in the feed, eliminating "back button" friction.
+
+### 4.3 Empty States
+- **Design Philosophy:** Empty states should be clean, minimalist, and actionable—never a dead end.
+- **Implementation:** 
+  - *Passport:* Display a friendly message like, "Your passport is empty. Ready for your first event?" paired with a prominent CTA routing the user back to the Pulse.
+  - *Hubs:* Show suggested communities based on the student's major if they aren't following any clubs yet.
+
+### 4.4 Organizer Analytics & Dashboards
+- **Core Metrics:** Prominently display the Live Capacity progress bar.
+- **Audience Insights:** Provide a simple, highly legible breakdown of attendees by **Course** and **Year** (e.g., "B.Tech CSE - 3rd Year: 45%").
+- **Rationale:** Equip organizers with immediate, actionable demographic insights without forcing them to export data to a CSV first.
+
+## Step 5: Component Design & Micro-interactions
+
+### 5.1 Tactile Utility Baseline Defaults
+To execute the "Tactile Utility" design language, all components must adhere to the following baseline defaults:
+1. **Geometry:** Components utilize `rounded-lg` or `rounded-xl` corners with flat, whisper-thin borders (`1px solid rgba(0,0,0,0.1)`). We strictly avoid harsh, heavy drop shadows, favoring a flat, paper-like aesthetic.
+2. **Typography:** Medium weight (`font-medium`) is the standard for readability, but large, bold titles (`text-2xl` or `text-3xl`, `tracking-tight`) are used to establish a clean, Notion-like visual hierarchy.
+3. **Physics & Animation:** Micro-interactions (like tapping a button or opening a drawer) use softer, spring-based bounce animations (similar to Apple Wallet) rather than linear or stiff CSS transitions. This makes the interface feel physical and responsive.
+4. **Form Controls:** For organizers creating events, form fields are minimalist—often styled as "underlined" inputs or seamless blocks rather than heavy, boxed containers, reducing visual clutter during data entry.
+
+### 5.2 The Digital Certificate & Skills Builder (Profile/Passport Shift)
+The student Profile and Passport have evolved beyond a simple "ticket wallet" or attendance tracker. It is now a **Digital Certificate & Skills Builder**.
+- **Verified Participation (QR Check-in):** We strictly maintain the **QR Code Check-in System** at the venue door. This ensures that attendance is physically verified by organizers, maintaining the integrity and trust of the platform's data.
+- **The Digital Certificate:** Once a student's QR code is successfully scanned and their attendance is verified, the event transforms into a permanent "Digital Certificate" within their Profile.
+- **Visual Portfolio:** As students actively participate in diverse events (hackathons, workshops, seminars), their profile aggregates these verified certificates. This builds a highly credible, verifiable campus portfolio and resume-ready credential, proving their active engagement and skills developed over their university tenure.
+
+### 5.3 Micro-interaction Specifications
+- **The "Add to Passport" Action:** When a student taps RSVP, the button scales down slightly (spring physics), validates the capacity, and then triggers a fluid animation of the event card visually "dropping" or "folding" down into the Passport tab icon at the bottom of the screen.
+- **Capacity Bar Feedback:** The Live Capacity progress bar fills with a smooth, eased motion. If capacity is critical (>90%), the bar may feature a very subtle pulse animation to communicate urgency without resorting to aggressive flashing.
+- **Drawer Snapping:** When pulling up an event details sheet, the drawer closely tracks the user's thumb, snapping satisfyingly to the top or bottom with spring physics when released.
+
+---
+
+## Conclusion & Next Steps
+
+### Workflow Completion
+This concludes the UX Design Specification phase. We have successfully mapped the core user experience, defined the emotional outcomes, selected our design system (shadcn/ui + Tailwind), and established the structural and interactive patterns for the Campus Platform, including the pivotal shift to the "Digital Certificate & Skills Builder."
+
+### Next Steps
+1. **Architecture & Tech Stack Checkout:** Proceed to formalize the system architecture and database schema in the Solution Design phase.
+2. **Epic & Story Creation:** Begin breaking down these UX specifications into actionable agile Epics and User Stories.
+3. **Initial Prototyping:** Developers can begin scaffolding the Next.js application, installing shadcn/ui, and configuring the base Tailwind theme using the Tactile Utility defaults defined in this document.
+
