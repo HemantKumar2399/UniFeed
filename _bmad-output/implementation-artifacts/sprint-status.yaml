@@ -80,10 +80,10 @@ development_status:
   epic-4-retrospective: done
 
   epic-5: backlog
-  5-1-the-command-menu-cmdk: ready-for-dev
-  5-2-server-side-algorithmic-search: ready-for-dev
-  5-3-global-search-overlay: ready-for-dev
-  5-4-personal-profile-shell: ready-for-dev
-  5-5-active-expired-ticket-sorting: ready-for-dev
-  5-6-dark-mode-settings-toggle: ready-for-dev
+  5-1-the-command-menu-cmdk: done
+  5-2-server-side-algorithmic-search: done
+  5-3-global-search-overlay: done
+  5-4-personal-profile-shell: done
+  5-5-active-expired-ticket-sorting: done
+  5-6-dark-mode-settings-toggle: done
   epic-5-retrospective: optional
