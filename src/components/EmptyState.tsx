@@ -39,7 +39,7 @@ export function EmptyState({
         {description}
       </p>
       {actionLabel && actionHref && (
-        <Button asChild variant="primary">
+        <Button asChild variant="default">
           <Link href={actionHref}>{actionLabel}</Link>
         </Button>
       )}

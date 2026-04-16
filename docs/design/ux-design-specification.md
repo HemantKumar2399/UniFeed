@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3]
+stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 inputDocuments:
   - docs/product/prd.md
   - DESIGN.md
@@ -438,3 +438,29 @@ This concludes the UX Design Specification phase. We have successfully mapped th
 2. **Epic & Story Creation:** Begin breaking down these UX specifications into actionable agile Epics and User Stories.
 3. **Initial Prototyping:** Developers can begin scaffolding the Next.js application, installing shadcn/ui, and configuring the base Tailwind theme using the Tactile Utility defaults defined in this document.
 
+
+### Desired Emotional Response
+**1. Primary Emotion: Effortless Trust**
+When a student crosses our "Front Door" and seamlessly authenticates, the immediate emotional response must be a deep exhalation. Built on responsive, reusable Tactile Utility tokens rather than hardcoded values, everything feels mathematically perfect and unbroken.
+**2. The Interaction "Feel": Tactile & Grounded**
+Users manipulate physical, premium objects—not web pages. Physics-in-motion (springs, slight scaling) provides satisfying, immediate feedback.
+**3. State Transitions: Unbroken Momentum**
+The shift to an Omnichannel Architecture eliminates jarring full-page reloads. Side-drawers, bottom-sheets, and shared layout shells keep the user oriented.
+**4. Organizer Emotion: Distraction-Free Mastery**
+Stripping away chaotic, hardcoded options in favor of perfectly constrained, reusable design tokens makes organizers feel powerful and secure.
+
+## Interaction & Visual Foundation
+
+### Key Interactions
+- **Omnichannel Navigation:** All primary views (Pulse, Hubs, Passport, Profile) exist within a persistent layout shell. Deep links and sub-views (like Event Details or Creator Mode) slide over the main view as bottom-sheets or side-drawers.
+- **One-Tap Actions:** RSVP and check-ins are instantaneous, utilizing optimistic UI updates backed by pessimistic database locks to ensure zero loading spinners during the critical path.
+- **Adaptive Components:** Cards and forms dynamically scale leveraging CSS Grid and Flexbox with design tokens, guaranteeing no broken layouts across mobile, tablet, and desktop viewports.
+
+### Visual Foundation
+- **Design Tokens:** Strict adherence to semantic variables (`--color-warm-white`, `--color-notion-black`, `--border-whisper`). Hardcoded HEX or RGB values are strictly forbidden in component logic.
+- **Typography & Spacing:** Compressed, rhythmic typography with deliberate whitespace. Components are built using standardized spacing multiples.
+- **Micro-interactions:** Tappable elements use `active:scale-95` and spring transitions for a grounded, physical feel.
+
+### Error States & Edge Cases
+- **Graceful Degradation:** If network fails, the app falls back to cached data with subtle, non-intrusive toast notifications.
+- **Empty States:** Never show a blank screen. Empty states must be beautifully illustrated with clear, actionable CTAs routing users back to discovery or creation.

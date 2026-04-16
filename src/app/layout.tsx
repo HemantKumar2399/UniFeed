@@ -28,7 +28,8 @@ const inter = Inter({
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  modal,
+}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   return (
     <html
       lang="en"
@@ -39,7 +40,10 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <AuthProvider>
-            <TRPCReactProvider>{children}</TRPCReactProvider>
+            <TRPCReactProvider>
+              {children}
+              {modal}
+            </TRPCReactProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

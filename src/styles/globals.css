@@ -50,6 +50,14 @@
   --color-badge-bg: #f2f9ff; /* Pill badge background (tinted blue) */
   --color-badge-text: #097fe8; /* Pill badge text */
 
+  /* --- ALIASES FOR SHADCN UI --- */
+  --color-background: var(--color-pure-white);
+  --color-foreground: var(--color-notion-black);
+  --color-muted: rgba(0, 0, 0, 0.05);
+  --color-muted-foreground: var(--color-warm-gray-500);
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-ring: var(--color-focus-blue);
+
   /* --- SEMANTIC ACCENT COLORS --- */
   --color-teal: #2a9d99; /* Success / positive */
   --color-green: #1aae39; /* Confirmation / completion */
@@ -484,5 +492,15 @@
     height: 1px;
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

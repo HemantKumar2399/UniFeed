@@ -113,6 +113,26 @@ Pivoting away from an "Instagram-clone" model, the platform utilizes a **"Tactil
 
 ---
 
-## 7. Innovation & Market Positioning
-*   **"Tactile Utility":** Replacing hyper-stimulating social feeds with a focused, respectful tool that values the user's time while still being a joy to tap and navigate.
-*   **Zero-Friction Strategy:** Solving "Form-Filling Fatigue" through the locked Student Passport.
+## 7. Architecture & UX Pivot: The Journey & Flow Strategy (Epics 8-15)
+
+We are abandoning the old "page-by-page" story mentality and shifting to a "Journey and Flow" architecture. Before installing advanced engine parts, we must ensure the "cabin strategy" feels like a single, unbreakable, premium experience from the landing page straight through to the dashboard.
+
+### 7.1 The Foundational UX Restructure
+We will insert two massive, cross-cutting foundational stories that form the app's skeleton:
+
+1. **Foundational Story A: The Premium "Front Door" Journey**
+   - **Scope:** Landing Page, Registration Flow, and Login.
+   - **The Experience:** A frictionless, "3-second" gateway. Using Tactile Utility tokens (warm neutrals, whisper borders), the landing page glides seamlessly into a one-tap authenticate state. If you have a university domain email, you are in. No friction, pure delight.
+
+2. **Foundational Story B: The Omnichannel Architecture Matrix**
+   - **Scope:** All core Navigation (Bottom Tabs, Sidebars, Modals) and Dashboard skeletons.
+   - **The Experience:** The shell of the app must never jump or jitter. We will map a definitive routing structure where heavy interactions (like ticket details or event editing) utilize elegant bottom-sheets or side-drawers instead of jarring page reloads.
+
+### 7.2 Ruthless Polish of Epics 8–15
+With the foundational structures in place, we stop building "pages" and inject "behavior":
+
+*   **Epic 8 (The Student Passport & Identity):** *Modified.* Because the new "Front Door" handles initial domain auth, Epic 8 solely focuses on backend security and the visual manifestation of the 'Student Passport' as a persistent digital object.
+*   **Epic 9 (Campus Pulse & Event Discovery):** *Merged.* Redundant with the completed Epic 7 refactor. Leftover bottom-sheet interactions are merged into the Omnichannel Architecture Matrix.
+*   **Epic 10 (Frictionless Registration & Transaction):** *Refocused.* Purely about the incredibly satisfying "One-Tap RSVP" physics and the pessimistic locking database magic underneath.
+*   **Epic 11 (Organizer Dashboard) & Epic 12 (Venue Entry):** *Combined.* The dashboard shell is perfected in Story B, making Epic 11 the "Distraction-Free Creator Mode" block editor. Epic 12 (QR Scanners) merges directly into this organizer flow so ticketing and scanning feel unified.
+*   **Epics 13, 14, 15 (Hubs, Threads, Algorithms):** *Platform Expansions.* These advanced community features slot perfectly into the new elegant architecture.

@@ -45,3 +45,16 @@ yarn-error.log*
 # idea files
 .idea
 
+# BMAD and local agent tooling artifacts (do not publish)
+/_bmad/
+/.agent/
+/.claude/
+/.cursor/
+/.trae/
+/.windsurf/
+/.github/skills/
+
+# Keep generated implementation/planning outputs publishable
+!/_bmad-output/
+!/_bmad-output/**
+
