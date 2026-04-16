@@ -3,7 +3,7 @@
 import { use, useState } from "react";
 import { api } from "@/trpc/react";
 import Link from "next/link";
-import { ArrowLeft, Check, Download, AlertCircle } from "lucide-react";
+import { ArrowLeft, Check, Download, AlertCircle, ScanLine } from "lucide-react";
 
 export default function EventAttendeesPage({
   params,
@@ -149,7 +149,14 @@ export default function EventAttendeesPage({
           </p>
         </div>
         
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/dashboard/events/${eventId}/scan`}
+            className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] border border-[var(--border-input)] bg-pure-white px-4 py-2 text-sm font-medium text-notion-black transition-colors duration-haptic active:scale-95 hover:bg-warm-white"
+          >
+            <ScanLine className="mr-2 h-4 w-4" />
+            Scan Mode
+          </Link>
           <button
             onClick={handleExportCsv}
             disabled={attendeesList.length === 0}

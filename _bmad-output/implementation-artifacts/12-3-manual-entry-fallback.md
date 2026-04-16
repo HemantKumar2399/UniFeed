@@ -1,6 +1,6 @@
 # Story 12.3: Manual Entry Fallback
 
-Status: ready-for-dev
+Status: done
 Depends on: [Story 12.2: Organizer Scan-Only Pipeline](https://github.com/HemantKumar822/UniFeed/issues/65)
 
 ## Story
@@ -18,12 +18,12 @@ so that the physical line doesn't halt due to technical glitches.
 
 ## Tasks / Subtasks
 
-- [ ] Add Search capabilities to 'Scan Mode' view
-  - [ ] Create Text bar to search via Type-ahead or on-enter
-  - [ ] Hit tRPC queries checking matching names/PRNs in Attendee List
-- [ ] Manual Check-in function
-  - [ ] Click 'Force Check-In' next to resulting user
-  - [ ] Triggers same redemption backend flow as scanner
+- [x] Add Search capabilities to 'Scan Mode' view
+  - [x] Create Text bar to search via Type-ahead or on-enter
+  - [x] Hit tRPC queries checking matching names/PRNs in Attendee List
+- [x] Manual Check-in function
+  - [x] Click 'Force Check-In' next to resulting user
+  - [x] Triggers same redemption backend flow as scanner
 
 ## Dev Notes
 
@@ -44,10 +44,25 @@ so that the physical line doesn't halt due to technical glitches.
 
 ### Agent Model Used
 
-Gemini 3.1 Pro
+GPT-5.3-Codex
 
 ### Debug Log References
 
+- Added attendee PRN/name matching utilities and tests for deterministic search behavior.
+- Implemented scan-mode manual fallback component with live attendee query + force check-in action.
+- Added event router procedures for organizer attendee search and manual check-in mutation.
+
 ### Completion Notes List
 
+- Added search bar with type-ahead behavior in scan mode to query by name, email, and PRN fallback keys.
+- Implemented `event.searchAttendees` tRPC query returning attendee rows with generated PRN identifiers.
+- Implemented `event.forceCheckIn` mutation to mark attendee RSVP as `ATTENDED` when QR scan fails.
+- Wired manual check-in flow to use same scan-mode success/error feedback framing.
+
 ### File List
+
+- src/components/ManualCheckInFallback.tsx
+- src/features/attendance/checkin-search.utils.ts
+- src/features/attendance/checkin-search.utils.test.ts
+- src/server/api/routers/event.ts
+- src/app/dashboard/events/[id]/scan/page.tsx

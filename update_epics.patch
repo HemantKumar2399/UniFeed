@@ -1,0 +1,13 @@
+--- _bmad-output/planning-artifacts/epics.md
++++ _bmad-output/planning-artifacts/epics.md
+@@ -51,8 +51,21 @@
+-### Epic 8: The Student Passport & Identity Layer
+-### Epic 9: Campus Pulse & Event Discovery
+-### Epic 10: Frictionless Registration & Transaction State
+-### Epic 11: Organizer Dashboard & Management
+-### Epic 12: Digital Passport & Venue Entry
++### Epic 8: The Premium "Front Door" Journey & Omnichannel Architecture
++### Epic 9: Distraction-Free Creator Mode & Reusable Component Library
++### Epic 10: Frictionless One-Tap Registration & Physics-in-Motion
++### Epic 11: Adaptive Contextual Dashboard & Analytics
++### Epic 12: Mobile-Native Venue Entry & Scanner System
