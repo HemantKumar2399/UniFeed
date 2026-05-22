@@ -149,3 +149,59 @@ export const protectedOrganizerProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Admin procedure
+ *
+ * Restricts access to users with 'ADMIN' or 'SUPER_ADMIN' roles.
+ */
+export const adminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    const role = ctx.session?.user?.role;
+    if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Only administrators can access this procedure.",
+      });
+    }
+    return next({
+      ctx: {
+        session: { ...ctx.session!, user: ctx.session!.user },
+      },
+    });
+  });
+
+/**
+ * College Admin procedure
+ *
+ * Restricts access to 'ADMIN' or 'SUPER_ADMIN' and attaches their collegeId to the context
+ * to enforce college-scoped data boundaries.
+ */
+export const collegeAdminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    const role = ctx.session?.user?.role;
+    const collegeId = ctx.session?.user?.collegeId;
+
+    if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Only administrators can access this procedure.",
+      });
+    }
+
+    if (!collegeId) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "User session is missing a college association.",
+      });
+    }
+
+    return next({
+      ctx: {
+        session: { ...ctx.session!, user: ctx.session!.user },
+        collegeId,
+      },
+    });
+  });

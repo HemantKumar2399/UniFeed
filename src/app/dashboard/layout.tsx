@@ -9,7 +9,12 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
 
-  if (session?.user?.role !== "ORGANIZER") {
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const role = session.user.role;
+  if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
     redirect("/unauthorized");
   }
 

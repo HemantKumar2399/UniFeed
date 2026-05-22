@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/server/auth";
+import { db } from "@/server/db";
 import { PremiumStudentShell } from "@/components/layout/premium/PremiumStudentShell";
 
 export default async function ProtectedLayout({
@@ -11,6 +12,15 @@ export default async function ProtectedLayout({
 
   if (!session?.user) {
     redirect("/");
+  }
+
+  if (session.user.role === "STUDENT") {
+    const profile = await db.studentProfile.findUnique({
+      where: { userId: session.user.id },
+    });
+    if (!profile) {
+      redirect("/onboarding");
+    }
   }
 
   return (

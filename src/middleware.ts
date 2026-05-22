@@ -28,14 +28,36 @@ const { auth } = NextAuth({
 });
 
 export default auth((req) => {
-  if (req.nextUrl.pathname.startsWith("/dashboard")) {
-    if (req.auth?.user?.role !== "ORGANIZER") {
-      return NextResponse.redirect(new URL("/unauthorized", req.url));
+  const user = req.auth?.user;
+  const role = user?.role;
+  const path = req.nextUrl.pathname;
+
+  const isDashboard = path.startsWith("/dashboard");
+  const isAdmin = path.startsWith("/admin");
+
+  if (isDashboard || isAdmin) {
+    if (!user) {
+      const loginUrl = new URL("/login", req.url);
+      loginUrl.searchParams.set("callbackUrl", path);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (isDashboard) {
+      if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/unauthorized", req.url));
+      }
+    }
+
+    if (isAdmin) {
+      if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/unauthorized", req.url));
+      }
     }
   }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard", "/dashboard/:path*", "/admin", "/admin/:path*"],
 };

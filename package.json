@@ -26,7 +26,7 @@
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
-    "test:unit": "npx tsx --test \"src/**/*.test.ts\" \"src/**/*.test.tsx\""
+    "test:unit": "npx tsx --test --env-file=.env \"src/**/*.test.ts\" \"src/**/*.test.tsx\""
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",

@@ -60,13 +60,13 @@ development_status:
   1-8-add-event-category-tag-metadata: done
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-remove-public-role-self-selection: backlog
-  2-2-assign-college-during-registration: backlog
-  2-3-add-student-onboarding-for-passport-data: backlog
-  2-4-add-controlled-organizer-assignment: backlog
-  2-5-add-controlled-admin-assignment: backlog
-  2-6-align-middleware-and-server-auth-config: backlog
+  epic-2: done
+  2-1-remove-public-role-self-selection: done
+  2-2-assign-college-during-registration: done
+  2-3-add-student-onboarding-for-passport-data: done
+  2-4-add-controlled-organizer-assignment: done
+  2-5-add-controlled-admin-assignment: done
+  2-6-align-middleware-and-server-auth-config: done
   epic-2-retrospective: optional
 
   epic-3: backlog

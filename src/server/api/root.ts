@@ -5,6 +5,8 @@ import { rsvpRouter } from "@/server/api/routers/rsvp";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 import { uploadRouter } from "@/server/api/routers/upload";
+import { studentRouter } from "@/server/api/routers/student";
+import { adminRouter } from "@/server/api/routers/admin";
 
 /**
  * This is the primary router for your server.
@@ -17,6 +19,8 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   rsvp: rsvpRouter,
   upload: uploadRouter,
+  student: studentRouter,
+  admin: adminRouter,
 });
 
 // export type definition of API
