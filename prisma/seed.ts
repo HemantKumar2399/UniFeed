@@ -1,6 +1,10 @@
 import { PrismaClient } from "../generated/prisma/index.js";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+
+const SEED_TEST_PASSWORD = "Test@1234";
+const SALT_ROUNDS = 12;
 
 const isLocalDatabase = /localhost|127\.0\.0\.1/.test(
   process.env.DATABASE_URL ?? "",
@@ -266,29 +270,38 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
   ],
 };
 
-async function upsertUser(input: { email: string; name: string; role: "USER" | "ORGANIZER" }) {
+async function upsertUser(input: {
+  email: string;
+  name: string;
+  role: "USER" | "ORGANIZER";
+  passwordHash: string;
+}) {
   return prisma.user.upsert({
     where: { email: input.email },
     update: {
       name: input.name,
       role: input.role,
+      password: input.passwordHash,
     },
     create: {
       email: input.email,
       name: input.name,
       role: input.role,
-      password: "seeded_password_hash",
+      password: input.passwordHash,
     },
   });
 }
 
 async function main() {
+  const passwordHash = await bcrypt.hash(SEED_TEST_PASSWORD, SALT_ROUNDS);
+
   const organizerUsers = await Promise.all(
     organizers.map((organizer) =>
       upsertUser({
         email: organizer.email,
         name: organizer.name,
         role: "ORGANIZER",
+        passwordHash,
       }),
     ),
   );
@@ -299,6 +312,7 @@ async function main() {
         email: student.email,
         name: student.name,
         role: "USER",
+        passwordHash,
       }),
     ),
   );
@@ -438,6 +452,7 @@ async function main() {
   console.log(
     `Seed completed: clubs=${totalClubs}, events=${totalEvents}, hubBlocks=${totalBlocks}, memberships=${totalMemberships}, follows=${totalFollows}, rsvps=${totalRsvps}`,
   );
+  console.log(`Seed login password for all seeded users: ${SEED_TEST_PASSWORD}`);
 }
 
 main()

@@ -41,4 +41,11 @@ fi
 echo "🗄️ Pushing Prisma schema to the database..."
 npx prisma db push
 
+echo "🌱 Seeding database with local test data..."
+npm run db:seed
+
+echo ""
+echo "🔐 Test account password (all seeded users): Test@1234"
+echo "📧 Allowed login domain: @students.edu.in"
+
 echo "🎉 Setup Complete! You can now start the server with: npm run dev"
