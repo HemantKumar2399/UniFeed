@@ -1,4 +1,4 @@
-import { getHappeningThisWeekWindow, isInHappeningThisWeekWindow } from "./happening-this-week.js";
+import { getHappeningThisWeekWindow, isInHappeningThisWeekWindow } from "./happening-this-week";
 
 export const HAPPENING_THIS_WEEK_LIMIT = 12;
 

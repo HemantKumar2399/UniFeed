@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { deriveFeedPreferenceSignals } from "./feed-preferences.js";
+import { deriveFeedPreferenceSignals } from "./feed-preferences";
 
 void test("deriveFeedPreferenceSignals reads independent course and domain headers", () => {
   const headers = new Headers();

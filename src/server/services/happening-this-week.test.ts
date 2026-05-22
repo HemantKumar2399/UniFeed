@@ -5,7 +5,7 @@ import {
   HAPPENING_WINDOW_DAYS,
   getHappeningThisWeekWindow,
   isInHappeningThisWeekWindow,
-} from "./happening-this-week.js";
+} from "./happening-this-week";
 
 void test("getHappeningThisWeekWindow returns a 7-day exclusive window", () => {
   const now = new Date("2026-04-17T12:00:00.000Z");

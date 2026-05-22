@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildStudentRelevanceProfile } from "./feed-ranking.js";
+import { buildStudentRelevanceProfile } from "./feed-ranking";
 import {
   FEED_RESULT_LIMIT,
   buildPublishedFeedQuery,
   selectTopPersonalizedFeedEvents,
-} from "./feed-query.js";
+} from "./feed-query";
 
 void test("buildPublishedFeedQuery keeps full candidate set before ranking", () => {
   const query = buildPublishedFeedQuery() as { take?: number; orderBy?: unknown };

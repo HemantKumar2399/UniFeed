@@ -1,5 +1,5 @@
-import type { StudentRelevanceProfile, RelevanceRankedEvent } from "./feed-ranking.js";
-import { rankEventsByRelevance, rankEventsWithFollowBoost } from "./feed-ranking.js";
+import type { StudentRelevanceProfile, RelevanceRankedEvent } from "./feed-ranking";
+import { rankEventsByRelevance, rankEventsWithFollowBoost } from "./feed-ranking";
 
 export const FEED_RESULT_LIMIT = 10;
 

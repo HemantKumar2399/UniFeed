@@ -5,7 +5,7 @@ import {
   HAPPENING_THIS_WEEK_LIMIT,
   buildHappeningThisWeekQuery,
   selectHappeningThisWeekEvents,
-} from "./happening-this-week-query.js";
+} from "./happening-this-week-query";
 
 void test("buildHappeningThisWeekQuery uses a strict less-than seven-day upper bound", () => {
   const reference = new Date("2026-04-17T12:00:00.000Z");

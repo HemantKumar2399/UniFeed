@@ -7,7 +7,7 @@ import {
   buildStudentRelevanceProfile,
   rankEventsByRelevance,
   rankEventsWithFollowBoost,
-} from "./feed-ranking.js";
+} from "./feed-ranking";
 
 void test("rankEventsWithFollowBoost slightly promotes followed clubs", () => {
   const base = new Date("2026-04-17T10:00:00.000Z");
