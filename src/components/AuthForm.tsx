@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,6 @@ function sanitizeCallbackUrl(raw: string | null): string {
 }
 
 function FormContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = sanitizeCallbackUrl(searchParams.get("callbackUrl"));
 
@@ -187,7 +186,7 @@ function FormContent() {
         <p className="mt-8 text-center text-sm font-medium text-muted-foreground">
           {mode === "login" ? (
             <>
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <button
                 type="button"
                 onClick={() => { setMode("register"); setError(null); }}

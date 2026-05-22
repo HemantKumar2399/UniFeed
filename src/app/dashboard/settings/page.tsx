@@ -3,6 +3,8 @@ import { auth } from "@/server/auth";
 
 export default async function DashboardSettingsPage() {
   const session = await auth();
+  const userName = session?.user?.name ?? "Organizer";
+  const userInitial = userName.charAt(0) || "O";
 
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12 max-w-4xl">
@@ -13,10 +15,10 @@ export default async function DashboardSettingsPage() {
         
         <div className="w-full bg-[#f6f5f4] rounded-[24px] p-6 border border-black/5 flex items-center gap-6">
           <div className="w-20 h-20 rounded-full bg-[#0075de] text-white flex items-center justify-center text-[28px] font-bold shadow-[0_4px_18px_rgba(0,117,222,0.2)]">
-            {session?.user?.name?.charAt(0) || "O"}
+            {userInitial}
           </div>
           <div>
-            <h2 className="text-[24px] font-bold text-black/95 tracking-tight">{session?.user?.name || "Organizer"}</h2>
+            <h2 className="text-[24px] font-bold text-black/95 tracking-tight">{userName}</h2>
             <p className="text-[15px] font-medium text-[#615d59] mt-1">{session?.user?.email}</p>
           </div>
         </div>

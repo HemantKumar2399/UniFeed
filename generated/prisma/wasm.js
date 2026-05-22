@@ -276,7 +276,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\hk998\\OneDrive\\Desktop\\Project\\Platform\\generated\\prisma",
+      "value": "C:\\Users\\kapil\\Desktop\\UniFeed\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -290,11 +290,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\hk998\\OneDrive\\Desktop\\Project\\Platform\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\kapil\\Desktop\\UniFeed\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",

@@ -60,7 +60,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl lg:text-3xl font-semibold tracking-[-0.02em] mb-3">The Campus Pulse</h3>
               <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
-                Never miss out. Real-time updates on what's happening right now, curated specifically for you.
+                Never miss out. Real-time updates on what&apos;s happening right now, curated specifically for you.
               </p>
             </div>
           </div>
