@@ -85,7 +85,7 @@ export const eventRouter = createTRPCRouter({
     }),
 
   updateStatus: protectedOrganizerProcedure
-    .input(z.object({ id: z.number().int(), status: z.enum(["DRAFT", "PUBLISHED"]) }))
+    .input(z.object({ id: z.number().int(), status: z.enum(["DRAFT", "SUBMITTED", "APPROVED", "PUBLISHED", "REJECTED", "CANCELLED"]) }))
     .mutation(async ({ ctx, input }) => {
       const event = await ctx.db.event.findUnique({ where: { id: input.id } });
       if (!event) throw new TRPCError({ code: "NOT_FOUND" });
@@ -120,6 +120,13 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
+      if (!ctx.session.user.collegeId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User session is not associated with a college.",
+        });
+      }
+
       return ctx.db.event.create({
         data: {
           title: input.title,
@@ -130,6 +137,7 @@ export const eventRouter = createTRPCRouter({
           capacity: input.capacity,
           clubId: clubMembership.clubId,
           authorId: ctx.session.user.id,
+          collegeId: ctx.session.user.collegeId,
         },
       });
     }),

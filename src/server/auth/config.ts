@@ -5,7 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { db } from "@/server/db";
 
-import { isAllowedDomain } from "./domain";
+import { getCollegeForEmail } from "./domain";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -15,12 +15,14 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: "USER" | "ORGANIZER";
+      role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+      collegeId: string;
     } & DefaultSession["user"];
   }
 
   interface User {
-    role?: "USER" | "ORGANIZER";
+    role?: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+    collegeId?: string;
   }
 }
 
@@ -51,7 +53,8 @@ export const authConfig = {
         // AC-1: Reject emails outside allowed university domains.
         // Throwing "AccessDenied" maps to /error?error=AccessDenied via NextAuth's
         // error routing — returning null would incorrectly fire "CredentialsSignin".
-        if (!isAllowedDomain(email)) {
+        const college = await getCollegeForEmail(email);
+        if (!college) {
           throw new Error("AccessDenied");
         }
 
@@ -72,7 +75,8 @@ export const authConfig = {
           id: user.id, 
           email: user.email, 
           name: user.name,
-          role: user.role
+          role: user.role,
+          collegeId: user.collegeId,
         };
       },
     }),
@@ -83,6 +87,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.collegeId = user.collegeId;
       }
       return token;
     },
@@ -91,7 +96,10 @@ export const authConfig = {
         session.user.id = token.id;
       }
       if (typeof token.role === "string") {
-        session.user.role = token.role as "USER" | "ORGANIZER";
+        session.user.role = token.role as "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+      }
+      if (typeof token.collegeId === "string") {
+        session.user.collegeId = token.collegeId;
       }
       return session;
     },

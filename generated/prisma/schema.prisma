@@ -31,6 +31,8 @@ model Club {
   id        Int              @id @default(autoincrement())
   name      String
   logoUrl   String
+  collegeId String
+  college   College          @relation(fields: [collegeId], references: [id])
   events    Event[]
   followers HubFollow[]
   blocks    HubBlock[]
@@ -43,19 +45,30 @@ model Event {
   id                Int                     @id @default(autoincrement())
   title             String
   description       String
-  status            EventStatus             @default(PUBLISHED)
+  status            EventStatus             @default(DRAFT)
   date              DateTime
   capacity          Int
   location          String
   imageUrl          String
   clubId            Int
   authorId          String
+  collegeId         String
+  college           College                 @relation(fields: [collegeId], references: [id])
   author            User                    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   club              Club                    @relation(fields: [clubId], references: [id], onDelete: Cascade)
   rsvps             RSVP[]
   discussionThreads EventDiscussionThread[]
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
+
+  // Metadata/Personalization fields
+  category       String?
+  tags           String[]
+  domain         String?
+  isFreeFood     Boolean  @default(false)
+  hasCertificate Boolean  @default(false)
+  isPaid         Boolean  @default(false)
+  targetBranches String[]
 
   @@index([date])
   @@index([clubId])
@@ -90,13 +103,16 @@ model Session {
 }
 
 model User {
-  role                      Role                    @default(USER)
+  role                      Role                    @default(STUDENT)
   id                        String                  @id @default(cuid())
   name                      String?
   email                     String?                 @unique
   emailVerified             DateTime?
   image                     String?
   password                  String? // hashed — only set for credentials-based accounts
+  collegeId                 String
+  college                   College                 @relation(fields: [collegeId], references: [id])
+  studentProfile            StudentProfile?
   accounts                  Account[]
   sessions                  Session[]
   posts                     Post[]
@@ -191,11 +207,11 @@ model VerificationToken {
 }
 
 model RSVP {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   userId    String
   eventId   Int
-  status    String   @default("GOING")
-  createdAt DateTime @default(now())
+  status    RSVPStatus @default(GOING)
+  createdAt DateTime   @default(now())
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -205,14 +221,68 @@ model RSVP {
   @@index([userId])
 }
 
+model College {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  emailDomains String[]
+  logoUrl      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  users           User[]
+  clubs           Club[]
+  events          Event[]
+  studentProfiles StudentProfile[]
+}
+
+model StudentProfile {
+  id             String    @id @default(cuid())
+  userId         String    @unique
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collegeId      String
+  college        College   @relation(fields: [collegeId], references: [id])
+  prn            String
+  branch         String
+  course         String
+  graduationYear Int
+  section        String?
+  phone          String?
+  isVerified     Boolean   @default(false)
+  lockedAt       DateTime?
+
+  // Permanent Student QR Identity
+  studentQrId            String?   @unique
+  studentQrSecretVersion Int       @default(1)
+  qrRevokedAt            DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([collegeId, prn])
+}
+
 enum Role {
-  USER
+  STUDENT
   ORGANIZER
+  ADMIN
+  SUPER_ADMIN
 }
 
 enum EventStatus {
   DRAFT
+  SUBMITTED
+  APPROVED
   PUBLISHED
+  REJECTED
+  CANCELLED
+}
+
+enum RSVPStatus {
+  GOING
+  WAITLISTED
+  CANCELLED
+  ATTENDED
 }
 
 enum ClubRole {

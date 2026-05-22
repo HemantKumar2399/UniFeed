@@ -1,26 +1,22 @@
-import { env } from "@/env";
+import { db } from "@/server/db";
 
 /**
- * Parses ALLOWED_DOMAINS env var into a Set of lowercase domain strings.
- * e.g. "jecrc.ac.in,jecrcfoundation.com" → Set { "jecrc.ac.in", "jecrcfoundation.com" }
+ * Looks up a College in the database that matches the domain of the given email.
+ * Returns the College record if found, or null otherwise.
  *
- * Using a Set for O(1) lookup vs Array.includes which is O(n).
+ * Uses the split result to extract the domain part.
  */
-const allowedDomains = new Set(
-  env.ALLOWED_DOMAINS.split(",").map((d) => d.trim().toLowerCase()),
-);
-
-/**
- * Returns true if the given email belongs to an allowed university domain.
- *
- * Uses .pop() on the split result so multi-@ addresses (e.g. "a@b@jecrc.ac.in")
- * are correctly evaluated on their trailing domain segment rather than the
- * first segment after @.
- */
-export function isAllowedDomain(email: string): boolean {
+export async function getCollegeForEmail(email: string) {
   const parts = email.split("@");
-  // Need at least two parts; the last part is the domain.
-  if (parts.length < 2) return false;
+  if (parts.length < 2) return null;
   const domain = parts[parts.length - 1]?.toLowerCase();
-  return !!domain && domain.length > 0 && allowedDomains.has(domain);
+  if (!domain) return null;
+
+  return db.college.findFirst({
+    where: {
+      emailDomains: {
+        has: domain,
+      },
+    },
+  });
 }

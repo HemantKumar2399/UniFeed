@@ -133,6 +133,7 @@ exports.Prisma.ClubScalarFieldEnum = {
   id: 'id',
   name: 'name',
   logoUrl: 'logoUrl',
+  collegeId: 'collegeId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -148,8 +149,16 @@ exports.Prisma.EventScalarFieldEnum = {
   imageUrl: 'imageUrl',
   clubId: 'clubId',
   authorId: 'authorId',
+  collegeId: 'collegeId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  category: 'category',
+  tags: 'tags',
+  domain: 'domain',
+  isFreeFood: 'isFreeFood',
+  hasCertificate: 'hasCertificate',
+  isPaid: 'isPaid',
+  targetBranches: 'targetBranches'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -182,7 +191,8 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
-  password: 'password'
+  password: 'password',
+  collegeId: 'collegeId'
 };
 
 exports.Prisma.EventDiscussionThreadScalarFieldEnum = {
@@ -243,6 +253,35 @@ exports.Prisma.RSVPScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CollegeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  emailDomains: 'emailDomains',
+  logoUrl: 'logoUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StudentProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  collegeId: 'collegeId',
+  prn: 'prn',
+  branch: 'branch',
+  course: 'course',
+  graduationYear: 'graduationYear',
+  section: 'section',
+  phone: 'phone',
+  isVerified: 'isVerified',
+  lockedAt: 'lockedAt',
+  studentQrId: 'studentQrId',
+  studentQrSecretVersion: 'studentQrSecretVersion',
+  qrRevokedAt: 'qrRevokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -259,12 +298,18 @@ exports.Prisma.NullsOrder = {
 };
 exports.EventStatus = exports.$Enums.EventStatus = {
   DRAFT: 'DRAFT',
-  PUBLISHED: 'PUBLISHED'
+  SUBMITTED: 'SUBMITTED',
+  APPROVED: 'APPROVED',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.Role = exports.$Enums.Role = {
-  USER: 'USER',
-  ORGANIZER: 'ORGANIZER'
+  STUDENT: 'STUDENT',
+  ORGANIZER: 'ORGANIZER',
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN'
 };
 
 exports.ClubRole = exports.$Enums.ClubRole = {
@@ -276,6 +321,13 @@ exports.HubBlockType = exports.$Enums.HubBlockType = {
   TEXT: 'TEXT',
   RESOURCE: 'RESOURCE',
   FAQ: 'FAQ'
+};
+
+exports.RSVPStatus = exports.$Enums.RSVPStatus = {
+  GOING: 'GOING',
+  WAITLISTED: 'WAITLISTED',
+  CANCELLED: 'CANCELLED',
+  ATTENDED: 'ATTENDED'
 };
 
 exports.Prisma.ModelName = {
@@ -291,7 +343,9 @@ exports.Prisma.ModelName = {
   HubFollow: 'HubFollow',
   HubBlock: 'HubBlock',
   VerificationToken: 'VerificationToken',
-  RSVP: 'RSVP'
+  RSVP: 'RSVP',
+  College: 'College',
+  StudentProfile: 'StudentProfile'
 };
 
 /**

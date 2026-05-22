@@ -288,7 +288,8 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
 async function upsertUser(input: {
   email: string;
   name: string;
-  role: "USER" | "ORGANIZER";
+  role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+  collegeId: string;
   passwordHash: string;
 }) {
   return prisma.user.upsert({
@@ -296,12 +297,14 @@ async function upsertUser(input: {
     update: {
       name: input.name,
       role: input.role,
+      collegeId: input.collegeId,
       password: input.passwordHash,
     },
     create: {
       email: input.email,
       name: input.name,
       role: input.role,
+      collegeId: input.collegeId,
       password: input.passwordHash,
     },
   });
@@ -310,12 +313,45 @@ async function upsertUser(input: {
 async function main() {
   const passwordHash = await bcrypt.hash(SEED_TEST_PASSWORD, SALT_ROUNDS);
 
+  // Clean existing records in correct order to avoid FK constraints
+  await prisma.rSVP.deleteMany();
+  await prisma.hubFollow.deleteMany();
+  await prisma.hubBlock.deleteMany();
+  await prisma.clubMembership.deleteMany();
+  await prisma.eventDiscussionReply.deleteMany();
+  await prisma.eventDiscussionThread.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.club.deleteMany();
+  await prisma.studentProfile.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.college.deleteMany();
+
+  // Create colleges
+  const jecrcCollege = await prisma.college.create({
+    data: {
+      name: "JECRC University",
+      slug: "jecrc",
+      emailDomains: ["jecrc.edu.in", "students.college.edu", SEED_EMAIL_DOMAIN],
+      logoUrl: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=256&q=80",
+    },
+  });
+
+  const spuCollege = await prisma.college.create({
+    data: {
+      name: "Sankalchand Patel University",
+      slug: "spu",
+      emailDomains: ["spu.ac.in"],
+      logoUrl: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=256&q=80",
+    },
+  });
+
   const organizerUsers = await Promise.all(
     organizers.map((organizer) =>
       upsertUser({
         email: organizer.email,
         name: organizer.name,
         role: "ORGANIZER",
+        collegeId: jecrcCollege.id,
         passwordHash,
       }),
     ),
@@ -326,22 +362,58 @@ async function main() {
       upsertUser({
         email: student.email,
         name: student.name,
-        role: "USER",
+        role: "STUDENT",
+        collegeId: jecrcCollege.id,
         passwordHash,
       }),
     ),
   );
 
-  await prisma.$transaction(async (tx) => {
-    await tx.rSVP.deleteMany();
-    await tx.hubFollow.deleteMany();
-    await tx.hubBlock.deleteMany();
-    await tx.clubMembership.deleteMany();
-    await tx.event.deleteMany();
-    await tx.club.deleteMany();
+  // Create StudentProfiles for student users
+  await Promise.all(
+    studentUsers.map((student, index) =>
+      prisma.studentProfile.create({
+        data: {
+          userId: student.id,
+          collegeId: jecrcCollege.id,
+          prn: `20JECRC00${index + 1}`,
+          branch: "Computer Science",
+          course: "B.Tech",
+          graduationYear: 2026,
+          section: "A",
+          phone: `987654321${index}`,
+          isVerified: true,
+          studentQrId: `qr_stud_${student.id}`,
+        },
+      })
+    )
+  );
 
+  // Seed Admin and Super Admin users
+  await upsertUser({
+    email: "admin.jecrc@students.college.edu",
+    name: "Admin User JECRC",
+    role: "ADMIN",
+    collegeId: jecrcCollege.id,
+    passwordHash,
+  });
+
+  await upsertUser({
+    email: "superadmin@students.college.edu",
+    name: "Super Admin User",
+    role: "SUPER_ADMIN",
+    collegeId: jecrcCollege.id,
+    passwordHash,
+  });
+
+  await prisma.$transaction(async (tx) => {
     const createdClubs = await Promise.all(
-      clubs.map((club) => tx.club.create({ data: club })),
+      clubs.map((club) => tx.club.create({
+        data: {
+          ...club,
+          collegeId: jecrcCollege.id,
+        }
+      })),
     );
 
     const clubByName = new Map(createdClubs.map((club) => [club.name, club]));
@@ -382,6 +454,8 @@ async function main() {
         date.setDate(date.getDate() + eventDraft.dateOffsetDays);
         date.setHours(17 + (index % 3), 30, 0, 0);
 
+        const isEven = index % 2 === 0;
+
         return tx.event.create({
           data: {
             title: eventDraft.title,
@@ -392,6 +466,15 @@ async function main() {
             imageUrl: eventDraft.imageUrl,
             clubId: club.id,
             authorId: author.id,
+            collegeId: jecrcCollege.id,
+            status: "PUBLISHED",
+            category: isEven ? "Technical" : "Cultural",
+            tags: isEven ? ["coding", "workshop"] : ["dance", "music"],
+            domain: isEven ? "Engineering" : "Arts",
+            isFreeFood: isEven,
+            hasCertificate: true,
+            isPaid: !isEven,
+            targetBranches: ["Computer Science", "Information Technology"],
           },
         });
       }),
@@ -455,17 +538,19 @@ async function main() {
     );
   });
 
-  const [totalClubs, totalEvents, totalBlocks, totalMemberships, totalFollows, totalRsvps] = await Promise.all([
+  const [totalClubs, totalEvents, totalBlocks, totalMemberships, totalFollows, totalRsvps, totalColleges, totalProfiles] = await Promise.all([
     prisma.club.count(),
     prisma.event.count(),
     prisma.hubBlock.count(),
     prisma.clubMembership.count(),
     prisma.hubFollow.count(),
     prisma.rSVP.count(),
+    prisma.college.count(),
+    prisma.studentProfile.count(),
   ]);
 
   console.log(
-    `Seed completed: clubs=${totalClubs}, events=${totalEvents}, hubBlocks=${totalBlocks}, memberships=${totalMemberships}, follows=${totalFollows}, rsvps=${totalRsvps}`,
+    `Seed completed: colleges=${totalColleges}, studentProfiles=${totalProfiles}, clubs=${totalClubs}, events=${totalEvents}, hubBlocks=${totalBlocks}, memberships=${totalMemberships}, follows=${totalFollows}, rsvps=${totalRsvps}`,
   );
   console.log(`Seed login password for all seeded users: ${SEED_TEST_PASSWORD}`);
 }

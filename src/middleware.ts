@@ -8,6 +8,7 @@ const { auth } = NextAuth({
       if (user) {
         token.id = user.id;
         token.role = user.role;
+        token.collegeId = user.collegeId;
       }
       return token;
     },
@@ -16,7 +17,10 @@ const { auth } = NextAuth({
         session.user.id = token.id;
       }
       if (typeof token.role === "string") {
-        session.user.role = token.role as "USER" | "ORGANIZER";
+        session.user.role = token.role as "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+      }
+      if (typeof token.collegeId === "string") {
+        session.user.collegeId = token.collegeId;
       }
       return session;
     },

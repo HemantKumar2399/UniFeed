@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/server/db";
 
-import { isAllowedDomain } from "@/server/auth/domain";
+import { getCollegeForEmail } from "@/server/auth/domain";
 
 const SALT_ROUNDS = 12;
 /** bcrypt silently truncates beyond 72 bytes — reject early to prevent two passwords matching. */
@@ -44,7 +44,8 @@ export async function POST(req: NextRequest) {
     }
 
     // AC-1: Domain check — reject non-university emails at registration too.
-    if (!isAllowedDomain(email)) {
+    const college = await getCollegeForEmail(email);
+    if (!college) {
       return NextResponse.json(
         {
           error:
@@ -75,7 +76,8 @@ export async function POST(req: NextRequest) {
         email,
         name: trimmedName,
         password: hashedPassword,
-        role: "USER",
+        role: "STUDENT",
+        collegeId: college.id,
       },
     });
 

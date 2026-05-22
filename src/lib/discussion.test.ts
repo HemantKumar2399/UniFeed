@@ -19,7 +19,7 @@ void test("canManageDiscussionThread requires organizer role and event ownership
 
   assert.equal(
     canManageDiscussionThread({
-      viewerRole: "USER",
+      viewerRole: "STUDENT",
       viewerId: "user-1",
       eventAuthorId: "user-1",
     }),
