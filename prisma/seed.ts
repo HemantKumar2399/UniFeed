@@ -12,7 +12,29 @@ if (process.env.NODE_ENV === "production" || !isLocalDatabase) {
   );
 }
 
-const clubs = [
+type SeedClub = {
+  name: string;
+  logoUrl: string;
+};
+
+type SeedEventDraft = {
+  clubName: string;
+  title: string;
+  description: string;
+  dateOffsetDays: number;
+  capacity: number;
+  location: string;
+  imageUrl: string;
+};
+
+type SeedHubBlock = {
+  type: "TEXT" | "RESOURCE" | "FAQ";
+  title: string | null;
+  content: string;
+  linkUrl: string | null;
+};
+
+const clubs: SeedClub[] = [
   {
     name: "JECRC Coding Club",
     logoUrl:
@@ -38,13 +60,30 @@ const clubs = [
     logoUrl:
       "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=256&q=80",
   },
+];
+
+const organizers = [
+  { email: "organizer.coding@university.edu", name: "Aarav Sharma" },
+  { email: "organizer.nss@university.edu", name: "Ananya Verma" },
+  { email: "organizer.robotics@university.edu", name: "Ritik Jain" },
+  { email: "organizer.ecell@university.edu", name: "Ishita Mehta" },
+  { email: "organizer.cultural@university.edu", name: "Kavya Singh" },
 ] as const;
 
-const eventDrafts = [
+const students = [
+  { email: "student.1@university.edu", name: "Rahul Gupta" },
+  { email: "student.2@university.edu", name: "Priya Joshi" },
+  { email: "student.3@university.edu", name: "Aditya Nair" },
+  { email: "student.4@university.edu", name: "Sneha Kapoor" },
+  { email: "student.5@university.edu", name: "Yash Malhotra" },
+] as const;
+
+const eventDrafts: SeedEventDraft[] = [
   {
+    clubName: "JECRC Coding Club",
     title: "HackSprint: 6-Hour Build Jam",
     description:
-      "Rapid prototyping challenge for first-year to final-year students with mentor checkpoints.",
+      "Rapid prototyping challenge with mentor checkpoints and final demos.",
     dateOffsetDays: 2,
     capacity: 180,
     location: "Innovation Lab, Block A",
@@ -52,16 +91,18 @@ const eventDrafts = [
       "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1200&q=80",
   },
   {
+    clubName: "JECRC Coding Club",
     title: "Open Source Onboarding Day",
     description:
-      "Hands-on workshop to make your first open source contribution with maintainers.",
-    dateOffsetDays: 4,
+      "Hands-on workshop to make your first open source contribution.",
+    dateOffsetDays: 5,
     capacity: 120,
     location: "Seminar Hall 2",
     imageUrl:
       "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
   },
   {
+    clubName: "NSS JECRC",
     title: "NSS Blood Donation Drive",
     description:
       "Campus-wide blood donation camp in collaboration with local hospitals.",
@@ -72,6 +113,7 @@ const eventDrafts = [
       "https://images.unsplash.com/photo-1615461066841-6116e61058f4?auto=format&fit=crop&w=1200&q=80",
   },
   {
+    clubName: "Robotics Society",
     title: "Line Follower Bot Challenge",
     description:
       "Design and race autonomous bots on a timed obstacle track.",
@@ -82,9 +124,10 @@ const eventDrafts = [
       "https://images.unsplash.com/photo-1561557944-6e7860d1a7eb?auto=format&fit=crop&w=1200&q=80",
   },
   {
+    clubName: "E-Cell JECRC",
     title: "Startup Pitch Arena",
     description:
-      "3-minute founder pitches with jury feedback and networking.",
+      "Three-minute founder pitches with jury feedback and networking.",
     dateOffsetDays: 10,
     capacity: 140,
     location: "Auditorium",
@@ -92,6 +135,7 @@ const eventDrafts = [
       "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
   },
   {
+    clubName: "Cultural Committee",
     title: "Garba Night: Campus Edition",
     description:
       "Traditional dance night with DJ fusion and student performances.",
@@ -102,49 +146,168 @@ const eventDrafts = [
       "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1200&q=80",
   },
   {
-    title: "Resume Clinic for Internships",
-    description:
-      "One-on-one resume and LinkedIn review sessions by senior mentors.",
-    dateOffsetDays: 14,
-    capacity: 110,
-    location: "Career Cell",
-    imageUrl:
-      "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "AI for Beginners Bootcamp",
-    description:
-      "Introductory AI workshop covering practical tools and fundamentals.",
-    dateOffsetDays: 16,
-    capacity: 200,
-    location: "Block C Smart Classroom",
-    imageUrl:
-      "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    title: "Community Clean-Up Marathon",
-    description:
-      "Volunteer campaign across campus zones with impact leaderboard.",
-    dateOffsetDays: 18,
-    capacity: 220,
-    location: "North Gate Assembly Point",
-    imageUrl:
-      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
+    clubName: "E-Cell JECRC",
     title: "Founder AMA: Building from Zero",
     description:
       "Live Q&A with alumni founders on product, hiring, and growth.",
-    dateOffsetDays: 20,
+    dateOffsetDays: 15,
     capacity: 160,
     location: "Conference Room 1",
     imageUrl:
       "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
   },
-] as const;
+];
+
+const clubBlocks: Record<string, SeedHubBlock[]> = {
+  "JECRC Coding Club": [
+    {
+      type: "TEXT",
+      title: "About the Club",
+      content:
+        "We help students build projects, contribute to open source, and prepare for hackathons.",
+      linkUrl: null,
+    },
+    {
+      type: "RESOURCE",
+      title: "Starter Kit",
+      content: "Roadmap, templates, and weekly challenge sheet for new members.",
+      linkUrl: "https://example.edu/coding-club/starter-kit",
+    },
+    {
+      type: "FAQ",
+      title: "Who can join?",
+      content: "Any JECRC student can join. No prior coding background is required.",
+      linkUrl: null,
+    },
+  ],
+  "NSS JECRC": [
+    {
+      type: "TEXT",
+      title: "Mission",
+      content:
+        "NSS JECRC runs social impact initiatives focused on service, health, and sustainability.",
+      linkUrl: null,
+    },
+    {
+      type: "RESOURCE",
+      title: "Volunteer Handbook",
+      content: "Volunteer SOP, safety checklist, and campaign calendar.",
+      linkUrl: "https://example.edu/nss/handbook",
+    },
+    {
+      type: "FAQ",
+      title: "Do volunteers get certificates?",
+      content: "Yes, certificates are issued based on event participation and contribution hours.",
+      linkUrl: null,
+    },
+  ],
+  "Robotics Society": [
+    {
+      type: "TEXT",
+      title: "Build With Us",
+      content:
+        "We build autonomous systems, compete in robotics events, and run practical hardware labs.",
+      linkUrl: null,
+    },
+    {
+      type: "RESOURCE",
+      title: "Parts and Tooling Guide",
+      content: "Recommended parts list and lab access instructions.",
+      linkUrl: "https://example.edu/robotics/parts-guide",
+    },
+    {
+      type: "FAQ",
+      title: "Do I need my own hardware?",
+      content: "No. Club labs provide starter kits for core projects and workshops.",
+      linkUrl: null,
+    },
+  ],
+  "E-Cell JECRC": [
+    {
+      type: "TEXT",
+      title: "What We Do",
+      content:
+        "E-Cell supports aspiring founders through mentorship, pitch reviews, and startup events.",
+      linkUrl: null,
+    },
+    {
+      type: "RESOURCE",
+      title: "Pitch Deck Template",
+      content: "Use this template for demo day and investor intro sessions.",
+      linkUrl: "https://example.edu/ecell/pitch-template",
+    },
+    {
+      type: "FAQ",
+      title: "Can first-year students pitch?",
+      content: "Absolutely. We encourage all students to pitch ideas and get mentor feedback.",
+      linkUrl: null,
+    },
+  ],
+  "Cultural Committee": [
+    {
+      type: "TEXT",
+      title: "Campus Culture",
+      content:
+        "We curate the major cultural experiences on campus from music and dance to arts festivals.",
+      linkUrl: null,
+    },
+    {
+      type: "RESOURCE",
+      title: "Performance Sign-up",
+      content: "Apply for solo or group performances for upcoming events.",
+      linkUrl: "https://example.edu/cultural/performance-signup",
+    },
+    {
+      type: "FAQ",
+      title: "Can we perform as a team?",
+      content: "Yes, both solo and team performances are welcome for all major showcases.",
+      linkUrl: null,
+    },
+  ],
+};
+
+async function upsertUser(input: { email: string; name: string; role: "USER" | "ORGANIZER" }) {
+  return prisma.user.upsert({
+    where: { email: input.email },
+    update: {
+      name: input.name,
+      role: input.role,
+    },
+    create: {
+      email: input.email,
+      name: input.name,
+      role: input.role,
+      password: "seeded_password_hash",
+    },
+  });
+}
 
 async function main() {
+  const organizerUsers = await Promise.all(
+    organizers.map((organizer) =>
+      upsertUser({
+        email: organizer.email,
+        name: organizer.name,
+        role: "ORGANIZER",
+      }),
+    ),
+  );
+
+  const studentUsers = await Promise.all(
+    students.map((student) =>
+      upsertUser({
+        email: student.email,
+        name: student.name,
+        role: "USER",
+      }),
+    ),
+  );
+
   await prisma.$transaction(async (tx) => {
+    await tx.rSVP.deleteMany();
+    await tx.hubFollow.deleteMany();
+    await tx.hubBlock.deleteMany();
+    await tx.clubMembership.deleteMany();
     await tx.event.deleteMany();
     await tx.club.deleteMany();
 
@@ -152,44 +315,129 @@ async function main() {
       clubs.map((club) => tx.club.create({ data: club })),
     );
 
-    // Find or create an admin user for the seeded events
-    const adminUser = await tx.user.upsert({
-      where: { email: "admin@university.edu" },
-      update: {},
-      create: {
-        email: "admin@university.edu",
-        name: "Admin User",
-        // Setting a dummy password or leaving it null is fine for seeding if not testing auth
-        password: "hashed_password_here" 
-      }
-    });
+    const clubByName = new Map(createdClubs.map((club) => [club.name, club]));
 
     await Promise.all(
-      eventDrafts.map((event, index) => {
-        const club = createdClubs[index % createdClubs.length];
+      createdClubs.map((club, index) =>
+        tx.clubMembership.createMany({
+          data: [
+            {
+              userId: organizerUsers[index]!.id,
+              clubId: club.id,
+              role: "OWNER",
+            },
+            {
+              userId: organizerUsers[(index + 1) % organizerUsers.length]!.id,
+              clubId: club.id,
+              role: "EDITOR",
+            },
+          ],
+        }),
+      ),
+    );
+
+    const createdEvents = await Promise.all(
+      eventDrafts.map((eventDraft, index) => {
+        const club = clubByName.get(eventDraft.clubName);
+        if (!club) {
+          throw new Error(`Missing seeded club for event draft: ${eventDraft.clubName}`);
+        }
+
+        const ownerMembershipIndex = createdClubs.findIndex((item) => item.id === club.id);
+        const author = organizerUsers[ownerMembershipIndex];
+        if (!author) {
+          throw new Error(`Missing organizer for club: ${eventDraft.clubName}`);
+        }
+
         const date = new Date();
-        date.setDate(date.getDate() + event.dateOffsetDays);
+        date.setDate(date.getDate() + eventDraft.dateOffsetDays);
         date.setHours(17 + (index % 3), 30, 0, 0);
 
         return tx.event.create({
           data: {
-            title: event.title,
-            description: event.description,
+            title: eventDraft.title,
+            description: eventDraft.description,
             date,
-            capacity: event.capacity,
-            location: event.location,
-            imageUrl: event.imageUrl,
-            clubId: club!.id,
-            authorId: adminUser.id, // Add authorId here
+            capacity: eventDraft.capacity,
+            location: eventDraft.location,
+            imageUrl: eventDraft.imageUrl,
+            clubId: club.id,
+            authorId: author.id,
           },
         });
       }),
     );
+
+    await Promise.all(
+      createdClubs.map(async (club) => {
+        const blocks = clubBlocks[club.name] ?? [];
+
+        if (blocks.length === 0) {
+          return;
+        }
+
+        await tx.hubBlock.createMany({
+          data: blocks.map((block, index) => ({
+            clubId: club.id,
+            type: block.type,
+            title: block.title,
+            content: block.content,
+            linkUrl: block.linkUrl,
+            position: index,
+          })),
+        });
+      }),
+    );
+
+    await Promise.all(
+      studentUsers.map((student, studentIndex) => {
+        const followedClubIds = [
+          createdClubs[studentIndex % createdClubs.length]!.id,
+          createdClubs[(studentIndex + 2) % createdClubs.length]!.id,
+        ];
+
+        return tx.hubFollow.createMany({
+          data: followedClubIds.map((clubId) => ({
+            userId: student.id,
+            clubId,
+          })),
+          skipDuplicates: true,
+        });
+      }),
+    );
+
+    await Promise.all(
+      studentUsers.flatMap((student, studentIndex) => {
+        const targetEvents = [
+          createdEvents[studentIndex % createdEvents.length],
+          createdEvents[(studentIndex + 3) % createdEvents.length],
+        ].filter((event): event is NonNullable<typeof event> => Boolean(event));
+
+        return targetEvents.map((event) =>
+          tx.rSVP.create({
+            data: {
+              userId: student.id,
+              eventId: event.id,
+              status: "GOING",
+            },
+          }),
+        );
+      }),
+    );
   });
 
-  const totalEvents = await prisma.event.count();
-  const totalClubs = await prisma.club.count();
-  console.log(`Seed completed: ${totalEvents} events across ${totalClubs} clubs`);
+  const [totalClubs, totalEvents, totalBlocks, totalMemberships, totalFollows, totalRsvps] = await Promise.all([
+    prisma.club.count(),
+    prisma.event.count(),
+    prisma.hubBlock.count(),
+    prisma.clubMembership.count(),
+    prisma.hubFollow.count(),
+    prisma.rSVP.count(),
+  ]);
+
+  console.log(
+    `Seed completed: clubs=${totalClubs}, events=${totalEvents}, hubBlocks=${totalBlocks}, memberships=${totalMemberships}, follows=${totalFollows}, rsvps=${totalRsvps}`,
+  );
 }
 
 main()

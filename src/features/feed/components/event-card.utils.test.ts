@@ -5,7 +5,7 @@ import {
   EXPAND_ANIMATION_DURATION_MS,
   formatEventDateMeta,
   getDescriptionRevealClasses,
-} from "./event-card.utils";
+} from "./event-card.utils.js";
 
 void test("formatEventDateMeta returns a readable string", () => {
   const value = formatEventDateMeta(new Date("2026-04-10T17:30:00.000Z"));

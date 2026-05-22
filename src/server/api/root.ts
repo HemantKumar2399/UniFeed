@@ -1,4 +1,5 @@
 import { eventRouter } from "@/server/api/routers/event";
+import { hubRouter } from "@/server/api/routers/hub";
 import { postRouter } from "@/server/api/routers/post";
 import { rsvpRouter } from "@/server/api/routers/rsvp";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
@@ -12,6 +13,7 @@ import { uploadRouter } from "@/server/api/routers/upload";
  */
 export const appRouter = createTRPCRouter({
   event: eventRouter,
+  hub: hubRouter,
   post: postRouter,
   rsvp: rsvpRouter,
   upload: uploadRouter,

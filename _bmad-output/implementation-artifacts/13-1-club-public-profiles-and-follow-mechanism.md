@@ -1,6 +1,6 @@
 # Story 13.1: Club Public Profiles & Follow Mechanism
 
-Status: ready-for-dev
+Status: done
 Depends on: [University Domain Authentication](https://github.com/HemantKumar822/UniFeed/issues/118)
 
 
@@ -26,7 +26,55 @@ So that I can stay updated on their specific activities and resources.
 
 ## Tasks / Subtasks
 
-- [ ] Analyze acceptance criteria
-- [ ] Implement core functionality
-- [ ] Write unit/integration tests
-- [ ] Review against Tactile Utility guidelines and existing components
+- [x] Analyze acceptance criteria
+- [x] Implement core functionality
+- [x] Write unit/integration tests
+- [x] Review against Tactile Utility guidelines and existing components
+
+### Review Findings
+
+- [x] [Review][Patch] Remove duplicate `hubRouter` import and duplicate `hub` key in root router registration [src/server/api/root.ts:2]
+
+## Dev Agent Record
+
+### Agent Model Used
+
+GPT-5.3-Codex
+
+### Debug Log References
+
+- Added `HubFollow` persistence model + migration to map student identity (Passport owner session user) to hub follows.
+- Added `hub` tRPC router with protected hub directory query and idempotent follow mutation.
+- Implemented feed-ranking helper to apply subtle follow-weighted ordering in `event.getFeed`.
+- Added Discover "Hubs Directory" client section with optimistic follow state via Zustand and 200ms haptic feedback animation.
+
+### Completion Notes List
+
+- Students can now browse a Hubs directory in Discover and follow clubs using the existing 3-tier button system.
+- Follow action updates UI optimistically, applies 200ms tactile feedback, and persists via `hub.follow` mutation.
+- Pulse feed ranking now slightly boosts events from followed hubs without disrupting chronological relevance.
+- Hub discovery cards now showcase stronger follow signals (featured hubs, recently updated hubs, and resource counts).
+- Seed data now includes realistic follow relationships and RSVP activity to visualize momentum in action.
+- Added unit tests for ranking behavior and lint validation for changed files.
+
+### File List
+
+- prisma/schema.prisma
+- prisma/migrations/20260417093000_add_hub_follow_model/migration.sql
+- src/server/services/feed-ranking.ts
+- src/server/services/feed-ranking.test.ts
+- src/server/api/routers/hub.ts
+- src/server/api/root.ts
+- src/server/api/routers/event.ts
+- src/features/hubs/state/follow-store.ts
+- src/features/hubs/components/HubsDirectorySection.tsx
+- src/app/(protected)/discover/page.tsx
+- prisma/seed.ts
+- package.json
+- package-lock.json
+
+## Change Log
+
+- 2026-04-17: Implemented Hub follows with optimistic UI + feed algorithm boost and moved story to review.
+- 2026-04-17: Addressed code review patch findings and moved story to done.
+- 2026-04-17: Improved hub showcase discoverability and refreshed seeded mock activity for better demo realism.

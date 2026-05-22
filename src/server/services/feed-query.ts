@@ -1,0 +1,43 @@
+import type { StudentRelevanceProfile, RelevanceRankedEvent } from "./feed-ranking.js";
+import { rankEventsByRelevance, rankEventsWithFollowBoost } from "./feed-ranking.js";
+
+export const FEED_RESULT_LIMIT = 10;
+
+export function buildPublishedFeedQuery() {
+  return {
+    where: {
+      status: "PUBLISHED" as const,
+    },
+    orderBy: [{ date: "asc" as const }, { id: "asc" as const }],
+    include: {
+      club: {
+        select: {
+          id: true,
+          name: true,
+          logoUrl: true,
+        },
+      },
+      _count: {
+        select: {
+          rsvps: true,
+        },
+      },
+    },
+  };
+}
+
+export function selectTopPersonalizedFeedEvents<T extends RelevanceRankedEvent>(
+  events: T[],
+  profile: StudentRelevanceProfile,
+): T[] {
+  const hasSignals =
+    profile.followedClubIds.size > 0 ||
+    profile.courseKeywords.size > 0 ||
+    profile.selectedDomains.size > 0;
+
+  if (!hasSignals) {
+    return rankEventsWithFollowBoost(events, new Set<number>()).slice(0, FEED_RESULT_LIMIT);
+  }
+
+  return rankEventsByRelevance(events, profile).slice(0, FEED_RESULT_LIMIT);
+}

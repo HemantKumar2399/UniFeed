@@ -185,6 +185,50 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password'
 };
 
+exports.Prisma.EventDiscussionThreadScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  authorId: 'authorId',
+  question: 'question',
+  pinned: 'pinned',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EventDiscussionReplyScalarFieldEnum = {
+  id: 'id',
+  threadId: 'threadId',
+  authorId: 'authorId',
+  message: 'message',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ClubMembershipScalarFieldEnum = {
+  userId: 'userId',
+  clubId: 'clubId',
+  role: 'role',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HubFollowScalarFieldEnum = {
+  userId: 'userId',
+  clubId: 'clubId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HubBlockScalarFieldEnum = {
+  id: 'id',
+  clubId: 'clubId',
+  type: 'type',
+  title: 'title',
+  content: 'content',
+  linkUrl: 'linkUrl',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.VerificationTokenScalarFieldEnum = {
   identifier: 'identifier',
   token: 'token',
@@ -223,6 +267,17 @@ exports.Role = exports.$Enums.Role = {
   ORGANIZER: 'ORGANIZER'
 };
 
+exports.ClubRole = exports.$Enums.ClubRole = {
+  OWNER: 'OWNER',
+  EDITOR: 'EDITOR'
+};
+
+exports.HubBlockType = exports.$Enums.HubBlockType = {
+  TEXT: 'TEXT',
+  RESOURCE: 'RESOURCE',
+  FAQ: 'FAQ'
+};
+
 exports.Prisma.ModelName = {
   Post: 'Post',
   Club: 'Club',
@@ -230,6 +285,11 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Session: 'Session',
   User: 'User',
+  EventDiscussionThread: 'EventDiscussionThread',
+  EventDiscussionReply: 'EventDiscussionReply',
+  ClubMembership: 'ClubMembership',
+  HubFollow: 'HubFollow',
+  HubBlock: 'HubBlock',
   VerificationToken: 'VerificationToken',
   RSVP: 'RSVP'
 };

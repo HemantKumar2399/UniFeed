@@ -44,6 +44,31 @@ export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model EventDiscussionThread
+ * 
+ */
+export type EventDiscussionThread = $Result.DefaultSelection<Prisma.$EventDiscussionThreadPayload>
+/**
+ * Model EventDiscussionReply
+ * 
+ */
+export type EventDiscussionReply = $Result.DefaultSelection<Prisma.$EventDiscussionReplyPayload>
+/**
+ * Model ClubMembership
+ * 
+ */
+export type ClubMembership = $Result.DefaultSelection<Prisma.$ClubMembershipPayload>
+/**
+ * Model HubFollow
+ * 
+ */
+export type HubFollow = $Result.DefaultSelection<Prisma.$HubFollowPayload>
+/**
+ * Model HubBlock
+ * 
+ */
+export type HubBlock = $Result.DefaultSelection<Prisma.$HubBlockPayload>
+/**
  * Model VerificationToken
  * 
  */
@@ -73,6 +98,23 @@ export const EventStatus: {
 
 export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
 
+
+export const ClubRole: {
+  OWNER: 'OWNER',
+  EDITOR: 'EDITOR'
+};
+
+export type ClubRole = (typeof ClubRole)[keyof typeof ClubRole]
+
+
+export const HubBlockType: {
+  TEXT: 'TEXT',
+  RESOURCE: 'RESOURCE',
+  FAQ: 'FAQ'
+};
+
+export type HubBlockType = (typeof HubBlockType)[keyof typeof HubBlockType]
+
 }
 
 export type Role = $Enums.Role
@@ -82,6 +124,14 @@ export const Role: typeof $Enums.Role
 export type EventStatus = $Enums.EventStatus
 
 export const EventStatus: typeof $Enums.EventStatus
+
+export type ClubRole = $Enums.ClubRole
+
+export const ClubRole: typeof $Enums.ClubRole
+
+export type HubBlockType = $Enums.HubBlockType
+
+export const HubBlockType: typeof $Enums.HubBlockType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -260,6 +310,56 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.eventDiscussionThread`: Exposes CRUD operations for the **EventDiscussionThread** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EventDiscussionThreads
+    * const eventDiscussionThreads = await prisma.eventDiscussionThread.findMany()
+    * ```
+    */
+  get eventDiscussionThread(): Prisma.EventDiscussionThreadDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.eventDiscussionReply`: Exposes CRUD operations for the **EventDiscussionReply** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EventDiscussionReplies
+    * const eventDiscussionReplies = await prisma.eventDiscussionReply.findMany()
+    * ```
+    */
+  get eventDiscussionReply(): Prisma.EventDiscussionReplyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.clubMembership`: Exposes CRUD operations for the **ClubMembership** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ClubMemberships
+    * const clubMemberships = await prisma.clubMembership.findMany()
+    * ```
+    */
+  get clubMembership(): Prisma.ClubMembershipDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.hubFollow`: Exposes CRUD operations for the **HubFollow** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more HubFollows
+    * const hubFollows = await prisma.hubFollow.findMany()
+    * ```
+    */
+  get hubFollow(): Prisma.HubFollowDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.hubBlock`: Exposes CRUD operations for the **HubBlock** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more HubBlocks
+    * const hubBlocks = await prisma.hubBlock.findMany()
+    * ```
+    */
+  get hubBlock(): Prisma.HubBlockDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.verificationToken`: Exposes CRUD operations for the **VerificationToken** model.
@@ -727,6 +827,11 @@ export namespace Prisma {
     Account: 'Account',
     Session: 'Session',
     User: 'User',
+    EventDiscussionThread: 'EventDiscussionThread',
+    EventDiscussionReply: 'EventDiscussionReply',
+    ClubMembership: 'ClubMembership',
+    HubFollow: 'HubFollow',
+    HubBlock: 'HubBlock',
     VerificationToken: 'VerificationToken',
     RSVP: 'RSVP'
   };
@@ -747,7 +852,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "club" | "event" | "account" | "session" | "user" | "verificationToken" | "rSVP"
+      modelProps: "post" | "club" | "event" | "account" | "session" | "user" | "eventDiscussionThread" | "eventDiscussionReply" | "clubMembership" | "hubFollow" | "hubBlock" | "verificationToken" | "rSVP"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1195,6 +1300,376 @@ export namespace Prisma {
           }
         }
       }
+      EventDiscussionThread: {
+        payload: Prisma.$EventDiscussionThreadPayload<ExtArgs>
+        fields: Prisma.EventDiscussionThreadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EventDiscussionThreadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EventDiscussionThreadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>
+          }
+          findFirst: {
+            args: Prisma.EventDiscussionThreadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EventDiscussionThreadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>
+          }
+          findMany: {
+            args: Prisma.EventDiscussionThreadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>[]
+          }
+          create: {
+            args: Prisma.EventDiscussionThreadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>
+          }
+          createMany: {
+            args: Prisma.EventDiscussionThreadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EventDiscussionThreadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>[]
+          }
+          delete: {
+            args: Prisma.EventDiscussionThreadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>
+          }
+          update: {
+            args: Prisma.EventDiscussionThreadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>
+          }
+          deleteMany: {
+            args: Prisma.EventDiscussionThreadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EventDiscussionThreadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EventDiscussionThreadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>[]
+          }
+          upsert: {
+            args: Prisma.EventDiscussionThreadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionThreadPayload>
+          }
+          aggregate: {
+            args: Prisma.EventDiscussionThreadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEventDiscussionThread>
+          }
+          groupBy: {
+            args: Prisma.EventDiscussionThreadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EventDiscussionThreadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EventDiscussionThreadCountArgs<ExtArgs>
+            result: $Utils.Optional<EventDiscussionThreadCountAggregateOutputType> | number
+          }
+        }
+      }
+      EventDiscussionReply: {
+        payload: Prisma.$EventDiscussionReplyPayload<ExtArgs>
+        fields: Prisma.EventDiscussionReplyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EventDiscussionReplyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EventDiscussionReplyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>
+          }
+          findFirst: {
+            args: Prisma.EventDiscussionReplyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EventDiscussionReplyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>
+          }
+          findMany: {
+            args: Prisma.EventDiscussionReplyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>[]
+          }
+          create: {
+            args: Prisma.EventDiscussionReplyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>
+          }
+          createMany: {
+            args: Prisma.EventDiscussionReplyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EventDiscussionReplyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>[]
+          }
+          delete: {
+            args: Prisma.EventDiscussionReplyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>
+          }
+          update: {
+            args: Prisma.EventDiscussionReplyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>
+          }
+          deleteMany: {
+            args: Prisma.EventDiscussionReplyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EventDiscussionReplyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EventDiscussionReplyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>[]
+          }
+          upsert: {
+            args: Prisma.EventDiscussionReplyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EventDiscussionReplyPayload>
+          }
+          aggregate: {
+            args: Prisma.EventDiscussionReplyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEventDiscussionReply>
+          }
+          groupBy: {
+            args: Prisma.EventDiscussionReplyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EventDiscussionReplyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EventDiscussionReplyCountArgs<ExtArgs>
+            result: $Utils.Optional<EventDiscussionReplyCountAggregateOutputType> | number
+          }
+        }
+      }
+      ClubMembership: {
+        payload: Prisma.$ClubMembershipPayload<ExtArgs>
+        fields: Prisma.ClubMembershipFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ClubMembershipFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ClubMembershipFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>
+          }
+          findFirst: {
+            args: Prisma.ClubMembershipFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ClubMembershipFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>
+          }
+          findMany: {
+            args: Prisma.ClubMembershipFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>[]
+          }
+          create: {
+            args: Prisma.ClubMembershipCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>
+          }
+          createMany: {
+            args: Prisma.ClubMembershipCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ClubMembershipCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>[]
+          }
+          delete: {
+            args: Prisma.ClubMembershipDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>
+          }
+          update: {
+            args: Prisma.ClubMembershipUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>
+          }
+          deleteMany: {
+            args: Prisma.ClubMembershipDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ClubMembershipUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ClubMembershipUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>[]
+          }
+          upsert: {
+            args: Prisma.ClubMembershipUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ClubMembershipPayload>
+          }
+          aggregate: {
+            args: Prisma.ClubMembershipAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateClubMembership>
+          }
+          groupBy: {
+            args: Prisma.ClubMembershipGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ClubMembershipGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ClubMembershipCountArgs<ExtArgs>
+            result: $Utils.Optional<ClubMembershipCountAggregateOutputType> | number
+          }
+        }
+      }
+      HubFollow: {
+        payload: Prisma.$HubFollowPayload<ExtArgs>
+        fields: Prisma.HubFollowFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HubFollowFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HubFollowFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>
+          }
+          findFirst: {
+            args: Prisma.HubFollowFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HubFollowFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>
+          }
+          findMany: {
+            args: Prisma.HubFollowFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>[]
+          }
+          create: {
+            args: Prisma.HubFollowCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>
+          }
+          createMany: {
+            args: Prisma.HubFollowCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.HubFollowCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>[]
+          }
+          delete: {
+            args: Prisma.HubFollowDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>
+          }
+          update: {
+            args: Prisma.HubFollowUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>
+          }
+          deleteMany: {
+            args: Prisma.HubFollowDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HubFollowUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.HubFollowUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>[]
+          }
+          upsert: {
+            args: Prisma.HubFollowUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubFollowPayload>
+          }
+          aggregate: {
+            args: Prisma.HubFollowAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHubFollow>
+          }
+          groupBy: {
+            args: Prisma.HubFollowGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HubFollowGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.HubFollowCountArgs<ExtArgs>
+            result: $Utils.Optional<HubFollowCountAggregateOutputType> | number
+          }
+        }
+      }
+      HubBlock: {
+        payload: Prisma.$HubBlockPayload<ExtArgs>
+        fields: Prisma.HubBlockFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HubBlockFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HubBlockFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>
+          }
+          findFirst: {
+            args: Prisma.HubBlockFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HubBlockFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>
+          }
+          findMany: {
+            args: Prisma.HubBlockFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>[]
+          }
+          create: {
+            args: Prisma.HubBlockCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>
+          }
+          createMany: {
+            args: Prisma.HubBlockCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.HubBlockCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>[]
+          }
+          delete: {
+            args: Prisma.HubBlockDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>
+          }
+          update: {
+            args: Prisma.HubBlockUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>
+          }
+          deleteMany: {
+            args: Prisma.HubBlockDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HubBlockUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.HubBlockUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>[]
+          }
+          upsert: {
+            args: Prisma.HubBlockUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HubBlockPayload>
+          }
+          aggregate: {
+            args: Prisma.HubBlockAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHubBlock>
+          }
+          groupBy: {
+            args: Prisma.HubBlockGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HubBlockGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.HubBlockCountArgs<ExtArgs>
+            result: $Utils.Optional<HubBlockCountAggregateOutputType> | number
+          }
+        }
+      }
       VerificationToken: {
         payload: Prisma.$VerificationTokenPayload<ExtArgs>
         fields: Prisma.VerificationTokenFieldRefs
@@ -1445,6 +1920,11 @@ export namespace Prisma {
     account?: AccountOmit
     session?: SessionOmit
     user?: UserOmit
+    eventDiscussionThread?: EventDiscussionThreadOmit
+    eventDiscussionReply?: EventDiscussionReplyOmit
+    clubMembership?: ClubMembershipOmit
+    hubFollow?: HubFollowOmit
+    hubBlock?: HubBlockOmit
     verificationToken?: VerificationTokenOmit
     rSVP?: RSVPOmit
   }
@@ -1528,10 +2008,16 @@ export namespace Prisma {
 
   export type ClubCountOutputType = {
     events: number
+    followers: number
+    blocks: number
+    members: number
   }
 
   export type ClubCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | ClubCountOutputTypeCountEventsArgs
+    followers?: boolean | ClubCountOutputTypeCountFollowersArgs
+    blocks?: boolean | ClubCountOutputTypeCountBlocksArgs
+    members?: boolean | ClubCountOutputTypeCountMembersArgs
   }
 
   // Custom InputTypes
@@ -1552,6 +2038,27 @@ export namespace Prisma {
     where?: EventWhereInput
   }
 
+  /**
+   * ClubCountOutputType without action
+   */
+  export type ClubCountOutputTypeCountFollowersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HubFollowWhereInput
+  }
+
+  /**
+   * ClubCountOutputType without action
+   */
+  export type ClubCountOutputTypeCountBlocksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HubBlockWhereInput
+  }
+
+  /**
+   * ClubCountOutputType without action
+   */
+  export type ClubCountOutputTypeCountMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ClubMembershipWhereInput
+  }
+
 
   /**
    * Count Type EventCountOutputType
@@ -1559,10 +2066,12 @@ export namespace Prisma {
 
   export type EventCountOutputType = {
     rsvps: number
+    discussionThreads: number
   }
 
   export type EventCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     rsvps?: boolean | EventCountOutputTypeCountRsvpsArgs
+    discussionThreads?: boolean | EventCountOutputTypeCountDiscussionThreadsArgs
   }
 
   // Custom InputTypes
@@ -1583,6 +2092,13 @@ export namespace Prisma {
     where?: RSVPWhereInput
   }
 
+  /**
+   * EventCountOutputType without action
+   */
+  export type EventCountOutputTypeCountDiscussionThreadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventDiscussionThreadWhereInput
+  }
+
 
   /**
    * Count Type UserCountOutputType
@@ -1594,6 +2110,10 @@ export namespace Prisma {
     posts: number
     authoredEvents: number
     rsvps: number
+    authoredDiscussionThreads: number
+    authoredDiscussionReplies: number
+    followedHubs: number
+    clubMemberships: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1602,6 +2122,10 @@ export namespace Prisma {
     posts?: boolean | UserCountOutputTypeCountPostsArgs
     authoredEvents?: boolean | UserCountOutputTypeCountAuthoredEventsArgs
     rsvps?: boolean | UserCountOutputTypeCountRsvpsArgs
+    authoredDiscussionThreads?: boolean | UserCountOutputTypeCountAuthoredDiscussionThreadsArgs
+    authoredDiscussionReplies?: boolean | UserCountOutputTypeCountAuthoredDiscussionRepliesArgs
+    followedHubs?: boolean | UserCountOutputTypeCountFollowedHubsArgs
+    clubMemberships?: boolean | UserCountOutputTypeCountClubMembershipsArgs
   }
 
   // Custom InputTypes
@@ -1648,6 +2172,65 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRsvpsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RSVPWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAuthoredDiscussionThreadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventDiscussionThreadWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAuthoredDiscussionRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventDiscussionReplyWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFollowedHubsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HubFollowWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountClubMembershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ClubMembershipWhereInput
+  }
+
+
+  /**
+   * Count Type EventDiscussionThreadCountOutputType
+   */
+
+  export type EventDiscussionThreadCountOutputType = {
+    replies: number
+  }
+
+  export type EventDiscussionThreadCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replies?: boolean | EventDiscussionThreadCountOutputTypeCountRepliesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * EventDiscussionThreadCountOutputType without action
+   */
+  export type EventDiscussionThreadCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThreadCountOutputType
+     */
+    select?: EventDiscussionThreadCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * EventDiscussionThreadCountOutputType without action
+   */
+  export type EventDiscussionThreadCountOutputTypeCountRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventDiscussionReplyWhereInput
   }
 
 
@@ -2946,6 +3529,9 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     events?: boolean | Club$eventsArgs<ExtArgs>
+    followers?: boolean | Club$followersArgs<ExtArgs>
+    blocks?: boolean | Club$blocksArgs<ExtArgs>
+    members?: boolean | Club$membersArgs<ExtArgs>
     _count?: boolean | ClubCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["club"]>
 
@@ -2976,6 +3562,9 @@ export namespace Prisma {
   export type ClubOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "logoUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["club"]>
   export type ClubInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     events?: boolean | Club$eventsArgs<ExtArgs>
+    followers?: boolean | Club$followersArgs<ExtArgs>
+    blocks?: boolean | Club$blocksArgs<ExtArgs>
+    members?: boolean | Club$membersArgs<ExtArgs>
     _count?: boolean | ClubCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClubIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2985,6 +3574,9 @@ export namespace Prisma {
     name: "Club"
     objects: {
       events: Prisma.$EventPayload<ExtArgs>[]
+      followers: Prisma.$HubFollowPayload<ExtArgs>[]
+      blocks: Prisma.$HubBlockPayload<ExtArgs>[]
+      members: Prisma.$ClubMembershipPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3387,6 +3979,9 @@ export namespace Prisma {
   export interface Prisma__ClubClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     events<T extends Club$eventsArgs<ExtArgs> = {}>(args?: Subset<T, Club$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    followers<T extends Club$followersArgs<ExtArgs> = {}>(args?: Subset<T, Club$followersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    blocks<T extends Club$blocksArgs<ExtArgs> = {}>(args?: Subset<T, Club$blocksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    members<T extends Club$membersArgs<ExtArgs> = {}>(args?: Subset<T, Club$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3833,6 +4428,78 @@ export namespace Prisma {
   }
 
   /**
+   * Club.followers
+   */
+  export type Club$followersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    where?: HubFollowWhereInput
+    orderBy?: HubFollowOrderByWithRelationInput | HubFollowOrderByWithRelationInput[]
+    cursor?: HubFollowWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HubFollowScalarFieldEnum | HubFollowScalarFieldEnum[]
+  }
+
+  /**
+   * Club.blocks
+   */
+  export type Club$blocksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    where?: HubBlockWhereInput
+    orderBy?: HubBlockOrderByWithRelationInput | HubBlockOrderByWithRelationInput[]
+    cursor?: HubBlockWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HubBlockScalarFieldEnum | HubBlockScalarFieldEnum[]
+  }
+
+  /**
+   * Club.members
+   */
+  export type Club$membersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    where?: ClubMembershipWhereInput
+    orderBy?: ClubMembershipOrderByWithRelationInput | ClubMembershipOrderByWithRelationInput[]
+    cursor?: ClubMembershipWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ClubMembershipScalarFieldEnum | ClubMembershipScalarFieldEnum[]
+  }
+
+  /**
    * Club without action
    */
   export type ClubDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4116,6 +4783,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
     rsvps?: boolean | Event$rsvpsArgs<ExtArgs>
+    discussionThreads?: boolean | Event$discussionThreadsArgs<ExtArgs>
     _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["event"]>
 
@@ -4173,6 +4841,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     club?: boolean | ClubDefaultArgs<ExtArgs>
     rsvps?: boolean | Event$rsvpsArgs<ExtArgs>
+    discussionThreads?: boolean | Event$discussionThreadsArgs<ExtArgs>
     _count?: boolean | EventCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4190,6 +4859,7 @@ export namespace Prisma {
       author: Prisma.$UserPayload<ExtArgs>
       club: Prisma.$ClubPayload<ExtArgs>
       rsvps: Prisma.$RSVPPayload<ExtArgs>[]
+      discussionThreads: Prisma.$EventDiscussionThreadPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -4601,6 +5271,7 @@ export namespace Prisma {
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     club<T extends ClubDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClubDefaultArgs<ExtArgs>>): Prisma__ClubClient<$Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     rsvps<T extends Event$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, Event$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    discussionThreads<T extends Event$discussionThreadsArgs<ExtArgs> = {}>(args?: Subset<T, Event$discussionThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5059,6 +5730,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RSVPScalarFieldEnum | RSVPScalarFieldEnum[]
+  }
+
+  /**
+   * Event.discussionThreads
+   */
+  export type Event$discussionThreadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    where?: EventDiscussionThreadWhereInput
+    orderBy?: EventDiscussionThreadOrderByWithRelationInput | EventDiscussionThreadOrderByWithRelationInput[]
+    cursor?: EventDiscussionThreadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventDiscussionThreadScalarFieldEnum | EventDiscussionThreadScalarFieldEnum[]
   }
 
   /**
@@ -7510,6 +8205,10 @@ export namespace Prisma {
     posts?: boolean | User$postsArgs<ExtArgs>
     authoredEvents?: boolean | User$authoredEventsArgs<ExtArgs>
     rsvps?: boolean | User$rsvpsArgs<ExtArgs>
+    authoredDiscussionThreads?: boolean | User$authoredDiscussionThreadsArgs<ExtArgs>
+    authoredDiscussionReplies?: boolean | User$authoredDiscussionRepliesArgs<ExtArgs>
+    followedHubs?: boolean | User$followedHubsArgs<ExtArgs>
+    clubMemberships?: boolean | User$clubMembershipsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -7550,6 +8249,10 @@ export namespace Prisma {
     posts?: boolean | User$postsArgs<ExtArgs>
     authoredEvents?: boolean | User$authoredEventsArgs<ExtArgs>
     rsvps?: boolean | User$rsvpsArgs<ExtArgs>
+    authoredDiscussionThreads?: boolean | User$authoredDiscussionThreadsArgs<ExtArgs>
+    authoredDiscussionReplies?: boolean | User$authoredDiscussionRepliesArgs<ExtArgs>
+    followedHubs?: boolean | User$followedHubsArgs<ExtArgs>
+    clubMemberships?: boolean | User$clubMembershipsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -7563,6 +8266,10 @@ export namespace Prisma {
       posts: Prisma.$PostPayload<ExtArgs>[]
       authoredEvents: Prisma.$EventPayload<ExtArgs>[]
       rsvps: Prisma.$RSVPPayload<ExtArgs>[]
+      authoredDiscussionThreads: Prisma.$EventDiscussionThreadPayload<ExtArgs>[]
+      authoredDiscussionReplies: Prisma.$EventDiscussionReplyPayload<ExtArgs>[]
+      followedHubs: Prisma.$HubFollowPayload<ExtArgs>[]
+      clubMemberships: Prisma.$ClubMembershipPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       role: $Enums.Role
@@ -7971,6 +8678,10 @@ export namespace Prisma {
     posts<T extends User$postsArgs<ExtArgs> = {}>(args?: Subset<T, User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     authoredEvents<T extends User$authoredEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$authoredEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     rsvps<T extends User$rsvpsArgs<ExtArgs> = {}>(args?: Subset<T, User$rsvpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RSVPPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    authoredDiscussionThreads<T extends User$authoredDiscussionThreadsArgs<ExtArgs> = {}>(args?: Subset<T, User$authoredDiscussionThreadsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    authoredDiscussionReplies<T extends User$authoredDiscussionRepliesArgs<ExtArgs> = {}>(args?: Subset<T, User$authoredDiscussionRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    followedHubs<T extends User$followedHubsArgs<ExtArgs> = {}>(args?: Subset<T, User$followedHubsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    clubMemberships<T extends User$clubMembershipsArgs<ExtArgs> = {}>(args?: Subset<T, User$clubMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8515,6 +9226,102 @@ export namespace Prisma {
   }
 
   /**
+   * User.authoredDiscussionThreads
+   */
+  export type User$authoredDiscussionThreadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    where?: EventDiscussionThreadWhereInput
+    orderBy?: EventDiscussionThreadOrderByWithRelationInput | EventDiscussionThreadOrderByWithRelationInput[]
+    cursor?: EventDiscussionThreadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventDiscussionThreadScalarFieldEnum | EventDiscussionThreadScalarFieldEnum[]
+  }
+
+  /**
+   * User.authoredDiscussionReplies
+   */
+  export type User$authoredDiscussionRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    where?: EventDiscussionReplyWhereInput
+    orderBy?: EventDiscussionReplyOrderByWithRelationInput | EventDiscussionReplyOrderByWithRelationInput[]
+    cursor?: EventDiscussionReplyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventDiscussionReplyScalarFieldEnum | EventDiscussionReplyScalarFieldEnum[]
+  }
+
+  /**
+   * User.followedHubs
+   */
+  export type User$followedHubsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    where?: HubFollowWhereInput
+    orderBy?: HubFollowOrderByWithRelationInput | HubFollowOrderByWithRelationInput[]
+    cursor?: HubFollowWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HubFollowScalarFieldEnum | HubFollowScalarFieldEnum[]
+  }
+
+  /**
+   * User.clubMemberships
+   */
+  export type User$clubMembershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    where?: ClubMembershipWhereInput
+    orderBy?: ClubMembershipOrderByWithRelationInput | ClubMembershipOrderByWithRelationInput[]
+    cursor?: ClubMembershipWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ClubMembershipScalarFieldEnum | ClubMembershipScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8530,6 +9337,5596 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EventDiscussionThread
+   */
+
+  export type AggregateEventDiscussionThread = {
+    _count: EventDiscussionThreadCountAggregateOutputType | null
+    _avg: EventDiscussionThreadAvgAggregateOutputType | null
+    _sum: EventDiscussionThreadSumAggregateOutputType | null
+    _min: EventDiscussionThreadMinAggregateOutputType | null
+    _max: EventDiscussionThreadMaxAggregateOutputType | null
+  }
+
+  export type EventDiscussionThreadAvgAggregateOutputType = {
+    id: number | null
+    eventId: number | null
+  }
+
+  export type EventDiscussionThreadSumAggregateOutputType = {
+    id: number | null
+    eventId: number | null
+  }
+
+  export type EventDiscussionThreadMinAggregateOutputType = {
+    id: number | null
+    eventId: number | null
+    authorId: string | null
+    question: string | null
+    pinned: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EventDiscussionThreadMaxAggregateOutputType = {
+    id: number | null
+    eventId: number | null
+    authorId: string | null
+    question: string | null
+    pinned: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EventDiscussionThreadCountAggregateOutputType = {
+    id: number
+    eventId: number
+    authorId: number
+    question: number
+    pinned: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EventDiscussionThreadAvgAggregateInputType = {
+    id?: true
+    eventId?: true
+  }
+
+  export type EventDiscussionThreadSumAggregateInputType = {
+    id?: true
+    eventId?: true
+  }
+
+  export type EventDiscussionThreadMinAggregateInputType = {
+    id?: true
+    eventId?: true
+    authorId?: true
+    question?: true
+    pinned?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EventDiscussionThreadMaxAggregateInputType = {
+    id?: true
+    eventId?: true
+    authorId?: true
+    question?: true
+    pinned?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EventDiscussionThreadCountAggregateInputType = {
+    id?: true
+    eventId?: true
+    authorId?: true
+    question?: true
+    pinned?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EventDiscussionThreadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EventDiscussionThread to aggregate.
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionThreads to fetch.
+     */
+    orderBy?: EventDiscussionThreadOrderByWithRelationInput | EventDiscussionThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EventDiscussionThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionThreads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EventDiscussionThreads
+    **/
+    _count?: true | EventDiscussionThreadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EventDiscussionThreadAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EventDiscussionThreadSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EventDiscussionThreadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EventDiscussionThreadMaxAggregateInputType
+  }
+
+  export type GetEventDiscussionThreadAggregateType<T extends EventDiscussionThreadAggregateArgs> = {
+        [P in keyof T & keyof AggregateEventDiscussionThread]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEventDiscussionThread[P]>
+      : GetScalarType<T[P], AggregateEventDiscussionThread[P]>
+  }
+
+
+
+
+  export type EventDiscussionThreadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventDiscussionThreadWhereInput
+    orderBy?: EventDiscussionThreadOrderByWithAggregationInput | EventDiscussionThreadOrderByWithAggregationInput[]
+    by: EventDiscussionThreadScalarFieldEnum[] | EventDiscussionThreadScalarFieldEnum
+    having?: EventDiscussionThreadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EventDiscussionThreadCountAggregateInputType | true
+    _avg?: EventDiscussionThreadAvgAggregateInputType
+    _sum?: EventDiscussionThreadSumAggregateInputType
+    _min?: EventDiscussionThreadMinAggregateInputType
+    _max?: EventDiscussionThreadMaxAggregateInputType
+  }
+
+  export type EventDiscussionThreadGroupByOutputType = {
+    id: number
+    eventId: number
+    authorId: string
+    question: string
+    pinned: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: EventDiscussionThreadCountAggregateOutputType | null
+    _avg: EventDiscussionThreadAvgAggregateOutputType | null
+    _sum: EventDiscussionThreadSumAggregateOutputType | null
+    _min: EventDiscussionThreadMinAggregateOutputType | null
+    _max: EventDiscussionThreadMaxAggregateOutputType | null
+  }
+
+  type GetEventDiscussionThreadGroupByPayload<T extends EventDiscussionThreadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EventDiscussionThreadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EventDiscussionThreadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EventDiscussionThreadGroupByOutputType[P]>
+            : GetScalarType<T[P], EventDiscussionThreadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EventDiscussionThreadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    eventId?: boolean
+    authorId?: boolean
+    question?: boolean
+    pinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    event?: boolean | EventDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    replies?: boolean | EventDiscussionThread$repliesArgs<ExtArgs>
+    _count?: boolean | EventDiscussionThreadCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventDiscussionThread"]>
+
+  export type EventDiscussionThreadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    eventId?: boolean
+    authorId?: boolean
+    question?: boolean
+    pinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    event?: boolean | EventDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventDiscussionThread"]>
+
+  export type EventDiscussionThreadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    eventId?: boolean
+    authorId?: boolean
+    question?: boolean
+    pinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    event?: boolean | EventDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventDiscussionThread"]>
+
+  export type EventDiscussionThreadSelectScalar = {
+    id?: boolean
+    eventId?: boolean
+    authorId?: boolean
+    question?: boolean
+    pinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EventDiscussionThreadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "eventId" | "authorId" | "question" | "pinned" | "createdAt" | "updatedAt", ExtArgs["result"]["eventDiscussionThread"]>
+  export type EventDiscussionThreadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    event?: boolean | EventDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    replies?: boolean | EventDiscussionThread$repliesArgs<ExtArgs>
+    _count?: boolean | EventDiscussionThreadCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type EventDiscussionThreadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    event?: boolean | EventDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EventDiscussionThreadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    event?: boolean | EventDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $EventDiscussionThreadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EventDiscussionThread"
+    objects: {
+      event: Prisma.$EventPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
+      replies: Prisma.$EventDiscussionReplyPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      eventId: number
+      authorId: string
+      question: string
+      pinned: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["eventDiscussionThread"]>
+    composites: {}
+  }
+
+  type EventDiscussionThreadGetPayload<S extends boolean | null | undefined | EventDiscussionThreadDefaultArgs> = $Result.GetResult<Prisma.$EventDiscussionThreadPayload, S>
+
+  type EventDiscussionThreadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EventDiscussionThreadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EventDiscussionThreadCountAggregateInputType | true
+    }
+
+  export interface EventDiscussionThreadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EventDiscussionThread'], meta: { name: 'EventDiscussionThread' } }
+    /**
+     * Find zero or one EventDiscussionThread that matches the filter.
+     * @param {EventDiscussionThreadFindUniqueArgs} args - Arguments to find a EventDiscussionThread
+     * @example
+     * // Get one EventDiscussionThread
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EventDiscussionThreadFindUniqueArgs>(args: SelectSubset<T, EventDiscussionThreadFindUniqueArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EventDiscussionThread that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EventDiscussionThreadFindUniqueOrThrowArgs} args - Arguments to find a EventDiscussionThread
+     * @example
+     * // Get one EventDiscussionThread
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EventDiscussionThreadFindUniqueOrThrowArgs>(args: SelectSubset<T, EventDiscussionThreadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EventDiscussionThread that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadFindFirstArgs} args - Arguments to find a EventDiscussionThread
+     * @example
+     * // Get one EventDiscussionThread
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EventDiscussionThreadFindFirstArgs>(args?: SelectSubset<T, EventDiscussionThreadFindFirstArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EventDiscussionThread that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadFindFirstOrThrowArgs} args - Arguments to find a EventDiscussionThread
+     * @example
+     * // Get one EventDiscussionThread
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EventDiscussionThreadFindFirstOrThrowArgs>(args?: SelectSubset<T, EventDiscussionThreadFindFirstOrThrowArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EventDiscussionThreads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EventDiscussionThreads
+     * const eventDiscussionThreads = await prisma.eventDiscussionThread.findMany()
+     * 
+     * // Get first 10 EventDiscussionThreads
+     * const eventDiscussionThreads = await prisma.eventDiscussionThread.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const eventDiscussionThreadWithIdOnly = await prisma.eventDiscussionThread.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EventDiscussionThreadFindManyArgs>(args?: SelectSubset<T, EventDiscussionThreadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EventDiscussionThread.
+     * @param {EventDiscussionThreadCreateArgs} args - Arguments to create a EventDiscussionThread.
+     * @example
+     * // Create one EventDiscussionThread
+     * const EventDiscussionThread = await prisma.eventDiscussionThread.create({
+     *   data: {
+     *     // ... data to create a EventDiscussionThread
+     *   }
+     * })
+     * 
+     */
+    create<T extends EventDiscussionThreadCreateArgs>(args: SelectSubset<T, EventDiscussionThreadCreateArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EventDiscussionThreads.
+     * @param {EventDiscussionThreadCreateManyArgs} args - Arguments to create many EventDiscussionThreads.
+     * @example
+     * // Create many EventDiscussionThreads
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EventDiscussionThreadCreateManyArgs>(args?: SelectSubset<T, EventDiscussionThreadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EventDiscussionThreads and returns the data saved in the database.
+     * @param {EventDiscussionThreadCreateManyAndReturnArgs} args - Arguments to create many EventDiscussionThreads.
+     * @example
+     * // Create many EventDiscussionThreads
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EventDiscussionThreads and only return the `id`
+     * const eventDiscussionThreadWithIdOnly = await prisma.eventDiscussionThread.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EventDiscussionThreadCreateManyAndReturnArgs>(args?: SelectSubset<T, EventDiscussionThreadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EventDiscussionThread.
+     * @param {EventDiscussionThreadDeleteArgs} args - Arguments to delete one EventDiscussionThread.
+     * @example
+     * // Delete one EventDiscussionThread
+     * const EventDiscussionThread = await prisma.eventDiscussionThread.delete({
+     *   where: {
+     *     // ... filter to delete one EventDiscussionThread
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EventDiscussionThreadDeleteArgs>(args: SelectSubset<T, EventDiscussionThreadDeleteArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EventDiscussionThread.
+     * @param {EventDiscussionThreadUpdateArgs} args - Arguments to update one EventDiscussionThread.
+     * @example
+     * // Update one EventDiscussionThread
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EventDiscussionThreadUpdateArgs>(args: SelectSubset<T, EventDiscussionThreadUpdateArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EventDiscussionThreads.
+     * @param {EventDiscussionThreadDeleteManyArgs} args - Arguments to filter EventDiscussionThreads to delete.
+     * @example
+     * // Delete a few EventDiscussionThreads
+     * const { count } = await prisma.eventDiscussionThread.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EventDiscussionThreadDeleteManyArgs>(args?: SelectSubset<T, EventDiscussionThreadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EventDiscussionThreads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EventDiscussionThreads
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EventDiscussionThreadUpdateManyArgs>(args: SelectSubset<T, EventDiscussionThreadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EventDiscussionThreads and returns the data updated in the database.
+     * @param {EventDiscussionThreadUpdateManyAndReturnArgs} args - Arguments to update many EventDiscussionThreads.
+     * @example
+     * // Update many EventDiscussionThreads
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EventDiscussionThreads and only return the `id`
+     * const eventDiscussionThreadWithIdOnly = await prisma.eventDiscussionThread.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EventDiscussionThreadUpdateManyAndReturnArgs>(args: SelectSubset<T, EventDiscussionThreadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EventDiscussionThread.
+     * @param {EventDiscussionThreadUpsertArgs} args - Arguments to update or create a EventDiscussionThread.
+     * @example
+     * // Update or create a EventDiscussionThread
+     * const eventDiscussionThread = await prisma.eventDiscussionThread.upsert({
+     *   create: {
+     *     // ... data to create a EventDiscussionThread
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EventDiscussionThread we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EventDiscussionThreadUpsertArgs>(args: SelectSubset<T, EventDiscussionThreadUpsertArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EventDiscussionThreads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadCountArgs} args - Arguments to filter EventDiscussionThreads to count.
+     * @example
+     * // Count the number of EventDiscussionThreads
+     * const count = await prisma.eventDiscussionThread.count({
+     *   where: {
+     *     // ... the filter for the EventDiscussionThreads we want to count
+     *   }
+     * })
+    **/
+    count<T extends EventDiscussionThreadCountArgs>(
+      args?: Subset<T, EventDiscussionThreadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EventDiscussionThreadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EventDiscussionThread.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EventDiscussionThreadAggregateArgs>(args: Subset<T, EventDiscussionThreadAggregateArgs>): Prisma.PrismaPromise<GetEventDiscussionThreadAggregateType<T>>
+
+    /**
+     * Group by EventDiscussionThread.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionThreadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EventDiscussionThreadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EventDiscussionThreadGroupByArgs['orderBy'] }
+        : { orderBy?: EventDiscussionThreadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EventDiscussionThreadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventDiscussionThreadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EventDiscussionThread model
+   */
+  readonly fields: EventDiscussionThreadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EventDiscussionThread.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EventDiscussionThreadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    event<T extends EventDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventDefaultArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    replies<T extends EventDiscussionThread$repliesArgs<ExtArgs> = {}>(args?: Subset<T, EventDiscussionThread$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EventDiscussionThread model
+   */
+  interface EventDiscussionThreadFieldRefs {
+    readonly id: FieldRef<"EventDiscussionThread", 'Int'>
+    readonly eventId: FieldRef<"EventDiscussionThread", 'Int'>
+    readonly authorId: FieldRef<"EventDiscussionThread", 'String'>
+    readonly question: FieldRef<"EventDiscussionThread", 'String'>
+    readonly pinned: FieldRef<"EventDiscussionThread", 'Boolean'>
+    readonly createdAt: FieldRef<"EventDiscussionThread", 'DateTime'>
+    readonly updatedAt: FieldRef<"EventDiscussionThread", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EventDiscussionThread findUnique
+   */
+  export type EventDiscussionThreadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionThread to fetch.
+     */
+    where: EventDiscussionThreadWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionThread findUniqueOrThrow
+   */
+  export type EventDiscussionThreadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionThread to fetch.
+     */
+    where: EventDiscussionThreadWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionThread findFirst
+   */
+  export type EventDiscussionThreadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionThread to fetch.
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionThreads to fetch.
+     */
+    orderBy?: EventDiscussionThreadOrderByWithRelationInput | EventDiscussionThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EventDiscussionThreads.
+     */
+    cursor?: EventDiscussionThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionThreads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventDiscussionThreads.
+     */
+    distinct?: EventDiscussionThreadScalarFieldEnum | EventDiscussionThreadScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionThread findFirstOrThrow
+   */
+  export type EventDiscussionThreadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionThread to fetch.
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionThreads to fetch.
+     */
+    orderBy?: EventDiscussionThreadOrderByWithRelationInput | EventDiscussionThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EventDiscussionThreads.
+     */
+    cursor?: EventDiscussionThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionThreads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventDiscussionThreads.
+     */
+    distinct?: EventDiscussionThreadScalarFieldEnum | EventDiscussionThreadScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionThread findMany
+   */
+  export type EventDiscussionThreadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionThreads to fetch.
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionThreads to fetch.
+     */
+    orderBy?: EventDiscussionThreadOrderByWithRelationInput | EventDiscussionThreadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EventDiscussionThreads.
+     */
+    cursor?: EventDiscussionThreadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionThreads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionThreads.
+     */
+    skip?: number
+    distinct?: EventDiscussionThreadScalarFieldEnum | EventDiscussionThreadScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionThread create
+   */
+  export type EventDiscussionThreadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EventDiscussionThread.
+     */
+    data: XOR<EventDiscussionThreadCreateInput, EventDiscussionThreadUncheckedCreateInput>
+  }
+
+  /**
+   * EventDiscussionThread createMany
+   */
+  export type EventDiscussionThreadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EventDiscussionThreads.
+     */
+    data: EventDiscussionThreadCreateManyInput | EventDiscussionThreadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EventDiscussionThread createManyAndReturn
+   */
+  export type EventDiscussionThreadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * The data used to create many EventDiscussionThreads.
+     */
+    data: EventDiscussionThreadCreateManyInput | EventDiscussionThreadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EventDiscussionThread update
+   */
+  export type EventDiscussionThreadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EventDiscussionThread.
+     */
+    data: XOR<EventDiscussionThreadUpdateInput, EventDiscussionThreadUncheckedUpdateInput>
+    /**
+     * Choose, which EventDiscussionThread to update.
+     */
+    where: EventDiscussionThreadWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionThread updateMany
+   */
+  export type EventDiscussionThreadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EventDiscussionThreads.
+     */
+    data: XOR<EventDiscussionThreadUpdateManyMutationInput, EventDiscussionThreadUncheckedUpdateManyInput>
+    /**
+     * Filter which EventDiscussionThreads to update
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * Limit how many EventDiscussionThreads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EventDiscussionThread updateManyAndReturn
+   */
+  export type EventDiscussionThreadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * The data used to update EventDiscussionThreads.
+     */
+    data: XOR<EventDiscussionThreadUpdateManyMutationInput, EventDiscussionThreadUncheckedUpdateManyInput>
+    /**
+     * Filter which EventDiscussionThreads to update
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * Limit how many EventDiscussionThreads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EventDiscussionThread upsert
+   */
+  export type EventDiscussionThreadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EventDiscussionThread to update in case it exists.
+     */
+    where: EventDiscussionThreadWhereUniqueInput
+    /**
+     * In case the EventDiscussionThread found by the `where` argument doesn't exist, create a new EventDiscussionThread with this data.
+     */
+    create: XOR<EventDiscussionThreadCreateInput, EventDiscussionThreadUncheckedCreateInput>
+    /**
+     * In case the EventDiscussionThread was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EventDiscussionThreadUpdateInput, EventDiscussionThreadUncheckedUpdateInput>
+  }
+
+  /**
+   * EventDiscussionThread delete
+   */
+  export type EventDiscussionThreadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+    /**
+     * Filter which EventDiscussionThread to delete.
+     */
+    where: EventDiscussionThreadWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionThread deleteMany
+   */
+  export type EventDiscussionThreadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EventDiscussionThreads to delete
+     */
+    where?: EventDiscussionThreadWhereInput
+    /**
+     * Limit how many EventDiscussionThreads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EventDiscussionThread.replies
+   */
+  export type EventDiscussionThread$repliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    where?: EventDiscussionReplyWhereInput
+    orderBy?: EventDiscussionReplyOrderByWithRelationInput | EventDiscussionReplyOrderByWithRelationInput[]
+    cursor?: EventDiscussionReplyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EventDiscussionReplyScalarFieldEnum | EventDiscussionReplyScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionThread without action
+   */
+  export type EventDiscussionThreadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionThread
+     */
+    select?: EventDiscussionThreadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionThread
+     */
+    omit?: EventDiscussionThreadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionThreadInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EventDiscussionReply
+   */
+
+  export type AggregateEventDiscussionReply = {
+    _count: EventDiscussionReplyCountAggregateOutputType | null
+    _avg: EventDiscussionReplyAvgAggregateOutputType | null
+    _sum: EventDiscussionReplySumAggregateOutputType | null
+    _min: EventDiscussionReplyMinAggregateOutputType | null
+    _max: EventDiscussionReplyMaxAggregateOutputType | null
+  }
+
+  export type EventDiscussionReplyAvgAggregateOutputType = {
+    id: number | null
+    threadId: number | null
+  }
+
+  export type EventDiscussionReplySumAggregateOutputType = {
+    id: number | null
+    threadId: number | null
+  }
+
+  export type EventDiscussionReplyMinAggregateOutputType = {
+    id: number | null
+    threadId: number | null
+    authorId: string | null
+    message: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EventDiscussionReplyMaxAggregateOutputType = {
+    id: number | null
+    threadId: number | null
+    authorId: string | null
+    message: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EventDiscussionReplyCountAggregateOutputType = {
+    id: number
+    threadId: number
+    authorId: number
+    message: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EventDiscussionReplyAvgAggregateInputType = {
+    id?: true
+    threadId?: true
+  }
+
+  export type EventDiscussionReplySumAggregateInputType = {
+    id?: true
+    threadId?: true
+  }
+
+  export type EventDiscussionReplyMinAggregateInputType = {
+    id?: true
+    threadId?: true
+    authorId?: true
+    message?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EventDiscussionReplyMaxAggregateInputType = {
+    id?: true
+    threadId?: true
+    authorId?: true
+    message?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type EventDiscussionReplyCountAggregateInputType = {
+    id?: true
+    threadId?: true
+    authorId?: true
+    message?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EventDiscussionReplyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EventDiscussionReply to aggregate.
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionReplies to fetch.
+     */
+    orderBy?: EventDiscussionReplyOrderByWithRelationInput | EventDiscussionReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EventDiscussionReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EventDiscussionReplies
+    **/
+    _count?: true | EventDiscussionReplyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EventDiscussionReplyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EventDiscussionReplySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EventDiscussionReplyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EventDiscussionReplyMaxAggregateInputType
+  }
+
+  export type GetEventDiscussionReplyAggregateType<T extends EventDiscussionReplyAggregateArgs> = {
+        [P in keyof T & keyof AggregateEventDiscussionReply]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEventDiscussionReply[P]>
+      : GetScalarType<T[P], AggregateEventDiscussionReply[P]>
+  }
+
+
+
+
+  export type EventDiscussionReplyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EventDiscussionReplyWhereInput
+    orderBy?: EventDiscussionReplyOrderByWithAggregationInput | EventDiscussionReplyOrderByWithAggregationInput[]
+    by: EventDiscussionReplyScalarFieldEnum[] | EventDiscussionReplyScalarFieldEnum
+    having?: EventDiscussionReplyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EventDiscussionReplyCountAggregateInputType | true
+    _avg?: EventDiscussionReplyAvgAggregateInputType
+    _sum?: EventDiscussionReplySumAggregateInputType
+    _min?: EventDiscussionReplyMinAggregateInputType
+    _max?: EventDiscussionReplyMaxAggregateInputType
+  }
+
+  export type EventDiscussionReplyGroupByOutputType = {
+    id: number
+    threadId: number
+    authorId: string
+    message: string
+    createdAt: Date
+    updatedAt: Date
+    _count: EventDiscussionReplyCountAggregateOutputType | null
+    _avg: EventDiscussionReplyAvgAggregateOutputType | null
+    _sum: EventDiscussionReplySumAggregateOutputType | null
+    _min: EventDiscussionReplyMinAggregateOutputType | null
+    _max: EventDiscussionReplyMaxAggregateOutputType | null
+  }
+
+  type GetEventDiscussionReplyGroupByPayload<T extends EventDiscussionReplyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EventDiscussionReplyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EventDiscussionReplyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EventDiscussionReplyGroupByOutputType[P]>
+            : GetScalarType<T[P], EventDiscussionReplyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EventDiscussionReplySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    threadId?: boolean
+    authorId?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    thread?: boolean | EventDiscussionThreadDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventDiscussionReply"]>
+
+  export type EventDiscussionReplySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    threadId?: boolean
+    authorId?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    thread?: boolean | EventDiscussionThreadDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventDiscussionReply"]>
+
+  export type EventDiscussionReplySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    threadId?: boolean
+    authorId?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    thread?: boolean | EventDiscussionThreadDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["eventDiscussionReply"]>
+
+  export type EventDiscussionReplySelectScalar = {
+    id?: boolean
+    threadId?: boolean
+    authorId?: boolean
+    message?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EventDiscussionReplyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "threadId" | "authorId" | "message" | "createdAt" | "updatedAt", ExtArgs["result"]["eventDiscussionReply"]>
+  export type EventDiscussionReplyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    thread?: boolean | EventDiscussionThreadDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EventDiscussionReplyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    thread?: boolean | EventDiscussionThreadDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type EventDiscussionReplyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    thread?: boolean | EventDiscussionThreadDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $EventDiscussionReplyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EventDiscussionReply"
+    objects: {
+      thread: Prisma.$EventDiscussionThreadPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      threadId: number
+      authorId: string
+      message: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["eventDiscussionReply"]>
+    composites: {}
+  }
+
+  type EventDiscussionReplyGetPayload<S extends boolean | null | undefined | EventDiscussionReplyDefaultArgs> = $Result.GetResult<Prisma.$EventDiscussionReplyPayload, S>
+
+  type EventDiscussionReplyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EventDiscussionReplyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EventDiscussionReplyCountAggregateInputType | true
+    }
+
+  export interface EventDiscussionReplyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EventDiscussionReply'], meta: { name: 'EventDiscussionReply' } }
+    /**
+     * Find zero or one EventDiscussionReply that matches the filter.
+     * @param {EventDiscussionReplyFindUniqueArgs} args - Arguments to find a EventDiscussionReply
+     * @example
+     * // Get one EventDiscussionReply
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EventDiscussionReplyFindUniqueArgs>(args: SelectSubset<T, EventDiscussionReplyFindUniqueArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EventDiscussionReply that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EventDiscussionReplyFindUniqueOrThrowArgs} args - Arguments to find a EventDiscussionReply
+     * @example
+     * // Get one EventDiscussionReply
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EventDiscussionReplyFindUniqueOrThrowArgs>(args: SelectSubset<T, EventDiscussionReplyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EventDiscussionReply that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyFindFirstArgs} args - Arguments to find a EventDiscussionReply
+     * @example
+     * // Get one EventDiscussionReply
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EventDiscussionReplyFindFirstArgs>(args?: SelectSubset<T, EventDiscussionReplyFindFirstArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EventDiscussionReply that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyFindFirstOrThrowArgs} args - Arguments to find a EventDiscussionReply
+     * @example
+     * // Get one EventDiscussionReply
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EventDiscussionReplyFindFirstOrThrowArgs>(args?: SelectSubset<T, EventDiscussionReplyFindFirstOrThrowArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EventDiscussionReplies that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EventDiscussionReplies
+     * const eventDiscussionReplies = await prisma.eventDiscussionReply.findMany()
+     * 
+     * // Get first 10 EventDiscussionReplies
+     * const eventDiscussionReplies = await prisma.eventDiscussionReply.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const eventDiscussionReplyWithIdOnly = await prisma.eventDiscussionReply.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EventDiscussionReplyFindManyArgs>(args?: SelectSubset<T, EventDiscussionReplyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EventDiscussionReply.
+     * @param {EventDiscussionReplyCreateArgs} args - Arguments to create a EventDiscussionReply.
+     * @example
+     * // Create one EventDiscussionReply
+     * const EventDiscussionReply = await prisma.eventDiscussionReply.create({
+     *   data: {
+     *     // ... data to create a EventDiscussionReply
+     *   }
+     * })
+     * 
+     */
+    create<T extends EventDiscussionReplyCreateArgs>(args: SelectSubset<T, EventDiscussionReplyCreateArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EventDiscussionReplies.
+     * @param {EventDiscussionReplyCreateManyArgs} args - Arguments to create many EventDiscussionReplies.
+     * @example
+     * // Create many EventDiscussionReplies
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EventDiscussionReplyCreateManyArgs>(args?: SelectSubset<T, EventDiscussionReplyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EventDiscussionReplies and returns the data saved in the database.
+     * @param {EventDiscussionReplyCreateManyAndReturnArgs} args - Arguments to create many EventDiscussionReplies.
+     * @example
+     * // Create many EventDiscussionReplies
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EventDiscussionReplies and only return the `id`
+     * const eventDiscussionReplyWithIdOnly = await prisma.eventDiscussionReply.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EventDiscussionReplyCreateManyAndReturnArgs>(args?: SelectSubset<T, EventDiscussionReplyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EventDiscussionReply.
+     * @param {EventDiscussionReplyDeleteArgs} args - Arguments to delete one EventDiscussionReply.
+     * @example
+     * // Delete one EventDiscussionReply
+     * const EventDiscussionReply = await prisma.eventDiscussionReply.delete({
+     *   where: {
+     *     // ... filter to delete one EventDiscussionReply
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EventDiscussionReplyDeleteArgs>(args: SelectSubset<T, EventDiscussionReplyDeleteArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EventDiscussionReply.
+     * @param {EventDiscussionReplyUpdateArgs} args - Arguments to update one EventDiscussionReply.
+     * @example
+     * // Update one EventDiscussionReply
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EventDiscussionReplyUpdateArgs>(args: SelectSubset<T, EventDiscussionReplyUpdateArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EventDiscussionReplies.
+     * @param {EventDiscussionReplyDeleteManyArgs} args - Arguments to filter EventDiscussionReplies to delete.
+     * @example
+     * // Delete a few EventDiscussionReplies
+     * const { count } = await prisma.eventDiscussionReply.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EventDiscussionReplyDeleteManyArgs>(args?: SelectSubset<T, EventDiscussionReplyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EventDiscussionReplies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EventDiscussionReplies
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EventDiscussionReplyUpdateManyArgs>(args: SelectSubset<T, EventDiscussionReplyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EventDiscussionReplies and returns the data updated in the database.
+     * @param {EventDiscussionReplyUpdateManyAndReturnArgs} args - Arguments to update many EventDiscussionReplies.
+     * @example
+     * // Update many EventDiscussionReplies
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EventDiscussionReplies and only return the `id`
+     * const eventDiscussionReplyWithIdOnly = await prisma.eventDiscussionReply.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EventDiscussionReplyUpdateManyAndReturnArgs>(args: SelectSubset<T, EventDiscussionReplyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EventDiscussionReply.
+     * @param {EventDiscussionReplyUpsertArgs} args - Arguments to update or create a EventDiscussionReply.
+     * @example
+     * // Update or create a EventDiscussionReply
+     * const eventDiscussionReply = await prisma.eventDiscussionReply.upsert({
+     *   create: {
+     *     // ... data to create a EventDiscussionReply
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EventDiscussionReply we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EventDiscussionReplyUpsertArgs>(args: SelectSubset<T, EventDiscussionReplyUpsertArgs<ExtArgs>>): Prisma__EventDiscussionReplyClient<$Result.GetResult<Prisma.$EventDiscussionReplyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EventDiscussionReplies.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyCountArgs} args - Arguments to filter EventDiscussionReplies to count.
+     * @example
+     * // Count the number of EventDiscussionReplies
+     * const count = await prisma.eventDiscussionReply.count({
+     *   where: {
+     *     // ... the filter for the EventDiscussionReplies we want to count
+     *   }
+     * })
+    **/
+    count<T extends EventDiscussionReplyCountArgs>(
+      args?: Subset<T, EventDiscussionReplyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EventDiscussionReplyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EventDiscussionReply.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EventDiscussionReplyAggregateArgs>(args: Subset<T, EventDiscussionReplyAggregateArgs>): Prisma.PrismaPromise<GetEventDiscussionReplyAggregateType<T>>
+
+    /**
+     * Group by EventDiscussionReply.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EventDiscussionReplyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EventDiscussionReplyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EventDiscussionReplyGroupByArgs['orderBy'] }
+        : { orderBy?: EventDiscussionReplyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EventDiscussionReplyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEventDiscussionReplyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EventDiscussionReply model
+   */
+  readonly fields: EventDiscussionReplyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EventDiscussionReply.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EventDiscussionReplyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    thread<T extends EventDiscussionThreadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventDiscussionThreadDefaultArgs<ExtArgs>>): Prisma__EventDiscussionThreadClient<$Result.GetResult<Prisma.$EventDiscussionThreadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EventDiscussionReply model
+   */
+  interface EventDiscussionReplyFieldRefs {
+    readonly id: FieldRef<"EventDiscussionReply", 'Int'>
+    readonly threadId: FieldRef<"EventDiscussionReply", 'Int'>
+    readonly authorId: FieldRef<"EventDiscussionReply", 'String'>
+    readonly message: FieldRef<"EventDiscussionReply", 'String'>
+    readonly createdAt: FieldRef<"EventDiscussionReply", 'DateTime'>
+    readonly updatedAt: FieldRef<"EventDiscussionReply", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EventDiscussionReply findUnique
+   */
+  export type EventDiscussionReplyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionReply to fetch.
+     */
+    where: EventDiscussionReplyWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionReply findUniqueOrThrow
+   */
+  export type EventDiscussionReplyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionReply to fetch.
+     */
+    where: EventDiscussionReplyWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionReply findFirst
+   */
+  export type EventDiscussionReplyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionReply to fetch.
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionReplies to fetch.
+     */
+    orderBy?: EventDiscussionReplyOrderByWithRelationInput | EventDiscussionReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EventDiscussionReplies.
+     */
+    cursor?: EventDiscussionReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventDiscussionReplies.
+     */
+    distinct?: EventDiscussionReplyScalarFieldEnum | EventDiscussionReplyScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionReply findFirstOrThrow
+   */
+  export type EventDiscussionReplyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionReply to fetch.
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionReplies to fetch.
+     */
+    orderBy?: EventDiscussionReplyOrderByWithRelationInput | EventDiscussionReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EventDiscussionReplies.
+     */
+    cursor?: EventDiscussionReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionReplies.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EventDiscussionReplies.
+     */
+    distinct?: EventDiscussionReplyScalarFieldEnum | EventDiscussionReplyScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionReply findMany
+   */
+  export type EventDiscussionReplyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * Filter, which EventDiscussionReplies to fetch.
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EventDiscussionReplies to fetch.
+     */
+    orderBy?: EventDiscussionReplyOrderByWithRelationInput | EventDiscussionReplyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EventDiscussionReplies.
+     */
+    cursor?: EventDiscussionReplyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EventDiscussionReplies from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EventDiscussionReplies.
+     */
+    skip?: number
+    distinct?: EventDiscussionReplyScalarFieldEnum | EventDiscussionReplyScalarFieldEnum[]
+  }
+
+  /**
+   * EventDiscussionReply create
+   */
+  export type EventDiscussionReplyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EventDiscussionReply.
+     */
+    data: XOR<EventDiscussionReplyCreateInput, EventDiscussionReplyUncheckedCreateInput>
+  }
+
+  /**
+   * EventDiscussionReply createMany
+   */
+  export type EventDiscussionReplyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EventDiscussionReplies.
+     */
+    data: EventDiscussionReplyCreateManyInput | EventDiscussionReplyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EventDiscussionReply createManyAndReturn
+   */
+  export type EventDiscussionReplyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * The data used to create many EventDiscussionReplies.
+     */
+    data: EventDiscussionReplyCreateManyInput | EventDiscussionReplyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EventDiscussionReply update
+   */
+  export type EventDiscussionReplyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EventDiscussionReply.
+     */
+    data: XOR<EventDiscussionReplyUpdateInput, EventDiscussionReplyUncheckedUpdateInput>
+    /**
+     * Choose, which EventDiscussionReply to update.
+     */
+    where: EventDiscussionReplyWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionReply updateMany
+   */
+  export type EventDiscussionReplyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EventDiscussionReplies.
+     */
+    data: XOR<EventDiscussionReplyUpdateManyMutationInput, EventDiscussionReplyUncheckedUpdateManyInput>
+    /**
+     * Filter which EventDiscussionReplies to update
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * Limit how many EventDiscussionReplies to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EventDiscussionReply updateManyAndReturn
+   */
+  export type EventDiscussionReplyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * The data used to update EventDiscussionReplies.
+     */
+    data: XOR<EventDiscussionReplyUpdateManyMutationInput, EventDiscussionReplyUncheckedUpdateManyInput>
+    /**
+     * Filter which EventDiscussionReplies to update
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * Limit how many EventDiscussionReplies to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EventDiscussionReply upsert
+   */
+  export type EventDiscussionReplyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EventDiscussionReply to update in case it exists.
+     */
+    where: EventDiscussionReplyWhereUniqueInput
+    /**
+     * In case the EventDiscussionReply found by the `where` argument doesn't exist, create a new EventDiscussionReply with this data.
+     */
+    create: XOR<EventDiscussionReplyCreateInput, EventDiscussionReplyUncheckedCreateInput>
+    /**
+     * In case the EventDiscussionReply was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EventDiscussionReplyUpdateInput, EventDiscussionReplyUncheckedUpdateInput>
+  }
+
+  /**
+   * EventDiscussionReply delete
+   */
+  export type EventDiscussionReplyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+    /**
+     * Filter which EventDiscussionReply to delete.
+     */
+    where: EventDiscussionReplyWhereUniqueInput
+  }
+
+  /**
+   * EventDiscussionReply deleteMany
+   */
+  export type EventDiscussionReplyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EventDiscussionReplies to delete
+     */
+    where?: EventDiscussionReplyWhereInput
+    /**
+     * Limit how many EventDiscussionReplies to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EventDiscussionReply without action
+   */
+  export type EventDiscussionReplyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EventDiscussionReply
+     */
+    select?: EventDiscussionReplySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EventDiscussionReply
+     */
+    omit?: EventDiscussionReplyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EventDiscussionReplyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ClubMembership
+   */
+
+  export type AggregateClubMembership = {
+    _count: ClubMembershipCountAggregateOutputType | null
+    _avg: ClubMembershipAvgAggregateOutputType | null
+    _sum: ClubMembershipSumAggregateOutputType | null
+    _min: ClubMembershipMinAggregateOutputType | null
+    _max: ClubMembershipMaxAggregateOutputType | null
+  }
+
+  export type ClubMembershipAvgAggregateOutputType = {
+    clubId: number | null
+  }
+
+  export type ClubMembershipSumAggregateOutputType = {
+    clubId: number | null
+  }
+
+  export type ClubMembershipMinAggregateOutputType = {
+    userId: string | null
+    clubId: number | null
+    role: $Enums.ClubRole | null
+    createdAt: Date | null
+  }
+
+  export type ClubMembershipMaxAggregateOutputType = {
+    userId: string | null
+    clubId: number | null
+    role: $Enums.ClubRole | null
+    createdAt: Date | null
+  }
+
+  export type ClubMembershipCountAggregateOutputType = {
+    userId: number
+    clubId: number
+    role: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ClubMembershipAvgAggregateInputType = {
+    clubId?: true
+  }
+
+  export type ClubMembershipSumAggregateInputType = {
+    clubId?: true
+  }
+
+  export type ClubMembershipMinAggregateInputType = {
+    userId?: true
+    clubId?: true
+    role?: true
+    createdAt?: true
+  }
+
+  export type ClubMembershipMaxAggregateInputType = {
+    userId?: true
+    clubId?: true
+    role?: true
+    createdAt?: true
+  }
+
+  export type ClubMembershipCountAggregateInputType = {
+    userId?: true
+    clubId?: true
+    role?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ClubMembershipAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ClubMembership to aggregate.
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClubMemberships to fetch.
+     */
+    orderBy?: ClubMembershipOrderByWithRelationInput | ClubMembershipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ClubMembershipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClubMemberships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClubMemberships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ClubMemberships
+    **/
+    _count?: true | ClubMembershipCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ClubMembershipAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ClubMembershipSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ClubMembershipMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ClubMembershipMaxAggregateInputType
+  }
+
+  export type GetClubMembershipAggregateType<T extends ClubMembershipAggregateArgs> = {
+        [P in keyof T & keyof AggregateClubMembership]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateClubMembership[P]>
+      : GetScalarType<T[P], AggregateClubMembership[P]>
+  }
+
+
+
+
+  export type ClubMembershipGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ClubMembershipWhereInput
+    orderBy?: ClubMembershipOrderByWithAggregationInput | ClubMembershipOrderByWithAggregationInput[]
+    by: ClubMembershipScalarFieldEnum[] | ClubMembershipScalarFieldEnum
+    having?: ClubMembershipScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ClubMembershipCountAggregateInputType | true
+    _avg?: ClubMembershipAvgAggregateInputType
+    _sum?: ClubMembershipSumAggregateInputType
+    _min?: ClubMembershipMinAggregateInputType
+    _max?: ClubMembershipMaxAggregateInputType
+  }
+
+  export type ClubMembershipGroupByOutputType = {
+    userId: string
+    clubId: number
+    role: $Enums.ClubRole
+    createdAt: Date
+    _count: ClubMembershipCountAggregateOutputType | null
+    _avg: ClubMembershipAvgAggregateOutputType | null
+    _sum: ClubMembershipSumAggregateOutputType | null
+    _min: ClubMembershipMinAggregateOutputType | null
+    _max: ClubMembershipMaxAggregateOutputType | null
+  }
+
+  type GetClubMembershipGroupByPayload<T extends ClubMembershipGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ClubMembershipGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ClubMembershipGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ClubMembershipGroupByOutputType[P]>
+            : GetScalarType<T[P], ClubMembershipGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ClubMembershipSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    clubId?: boolean
+    role?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["clubMembership"]>
+
+  export type ClubMembershipSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    clubId?: boolean
+    role?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["clubMembership"]>
+
+  export type ClubMembershipSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    clubId?: boolean
+    role?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["clubMembership"]>
+
+  export type ClubMembershipSelectScalar = {
+    userId?: boolean
+    clubId?: boolean
+    role?: boolean
+    createdAt?: boolean
+  }
+
+  export type ClubMembershipOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "clubId" | "role" | "createdAt", ExtArgs["result"]["clubMembership"]>
+  export type ClubMembershipInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+  export type ClubMembershipIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+  export type ClubMembershipIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+
+  export type $ClubMembershipPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ClubMembership"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      club: Prisma.$ClubPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      userId: string
+      clubId: number
+      role: $Enums.ClubRole
+      createdAt: Date
+    }, ExtArgs["result"]["clubMembership"]>
+    composites: {}
+  }
+
+  type ClubMembershipGetPayload<S extends boolean | null | undefined | ClubMembershipDefaultArgs> = $Result.GetResult<Prisma.$ClubMembershipPayload, S>
+
+  type ClubMembershipCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ClubMembershipFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ClubMembershipCountAggregateInputType | true
+    }
+
+  export interface ClubMembershipDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ClubMembership'], meta: { name: 'ClubMembership' } }
+    /**
+     * Find zero or one ClubMembership that matches the filter.
+     * @param {ClubMembershipFindUniqueArgs} args - Arguments to find a ClubMembership
+     * @example
+     * // Get one ClubMembership
+     * const clubMembership = await prisma.clubMembership.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ClubMembershipFindUniqueArgs>(args: SelectSubset<T, ClubMembershipFindUniqueArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ClubMembership that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ClubMembershipFindUniqueOrThrowArgs} args - Arguments to find a ClubMembership
+     * @example
+     * // Get one ClubMembership
+     * const clubMembership = await prisma.clubMembership.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ClubMembershipFindUniqueOrThrowArgs>(args: SelectSubset<T, ClubMembershipFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ClubMembership that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipFindFirstArgs} args - Arguments to find a ClubMembership
+     * @example
+     * // Get one ClubMembership
+     * const clubMembership = await prisma.clubMembership.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ClubMembershipFindFirstArgs>(args?: SelectSubset<T, ClubMembershipFindFirstArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ClubMembership that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipFindFirstOrThrowArgs} args - Arguments to find a ClubMembership
+     * @example
+     * // Get one ClubMembership
+     * const clubMembership = await prisma.clubMembership.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ClubMembershipFindFirstOrThrowArgs>(args?: SelectSubset<T, ClubMembershipFindFirstOrThrowArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ClubMemberships that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ClubMemberships
+     * const clubMemberships = await prisma.clubMembership.findMany()
+     * 
+     * // Get first 10 ClubMemberships
+     * const clubMemberships = await prisma.clubMembership.findMany({ take: 10 })
+     * 
+     * // Only select the `userId`
+     * const clubMembershipWithUserIdOnly = await prisma.clubMembership.findMany({ select: { userId: true } })
+     * 
+     */
+    findMany<T extends ClubMembershipFindManyArgs>(args?: SelectSubset<T, ClubMembershipFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ClubMembership.
+     * @param {ClubMembershipCreateArgs} args - Arguments to create a ClubMembership.
+     * @example
+     * // Create one ClubMembership
+     * const ClubMembership = await prisma.clubMembership.create({
+     *   data: {
+     *     // ... data to create a ClubMembership
+     *   }
+     * })
+     * 
+     */
+    create<T extends ClubMembershipCreateArgs>(args: SelectSubset<T, ClubMembershipCreateArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ClubMemberships.
+     * @param {ClubMembershipCreateManyArgs} args - Arguments to create many ClubMemberships.
+     * @example
+     * // Create many ClubMemberships
+     * const clubMembership = await prisma.clubMembership.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ClubMembershipCreateManyArgs>(args?: SelectSubset<T, ClubMembershipCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ClubMemberships and returns the data saved in the database.
+     * @param {ClubMembershipCreateManyAndReturnArgs} args - Arguments to create many ClubMemberships.
+     * @example
+     * // Create many ClubMemberships
+     * const clubMembership = await prisma.clubMembership.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ClubMemberships and only return the `userId`
+     * const clubMembershipWithUserIdOnly = await prisma.clubMembership.createManyAndReturn({
+     *   select: { userId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ClubMembershipCreateManyAndReturnArgs>(args?: SelectSubset<T, ClubMembershipCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ClubMembership.
+     * @param {ClubMembershipDeleteArgs} args - Arguments to delete one ClubMembership.
+     * @example
+     * // Delete one ClubMembership
+     * const ClubMembership = await prisma.clubMembership.delete({
+     *   where: {
+     *     // ... filter to delete one ClubMembership
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ClubMembershipDeleteArgs>(args: SelectSubset<T, ClubMembershipDeleteArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ClubMembership.
+     * @param {ClubMembershipUpdateArgs} args - Arguments to update one ClubMembership.
+     * @example
+     * // Update one ClubMembership
+     * const clubMembership = await prisma.clubMembership.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ClubMembershipUpdateArgs>(args: SelectSubset<T, ClubMembershipUpdateArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ClubMemberships.
+     * @param {ClubMembershipDeleteManyArgs} args - Arguments to filter ClubMemberships to delete.
+     * @example
+     * // Delete a few ClubMemberships
+     * const { count } = await prisma.clubMembership.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ClubMembershipDeleteManyArgs>(args?: SelectSubset<T, ClubMembershipDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ClubMemberships.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ClubMemberships
+     * const clubMembership = await prisma.clubMembership.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ClubMembershipUpdateManyArgs>(args: SelectSubset<T, ClubMembershipUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ClubMemberships and returns the data updated in the database.
+     * @param {ClubMembershipUpdateManyAndReturnArgs} args - Arguments to update many ClubMemberships.
+     * @example
+     * // Update many ClubMemberships
+     * const clubMembership = await prisma.clubMembership.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ClubMemberships and only return the `userId`
+     * const clubMembershipWithUserIdOnly = await prisma.clubMembership.updateManyAndReturn({
+     *   select: { userId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ClubMembershipUpdateManyAndReturnArgs>(args: SelectSubset<T, ClubMembershipUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ClubMembership.
+     * @param {ClubMembershipUpsertArgs} args - Arguments to update or create a ClubMembership.
+     * @example
+     * // Update or create a ClubMembership
+     * const clubMembership = await prisma.clubMembership.upsert({
+     *   create: {
+     *     // ... data to create a ClubMembership
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ClubMembership we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ClubMembershipUpsertArgs>(args: SelectSubset<T, ClubMembershipUpsertArgs<ExtArgs>>): Prisma__ClubMembershipClient<$Result.GetResult<Prisma.$ClubMembershipPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ClubMemberships.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipCountArgs} args - Arguments to filter ClubMemberships to count.
+     * @example
+     * // Count the number of ClubMemberships
+     * const count = await prisma.clubMembership.count({
+     *   where: {
+     *     // ... the filter for the ClubMemberships we want to count
+     *   }
+     * })
+    **/
+    count<T extends ClubMembershipCountArgs>(
+      args?: Subset<T, ClubMembershipCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ClubMembershipCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ClubMembership.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ClubMembershipAggregateArgs>(args: Subset<T, ClubMembershipAggregateArgs>): Prisma.PrismaPromise<GetClubMembershipAggregateType<T>>
+
+    /**
+     * Group by ClubMembership.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ClubMembershipGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ClubMembershipGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ClubMembershipGroupByArgs['orderBy'] }
+        : { orderBy?: ClubMembershipGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ClubMembershipGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetClubMembershipGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ClubMembership model
+   */
+  readonly fields: ClubMembershipFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ClubMembership.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ClubMembershipClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    club<T extends ClubDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClubDefaultArgs<ExtArgs>>): Prisma__ClubClient<$Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ClubMembership model
+   */
+  interface ClubMembershipFieldRefs {
+    readonly userId: FieldRef<"ClubMembership", 'String'>
+    readonly clubId: FieldRef<"ClubMembership", 'Int'>
+    readonly role: FieldRef<"ClubMembership", 'ClubRole'>
+    readonly createdAt: FieldRef<"ClubMembership", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ClubMembership findUnique
+   */
+  export type ClubMembershipFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * Filter, which ClubMembership to fetch.
+     */
+    where: ClubMembershipWhereUniqueInput
+  }
+
+  /**
+   * ClubMembership findUniqueOrThrow
+   */
+  export type ClubMembershipFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * Filter, which ClubMembership to fetch.
+     */
+    where: ClubMembershipWhereUniqueInput
+  }
+
+  /**
+   * ClubMembership findFirst
+   */
+  export type ClubMembershipFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * Filter, which ClubMembership to fetch.
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClubMemberships to fetch.
+     */
+    orderBy?: ClubMembershipOrderByWithRelationInput | ClubMembershipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ClubMemberships.
+     */
+    cursor?: ClubMembershipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClubMemberships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClubMemberships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ClubMemberships.
+     */
+    distinct?: ClubMembershipScalarFieldEnum | ClubMembershipScalarFieldEnum[]
+  }
+
+  /**
+   * ClubMembership findFirstOrThrow
+   */
+  export type ClubMembershipFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * Filter, which ClubMembership to fetch.
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClubMemberships to fetch.
+     */
+    orderBy?: ClubMembershipOrderByWithRelationInput | ClubMembershipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ClubMemberships.
+     */
+    cursor?: ClubMembershipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClubMemberships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClubMemberships.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ClubMemberships.
+     */
+    distinct?: ClubMembershipScalarFieldEnum | ClubMembershipScalarFieldEnum[]
+  }
+
+  /**
+   * ClubMembership findMany
+   */
+  export type ClubMembershipFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * Filter, which ClubMemberships to fetch.
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ClubMemberships to fetch.
+     */
+    orderBy?: ClubMembershipOrderByWithRelationInput | ClubMembershipOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ClubMemberships.
+     */
+    cursor?: ClubMembershipWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ClubMemberships from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ClubMemberships.
+     */
+    skip?: number
+    distinct?: ClubMembershipScalarFieldEnum | ClubMembershipScalarFieldEnum[]
+  }
+
+  /**
+   * ClubMembership create
+   */
+  export type ClubMembershipCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ClubMembership.
+     */
+    data: XOR<ClubMembershipCreateInput, ClubMembershipUncheckedCreateInput>
+  }
+
+  /**
+   * ClubMembership createMany
+   */
+  export type ClubMembershipCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ClubMemberships.
+     */
+    data: ClubMembershipCreateManyInput | ClubMembershipCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ClubMembership createManyAndReturn
+   */
+  export type ClubMembershipCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * The data used to create many ClubMemberships.
+     */
+    data: ClubMembershipCreateManyInput | ClubMembershipCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ClubMembership update
+   */
+  export type ClubMembershipUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ClubMembership.
+     */
+    data: XOR<ClubMembershipUpdateInput, ClubMembershipUncheckedUpdateInput>
+    /**
+     * Choose, which ClubMembership to update.
+     */
+    where: ClubMembershipWhereUniqueInput
+  }
+
+  /**
+   * ClubMembership updateMany
+   */
+  export type ClubMembershipUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ClubMemberships.
+     */
+    data: XOR<ClubMembershipUpdateManyMutationInput, ClubMembershipUncheckedUpdateManyInput>
+    /**
+     * Filter which ClubMemberships to update
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * Limit how many ClubMemberships to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ClubMembership updateManyAndReturn
+   */
+  export type ClubMembershipUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * The data used to update ClubMemberships.
+     */
+    data: XOR<ClubMembershipUpdateManyMutationInput, ClubMembershipUncheckedUpdateManyInput>
+    /**
+     * Filter which ClubMemberships to update
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * Limit how many ClubMemberships to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ClubMembership upsert
+   */
+  export type ClubMembershipUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ClubMembership to update in case it exists.
+     */
+    where: ClubMembershipWhereUniqueInput
+    /**
+     * In case the ClubMembership found by the `where` argument doesn't exist, create a new ClubMembership with this data.
+     */
+    create: XOR<ClubMembershipCreateInput, ClubMembershipUncheckedCreateInput>
+    /**
+     * In case the ClubMembership was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ClubMembershipUpdateInput, ClubMembershipUncheckedUpdateInput>
+  }
+
+  /**
+   * ClubMembership delete
+   */
+  export type ClubMembershipDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+    /**
+     * Filter which ClubMembership to delete.
+     */
+    where: ClubMembershipWhereUniqueInput
+  }
+
+  /**
+   * ClubMembership deleteMany
+   */
+  export type ClubMembershipDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ClubMemberships to delete
+     */
+    where?: ClubMembershipWhereInput
+    /**
+     * Limit how many ClubMemberships to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ClubMembership without action
+   */
+  export type ClubMembershipDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ClubMembership
+     */
+    select?: ClubMembershipSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ClubMembership
+     */
+    omit?: ClubMembershipOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClubMembershipInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model HubFollow
+   */
+
+  export type AggregateHubFollow = {
+    _count: HubFollowCountAggregateOutputType | null
+    _avg: HubFollowAvgAggregateOutputType | null
+    _sum: HubFollowSumAggregateOutputType | null
+    _min: HubFollowMinAggregateOutputType | null
+    _max: HubFollowMaxAggregateOutputType | null
+  }
+
+  export type HubFollowAvgAggregateOutputType = {
+    clubId: number | null
+  }
+
+  export type HubFollowSumAggregateOutputType = {
+    clubId: number | null
+  }
+
+  export type HubFollowMinAggregateOutputType = {
+    userId: string | null
+    clubId: number | null
+    createdAt: Date | null
+  }
+
+  export type HubFollowMaxAggregateOutputType = {
+    userId: string | null
+    clubId: number | null
+    createdAt: Date | null
+  }
+
+  export type HubFollowCountAggregateOutputType = {
+    userId: number
+    clubId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type HubFollowAvgAggregateInputType = {
+    clubId?: true
+  }
+
+  export type HubFollowSumAggregateInputType = {
+    clubId?: true
+  }
+
+  export type HubFollowMinAggregateInputType = {
+    userId?: true
+    clubId?: true
+    createdAt?: true
+  }
+
+  export type HubFollowMaxAggregateInputType = {
+    userId?: true
+    clubId?: true
+    createdAt?: true
+  }
+
+  export type HubFollowCountAggregateInputType = {
+    userId?: true
+    clubId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type HubFollowAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HubFollow to aggregate.
+     */
+    where?: HubFollowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubFollows to fetch.
+     */
+    orderBy?: HubFollowOrderByWithRelationInput | HubFollowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HubFollowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubFollows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubFollows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned HubFollows
+    **/
+    _count?: true | HubFollowCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: HubFollowAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: HubFollowSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HubFollowMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HubFollowMaxAggregateInputType
+  }
+
+  export type GetHubFollowAggregateType<T extends HubFollowAggregateArgs> = {
+        [P in keyof T & keyof AggregateHubFollow]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHubFollow[P]>
+      : GetScalarType<T[P], AggregateHubFollow[P]>
+  }
+
+
+
+
+  export type HubFollowGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HubFollowWhereInput
+    orderBy?: HubFollowOrderByWithAggregationInput | HubFollowOrderByWithAggregationInput[]
+    by: HubFollowScalarFieldEnum[] | HubFollowScalarFieldEnum
+    having?: HubFollowScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HubFollowCountAggregateInputType | true
+    _avg?: HubFollowAvgAggregateInputType
+    _sum?: HubFollowSumAggregateInputType
+    _min?: HubFollowMinAggregateInputType
+    _max?: HubFollowMaxAggregateInputType
+  }
+
+  export type HubFollowGroupByOutputType = {
+    userId: string
+    clubId: number
+    createdAt: Date
+    _count: HubFollowCountAggregateOutputType | null
+    _avg: HubFollowAvgAggregateOutputType | null
+    _sum: HubFollowSumAggregateOutputType | null
+    _min: HubFollowMinAggregateOutputType | null
+    _max: HubFollowMaxAggregateOutputType | null
+  }
+
+  type GetHubFollowGroupByPayload<T extends HubFollowGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HubFollowGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HubFollowGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HubFollowGroupByOutputType[P]>
+            : GetScalarType<T[P], HubFollowGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HubFollowSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    clubId?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["hubFollow"]>
+
+  export type HubFollowSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    clubId?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["hubFollow"]>
+
+  export type HubFollowSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    clubId?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["hubFollow"]>
+
+  export type HubFollowSelectScalar = {
+    userId?: boolean
+    clubId?: boolean
+    createdAt?: boolean
+  }
+
+  export type HubFollowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "clubId" | "createdAt", ExtArgs["result"]["hubFollow"]>
+  export type HubFollowInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+  export type HubFollowIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+  export type HubFollowIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+
+  export type $HubFollowPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "HubFollow"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      club: Prisma.$ClubPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      userId: string
+      clubId: number
+      createdAt: Date
+    }, ExtArgs["result"]["hubFollow"]>
+    composites: {}
+  }
+
+  type HubFollowGetPayload<S extends boolean | null | undefined | HubFollowDefaultArgs> = $Result.GetResult<Prisma.$HubFollowPayload, S>
+
+  type HubFollowCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HubFollowFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HubFollowCountAggregateInputType | true
+    }
+
+  export interface HubFollowDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['HubFollow'], meta: { name: 'HubFollow' } }
+    /**
+     * Find zero or one HubFollow that matches the filter.
+     * @param {HubFollowFindUniqueArgs} args - Arguments to find a HubFollow
+     * @example
+     * // Get one HubFollow
+     * const hubFollow = await prisma.hubFollow.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HubFollowFindUniqueArgs>(args: SelectSubset<T, HubFollowFindUniqueArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one HubFollow that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HubFollowFindUniqueOrThrowArgs} args - Arguments to find a HubFollow
+     * @example
+     * // Get one HubFollow
+     * const hubFollow = await prisma.hubFollow.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HubFollowFindUniqueOrThrowArgs>(args: SelectSubset<T, HubFollowFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HubFollow that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowFindFirstArgs} args - Arguments to find a HubFollow
+     * @example
+     * // Get one HubFollow
+     * const hubFollow = await prisma.hubFollow.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HubFollowFindFirstArgs>(args?: SelectSubset<T, HubFollowFindFirstArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HubFollow that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowFindFirstOrThrowArgs} args - Arguments to find a HubFollow
+     * @example
+     * // Get one HubFollow
+     * const hubFollow = await prisma.hubFollow.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HubFollowFindFirstOrThrowArgs>(args?: SelectSubset<T, HubFollowFindFirstOrThrowArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HubFollows that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all HubFollows
+     * const hubFollows = await prisma.hubFollow.findMany()
+     * 
+     * // Get first 10 HubFollows
+     * const hubFollows = await prisma.hubFollow.findMany({ take: 10 })
+     * 
+     * // Only select the `userId`
+     * const hubFollowWithUserIdOnly = await prisma.hubFollow.findMany({ select: { userId: true } })
+     * 
+     */
+    findMany<T extends HubFollowFindManyArgs>(args?: SelectSubset<T, HubFollowFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a HubFollow.
+     * @param {HubFollowCreateArgs} args - Arguments to create a HubFollow.
+     * @example
+     * // Create one HubFollow
+     * const HubFollow = await prisma.hubFollow.create({
+     *   data: {
+     *     // ... data to create a HubFollow
+     *   }
+     * })
+     * 
+     */
+    create<T extends HubFollowCreateArgs>(args: SelectSubset<T, HubFollowCreateArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many HubFollows.
+     * @param {HubFollowCreateManyArgs} args - Arguments to create many HubFollows.
+     * @example
+     * // Create many HubFollows
+     * const hubFollow = await prisma.hubFollow.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HubFollowCreateManyArgs>(args?: SelectSubset<T, HubFollowCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many HubFollows and returns the data saved in the database.
+     * @param {HubFollowCreateManyAndReturnArgs} args - Arguments to create many HubFollows.
+     * @example
+     * // Create many HubFollows
+     * const hubFollow = await prisma.hubFollow.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many HubFollows and only return the `userId`
+     * const hubFollowWithUserIdOnly = await prisma.hubFollow.createManyAndReturn({
+     *   select: { userId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends HubFollowCreateManyAndReturnArgs>(args?: SelectSubset<T, HubFollowCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a HubFollow.
+     * @param {HubFollowDeleteArgs} args - Arguments to delete one HubFollow.
+     * @example
+     * // Delete one HubFollow
+     * const HubFollow = await prisma.hubFollow.delete({
+     *   where: {
+     *     // ... filter to delete one HubFollow
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HubFollowDeleteArgs>(args: SelectSubset<T, HubFollowDeleteArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one HubFollow.
+     * @param {HubFollowUpdateArgs} args - Arguments to update one HubFollow.
+     * @example
+     * // Update one HubFollow
+     * const hubFollow = await prisma.hubFollow.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HubFollowUpdateArgs>(args: SelectSubset<T, HubFollowUpdateArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more HubFollows.
+     * @param {HubFollowDeleteManyArgs} args - Arguments to filter HubFollows to delete.
+     * @example
+     * // Delete a few HubFollows
+     * const { count } = await prisma.hubFollow.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HubFollowDeleteManyArgs>(args?: SelectSubset<T, HubFollowDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HubFollows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many HubFollows
+     * const hubFollow = await prisma.hubFollow.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HubFollowUpdateManyArgs>(args: SelectSubset<T, HubFollowUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HubFollows and returns the data updated in the database.
+     * @param {HubFollowUpdateManyAndReturnArgs} args - Arguments to update many HubFollows.
+     * @example
+     * // Update many HubFollows
+     * const hubFollow = await prisma.hubFollow.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more HubFollows and only return the `userId`
+     * const hubFollowWithUserIdOnly = await prisma.hubFollow.updateManyAndReturn({
+     *   select: { userId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends HubFollowUpdateManyAndReturnArgs>(args: SelectSubset<T, HubFollowUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one HubFollow.
+     * @param {HubFollowUpsertArgs} args - Arguments to update or create a HubFollow.
+     * @example
+     * // Update or create a HubFollow
+     * const hubFollow = await prisma.hubFollow.upsert({
+     *   create: {
+     *     // ... data to create a HubFollow
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the HubFollow we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HubFollowUpsertArgs>(args: SelectSubset<T, HubFollowUpsertArgs<ExtArgs>>): Prisma__HubFollowClient<$Result.GetResult<Prisma.$HubFollowPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of HubFollows.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowCountArgs} args - Arguments to filter HubFollows to count.
+     * @example
+     * // Count the number of HubFollows
+     * const count = await prisma.hubFollow.count({
+     *   where: {
+     *     // ... the filter for the HubFollows we want to count
+     *   }
+     * })
+    **/
+    count<T extends HubFollowCountArgs>(
+      args?: Subset<T, HubFollowCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HubFollowCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a HubFollow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HubFollowAggregateArgs>(args: Subset<T, HubFollowAggregateArgs>): Prisma.PrismaPromise<GetHubFollowAggregateType<T>>
+
+    /**
+     * Group by HubFollow.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubFollowGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HubFollowGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HubFollowGroupByArgs['orderBy'] }
+        : { orderBy?: HubFollowGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HubFollowGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHubFollowGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the HubFollow model
+   */
+  readonly fields: HubFollowFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for HubFollow.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HubFollowClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    club<T extends ClubDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClubDefaultArgs<ExtArgs>>): Prisma__ClubClient<$Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the HubFollow model
+   */
+  interface HubFollowFieldRefs {
+    readonly userId: FieldRef<"HubFollow", 'String'>
+    readonly clubId: FieldRef<"HubFollow", 'Int'>
+    readonly createdAt: FieldRef<"HubFollow", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * HubFollow findUnique
+   */
+  export type HubFollowFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * Filter, which HubFollow to fetch.
+     */
+    where: HubFollowWhereUniqueInput
+  }
+
+  /**
+   * HubFollow findUniqueOrThrow
+   */
+  export type HubFollowFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * Filter, which HubFollow to fetch.
+     */
+    where: HubFollowWhereUniqueInput
+  }
+
+  /**
+   * HubFollow findFirst
+   */
+  export type HubFollowFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * Filter, which HubFollow to fetch.
+     */
+    where?: HubFollowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubFollows to fetch.
+     */
+    orderBy?: HubFollowOrderByWithRelationInput | HubFollowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HubFollows.
+     */
+    cursor?: HubFollowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubFollows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubFollows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HubFollows.
+     */
+    distinct?: HubFollowScalarFieldEnum | HubFollowScalarFieldEnum[]
+  }
+
+  /**
+   * HubFollow findFirstOrThrow
+   */
+  export type HubFollowFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * Filter, which HubFollow to fetch.
+     */
+    where?: HubFollowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubFollows to fetch.
+     */
+    orderBy?: HubFollowOrderByWithRelationInput | HubFollowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HubFollows.
+     */
+    cursor?: HubFollowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubFollows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubFollows.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HubFollows.
+     */
+    distinct?: HubFollowScalarFieldEnum | HubFollowScalarFieldEnum[]
+  }
+
+  /**
+   * HubFollow findMany
+   */
+  export type HubFollowFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * Filter, which HubFollows to fetch.
+     */
+    where?: HubFollowWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubFollows to fetch.
+     */
+    orderBy?: HubFollowOrderByWithRelationInput | HubFollowOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing HubFollows.
+     */
+    cursor?: HubFollowWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubFollows from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubFollows.
+     */
+    skip?: number
+    distinct?: HubFollowScalarFieldEnum | HubFollowScalarFieldEnum[]
+  }
+
+  /**
+   * HubFollow create
+   */
+  export type HubFollowCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * The data needed to create a HubFollow.
+     */
+    data: XOR<HubFollowCreateInput, HubFollowUncheckedCreateInput>
+  }
+
+  /**
+   * HubFollow createMany
+   */
+  export type HubFollowCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many HubFollows.
+     */
+    data: HubFollowCreateManyInput | HubFollowCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * HubFollow createManyAndReturn
+   */
+  export type HubFollowCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * The data used to create many HubFollows.
+     */
+    data: HubFollowCreateManyInput | HubFollowCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HubFollow update
+   */
+  export type HubFollowUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * The data needed to update a HubFollow.
+     */
+    data: XOR<HubFollowUpdateInput, HubFollowUncheckedUpdateInput>
+    /**
+     * Choose, which HubFollow to update.
+     */
+    where: HubFollowWhereUniqueInput
+  }
+
+  /**
+   * HubFollow updateMany
+   */
+  export type HubFollowUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update HubFollows.
+     */
+    data: XOR<HubFollowUpdateManyMutationInput, HubFollowUncheckedUpdateManyInput>
+    /**
+     * Filter which HubFollows to update
+     */
+    where?: HubFollowWhereInput
+    /**
+     * Limit how many HubFollows to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HubFollow updateManyAndReturn
+   */
+  export type HubFollowUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * The data used to update HubFollows.
+     */
+    data: XOR<HubFollowUpdateManyMutationInput, HubFollowUncheckedUpdateManyInput>
+    /**
+     * Filter which HubFollows to update
+     */
+    where?: HubFollowWhereInput
+    /**
+     * Limit how many HubFollows to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HubFollow upsert
+   */
+  export type HubFollowUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * The filter to search for the HubFollow to update in case it exists.
+     */
+    where: HubFollowWhereUniqueInput
+    /**
+     * In case the HubFollow found by the `where` argument doesn't exist, create a new HubFollow with this data.
+     */
+    create: XOR<HubFollowCreateInput, HubFollowUncheckedCreateInput>
+    /**
+     * In case the HubFollow was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HubFollowUpdateInput, HubFollowUncheckedUpdateInput>
+  }
+
+  /**
+   * HubFollow delete
+   */
+  export type HubFollowDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+    /**
+     * Filter which HubFollow to delete.
+     */
+    where: HubFollowWhereUniqueInput
+  }
+
+  /**
+   * HubFollow deleteMany
+   */
+  export type HubFollowDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HubFollows to delete
+     */
+    where?: HubFollowWhereInput
+    /**
+     * Limit how many HubFollows to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * HubFollow without action
+   */
+  export type HubFollowDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubFollow
+     */
+    select?: HubFollowSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubFollow
+     */
+    omit?: HubFollowOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubFollowInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model HubBlock
+   */
+
+  export type AggregateHubBlock = {
+    _count: HubBlockCountAggregateOutputType | null
+    _avg: HubBlockAvgAggregateOutputType | null
+    _sum: HubBlockSumAggregateOutputType | null
+    _min: HubBlockMinAggregateOutputType | null
+    _max: HubBlockMaxAggregateOutputType | null
+  }
+
+  export type HubBlockAvgAggregateOutputType = {
+    id: number | null
+    clubId: number | null
+    position: number | null
+  }
+
+  export type HubBlockSumAggregateOutputType = {
+    id: number | null
+    clubId: number | null
+    position: number | null
+  }
+
+  export type HubBlockMinAggregateOutputType = {
+    id: number | null
+    clubId: number | null
+    type: $Enums.HubBlockType | null
+    title: string | null
+    content: string | null
+    linkUrl: string | null
+    position: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HubBlockMaxAggregateOutputType = {
+    id: number | null
+    clubId: number | null
+    type: $Enums.HubBlockType | null
+    title: string | null
+    content: string | null
+    linkUrl: string | null
+    position: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HubBlockCountAggregateOutputType = {
+    id: number
+    clubId: number
+    type: number
+    title: number
+    content: number
+    linkUrl: number
+    position: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type HubBlockAvgAggregateInputType = {
+    id?: true
+    clubId?: true
+    position?: true
+  }
+
+  export type HubBlockSumAggregateInputType = {
+    id?: true
+    clubId?: true
+    position?: true
+  }
+
+  export type HubBlockMinAggregateInputType = {
+    id?: true
+    clubId?: true
+    type?: true
+    title?: true
+    content?: true
+    linkUrl?: true
+    position?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HubBlockMaxAggregateInputType = {
+    id?: true
+    clubId?: true
+    type?: true
+    title?: true
+    content?: true
+    linkUrl?: true
+    position?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HubBlockCountAggregateInputType = {
+    id?: true
+    clubId?: true
+    type?: true
+    title?: true
+    content?: true
+    linkUrl?: true
+    position?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type HubBlockAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HubBlock to aggregate.
+     */
+    where?: HubBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubBlocks to fetch.
+     */
+    orderBy?: HubBlockOrderByWithRelationInput | HubBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HubBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned HubBlocks
+    **/
+    _count?: true | HubBlockCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: HubBlockAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: HubBlockSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HubBlockMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HubBlockMaxAggregateInputType
+  }
+
+  export type GetHubBlockAggregateType<T extends HubBlockAggregateArgs> = {
+        [P in keyof T & keyof AggregateHubBlock]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHubBlock[P]>
+      : GetScalarType<T[P], AggregateHubBlock[P]>
+  }
+
+
+
+
+  export type HubBlockGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HubBlockWhereInput
+    orderBy?: HubBlockOrderByWithAggregationInput | HubBlockOrderByWithAggregationInput[]
+    by: HubBlockScalarFieldEnum[] | HubBlockScalarFieldEnum
+    having?: HubBlockScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HubBlockCountAggregateInputType | true
+    _avg?: HubBlockAvgAggregateInputType
+    _sum?: HubBlockSumAggregateInputType
+    _min?: HubBlockMinAggregateInputType
+    _max?: HubBlockMaxAggregateInputType
+  }
+
+  export type HubBlockGroupByOutputType = {
+    id: number
+    clubId: number
+    type: $Enums.HubBlockType
+    title: string | null
+    content: string
+    linkUrl: string | null
+    position: number
+    createdAt: Date
+    updatedAt: Date
+    _count: HubBlockCountAggregateOutputType | null
+    _avg: HubBlockAvgAggregateOutputType | null
+    _sum: HubBlockSumAggregateOutputType | null
+    _min: HubBlockMinAggregateOutputType | null
+    _max: HubBlockMaxAggregateOutputType | null
+  }
+
+  type GetHubBlockGroupByPayload<T extends HubBlockGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HubBlockGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HubBlockGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HubBlockGroupByOutputType[P]>
+            : GetScalarType<T[P], HubBlockGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HubBlockSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    clubId?: boolean
+    type?: boolean
+    title?: boolean
+    content?: boolean
+    linkUrl?: boolean
+    position?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["hubBlock"]>
+
+  export type HubBlockSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    clubId?: boolean
+    type?: boolean
+    title?: boolean
+    content?: boolean
+    linkUrl?: boolean
+    position?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["hubBlock"]>
+
+  export type HubBlockSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    clubId?: boolean
+    type?: boolean
+    title?: boolean
+    content?: boolean
+    linkUrl?: boolean
+    position?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["hubBlock"]>
+
+  export type HubBlockSelectScalar = {
+    id?: boolean
+    clubId?: boolean
+    type?: boolean
+    title?: boolean
+    content?: boolean
+    linkUrl?: boolean
+    position?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type HubBlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clubId" | "type" | "title" | "content" | "linkUrl" | "position" | "createdAt" | "updatedAt", ExtArgs["result"]["hubBlock"]>
+  export type HubBlockInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+  export type HubBlockIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+  export type HubBlockIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    club?: boolean | ClubDefaultArgs<ExtArgs>
+  }
+
+  export type $HubBlockPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "HubBlock"
+    objects: {
+      club: Prisma.$ClubPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      clubId: number
+      type: $Enums.HubBlockType
+      title: string | null
+      content: string
+      linkUrl: string | null
+      position: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["hubBlock"]>
+    composites: {}
+  }
+
+  type HubBlockGetPayload<S extends boolean | null | undefined | HubBlockDefaultArgs> = $Result.GetResult<Prisma.$HubBlockPayload, S>
+
+  type HubBlockCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HubBlockFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HubBlockCountAggregateInputType | true
+    }
+
+  export interface HubBlockDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['HubBlock'], meta: { name: 'HubBlock' } }
+    /**
+     * Find zero or one HubBlock that matches the filter.
+     * @param {HubBlockFindUniqueArgs} args - Arguments to find a HubBlock
+     * @example
+     * // Get one HubBlock
+     * const hubBlock = await prisma.hubBlock.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HubBlockFindUniqueArgs>(args: SelectSubset<T, HubBlockFindUniqueArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one HubBlock that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HubBlockFindUniqueOrThrowArgs} args - Arguments to find a HubBlock
+     * @example
+     * // Get one HubBlock
+     * const hubBlock = await prisma.hubBlock.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HubBlockFindUniqueOrThrowArgs>(args: SelectSubset<T, HubBlockFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HubBlock that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockFindFirstArgs} args - Arguments to find a HubBlock
+     * @example
+     * // Get one HubBlock
+     * const hubBlock = await prisma.hubBlock.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HubBlockFindFirstArgs>(args?: SelectSubset<T, HubBlockFindFirstArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HubBlock that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockFindFirstOrThrowArgs} args - Arguments to find a HubBlock
+     * @example
+     * // Get one HubBlock
+     * const hubBlock = await prisma.hubBlock.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HubBlockFindFirstOrThrowArgs>(args?: SelectSubset<T, HubBlockFindFirstOrThrowArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HubBlocks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all HubBlocks
+     * const hubBlocks = await prisma.hubBlock.findMany()
+     * 
+     * // Get first 10 HubBlocks
+     * const hubBlocks = await prisma.hubBlock.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const hubBlockWithIdOnly = await prisma.hubBlock.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends HubBlockFindManyArgs>(args?: SelectSubset<T, HubBlockFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a HubBlock.
+     * @param {HubBlockCreateArgs} args - Arguments to create a HubBlock.
+     * @example
+     * // Create one HubBlock
+     * const HubBlock = await prisma.hubBlock.create({
+     *   data: {
+     *     // ... data to create a HubBlock
+     *   }
+     * })
+     * 
+     */
+    create<T extends HubBlockCreateArgs>(args: SelectSubset<T, HubBlockCreateArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many HubBlocks.
+     * @param {HubBlockCreateManyArgs} args - Arguments to create many HubBlocks.
+     * @example
+     * // Create many HubBlocks
+     * const hubBlock = await prisma.hubBlock.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HubBlockCreateManyArgs>(args?: SelectSubset<T, HubBlockCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many HubBlocks and returns the data saved in the database.
+     * @param {HubBlockCreateManyAndReturnArgs} args - Arguments to create many HubBlocks.
+     * @example
+     * // Create many HubBlocks
+     * const hubBlock = await prisma.hubBlock.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many HubBlocks and only return the `id`
+     * const hubBlockWithIdOnly = await prisma.hubBlock.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends HubBlockCreateManyAndReturnArgs>(args?: SelectSubset<T, HubBlockCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a HubBlock.
+     * @param {HubBlockDeleteArgs} args - Arguments to delete one HubBlock.
+     * @example
+     * // Delete one HubBlock
+     * const HubBlock = await prisma.hubBlock.delete({
+     *   where: {
+     *     // ... filter to delete one HubBlock
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HubBlockDeleteArgs>(args: SelectSubset<T, HubBlockDeleteArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one HubBlock.
+     * @param {HubBlockUpdateArgs} args - Arguments to update one HubBlock.
+     * @example
+     * // Update one HubBlock
+     * const hubBlock = await prisma.hubBlock.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HubBlockUpdateArgs>(args: SelectSubset<T, HubBlockUpdateArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more HubBlocks.
+     * @param {HubBlockDeleteManyArgs} args - Arguments to filter HubBlocks to delete.
+     * @example
+     * // Delete a few HubBlocks
+     * const { count } = await prisma.hubBlock.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HubBlockDeleteManyArgs>(args?: SelectSubset<T, HubBlockDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HubBlocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many HubBlocks
+     * const hubBlock = await prisma.hubBlock.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HubBlockUpdateManyArgs>(args: SelectSubset<T, HubBlockUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HubBlocks and returns the data updated in the database.
+     * @param {HubBlockUpdateManyAndReturnArgs} args - Arguments to update many HubBlocks.
+     * @example
+     * // Update many HubBlocks
+     * const hubBlock = await prisma.hubBlock.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more HubBlocks and only return the `id`
+     * const hubBlockWithIdOnly = await prisma.hubBlock.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends HubBlockUpdateManyAndReturnArgs>(args: SelectSubset<T, HubBlockUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one HubBlock.
+     * @param {HubBlockUpsertArgs} args - Arguments to update or create a HubBlock.
+     * @example
+     * // Update or create a HubBlock
+     * const hubBlock = await prisma.hubBlock.upsert({
+     *   create: {
+     *     // ... data to create a HubBlock
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the HubBlock we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HubBlockUpsertArgs>(args: SelectSubset<T, HubBlockUpsertArgs<ExtArgs>>): Prisma__HubBlockClient<$Result.GetResult<Prisma.$HubBlockPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of HubBlocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockCountArgs} args - Arguments to filter HubBlocks to count.
+     * @example
+     * // Count the number of HubBlocks
+     * const count = await prisma.hubBlock.count({
+     *   where: {
+     *     // ... the filter for the HubBlocks we want to count
+     *   }
+     * })
+    **/
+    count<T extends HubBlockCountArgs>(
+      args?: Subset<T, HubBlockCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HubBlockCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a HubBlock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HubBlockAggregateArgs>(args: Subset<T, HubBlockAggregateArgs>): Prisma.PrismaPromise<GetHubBlockAggregateType<T>>
+
+    /**
+     * Group by HubBlock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HubBlockGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HubBlockGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HubBlockGroupByArgs['orderBy'] }
+        : { orderBy?: HubBlockGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HubBlockGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHubBlockGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the HubBlock model
+   */
+  readonly fields: HubBlockFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for HubBlock.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HubBlockClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    club<T extends ClubDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClubDefaultArgs<ExtArgs>>): Prisma__ClubClient<$Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the HubBlock model
+   */
+  interface HubBlockFieldRefs {
+    readonly id: FieldRef<"HubBlock", 'Int'>
+    readonly clubId: FieldRef<"HubBlock", 'Int'>
+    readonly type: FieldRef<"HubBlock", 'HubBlockType'>
+    readonly title: FieldRef<"HubBlock", 'String'>
+    readonly content: FieldRef<"HubBlock", 'String'>
+    readonly linkUrl: FieldRef<"HubBlock", 'String'>
+    readonly position: FieldRef<"HubBlock", 'Int'>
+    readonly createdAt: FieldRef<"HubBlock", 'DateTime'>
+    readonly updatedAt: FieldRef<"HubBlock", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * HubBlock findUnique
+   */
+  export type HubBlockFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which HubBlock to fetch.
+     */
+    where: HubBlockWhereUniqueInput
+  }
+
+  /**
+   * HubBlock findUniqueOrThrow
+   */
+  export type HubBlockFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which HubBlock to fetch.
+     */
+    where: HubBlockWhereUniqueInput
+  }
+
+  /**
+   * HubBlock findFirst
+   */
+  export type HubBlockFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which HubBlock to fetch.
+     */
+    where?: HubBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubBlocks to fetch.
+     */
+    orderBy?: HubBlockOrderByWithRelationInput | HubBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HubBlocks.
+     */
+    cursor?: HubBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HubBlocks.
+     */
+    distinct?: HubBlockScalarFieldEnum | HubBlockScalarFieldEnum[]
+  }
+
+  /**
+   * HubBlock findFirstOrThrow
+   */
+  export type HubBlockFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which HubBlock to fetch.
+     */
+    where?: HubBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubBlocks to fetch.
+     */
+    orderBy?: HubBlockOrderByWithRelationInput | HubBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HubBlocks.
+     */
+    cursor?: HubBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HubBlocks.
+     */
+    distinct?: HubBlockScalarFieldEnum | HubBlockScalarFieldEnum[]
+  }
+
+  /**
+   * HubBlock findMany
+   */
+  export type HubBlockFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * Filter, which HubBlocks to fetch.
+     */
+    where?: HubBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HubBlocks to fetch.
+     */
+    orderBy?: HubBlockOrderByWithRelationInput | HubBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing HubBlocks.
+     */
+    cursor?: HubBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HubBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HubBlocks.
+     */
+    skip?: number
+    distinct?: HubBlockScalarFieldEnum | HubBlockScalarFieldEnum[]
+  }
+
+  /**
+   * HubBlock create
+   */
+  export type HubBlockCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * The data needed to create a HubBlock.
+     */
+    data: XOR<HubBlockCreateInput, HubBlockUncheckedCreateInput>
+  }
+
+  /**
+   * HubBlock createMany
+   */
+  export type HubBlockCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many HubBlocks.
+     */
+    data: HubBlockCreateManyInput | HubBlockCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * HubBlock createManyAndReturn
+   */
+  export type HubBlockCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * The data used to create many HubBlocks.
+     */
+    data: HubBlockCreateManyInput | HubBlockCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HubBlock update
+   */
+  export type HubBlockUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * The data needed to update a HubBlock.
+     */
+    data: XOR<HubBlockUpdateInput, HubBlockUncheckedUpdateInput>
+    /**
+     * Choose, which HubBlock to update.
+     */
+    where: HubBlockWhereUniqueInput
+  }
+
+  /**
+   * HubBlock updateMany
+   */
+  export type HubBlockUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update HubBlocks.
+     */
+    data: XOR<HubBlockUpdateManyMutationInput, HubBlockUncheckedUpdateManyInput>
+    /**
+     * Filter which HubBlocks to update
+     */
+    where?: HubBlockWhereInput
+    /**
+     * Limit how many HubBlocks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HubBlock updateManyAndReturn
+   */
+  export type HubBlockUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * The data used to update HubBlocks.
+     */
+    data: XOR<HubBlockUpdateManyMutationInput, HubBlockUncheckedUpdateManyInput>
+    /**
+     * Filter which HubBlocks to update
+     */
+    where?: HubBlockWhereInput
+    /**
+     * Limit how many HubBlocks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * HubBlock upsert
+   */
+  export type HubBlockUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * The filter to search for the HubBlock to update in case it exists.
+     */
+    where: HubBlockWhereUniqueInput
+    /**
+     * In case the HubBlock found by the `where` argument doesn't exist, create a new HubBlock with this data.
+     */
+    create: XOR<HubBlockCreateInput, HubBlockUncheckedCreateInput>
+    /**
+     * In case the HubBlock was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HubBlockUpdateInput, HubBlockUncheckedUpdateInput>
+  }
+
+  /**
+   * HubBlock delete
+   */
+  export type HubBlockDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
+    /**
+     * Filter which HubBlock to delete.
+     */
+    where: HubBlockWhereUniqueInput
+  }
+
+  /**
+   * HubBlock deleteMany
+   */
+  export type HubBlockDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HubBlocks to delete
+     */
+    where?: HubBlockWhereInput
+    /**
+     * Limit how many HubBlocks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * HubBlock without action
+   */
+  export type HubBlockDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HubBlock
+     */
+    select?: HubBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HubBlock
+     */
+    omit?: HubBlockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HubBlockInclude<ExtArgs> | null
   }
 
 
@@ -10702,6 +17099,65 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const EventDiscussionThreadScalarFieldEnum: {
+    id: 'id',
+    eventId: 'eventId',
+    authorId: 'authorId',
+    question: 'question',
+    pinned: 'pinned',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EventDiscussionThreadScalarFieldEnum = (typeof EventDiscussionThreadScalarFieldEnum)[keyof typeof EventDiscussionThreadScalarFieldEnum]
+
+
+  export const EventDiscussionReplyScalarFieldEnum: {
+    id: 'id',
+    threadId: 'threadId',
+    authorId: 'authorId',
+    message: 'message',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EventDiscussionReplyScalarFieldEnum = (typeof EventDiscussionReplyScalarFieldEnum)[keyof typeof EventDiscussionReplyScalarFieldEnum]
+
+
+  export const ClubMembershipScalarFieldEnum: {
+    userId: 'userId',
+    clubId: 'clubId',
+    role: 'role',
+    createdAt: 'createdAt'
+  };
+
+  export type ClubMembershipScalarFieldEnum = (typeof ClubMembershipScalarFieldEnum)[keyof typeof ClubMembershipScalarFieldEnum]
+
+
+  export const HubFollowScalarFieldEnum: {
+    userId: 'userId',
+    clubId: 'clubId',
+    createdAt: 'createdAt'
+  };
+
+  export type HubFollowScalarFieldEnum = (typeof HubFollowScalarFieldEnum)[keyof typeof HubFollowScalarFieldEnum]
+
+
+  export const HubBlockScalarFieldEnum: {
+    id: 'id',
+    clubId: 'clubId',
+    type: 'type',
+    title: 'title',
+    content: 'content',
+    linkUrl: 'linkUrl',
+    position: 'position',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type HubBlockScalarFieldEnum = (typeof HubBlockScalarFieldEnum)[keyof typeof HubBlockScalarFieldEnum]
+
+
   export const VerificationTokenScalarFieldEnum: {
     identifier: 'identifier',
     token: 'token',
@@ -10822,6 +17278,41 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'ClubRole'
+   */
+  export type EnumClubRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClubRole'>
+    
+
+
+  /**
+   * Reference to a field of type 'ClubRole[]'
+   */
+  export type ListEnumClubRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClubRole[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'HubBlockType'
+   */
+  export type EnumHubBlockTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HubBlockType'>
+    
+
+
+  /**
+   * Reference to a field of type 'HubBlockType[]'
+   */
+  export type ListEnumHubBlockTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HubBlockType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -10905,6 +17396,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Club"> | Date | string
     updatedAt?: DateTimeFilter<"Club"> | Date | string
     events?: EventListRelationFilter
+    followers?: HubFollowListRelationFilter
+    blocks?: HubBlockListRelationFilter
+    members?: ClubMembershipListRelationFilter
   }
 
   export type ClubOrderByWithRelationInput = {
@@ -10914,6 +17408,9 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     events?: EventOrderByRelationAggregateInput
+    followers?: HubFollowOrderByRelationAggregateInput
+    blocks?: HubBlockOrderByRelationAggregateInput
+    members?: ClubMembershipOrderByRelationAggregateInput
   }
 
   export type ClubWhereUniqueInput = Prisma.AtLeast<{
@@ -10926,6 +17423,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Club"> | Date | string
     updatedAt?: DateTimeFilter<"Club"> | Date | string
     events?: EventListRelationFilter
+    followers?: HubFollowListRelationFilter
+    blocks?: HubBlockListRelationFilter
+    members?: ClubMembershipListRelationFilter
   }, "id">
 
   export type ClubOrderByWithAggregationInput = {
@@ -10971,6 +17471,7 @@ export namespace Prisma {
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
     rsvps?: RSVPListRelationFilter
+    discussionThreads?: EventDiscussionThreadListRelationFilter
   }
 
   export type EventOrderByWithRelationInput = {
@@ -10989,6 +17490,7 @@ export namespace Prisma {
     author?: UserOrderByWithRelationInput
     club?: ClubOrderByWithRelationInput
     rsvps?: RSVPOrderByRelationAggregateInput
+    discussionThreads?: EventDiscussionThreadOrderByRelationAggregateInput
   }
 
   export type EventWhereUniqueInput = Prisma.AtLeast<{
@@ -11010,6 +17512,7 @@ export namespace Prisma {
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
     rsvps?: RSVPListRelationFilter
+    discussionThreads?: EventDiscussionThreadListRelationFilter
   }, "id">
 
   export type EventOrderByWithAggregationInput = {
@@ -11214,6 +17717,10 @@ export namespace Prisma {
     posts?: PostListRelationFilter
     authoredEvents?: EventListRelationFilter
     rsvps?: RSVPListRelationFilter
+    authoredDiscussionThreads?: EventDiscussionThreadListRelationFilter
+    authoredDiscussionReplies?: EventDiscussionReplyListRelationFilter
+    followedHubs?: HubFollowListRelationFilter
+    clubMemberships?: ClubMembershipListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11229,6 +17736,10 @@ export namespace Prisma {
     posts?: PostOrderByRelationAggregateInput
     authoredEvents?: EventOrderByRelationAggregateInput
     rsvps?: RSVPOrderByRelationAggregateInput
+    authoredDiscussionThreads?: EventDiscussionThreadOrderByRelationAggregateInput
+    authoredDiscussionReplies?: EventDiscussionReplyOrderByRelationAggregateInput
+    followedHubs?: HubFollowOrderByRelationAggregateInput
+    clubMemberships?: ClubMembershipOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11247,6 +17758,10 @@ export namespace Prisma {
     posts?: PostListRelationFilter
     authoredEvents?: EventListRelationFilter
     rsvps?: RSVPListRelationFilter
+    authoredDiscussionThreads?: EventDiscussionThreadListRelationFilter
+    authoredDiscussionReplies?: EventDiscussionReplyListRelationFilter
+    followedHubs?: HubFollowListRelationFilter
+    clubMemberships?: ClubMembershipListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11273,6 +17788,328 @@ export namespace Prisma {
     emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     password?: StringNullableWithAggregatesFilter<"User"> | string | null
+  }
+
+  export type EventDiscussionThreadWhereInput = {
+    AND?: EventDiscussionThreadWhereInput | EventDiscussionThreadWhereInput[]
+    OR?: EventDiscussionThreadWhereInput[]
+    NOT?: EventDiscussionThreadWhereInput | EventDiscussionThreadWhereInput[]
+    id?: IntFilter<"EventDiscussionThread"> | number
+    eventId?: IntFilter<"EventDiscussionThread"> | number
+    authorId?: StringFilter<"EventDiscussionThread"> | string
+    question?: StringFilter<"EventDiscussionThread"> | string
+    pinned?: BoolFilter<"EventDiscussionThread"> | boolean
+    createdAt?: DateTimeFilter<"EventDiscussionThread"> | Date | string
+    updatedAt?: DateTimeFilter<"EventDiscussionThread"> | Date | string
+    event?: XOR<EventScalarRelationFilter, EventWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    replies?: EventDiscussionReplyListRelationFilter
+  }
+
+  export type EventDiscussionThreadOrderByWithRelationInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    authorId?: SortOrder
+    question?: SortOrder
+    pinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    event?: EventOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
+    replies?: EventDiscussionReplyOrderByRelationAggregateInput
+  }
+
+  export type EventDiscussionThreadWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: EventDiscussionThreadWhereInput | EventDiscussionThreadWhereInput[]
+    OR?: EventDiscussionThreadWhereInput[]
+    NOT?: EventDiscussionThreadWhereInput | EventDiscussionThreadWhereInput[]
+    eventId?: IntFilter<"EventDiscussionThread"> | number
+    authorId?: StringFilter<"EventDiscussionThread"> | string
+    question?: StringFilter<"EventDiscussionThread"> | string
+    pinned?: BoolFilter<"EventDiscussionThread"> | boolean
+    createdAt?: DateTimeFilter<"EventDiscussionThread"> | Date | string
+    updatedAt?: DateTimeFilter<"EventDiscussionThread"> | Date | string
+    event?: XOR<EventScalarRelationFilter, EventWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    replies?: EventDiscussionReplyListRelationFilter
+  }, "id">
+
+  export type EventDiscussionThreadOrderByWithAggregationInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    authorId?: SortOrder
+    question?: SortOrder
+    pinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: EventDiscussionThreadCountOrderByAggregateInput
+    _avg?: EventDiscussionThreadAvgOrderByAggregateInput
+    _max?: EventDiscussionThreadMaxOrderByAggregateInput
+    _min?: EventDiscussionThreadMinOrderByAggregateInput
+    _sum?: EventDiscussionThreadSumOrderByAggregateInput
+  }
+
+  export type EventDiscussionThreadScalarWhereWithAggregatesInput = {
+    AND?: EventDiscussionThreadScalarWhereWithAggregatesInput | EventDiscussionThreadScalarWhereWithAggregatesInput[]
+    OR?: EventDiscussionThreadScalarWhereWithAggregatesInput[]
+    NOT?: EventDiscussionThreadScalarWhereWithAggregatesInput | EventDiscussionThreadScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"EventDiscussionThread"> | number
+    eventId?: IntWithAggregatesFilter<"EventDiscussionThread"> | number
+    authorId?: StringWithAggregatesFilter<"EventDiscussionThread"> | string
+    question?: StringWithAggregatesFilter<"EventDiscussionThread"> | string
+    pinned?: BoolWithAggregatesFilter<"EventDiscussionThread"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"EventDiscussionThread"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EventDiscussionThread"> | Date | string
+  }
+
+  export type EventDiscussionReplyWhereInput = {
+    AND?: EventDiscussionReplyWhereInput | EventDiscussionReplyWhereInput[]
+    OR?: EventDiscussionReplyWhereInput[]
+    NOT?: EventDiscussionReplyWhereInput | EventDiscussionReplyWhereInput[]
+    id?: IntFilter<"EventDiscussionReply"> | number
+    threadId?: IntFilter<"EventDiscussionReply"> | number
+    authorId?: StringFilter<"EventDiscussionReply"> | string
+    message?: StringFilter<"EventDiscussionReply"> | string
+    createdAt?: DateTimeFilter<"EventDiscussionReply"> | Date | string
+    updatedAt?: DateTimeFilter<"EventDiscussionReply"> | Date | string
+    thread?: XOR<EventDiscussionThreadScalarRelationFilter, EventDiscussionThreadWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type EventDiscussionReplyOrderByWithRelationInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    authorId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    thread?: EventDiscussionThreadOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
+  }
+
+  export type EventDiscussionReplyWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: EventDiscussionReplyWhereInput | EventDiscussionReplyWhereInput[]
+    OR?: EventDiscussionReplyWhereInput[]
+    NOT?: EventDiscussionReplyWhereInput | EventDiscussionReplyWhereInput[]
+    threadId?: IntFilter<"EventDiscussionReply"> | number
+    authorId?: StringFilter<"EventDiscussionReply"> | string
+    message?: StringFilter<"EventDiscussionReply"> | string
+    createdAt?: DateTimeFilter<"EventDiscussionReply"> | Date | string
+    updatedAt?: DateTimeFilter<"EventDiscussionReply"> | Date | string
+    thread?: XOR<EventDiscussionThreadScalarRelationFilter, EventDiscussionThreadWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type EventDiscussionReplyOrderByWithAggregationInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    authorId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: EventDiscussionReplyCountOrderByAggregateInput
+    _avg?: EventDiscussionReplyAvgOrderByAggregateInput
+    _max?: EventDiscussionReplyMaxOrderByAggregateInput
+    _min?: EventDiscussionReplyMinOrderByAggregateInput
+    _sum?: EventDiscussionReplySumOrderByAggregateInput
+  }
+
+  export type EventDiscussionReplyScalarWhereWithAggregatesInput = {
+    AND?: EventDiscussionReplyScalarWhereWithAggregatesInput | EventDiscussionReplyScalarWhereWithAggregatesInput[]
+    OR?: EventDiscussionReplyScalarWhereWithAggregatesInput[]
+    NOT?: EventDiscussionReplyScalarWhereWithAggregatesInput | EventDiscussionReplyScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"EventDiscussionReply"> | number
+    threadId?: IntWithAggregatesFilter<"EventDiscussionReply"> | number
+    authorId?: StringWithAggregatesFilter<"EventDiscussionReply"> | string
+    message?: StringWithAggregatesFilter<"EventDiscussionReply"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"EventDiscussionReply"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"EventDiscussionReply"> | Date | string
+  }
+
+  export type ClubMembershipWhereInput = {
+    AND?: ClubMembershipWhereInput | ClubMembershipWhereInput[]
+    OR?: ClubMembershipWhereInput[]
+    NOT?: ClubMembershipWhereInput | ClubMembershipWhereInput[]
+    userId?: StringFilter<"ClubMembership"> | string
+    clubId?: IntFilter<"ClubMembership"> | number
+    role?: EnumClubRoleFilter<"ClubMembership"> | $Enums.ClubRole
+    createdAt?: DateTimeFilter<"ClubMembership"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+  }
+
+  export type ClubMembershipOrderByWithRelationInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    role?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    club?: ClubOrderByWithRelationInput
+  }
+
+  export type ClubMembershipWhereUniqueInput = Prisma.AtLeast<{
+    userId_clubId?: ClubMembershipUserIdClubIdCompoundUniqueInput
+    AND?: ClubMembershipWhereInput | ClubMembershipWhereInput[]
+    OR?: ClubMembershipWhereInput[]
+    NOT?: ClubMembershipWhereInput | ClubMembershipWhereInput[]
+    userId?: StringFilter<"ClubMembership"> | string
+    clubId?: IntFilter<"ClubMembership"> | number
+    role?: EnumClubRoleFilter<"ClubMembership"> | $Enums.ClubRole
+    createdAt?: DateTimeFilter<"ClubMembership"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+  }, "userId_clubId">
+
+  export type ClubMembershipOrderByWithAggregationInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    role?: SortOrder
+    createdAt?: SortOrder
+    _count?: ClubMembershipCountOrderByAggregateInput
+    _avg?: ClubMembershipAvgOrderByAggregateInput
+    _max?: ClubMembershipMaxOrderByAggregateInput
+    _min?: ClubMembershipMinOrderByAggregateInput
+    _sum?: ClubMembershipSumOrderByAggregateInput
+  }
+
+  export type ClubMembershipScalarWhereWithAggregatesInput = {
+    AND?: ClubMembershipScalarWhereWithAggregatesInput | ClubMembershipScalarWhereWithAggregatesInput[]
+    OR?: ClubMembershipScalarWhereWithAggregatesInput[]
+    NOT?: ClubMembershipScalarWhereWithAggregatesInput | ClubMembershipScalarWhereWithAggregatesInput[]
+    userId?: StringWithAggregatesFilter<"ClubMembership"> | string
+    clubId?: IntWithAggregatesFilter<"ClubMembership"> | number
+    role?: EnumClubRoleWithAggregatesFilter<"ClubMembership"> | $Enums.ClubRole
+    createdAt?: DateTimeWithAggregatesFilter<"ClubMembership"> | Date | string
+  }
+
+  export type HubFollowWhereInput = {
+    AND?: HubFollowWhereInput | HubFollowWhereInput[]
+    OR?: HubFollowWhereInput[]
+    NOT?: HubFollowWhereInput | HubFollowWhereInput[]
+    userId?: StringFilter<"HubFollow"> | string
+    clubId?: IntFilter<"HubFollow"> | number
+    createdAt?: DateTimeFilter<"HubFollow"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+  }
+
+  export type HubFollowOrderByWithRelationInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    club?: ClubOrderByWithRelationInput
+  }
+
+  export type HubFollowWhereUniqueInput = Prisma.AtLeast<{
+    userId_clubId?: HubFollowUserIdClubIdCompoundUniqueInput
+    AND?: HubFollowWhereInput | HubFollowWhereInput[]
+    OR?: HubFollowWhereInput[]
+    NOT?: HubFollowWhereInput | HubFollowWhereInput[]
+    userId?: StringFilter<"HubFollow"> | string
+    clubId?: IntFilter<"HubFollow"> | number
+    createdAt?: DateTimeFilter<"HubFollow"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+  }, "userId_clubId">
+
+  export type HubFollowOrderByWithAggregationInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    createdAt?: SortOrder
+    _count?: HubFollowCountOrderByAggregateInput
+    _avg?: HubFollowAvgOrderByAggregateInput
+    _max?: HubFollowMaxOrderByAggregateInput
+    _min?: HubFollowMinOrderByAggregateInput
+    _sum?: HubFollowSumOrderByAggregateInput
+  }
+
+  export type HubFollowScalarWhereWithAggregatesInput = {
+    AND?: HubFollowScalarWhereWithAggregatesInput | HubFollowScalarWhereWithAggregatesInput[]
+    OR?: HubFollowScalarWhereWithAggregatesInput[]
+    NOT?: HubFollowScalarWhereWithAggregatesInput | HubFollowScalarWhereWithAggregatesInput[]
+    userId?: StringWithAggregatesFilter<"HubFollow"> | string
+    clubId?: IntWithAggregatesFilter<"HubFollow"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"HubFollow"> | Date | string
+  }
+
+  export type HubBlockWhereInput = {
+    AND?: HubBlockWhereInput | HubBlockWhereInput[]
+    OR?: HubBlockWhereInput[]
+    NOT?: HubBlockWhereInput | HubBlockWhereInput[]
+    id?: IntFilter<"HubBlock"> | number
+    clubId?: IntFilter<"HubBlock"> | number
+    type?: EnumHubBlockTypeFilter<"HubBlock"> | $Enums.HubBlockType
+    title?: StringNullableFilter<"HubBlock"> | string | null
+    content?: StringFilter<"HubBlock"> | string
+    linkUrl?: StringNullableFilter<"HubBlock"> | string | null
+    position?: IntFilter<"HubBlock"> | number
+    createdAt?: DateTimeFilter<"HubBlock"> | Date | string
+    updatedAt?: DateTimeFilter<"HubBlock"> | Date | string
+    club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+  }
+
+  export type HubBlockOrderByWithRelationInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    type?: SortOrder
+    title?: SortOrderInput | SortOrder
+    content?: SortOrder
+    linkUrl?: SortOrderInput | SortOrder
+    position?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    club?: ClubOrderByWithRelationInput
+  }
+
+  export type HubBlockWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: HubBlockWhereInput | HubBlockWhereInput[]
+    OR?: HubBlockWhereInput[]
+    NOT?: HubBlockWhereInput | HubBlockWhereInput[]
+    clubId?: IntFilter<"HubBlock"> | number
+    type?: EnumHubBlockTypeFilter<"HubBlock"> | $Enums.HubBlockType
+    title?: StringNullableFilter<"HubBlock"> | string | null
+    content?: StringFilter<"HubBlock"> | string
+    linkUrl?: StringNullableFilter<"HubBlock"> | string | null
+    position?: IntFilter<"HubBlock"> | number
+    createdAt?: DateTimeFilter<"HubBlock"> | Date | string
+    updatedAt?: DateTimeFilter<"HubBlock"> | Date | string
+    club?: XOR<ClubScalarRelationFilter, ClubWhereInput>
+  }, "id">
+
+  export type HubBlockOrderByWithAggregationInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    type?: SortOrder
+    title?: SortOrderInput | SortOrder
+    content?: SortOrder
+    linkUrl?: SortOrderInput | SortOrder
+    position?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: HubBlockCountOrderByAggregateInput
+    _avg?: HubBlockAvgOrderByAggregateInput
+    _max?: HubBlockMaxOrderByAggregateInput
+    _min?: HubBlockMinOrderByAggregateInput
+    _sum?: HubBlockSumOrderByAggregateInput
+  }
+
+  export type HubBlockScalarWhereWithAggregatesInput = {
+    AND?: HubBlockScalarWhereWithAggregatesInput | HubBlockScalarWhereWithAggregatesInput[]
+    OR?: HubBlockScalarWhereWithAggregatesInput[]
+    NOT?: HubBlockScalarWhereWithAggregatesInput | HubBlockScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"HubBlock"> | number
+    clubId?: IntWithAggregatesFilter<"HubBlock"> | number
+    type?: EnumHubBlockTypeWithAggregatesFilter<"HubBlock"> | $Enums.HubBlockType
+    title?: StringNullableWithAggregatesFilter<"HubBlock"> | string | null
+    content?: StringWithAggregatesFilter<"HubBlock"> | string
+    linkUrl?: StringNullableWithAggregatesFilter<"HubBlock"> | string | null
+    position?: IntWithAggregatesFilter<"HubBlock"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"HubBlock"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"HubBlock"> | Date | string
   }
 
   export type VerificationTokenWhereInput = {
@@ -11437,6 +18274,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     events?: EventCreateNestedManyWithoutClubInput
+    followers?: HubFollowCreateNestedManyWithoutClubInput
+    blocks?: HubBlockCreateNestedManyWithoutClubInput
+    members?: ClubMembershipCreateNestedManyWithoutClubInput
   }
 
   export type ClubUncheckedCreateInput = {
@@ -11446,6 +18286,9 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     events?: EventUncheckedCreateNestedManyWithoutClubInput
+    followers?: HubFollowUncheckedCreateNestedManyWithoutClubInput
+    blocks?: HubBlockUncheckedCreateNestedManyWithoutClubInput
+    members?: ClubMembershipUncheckedCreateNestedManyWithoutClubInput
   }
 
   export type ClubUpdateInput = {
@@ -11454,6 +18297,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     events?: EventUpdateManyWithoutClubNestedInput
+    followers?: HubFollowUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUpdateManyWithoutClubNestedInput
   }
 
   export type ClubUncheckedUpdateInput = {
@@ -11463,6 +18309,9 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     events?: EventUncheckedUpdateManyWithoutClubNestedInput
+    followers?: HubFollowUncheckedUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUncheckedUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUncheckedUpdateManyWithoutClubNestedInput
   }
 
   export type ClubCreateManyInput = {
@@ -11501,6 +18350,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutAuthoredEventsInput
     club: ClubCreateNestedOneWithoutEventsInput
     rsvps?: RSVPCreateNestedManyWithoutEventInput
+    discussionThreads?: EventDiscussionThreadCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateInput = {
@@ -11517,6 +18367,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
+    discussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventUpdateInput = {
@@ -11532,6 +18383,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
     club?: ClubUpdateOneRequiredWithoutEventsNestedInput
     rsvps?: RSVPUpdateManyWithoutEventNestedInput
+    discussionThreads?: EventDiscussionThreadUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateInput = {
@@ -11548,6 +18400,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
+    discussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventCreateManyInput = {
@@ -11764,6 +18617,10 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11779,6 +18636,10 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11794,6 +18655,10 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11809,6 +18674,10 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -11839,6 +18708,300 @@ export namespace Prisma {
     emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     image?: NullableStringFieldUpdateOperationsInput | string | null
     password?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type EventDiscussionThreadCreateInput = {
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    event: EventCreateNestedOneWithoutDiscussionThreadsInput
+    author: UserCreateNestedOneWithoutAuthoredDiscussionThreadsInput
+    replies?: EventDiscussionReplyCreateNestedManyWithoutThreadInput
+  }
+
+  export type EventDiscussionThreadUncheckedCreateInput = {
+    id?: number
+    eventId: number
+    authorId: string
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutThreadInput
+  }
+
+  export type EventDiscussionThreadUpdateInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    event?: EventUpdateOneRequiredWithoutDiscussionThreadsNestedInput
+    author?: UserUpdateOneRequiredWithoutAuthoredDiscussionThreadsNestedInput
+    replies?: EventDiscussionReplyUpdateManyWithoutThreadNestedInput
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: EventDiscussionReplyUncheckedUpdateManyWithoutThreadNestedInput
+  }
+
+  export type EventDiscussionThreadCreateManyInput = {
+    id?: number
+    eventId: number
+    authorId: string
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionThreadUpdateManyMutationInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyCreateInput = {
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    thread: EventDiscussionThreadCreateNestedOneWithoutRepliesInput
+    author: UserCreateNestedOneWithoutAuthoredDiscussionRepliesInput
+  }
+
+  export type EventDiscussionReplyUncheckedCreateInput = {
+    id?: number
+    threadId: number
+    authorId: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionReplyUpdateInput = {
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    thread?: EventDiscussionThreadUpdateOneRequiredWithoutRepliesNestedInput
+    author?: UserUpdateOneRequiredWithoutAuthoredDiscussionRepliesNestedInput
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    threadId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyCreateManyInput = {
+    id?: number
+    threadId: number
+    authorId: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionReplyUpdateManyMutationInput = {
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    threadId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipCreateInput = {
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutClubMembershipsInput
+    club: ClubCreateNestedOneWithoutMembersInput
+  }
+
+  export type ClubMembershipUncheckedCreateInput = {
+    userId: string
+    clubId: number
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+  }
+
+  export type ClubMembershipUpdateInput = {
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutClubMembershipsNestedInput
+    club?: ClubUpdateOneRequiredWithoutMembersNestedInput
+  }
+
+  export type ClubMembershipUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipCreateManyInput = {
+    userId: string
+    clubId: number
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+  }
+
+  export type ClubMembershipUpdateManyMutationInput = {
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubFollowCreateInput = {
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutFollowedHubsInput
+    club: ClubCreateNestedOneWithoutFollowersInput
+  }
+
+  export type HubFollowUncheckedCreateInput = {
+    userId: string
+    clubId: number
+    createdAt?: Date | string
+  }
+
+  export type HubFollowUpdateInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFollowedHubsNestedInput
+    club?: ClubUpdateOneRequiredWithoutFollowersNestedInput
+  }
+
+  export type HubFollowUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubFollowCreateManyInput = {
+    userId: string
+    clubId: number
+    createdAt?: Date | string
+  }
+
+  export type HubFollowUpdateManyMutationInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubFollowUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubBlockCreateInput = {
+    type: $Enums.HubBlockType
+    title?: string | null
+    content: string
+    linkUrl?: string | null
+    position: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    club: ClubCreateNestedOneWithoutBlocksInput
+  }
+
+  export type HubBlockUncheckedCreateInput = {
+    id?: number
+    clubId: number
+    type: $Enums.HubBlockType
+    title?: string | null
+    content: string
+    linkUrl?: string | null
+    position: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HubBlockUpdateInput = {
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    club?: ClubUpdateOneRequiredWithoutBlocksNestedInput
+  }
+
+  export type HubBlockUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clubId?: IntFieldUpdateOperationsInput | number
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubBlockCreateManyInput = {
+    id?: number
+    clubId: number
+    type: $Enums.HubBlockType
+    title?: string | null
+    content: string
+    linkUrl?: string | null
+    position: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HubBlockUpdateManyMutationInput = {
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubBlockUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    clubId?: IntFieldUpdateOperationsInput | number
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VerificationTokenCreateInput = {
@@ -12062,7 +19225,37 @@ export namespace Prisma {
     none?: EventWhereInput
   }
 
+  export type HubFollowListRelationFilter = {
+    every?: HubFollowWhereInput
+    some?: HubFollowWhereInput
+    none?: HubFollowWhereInput
+  }
+
+  export type HubBlockListRelationFilter = {
+    every?: HubBlockWhereInput
+    some?: HubBlockWhereInput
+    none?: HubBlockWhereInput
+  }
+
+  export type ClubMembershipListRelationFilter = {
+    every?: ClubMembershipWhereInput
+    some?: ClubMembershipWhereInput
+    none?: ClubMembershipWhereInput
+  }
+
   export type EventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type HubFollowOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type HubBlockOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ClubMembershipOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12116,7 +19309,17 @@ export namespace Prisma {
     none?: RSVPWhereInput
   }
 
+  export type EventDiscussionThreadListRelationFilter = {
+    every?: EventDiscussionThreadWhereInput
+    some?: EventDiscussionThreadWhereInput
+    none?: EventDiscussionThreadWhereInput
+  }
+
   export type RSVPOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EventDiscussionThreadOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12372,6 +19575,12 @@ export namespace Prisma {
     none?: PostWhereInput
   }
 
+  export type EventDiscussionReplyListRelationFilter = {
+    every?: EventDiscussionReplyWhereInput
+    some?: EventDiscussionReplyWhereInput
+    none?: EventDiscussionReplyWhereInput
+  }
+
   export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -12381,6 +19590,10 @@ export namespace Prisma {
   }
 
   export type PostOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EventDiscussionReplyOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12438,6 +19651,253 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type EventScalarRelationFilter = {
+    is?: EventWhereInput
+    isNot?: EventWhereInput
+  }
+
+  export type EventDiscussionThreadCountOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    authorId?: SortOrder
+    question?: SortOrder
+    pinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventDiscussionThreadAvgOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+  }
+
+  export type EventDiscussionThreadMaxOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    authorId?: SortOrder
+    question?: SortOrder
+    pinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventDiscussionThreadMinOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+    authorId?: SortOrder
+    question?: SortOrder
+    pinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventDiscussionThreadSumOrderByAggregateInput = {
+    id?: SortOrder
+    eventId?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type EventDiscussionThreadScalarRelationFilter = {
+    is?: EventDiscussionThreadWhereInput
+    isNot?: EventDiscussionThreadWhereInput
+  }
+
+  export type EventDiscussionReplyCountOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    authorId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventDiscussionReplyAvgOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+  }
+
+  export type EventDiscussionReplyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    authorId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventDiscussionReplyMinOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+    authorId?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EventDiscussionReplySumOrderByAggregateInput = {
+    id?: SortOrder
+    threadId?: SortOrder
+  }
+
+  export type EnumClubRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClubRole | EnumClubRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumClubRoleFilter<$PrismaModel> | $Enums.ClubRole
+  }
+
+  export type ClubMembershipUserIdClubIdCompoundUniqueInput = {
+    userId: string
+    clubId: number
+  }
+
+  export type ClubMembershipCountOrderByAggregateInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    role?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ClubMembershipAvgOrderByAggregateInput = {
+    clubId?: SortOrder
+  }
+
+  export type ClubMembershipMaxOrderByAggregateInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    role?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ClubMembershipMinOrderByAggregateInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    role?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ClubMembershipSumOrderByAggregateInput = {
+    clubId?: SortOrder
+  }
+
+  export type EnumClubRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClubRole | EnumClubRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumClubRoleWithAggregatesFilter<$PrismaModel> | $Enums.ClubRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClubRoleFilter<$PrismaModel>
+    _max?: NestedEnumClubRoleFilter<$PrismaModel>
+  }
+
+  export type HubFollowUserIdClubIdCompoundUniqueInput = {
+    userId: string
+    clubId: number
+  }
+
+  export type HubFollowCountOrderByAggregateInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type HubFollowAvgOrderByAggregateInput = {
+    clubId?: SortOrder
+  }
+
+  export type HubFollowMaxOrderByAggregateInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type HubFollowMinOrderByAggregateInput = {
+    userId?: SortOrder
+    clubId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type HubFollowSumOrderByAggregateInput = {
+    clubId?: SortOrder
+  }
+
+  export type EnumHubBlockTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.HubBlockType | EnumHubBlockTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHubBlockTypeFilter<$PrismaModel> | $Enums.HubBlockType
+  }
+
+  export type HubBlockCountOrderByAggregateInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    linkUrl?: SortOrder
+    position?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HubBlockAvgOrderByAggregateInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    position?: SortOrder
+  }
+
+  export type HubBlockMaxOrderByAggregateInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    linkUrl?: SortOrder
+    position?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HubBlockMinOrderByAggregateInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    type?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    linkUrl?: SortOrder
+    position?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HubBlockSumOrderByAggregateInput = {
+    id?: SortOrder
+    clubId?: SortOrder
+    position?: SortOrder
+  }
+
+  export type EnumHubBlockTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HubBlockType | EnumHubBlockTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHubBlockTypeWithAggregatesFilter<$PrismaModel> | $Enums.HubBlockType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHubBlockTypeFilter<$PrismaModel>
+    _max?: NestedEnumHubBlockTypeFilter<$PrismaModel>
+  }
+
   export type VerificationTokenIdentifierTokenCompoundUniqueInput = {
     identifier: string
     token: string
@@ -12459,11 +19919,6 @@ export namespace Prisma {
     identifier?: SortOrder
     token?: SortOrder
     expires?: SortOrder
-  }
-
-  export type EventScalarRelationFilter = {
-    is?: EventWhereInput
-    isNot?: EventWhereInput
   }
 
   export type RSVPUserIdEventIdCompoundUniqueInput = {
@@ -12542,11 +19997,53 @@ export namespace Prisma {
     connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
   }
 
+  export type HubFollowCreateNestedManyWithoutClubInput = {
+    create?: XOR<HubFollowCreateWithoutClubInput, HubFollowUncheckedCreateWithoutClubInput> | HubFollowCreateWithoutClubInput[] | HubFollowUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutClubInput | HubFollowCreateOrConnectWithoutClubInput[]
+    createMany?: HubFollowCreateManyClubInputEnvelope
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+  }
+
+  export type HubBlockCreateNestedManyWithoutClubInput = {
+    create?: XOR<HubBlockCreateWithoutClubInput, HubBlockUncheckedCreateWithoutClubInput> | HubBlockCreateWithoutClubInput[] | HubBlockUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubBlockCreateOrConnectWithoutClubInput | HubBlockCreateOrConnectWithoutClubInput[]
+    createMany?: HubBlockCreateManyClubInputEnvelope
+    connect?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+  }
+
+  export type ClubMembershipCreateNestedManyWithoutClubInput = {
+    create?: XOR<ClubMembershipCreateWithoutClubInput, ClubMembershipUncheckedCreateWithoutClubInput> | ClubMembershipCreateWithoutClubInput[] | ClubMembershipUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutClubInput | ClubMembershipCreateOrConnectWithoutClubInput[]
+    createMany?: ClubMembershipCreateManyClubInputEnvelope
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+  }
+
   export type EventUncheckedCreateNestedManyWithoutClubInput = {
     create?: XOR<EventCreateWithoutClubInput, EventUncheckedCreateWithoutClubInput> | EventCreateWithoutClubInput[] | EventUncheckedCreateWithoutClubInput[]
     connectOrCreate?: EventCreateOrConnectWithoutClubInput | EventCreateOrConnectWithoutClubInput[]
     createMany?: EventCreateManyClubInputEnvelope
     connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
+  export type HubFollowUncheckedCreateNestedManyWithoutClubInput = {
+    create?: XOR<HubFollowCreateWithoutClubInput, HubFollowUncheckedCreateWithoutClubInput> | HubFollowCreateWithoutClubInput[] | HubFollowUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutClubInput | HubFollowCreateOrConnectWithoutClubInput[]
+    createMany?: HubFollowCreateManyClubInputEnvelope
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+  }
+
+  export type HubBlockUncheckedCreateNestedManyWithoutClubInput = {
+    create?: XOR<HubBlockCreateWithoutClubInput, HubBlockUncheckedCreateWithoutClubInput> | HubBlockCreateWithoutClubInput[] | HubBlockUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubBlockCreateOrConnectWithoutClubInput | HubBlockCreateOrConnectWithoutClubInput[]
+    createMany?: HubBlockCreateManyClubInputEnvelope
+    connect?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+  }
+
+  export type ClubMembershipUncheckedCreateNestedManyWithoutClubInput = {
+    create?: XOR<ClubMembershipCreateWithoutClubInput, ClubMembershipUncheckedCreateWithoutClubInput> | ClubMembershipCreateWithoutClubInput[] | ClubMembershipUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutClubInput | ClubMembershipCreateOrConnectWithoutClubInput[]
+    createMany?: ClubMembershipCreateManyClubInputEnvelope
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
   }
 
   export type EventUpdateManyWithoutClubNestedInput = {
@@ -12563,6 +20060,48 @@ export namespace Prisma {
     deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
   }
 
+  export type HubFollowUpdateManyWithoutClubNestedInput = {
+    create?: XOR<HubFollowCreateWithoutClubInput, HubFollowUncheckedCreateWithoutClubInput> | HubFollowCreateWithoutClubInput[] | HubFollowUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutClubInput | HubFollowCreateOrConnectWithoutClubInput[]
+    upsert?: HubFollowUpsertWithWhereUniqueWithoutClubInput | HubFollowUpsertWithWhereUniqueWithoutClubInput[]
+    createMany?: HubFollowCreateManyClubInputEnvelope
+    set?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    disconnect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    delete?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    update?: HubFollowUpdateWithWhereUniqueWithoutClubInput | HubFollowUpdateWithWhereUniqueWithoutClubInput[]
+    updateMany?: HubFollowUpdateManyWithWhereWithoutClubInput | HubFollowUpdateManyWithWhereWithoutClubInput[]
+    deleteMany?: HubFollowScalarWhereInput | HubFollowScalarWhereInput[]
+  }
+
+  export type HubBlockUpdateManyWithoutClubNestedInput = {
+    create?: XOR<HubBlockCreateWithoutClubInput, HubBlockUncheckedCreateWithoutClubInput> | HubBlockCreateWithoutClubInput[] | HubBlockUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubBlockCreateOrConnectWithoutClubInput | HubBlockCreateOrConnectWithoutClubInput[]
+    upsert?: HubBlockUpsertWithWhereUniqueWithoutClubInput | HubBlockUpsertWithWhereUniqueWithoutClubInput[]
+    createMany?: HubBlockCreateManyClubInputEnvelope
+    set?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    disconnect?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    delete?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    connect?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    update?: HubBlockUpdateWithWhereUniqueWithoutClubInput | HubBlockUpdateWithWhereUniqueWithoutClubInput[]
+    updateMany?: HubBlockUpdateManyWithWhereWithoutClubInput | HubBlockUpdateManyWithWhereWithoutClubInput[]
+    deleteMany?: HubBlockScalarWhereInput | HubBlockScalarWhereInput[]
+  }
+
+  export type ClubMembershipUpdateManyWithoutClubNestedInput = {
+    create?: XOR<ClubMembershipCreateWithoutClubInput, ClubMembershipUncheckedCreateWithoutClubInput> | ClubMembershipCreateWithoutClubInput[] | ClubMembershipUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutClubInput | ClubMembershipCreateOrConnectWithoutClubInput[]
+    upsert?: ClubMembershipUpsertWithWhereUniqueWithoutClubInput | ClubMembershipUpsertWithWhereUniqueWithoutClubInput[]
+    createMany?: ClubMembershipCreateManyClubInputEnvelope
+    set?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    disconnect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    delete?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    update?: ClubMembershipUpdateWithWhereUniqueWithoutClubInput | ClubMembershipUpdateWithWhereUniqueWithoutClubInput[]
+    updateMany?: ClubMembershipUpdateManyWithWhereWithoutClubInput | ClubMembershipUpdateManyWithWhereWithoutClubInput[]
+    deleteMany?: ClubMembershipScalarWhereInput | ClubMembershipScalarWhereInput[]
+  }
+
   export type EventUncheckedUpdateManyWithoutClubNestedInput = {
     create?: XOR<EventCreateWithoutClubInput, EventUncheckedCreateWithoutClubInput> | EventCreateWithoutClubInput[] | EventUncheckedCreateWithoutClubInput[]
     connectOrCreate?: EventCreateOrConnectWithoutClubInput | EventCreateOrConnectWithoutClubInput[]
@@ -12575,6 +20114,48 @@ export namespace Prisma {
     update?: EventUpdateWithWhereUniqueWithoutClubInput | EventUpdateWithWhereUniqueWithoutClubInput[]
     updateMany?: EventUpdateManyWithWhereWithoutClubInput | EventUpdateManyWithWhereWithoutClubInput[]
     deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  }
+
+  export type HubFollowUncheckedUpdateManyWithoutClubNestedInput = {
+    create?: XOR<HubFollowCreateWithoutClubInput, HubFollowUncheckedCreateWithoutClubInput> | HubFollowCreateWithoutClubInput[] | HubFollowUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutClubInput | HubFollowCreateOrConnectWithoutClubInput[]
+    upsert?: HubFollowUpsertWithWhereUniqueWithoutClubInput | HubFollowUpsertWithWhereUniqueWithoutClubInput[]
+    createMany?: HubFollowCreateManyClubInputEnvelope
+    set?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    disconnect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    delete?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    update?: HubFollowUpdateWithWhereUniqueWithoutClubInput | HubFollowUpdateWithWhereUniqueWithoutClubInput[]
+    updateMany?: HubFollowUpdateManyWithWhereWithoutClubInput | HubFollowUpdateManyWithWhereWithoutClubInput[]
+    deleteMany?: HubFollowScalarWhereInput | HubFollowScalarWhereInput[]
+  }
+
+  export type HubBlockUncheckedUpdateManyWithoutClubNestedInput = {
+    create?: XOR<HubBlockCreateWithoutClubInput, HubBlockUncheckedCreateWithoutClubInput> | HubBlockCreateWithoutClubInput[] | HubBlockUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: HubBlockCreateOrConnectWithoutClubInput | HubBlockCreateOrConnectWithoutClubInput[]
+    upsert?: HubBlockUpsertWithWhereUniqueWithoutClubInput | HubBlockUpsertWithWhereUniqueWithoutClubInput[]
+    createMany?: HubBlockCreateManyClubInputEnvelope
+    set?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    disconnect?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    delete?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    connect?: HubBlockWhereUniqueInput | HubBlockWhereUniqueInput[]
+    update?: HubBlockUpdateWithWhereUniqueWithoutClubInput | HubBlockUpdateWithWhereUniqueWithoutClubInput[]
+    updateMany?: HubBlockUpdateManyWithWhereWithoutClubInput | HubBlockUpdateManyWithWhereWithoutClubInput[]
+    deleteMany?: HubBlockScalarWhereInput | HubBlockScalarWhereInput[]
+  }
+
+  export type ClubMembershipUncheckedUpdateManyWithoutClubNestedInput = {
+    create?: XOR<ClubMembershipCreateWithoutClubInput, ClubMembershipUncheckedCreateWithoutClubInput> | ClubMembershipCreateWithoutClubInput[] | ClubMembershipUncheckedCreateWithoutClubInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutClubInput | ClubMembershipCreateOrConnectWithoutClubInput[]
+    upsert?: ClubMembershipUpsertWithWhereUniqueWithoutClubInput | ClubMembershipUpsertWithWhereUniqueWithoutClubInput[]
+    createMany?: ClubMembershipCreateManyClubInputEnvelope
+    set?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    disconnect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    delete?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    update?: ClubMembershipUpdateWithWhereUniqueWithoutClubInput | ClubMembershipUpdateWithWhereUniqueWithoutClubInput[]
+    updateMany?: ClubMembershipUpdateManyWithWhereWithoutClubInput | ClubMembershipUpdateManyWithWhereWithoutClubInput[]
+    deleteMany?: ClubMembershipScalarWhereInput | ClubMembershipScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAuthoredEventsInput = {
@@ -12596,11 +20177,25 @@ export namespace Prisma {
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
   }
 
+  export type EventDiscussionThreadCreateNestedManyWithoutEventInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutEventInput, EventDiscussionThreadUncheckedCreateWithoutEventInput> | EventDiscussionThreadCreateWithoutEventInput[] | EventDiscussionThreadUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutEventInput | EventDiscussionThreadCreateOrConnectWithoutEventInput[]
+    createMany?: EventDiscussionThreadCreateManyEventInputEnvelope
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+  }
+
   export type RSVPUncheckedCreateNestedManyWithoutEventInput = {
     create?: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput> | RSVPCreateWithoutEventInput[] | RSVPUncheckedCreateWithoutEventInput[]
     connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
     createMany?: RSVPCreateManyEventInputEnvelope
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
+  export type EventDiscussionThreadUncheckedCreateNestedManyWithoutEventInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutEventInput, EventDiscussionThreadUncheckedCreateWithoutEventInput> | EventDiscussionThreadCreateWithoutEventInput[] | EventDiscussionThreadUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutEventInput | EventDiscussionThreadCreateOrConnectWithoutEventInput[]
+    createMany?: EventDiscussionThreadCreateManyEventInputEnvelope
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
   }
 
   export type EnumEventStatusFieldUpdateOperationsInput = {
@@ -12637,6 +20232,20 @@ export namespace Prisma {
     deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
   }
 
+  export type EventDiscussionThreadUpdateManyWithoutEventNestedInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutEventInput, EventDiscussionThreadUncheckedCreateWithoutEventInput> | EventDiscussionThreadCreateWithoutEventInput[] | EventDiscussionThreadUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutEventInput | EventDiscussionThreadCreateOrConnectWithoutEventInput[]
+    upsert?: EventDiscussionThreadUpsertWithWhereUniqueWithoutEventInput | EventDiscussionThreadUpsertWithWhereUniqueWithoutEventInput[]
+    createMany?: EventDiscussionThreadCreateManyEventInputEnvelope
+    set?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    disconnect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    delete?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    update?: EventDiscussionThreadUpdateWithWhereUniqueWithoutEventInput | EventDiscussionThreadUpdateWithWhereUniqueWithoutEventInput[]
+    updateMany?: EventDiscussionThreadUpdateManyWithWhereWithoutEventInput | EventDiscussionThreadUpdateManyWithWhereWithoutEventInput[]
+    deleteMany?: EventDiscussionThreadScalarWhereInput | EventDiscussionThreadScalarWhereInput[]
+  }
+
   export type RSVPUncheckedUpdateManyWithoutEventNestedInput = {
     create?: XOR<RSVPCreateWithoutEventInput, RSVPUncheckedCreateWithoutEventInput> | RSVPCreateWithoutEventInput[] | RSVPUncheckedCreateWithoutEventInput[]
     connectOrCreate?: RSVPCreateOrConnectWithoutEventInput | RSVPCreateOrConnectWithoutEventInput[]
@@ -12649,6 +20258,20 @@ export namespace Prisma {
     update?: RSVPUpdateWithWhereUniqueWithoutEventInput | RSVPUpdateWithWhereUniqueWithoutEventInput[]
     updateMany?: RSVPUpdateManyWithWhereWithoutEventInput | RSVPUpdateManyWithWhereWithoutEventInput[]
     deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateManyWithoutEventNestedInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutEventInput, EventDiscussionThreadUncheckedCreateWithoutEventInput> | EventDiscussionThreadCreateWithoutEventInput[] | EventDiscussionThreadUncheckedCreateWithoutEventInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutEventInput | EventDiscussionThreadCreateOrConnectWithoutEventInput[]
+    upsert?: EventDiscussionThreadUpsertWithWhereUniqueWithoutEventInput | EventDiscussionThreadUpsertWithWhereUniqueWithoutEventInput[]
+    createMany?: EventDiscussionThreadCreateManyEventInputEnvelope
+    set?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    disconnect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    delete?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    update?: EventDiscussionThreadUpdateWithWhereUniqueWithoutEventInput | EventDiscussionThreadUpdateWithWhereUniqueWithoutEventInput[]
+    updateMany?: EventDiscussionThreadUpdateManyWithWhereWithoutEventInput | EventDiscussionThreadUpdateManyWithWhereWithoutEventInput[]
+    deleteMany?: EventDiscussionThreadScalarWhereInput | EventDiscussionThreadScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -12726,6 +20349,34 @@ export namespace Prisma {
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
   }
 
+  export type EventDiscussionThreadCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutAuthorInput, EventDiscussionThreadUncheckedCreateWithoutAuthorInput> | EventDiscussionThreadCreateWithoutAuthorInput[] | EventDiscussionThreadUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutAuthorInput | EventDiscussionThreadCreateOrConnectWithoutAuthorInput[]
+    createMany?: EventDiscussionThreadCreateManyAuthorInputEnvelope
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+  }
+
+  export type EventDiscussionReplyCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutAuthorInput, EventDiscussionReplyUncheckedCreateWithoutAuthorInput> | EventDiscussionReplyCreateWithoutAuthorInput[] | EventDiscussionReplyUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutAuthorInput | EventDiscussionReplyCreateOrConnectWithoutAuthorInput[]
+    createMany?: EventDiscussionReplyCreateManyAuthorInputEnvelope
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+  }
+
+  export type HubFollowCreateNestedManyWithoutUserInput = {
+    create?: XOR<HubFollowCreateWithoutUserInput, HubFollowUncheckedCreateWithoutUserInput> | HubFollowCreateWithoutUserInput[] | HubFollowUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutUserInput | HubFollowCreateOrConnectWithoutUserInput[]
+    createMany?: HubFollowCreateManyUserInputEnvelope
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+  }
+
+  export type ClubMembershipCreateNestedManyWithoutUserInput = {
+    create?: XOR<ClubMembershipCreateWithoutUserInput, ClubMembershipUncheckedCreateWithoutUserInput> | ClubMembershipCreateWithoutUserInput[] | ClubMembershipUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutUserInput | ClubMembershipCreateOrConnectWithoutUserInput[]
+    createMany?: ClubMembershipCreateManyUserInputEnvelope
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -12759,6 +20410,34 @@ export namespace Prisma {
     connectOrCreate?: RSVPCreateOrConnectWithoutUserInput | RSVPCreateOrConnectWithoutUserInput[]
     createMany?: RSVPCreateManyUserInputEnvelope
     connect?: RSVPWhereUniqueInput | RSVPWhereUniqueInput[]
+  }
+
+  export type EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutAuthorInput, EventDiscussionThreadUncheckedCreateWithoutAuthorInput> | EventDiscussionThreadCreateWithoutAuthorInput[] | EventDiscussionThreadUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutAuthorInput | EventDiscussionThreadCreateOrConnectWithoutAuthorInput[]
+    createMany?: EventDiscussionThreadCreateManyAuthorInputEnvelope
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+  }
+
+  export type EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutAuthorInput, EventDiscussionReplyUncheckedCreateWithoutAuthorInput> | EventDiscussionReplyCreateWithoutAuthorInput[] | EventDiscussionReplyUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutAuthorInput | EventDiscussionReplyCreateOrConnectWithoutAuthorInput[]
+    createMany?: EventDiscussionReplyCreateManyAuthorInputEnvelope
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+  }
+
+  export type HubFollowUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<HubFollowCreateWithoutUserInput, HubFollowUncheckedCreateWithoutUserInput> | HubFollowCreateWithoutUserInput[] | HubFollowUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutUserInput | HubFollowCreateOrConnectWithoutUserInput[]
+    createMany?: HubFollowCreateManyUserInputEnvelope
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+  }
+
+  export type ClubMembershipUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ClubMembershipCreateWithoutUserInput, ClubMembershipUncheckedCreateWithoutUserInput> | ClubMembershipCreateWithoutUserInput[] | ClubMembershipUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutUserInput | ClubMembershipCreateOrConnectWithoutUserInput[]
+    createMany?: ClubMembershipCreateManyUserInputEnvelope
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
   }
 
   export type EnumRoleFieldUpdateOperationsInput = {
@@ -12839,6 +20518,62 @@ export namespace Prisma {
     deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
   }
 
+  export type EventDiscussionThreadUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutAuthorInput, EventDiscussionThreadUncheckedCreateWithoutAuthorInput> | EventDiscussionThreadCreateWithoutAuthorInput[] | EventDiscussionThreadUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutAuthorInput | EventDiscussionThreadCreateOrConnectWithoutAuthorInput[]
+    upsert?: EventDiscussionThreadUpsertWithWhereUniqueWithoutAuthorInput | EventDiscussionThreadUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: EventDiscussionThreadCreateManyAuthorInputEnvelope
+    set?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    disconnect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    delete?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    update?: EventDiscussionThreadUpdateWithWhereUniqueWithoutAuthorInput | EventDiscussionThreadUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: EventDiscussionThreadUpdateManyWithWhereWithoutAuthorInput | EventDiscussionThreadUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: EventDiscussionThreadScalarWhereInput | EventDiscussionThreadScalarWhereInput[]
+  }
+
+  export type EventDiscussionReplyUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutAuthorInput, EventDiscussionReplyUncheckedCreateWithoutAuthorInput> | EventDiscussionReplyCreateWithoutAuthorInput[] | EventDiscussionReplyUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutAuthorInput | EventDiscussionReplyCreateOrConnectWithoutAuthorInput[]
+    upsert?: EventDiscussionReplyUpsertWithWhereUniqueWithoutAuthorInput | EventDiscussionReplyUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: EventDiscussionReplyCreateManyAuthorInputEnvelope
+    set?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    disconnect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    delete?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    update?: EventDiscussionReplyUpdateWithWhereUniqueWithoutAuthorInput | EventDiscussionReplyUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: EventDiscussionReplyUpdateManyWithWhereWithoutAuthorInput | EventDiscussionReplyUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: EventDiscussionReplyScalarWhereInput | EventDiscussionReplyScalarWhereInput[]
+  }
+
+  export type HubFollowUpdateManyWithoutUserNestedInput = {
+    create?: XOR<HubFollowCreateWithoutUserInput, HubFollowUncheckedCreateWithoutUserInput> | HubFollowCreateWithoutUserInput[] | HubFollowUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutUserInput | HubFollowCreateOrConnectWithoutUserInput[]
+    upsert?: HubFollowUpsertWithWhereUniqueWithoutUserInput | HubFollowUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: HubFollowCreateManyUserInputEnvelope
+    set?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    disconnect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    delete?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    update?: HubFollowUpdateWithWhereUniqueWithoutUserInput | HubFollowUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: HubFollowUpdateManyWithWhereWithoutUserInput | HubFollowUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: HubFollowScalarWhereInput | HubFollowScalarWhereInput[]
+  }
+
+  export type ClubMembershipUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ClubMembershipCreateWithoutUserInput, ClubMembershipUncheckedCreateWithoutUserInput> | ClubMembershipCreateWithoutUserInput[] | ClubMembershipUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutUserInput | ClubMembershipCreateOrConnectWithoutUserInput[]
+    upsert?: ClubMembershipUpsertWithWhereUniqueWithoutUserInput | ClubMembershipUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ClubMembershipCreateManyUserInputEnvelope
+    set?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    disconnect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    delete?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    update?: ClubMembershipUpdateWithWhereUniqueWithoutUserInput | ClubMembershipUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ClubMembershipUpdateManyWithWhereWithoutUserInput | ClubMembershipUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ClubMembershipScalarWhereInput | ClubMembershipScalarWhereInput[]
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -12907,6 +20642,242 @@ export namespace Prisma {
     update?: RSVPUpdateWithWhereUniqueWithoutUserInput | RSVPUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: RSVPUpdateManyWithWhereWithoutUserInput | RSVPUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: RSVPScalarWhereInput | RSVPScalarWhereInput[]
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutAuthorInput, EventDiscussionThreadUncheckedCreateWithoutAuthorInput> | EventDiscussionThreadCreateWithoutAuthorInput[] | EventDiscussionThreadUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutAuthorInput | EventDiscussionThreadCreateOrConnectWithoutAuthorInput[]
+    upsert?: EventDiscussionThreadUpsertWithWhereUniqueWithoutAuthorInput | EventDiscussionThreadUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: EventDiscussionThreadCreateManyAuthorInputEnvelope
+    set?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    disconnect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    delete?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    connect?: EventDiscussionThreadWhereUniqueInput | EventDiscussionThreadWhereUniqueInput[]
+    update?: EventDiscussionThreadUpdateWithWhereUniqueWithoutAuthorInput | EventDiscussionThreadUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: EventDiscussionThreadUpdateManyWithWhereWithoutAuthorInput | EventDiscussionThreadUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: EventDiscussionThreadScalarWhereInput | EventDiscussionThreadScalarWhereInput[]
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutAuthorInput, EventDiscussionReplyUncheckedCreateWithoutAuthorInput> | EventDiscussionReplyCreateWithoutAuthorInput[] | EventDiscussionReplyUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutAuthorInput | EventDiscussionReplyCreateOrConnectWithoutAuthorInput[]
+    upsert?: EventDiscussionReplyUpsertWithWhereUniqueWithoutAuthorInput | EventDiscussionReplyUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: EventDiscussionReplyCreateManyAuthorInputEnvelope
+    set?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    disconnect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    delete?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    update?: EventDiscussionReplyUpdateWithWhereUniqueWithoutAuthorInput | EventDiscussionReplyUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: EventDiscussionReplyUpdateManyWithWhereWithoutAuthorInput | EventDiscussionReplyUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: EventDiscussionReplyScalarWhereInput | EventDiscussionReplyScalarWhereInput[]
+  }
+
+  export type HubFollowUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<HubFollowCreateWithoutUserInput, HubFollowUncheckedCreateWithoutUserInput> | HubFollowCreateWithoutUserInput[] | HubFollowUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: HubFollowCreateOrConnectWithoutUserInput | HubFollowCreateOrConnectWithoutUserInput[]
+    upsert?: HubFollowUpsertWithWhereUniqueWithoutUserInput | HubFollowUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: HubFollowCreateManyUserInputEnvelope
+    set?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    disconnect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    delete?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    connect?: HubFollowWhereUniqueInput | HubFollowWhereUniqueInput[]
+    update?: HubFollowUpdateWithWhereUniqueWithoutUserInput | HubFollowUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: HubFollowUpdateManyWithWhereWithoutUserInput | HubFollowUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: HubFollowScalarWhereInput | HubFollowScalarWhereInput[]
+  }
+
+  export type ClubMembershipUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ClubMembershipCreateWithoutUserInput, ClubMembershipUncheckedCreateWithoutUserInput> | ClubMembershipCreateWithoutUserInput[] | ClubMembershipUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ClubMembershipCreateOrConnectWithoutUserInput | ClubMembershipCreateOrConnectWithoutUserInput[]
+    upsert?: ClubMembershipUpsertWithWhereUniqueWithoutUserInput | ClubMembershipUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ClubMembershipCreateManyUserInputEnvelope
+    set?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    disconnect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    delete?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    connect?: ClubMembershipWhereUniqueInput | ClubMembershipWhereUniqueInput[]
+    update?: ClubMembershipUpdateWithWhereUniqueWithoutUserInput | ClubMembershipUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ClubMembershipUpdateManyWithWhereWithoutUserInput | ClubMembershipUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ClubMembershipScalarWhereInput | ClubMembershipScalarWhereInput[]
+  }
+
+  export type EventCreateNestedOneWithoutDiscussionThreadsInput = {
+    create?: XOR<EventCreateWithoutDiscussionThreadsInput, EventUncheckedCreateWithoutDiscussionThreadsInput>
+    connectOrCreate?: EventCreateOrConnectWithoutDiscussionThreadsInput
+    connect?: EventWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAuthoredDiscussionThreadsInput = {
+    create?: XOR<UserCreateWithoutAuthoredDiscussionThreadsInput, UserUncheckedCreateWithoutAuthoredDiscussionThreadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthoredDiscussionThreadsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EventDiscussionReplyCreateNestedManyWithoutThreadInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutThreadInput, EventDiscussionReplyUncheckedCreateWithoutThreadInput> | EventDiscussionReplyCreateWithoutThreadInput[] | EventDiscussionReplyUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutThreadInput | EventDiscussionReplyCreateOrConnectWithoutThreadInput[]
+    createMany?: EventDiscussionReplyCreateManyThreadInputEnvelope
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+  }
+
+  export type EventDiscussionReplyUncheckedCreateNestedManyWithoutThreadInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutThreadInput, EventDiscussionReplyUncheckedCreateWithoutThreadInput> | EventDiscussionReplyCreateWithoutThreadInput[] | EventDiscussionReplyUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutThreadInput | EventDiscussionReplyCreateOrConnectWithoutThreadInput[]
+    createMany?: EventDiscussionReplyCreateManyThreadInputEnvelope
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type EventUpdateOneRequiredWithoutDiscussionThreadsNestedInput = {
+    create?: XOR<EventCreateWithoutDiscussionThreadsInput, EventUncheckedCreateWithoutDiscussionThreadsInput>
+    connectOrCreate?: EventCreateOrConnectWithoutDiscussionThreadsInput
+    upsert?: EventUpsertWithoutDiscussionThreadsInput
+    connect?: EventWhereUniqueInput
+    update?: XOR<XOR<EventUpdateToOneWithWhereWithoutDiscussionThreadsInput, EventUpdateWithoutDiscussionThreadsInput>, EventUncheckedUpdateWithoutDiscussionThreadsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutAuthoredDiscussionThreadsNestedInput = {
+    create?: XOR<UserCreateWithoutAuthoredDiscussionThreadsInput, UserUncheckedCreateWithoutAuthoredDiscussionThreadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthoredDiscussionThreadsInput
+    upsert?: UserUpsertWithoutAuthoredDiscussionThreadsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthoredDiscussionThreadsInput, UserUpdateWithoutAuthoredDiscussionThreadsInput>, UserUncheckedUpdateWithoutAuthoredDiscussionThreadsInput>
+  }
+
+  export type EventDiscussionReplyUpdateManyWithoutThreadNestedInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutThreadInput, EventDiscussionReplyUncheckedCreateWithoutThreadInput> | EventDiscussionReplyCreateWithoutThreadInput[] | EventDiscussionReplyUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutThreadInput | EventDiscussionReplyCreateOrConnectWithoutThreadInput[]
+    upsert?: EventDiscussionReplyUpsertWithWhereUniqueWithoutThreadInput | EventDiscussionReplyUpsertWithWhereUniqueWithoutThreadInput[]
+    createMany?: EventDiscussionReplyCreateManyThreadInputEnvelope
+    set?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    disconnect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    delete?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    update?: EventDiscussionReplyUpdateWithWhereUniqueWithoutThreadInput | EventDiscussionReplyUpdateWithWhereUniqueWithoutThreadInput[]
+    updateMany?: EventDiscussionReplyUpdateManyWithWhereWithoutThreadInput | EventDiscussionReplyUpdateManyWithWhereWithoutThreadInput[]
+    deleteMany?: EventDiscussionReplyScalarWhereInput | EventDiscussionReplyScalarWhereInput[]
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateManyWithoutThreadNestedInput = {
+    create?: XOR<EventDiscussionReplyCreateWithoutThreadInput, EventDiscussionReplyUncheckedCreateWithoutThreadInput> | EventDiscussionReplyCreateWithoutThreadInput[] | EventDiscussionReplyUncheckedCreateWithoutThreadInput[]
+    connectOrCreate?: EventDiscussionReplyCreateOrConnectWithoutThreadInput | EventDiscussionReplyCreateOrConnectWithoutThreadInput[]
+    upsert?: EventDiscussionReplyUpsertWithWhereUniqueWithoutThreadInput | EventDiscussionReplyUpsertWithWhereUniqueWithoutThreadInput[]
+    createMany?: EventDiscussionReplyCreateManyThreadInputEnvelope
+    set?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    disconnect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    delete?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    connect?: EventDiscussionReplyWhereUniqueInput | EventDiscussionReplyWhereUniqueInput[]
+    update?: EventDiscussionReplyUpdateWithWhereUniqueWithoutThreadInput | EventDiscussionReplyUpdateWithWhereUniqueWithoutThreadInput[]
+    updateMany?: EventDiscussionReplyUpdateManyWithWhereWithoutThreadInput | EventDiscussionReplyUpdateManyWithWhereWithoutThreadInput[]
+    deleteMany?: EventDiscussionReplyScalarWhereInput | EventDiscussionReplyScalarWhereInput[]
+  }
+
+  export type EventDiscussionThreadCreateNestedOneWithoutRepliesInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutRepliesInput, EventDiscussionThreadUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutRepliesInput
+    connect?: EventDiscussionThreadWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutAuthoredDiscussionRepliesInput = {
+    create?: XOR<UserCreateWithoutAuthoredDiscussionRepliesInput, UserUncheckedCreateWithoutAuthoredDiscussionRepliesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthoredDiscussionRepliesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EventDiscussionThreadUpdateOneRequiredWithoutRepliesNestedInput = {
+    create?: XOR<EventDiscussionThreadCreateWithoutRepliesInput, EventDiscussionThreadUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: EventDiscussionThreadCreateOrConnectWithoutRepliesInput
+    upsert?: EventDiscussionThreadUpsertWithoutRepliesInput
+    connect?: EventDiscussionThreadWhereUniqueInput
+    update?: XOR<XOR<EventDiscussionThreadUpdateToOneWithWhereWithoutRepliesInput, EventDiscussionThreadUpdateWithoutRepliesInput>, EventDiscussionThreadUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutAuthoredDiscussionRepliesNestedInput = {
+    create?: XOR<UserCreateWithoutAuthoredDiscussionRepliesInput, UserUncheckedCreateWithoutAuthoredDiscussionRepliesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAuthoredDiscussionRepliesInput
+    upsert?: UserUpsertWithoutAuthoredDiscussionRepliesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthoredDiscussionRepliesInput, UserUpdateWithoutAuthoredDiscussionRepliesInput>, UserUncheckedUpdateWithoutAuthoredDiscussionRepliesInput>
+  }
+
+  export type UserCreateNestedOneWithoutClubMembershipsInput = {
+    create?: XOR<UserCreateWithoutClubMembershipsInput, UserUncheckedCreateWithoutClubMembershipsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutClubMembershipsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ClubCreateNestedOneWithoutMembersInput = {
+    create?: XOR<ClubCreateWithoutMembersInput, ClubUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: ClubCreateOrConnectWithoutMembersInput
+    connect?: ClubWhereUniqueInput
+  }
+
+  export type EnumClubRoleFieldUpdateOperationsInput = {
+    set?: $Enums.ClubRole
+  }
+
+  export type UserUpdateOneRequiredWithoutClubMembershipsNestedInput = {
+    create?: XOR<UserCreateWithoutClubMembershipsInput, UserUncheckedCreateWithoutClubMembershipsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutClubMembershipsInput
+    upsert?: UserUpsertWithoutClubMembershipsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutClubMembershipsInput, UserUpdateWithoutClubMembershipsInput>, UserUncheckedUpdateWithoutClubMembershipsInput>
+  }
+
+  export type ClubUpdateOneRequiredWithoutMembersNestedInput = {
+    create?: XOR<ClubCreateWithoutMembersInput, ClubUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: ClubCreateOrConnectWithoutMembersInput
+    upsert?: ClubUpsertWithoutMembersInput
+    connect?: ClubWhereUniqueInput
+    update?: XOR<XOR<ClubUpdateToOneWithWhereWithoutMembersInput, ClubUpdateWithoutMembersInput>, ClubUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type UserCreateNestedOneWithoutFollowedHubsInput = {
+    create?: XOR<UserCreateWithoutFollowedHubsInput, UserUncheckedCreateWithoutFollowedHubsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFollowedHubsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ClubCreateNestedOneWithoutFollowersInput = {
+    create?: XOR<ClubCreateWithoutFollowersInput, ClubUncheckedCreateWithoutFollowersInput>
+    connectOrCreate?: ClubCreateOrConnectWithoutFollowersInput
+    connect?: ClubWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutFollowedHubsNestedInput = {
+    create?: XOR<UserCreateWithoutFollowedHubsInput, UserUncheckedCreateWithoutFollowedHubsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFollowedHubsInput
+    upsert?: UserUpsertWithoutFollowedHubsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFollowedHubsInput, UserUpdateWithoutFollowedHubsInput>, UserUncheckedUpdateWithoutFollowedHubsInput>
+  }
+
+  export type ClubUpdateOneRequiredWithoutFollowersNestedInput = {
+    create?: XOR<ClubCreateWithoutFollowersInput, ClubUncheckedCreateWithoutFollowersInput>
+    connectOrCreate?: ClubCreateOrConnectWithoutFollowersInput
+    upsert?: ClubUpsertWithoutFollowersInput
+    connect?: ClubWhereUniqueInput
+    update?: XOR<XOR<ClubUpdateToOneWithWhereWithoutFollowersInput, ClubUpdateWithoutFollowersInput>, ClubUncheckedUpdateWithoutFollowersInput>
+  }
+
+  export type ClubCreateNestedOneWithoutBlocksInput = {
+    create?: XOR<ClubCreateWithoutBlocksInput, ClubUncheckedCreateWithoutBlocksInput>
+    connectOrCreate?: ClubCreateOrConnectWithoutBlocksInput
+    connect?: ClubWhereUniqueInput
+  }
+
+  export type EnumHubBlockTypeFieldUpdateOperationsInput = {
+    set?: $Enums.HubBlockType
+  }
+
+  export type ClubUpdateOneRequiredWithoutBlocksNestedInput = {
+    create?: XOR<ClubCreateWithoutBlocksInput, ClubUncheckedCreateWithoutBlocksInput>
+    connectOrCreate?: ClubCreateOrConnectWithoutBlocksInput
+    upsert?: ClubUpsertWithoutBlocksInput
+    connect?: ClubWhereUniqueInput
+    update?: XOR<XOR<ClubUpdateToOneWithWhereWithoutBlocksInput, ClubUpdateWithoutBlocksInput>, ClubUncheckedUpdateWithoutBlocksInput>
   }
 
   export type UserCreateNestedOneWithoutRsvpsInput = {
@@ -13159,6 +21130,53 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedEnumClubRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClubRole | EnumClubRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumClubRoleFilter<$PrismaModel> | $Enums.ClubRole
+  }
+
+  export type NestedEnumClubRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ClubRole | EnumClubRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ClubRole[] | ListEnumClubRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumClubRoleWithAggregatesFilter<$PrismaModel> | $Enums.ClubRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClubRoleFilter<$PrismaModel>
+    _max?: NestedEnumClubRoleFilter<$PrismaModel>
+  }
+
+  export type NestedEnumHubBlockTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.HubBlockType | EnumHubBlockTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHubBlockTypeFilter<$PrismaModel> | $Enums.HubBlockType
+  }
+
+  export type NestedEnumHubBlockTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.HubBlockType | EnumHubBlockTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.HubBlockType[] | ListEnumHubBlockTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumHubBlockTypeWithAggregatesFilter<$PrismaModel> | $Enums.HubBlockType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumHubBlockTypeFilter<$PrismaModel>
+    _max?: NestedEnumHubBlockTypeFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutPostsInput = {
     role?: $Enums.Role
     id?: string
@@ -13171,6 +21189,10 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPostsInput = {
@@ -13185,6 +21207,10 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPostsInput = {
@@ -13215,6 +21241,10 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPostsInput = {
@@ -13229,6 +21259,10 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventCreateWithoutClubInput = {
@@ -13243,6 +21277,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutAuthoredEventsInput
     rsvps?: RSVPCreateNestedManyWithoutEventInput
+    discussionThreads?: EventDiscussionThreadCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateWithoutClubInput = {
@@ -13258,6 +21293,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
+    discussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventCreateOrConnectWithoutClubInput = {
@@ -13267,6 +21303,79 @@ export namespace Prisma {
 
   export type EventCreateManyClubInputEnvelope = {
     data: EventCreateManyClubInput | EventCreateManyClubInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HubFollowCreateWithoutClubInput = {
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutFollowedHubsInput
+  }
+
+  export type HubFollowUncheckedCreateWithoutClubInput = {
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type HubFollowCreateOrConnectWithoutClubInput = {
+    where: HubFollowWhereUniqueInput
+    create: XOR<HubFollowCreateWithoutClubInput, HubFollowUncheckedCreateWithoutClubInput>
+  }
+
+  export type HubFollowCreateManyClubInputEnvelope = {
+    data: HubFollowCreateManyClubInput | HubFollowCreateManyClubInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HubBlockCreateWithoutClubInput = {
+    type: $Enums.HubBlockType
+    title?: string | null
+    content: string
+    linkUrl?: string | null
+    position: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HubBlockUncheckedCreateWithoutClubInput = {
+    id?: number
+    type: $Enums.HubBlockType
+    title?: string | null
+    content: string
+    linkUrl?: string | null
+    position: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HubBlockCreateOrConnectWithoutClubInput = {
+    where: HubBlockWhereUniqueInput
+    create: XOR<HubBlockCreateWithoutClubInput, HubBlockUncheckedCreateWithoutClubInput>
+  }
+
+  export type HubBlockCreateManyClubInputEnvelope = {
+    data: HubBlockCreateManyClubInput | HubBlockCreateManyClubInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ClubMembershipCreateWithoutClubInput = {
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutClubMembershipsInput
+  }
+
+  export type ClubMembershipUncheckedCreateWithoutClubInput = {
+    userId: string
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+  }
+
+  export type ClubMembershipCreateOrConnectWithoutClubInput = {
+    where: ClubMembershipWhereUniqueInput
+    create: XOR<ClubMembershipCreateWithoutClubInput, ClubMembershipUncheckedCreateWithoutClubInput>
+  }
+
+  export type ClubMembershipCreateManyClubInputEnvelope = {
+    data: ClubMembershipCreateManyClubInput | ClubMembershipCreateManyClubInput[]
     skipDuplicates?: boolean
   }
 
@@ -13304,6 +21413,88 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Event"> | Date | string
   }
 
+  export type HubFollowUpsertWithWhereUniqueWithoutClubInput = {
+    where: HubFollowWhereUniqueInput
+    update: XOR<HubFollowUpdateWithoutClubInput, HubFollowUncheckedUpdateWithoutClubInput>
+    create: XOR<HubFollowCreateWithoutClubInput, HubFollowUncheckedCreateWithoutClubInput>
+  }
+
+  export type HubFollowUpdateWithWhereUniqueWithoutClubInput = {
+    where: HubFollowWhereUniqueInput
+    data: XOR<HubFollowUpdateWithoutClubInput, HubFollowUncheckedUpdateWithoutClubInput>
+  }
+
+  export type HubFollowUpdateManyWithWhereWithoutClubInput = {
+    where: HubFollowScalarWhereInput
+    data: XOR<HubFollowUpdateManyMutationInput, HubFollowUncheckedUpdateManyWithoutClubInput>
+  }
+
+  export type HubFollowScalarWhereInput = {
+    AND?: HubFollowScalarWhereInput | HubFollowScalarWhereInput[]
+    OR?: HubFollowScalarWhereInput[]
+    NOT?: HubFollowScalarWhereInput | HubFollowScalarWhereInput[]
+    userId?: StringFilter<"HubFollow"> | string
+    clubId?: IntFilter<"HubFollow"> | number
+    createdAt?: DateTimeFilter<"HubFollow"> | Date | string
+  }
+
+  export type HubBlockUpsertWithWhereUniqueWithoutClubInput = {
+    where: HubBlockWhereUniqueInput
+    update: XOR<HubBlockUpdateWithoutClubInput, HubBlockUncheckedUpdateWithoutClubInput>
+    create: XOR<HubBlockCreateWithoutClubInput, HubBlockUncheckedCreateWithoutClubInput>
+  }
+
+  export type HubBlockUpdateWithWhereUniqueWithoutClubInput = {
+    where: HubBlockWhereUniqueInput
+    data: XOR<HubBlockUpdateWithoutClubInput, HubBlockUncheckedUpdateWithoutClubInput>
+  }
+
+  export type HubBlockUpdateManyWithWhereWithoutClubInput = {
+    where: HubBlockScalarWhereInput
+    data: XOR<HubBlockUpdateManyMutationInput, HubBlockUncheckedUpdateManyWithoutClubInput>
+  }
+
+  export type HubBlockScalarWhereInput = {
+    AND?: HubBlockScalarWhereInput | HubBlockScalarWhereInput[]
+    OR?: HubBlockScalarWhereInput[]
+    NOT?: HubBlockScalarWhereInput | HubBlockScalarWhereInput[]
+    id?: IntFilter<"HubBlock"> | number
+    clubId?: IntFilter<"HubBlock"> | number
+    type?: EnumHubBlockTypeFilter<"HubBlock"> | $Enums.HubBlockType
+    title?: StringNullableFilter<"HubBlock"> | string | null
+    content?: StringFilter<"HubBlock"> | string
+    linkUrl?: StringNullableFilter<"HubBlock"> | string | null
+    position?: IntFilter<"HubBlock"> | number
+    createdAt?: DateTimeFilter<"HubBlock"> | Date | string
+    updatedAt?: DateTimeFilter<"HubBlock"> | Date | string
+  }
+
+  export type ClubMembershipUpsertWithWhereUniqueWithoutClubInput = {
+    where: ClubMembershipWhereUniqueInput
+    update: XOR<ClubMembershipUpdateWithoutClubInput, ClubMembershipUncheckedUpdateWithoutClubInput>
+    create: XOR<ClubMembershipCreateWithoutClubInput, ClubMembershipUncheckedCreateWithoutClubInput>
+  }
+
+  export type ClubMembershipUpdateWithWhereUniqueWithoutClubInput = {
+    where: ClubMembershipWhereUniqueInput
+    data: XOR<ClubMembershipUpdateWithoutClubInput, ClubMembershipUncheckedUpdateWithoutClubInput>
+  }
+
+  export type ClubMembershipUpdateManyWithWhereWithoutClubInput = {
+    where: ClubMembershipScalarWhereInput
+    data: XOR<ClubMembershipUpdateManyMutationInput, ClubMembershipUncheckedUpdateManyWithoutClubInput>
+  }
+
+  export type ClubMembershipScalarWhereInput = {
+    AND?: ClubMembershipScalarWhereInput | ClubMembershipScalarWhereInput[]
+    OR?: ClubMembershipScalarWhereInput[]
+    NOT?: ClubMembershipScalarWhereInput | ClubMembershipScalarWhereInput[]
+    userId?: StringFilter<"ClubMembership"> | string
+    clubId?: IntFilter<"ClubMembership"> | number
+    role?: EnumClubRoleFilter<"ClubMembership"> | $Enums.ClubRole
+    createdAt?: DateTimeFilter<"ClubMembership"> | Date | string
+  }
+
   export type UserCreateWithoutAuthoredEventsInput = {
     role?: $Enums.Role
     id?: string
@@ -13316,6 +21507,10 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAuthoredEventsInput = {
@@ -13330,6 +21525,10 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAuthoredEventsInput = {
@@ -13342,6 +21541,9 @@ export namespace Prisma {
     logoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    followers?: HubFollowCreateNestedManyWithoutClubInput
+    blocks?: HubBlockCreateNestedManyWithoutClubInput
+    members?: ClubMembershipCreateNestedManyWithoutClubInput
   }
 
   export type ClubUncheckedCreateWithoutEventsInput = {
@@ -13350,6 +21552,9 @@ export namespace Prisma {
     logoUrl: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    followers?: HubFollowUncheckedCreateNestedManyWithoutClubInput
+    blocks?: HubBlockUncheckedCreateNestedManyWithoutClubInput
+    members?: ClubMembershipUncheckedCreateNestedManyWithoutClubInput
   }
 
   export type ClubCreateOrConnectWithoutEventsInput = {
@@ -13380,6 +21585,35 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type EventDiscussionThreadCreateWithoutEventInput = {
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutAuthoredDiscussionThreadsInput
+    replies?: EventDiscussionReplyCreateNestedManyWithoutThreadInput
+  }
+
+  export type EventDiscussionThreadUncheckedCreateWithoutEventInput = {
+    id?: number
+    authorId: string
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutThreadInput
+  }
+
+  export type EventDiscussionThreadCreateOrConnectWithoutEventInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    create: XOR<EventDiscussionThreadCreateWithoutEventInput, EventDiscussionThreadUncheckedCreateWithoutEventInput>
+  }
+
+  export type EventDiscussionThreadCreateManyEventInputEnvelope = {
+    data: EventDiscussionThreadCreateManyEventInput | EventDiscussionThreadCreateManyEventInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutAuthoredEventsInput = {
     update: XOR<UserUpdateWithoutAuthoredEventsInput, UserUncheckedUpdateWithoutAuthoredEventsInput>
     create: XOR<UserCreateWithoutAuthoredEventsInput, UserUncheckedCreateWithoutAuthoredEventsInput>
@@ -13403,6 +21637,10 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuthoredEventsInput = {
@@ -13417,6 +21655,10 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubUpsertWithoutEventsInput = {
@@ -13435,6 +21677,9 @@ export namespace Prisma {
     logoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    followers?: HubFollowUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUpdateManyWithoutClubNestedInput
   }
 
   export type ClubUncheckedUpdateWithoutEventsInput = {
@@ -13443,6 +21688,9 @@ export namespace Prisma {
     logoUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    followers?: HubFollowUncheckedUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUncheckedUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUncheckedUpdateManyWithoutClubNestedInput
   }
 
   export type RSVPUpsertWithWhereUniqueWithoutEventInput = {
@@ -13472,6 +21720,35 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"RSVP"> | Date | string
   }
 
+  export type EventDiscussionThreadUpsertWithWhereUniqueWithoutEventInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    update: XOR<EventDiscussionThreadUpdateWithoutEventInput, EventDiscussionThreadUncheckedUpdateWithoutEventInput>
+    create: XOR<EventDiscussionThreadCreateWithoutEventInput, EventDiscussionThreadUncheckedCreateWithoutEventInput>
+  }
+
+  export type EventDiscussionThreadUpdateWithWhereUniqueWithoutEventInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    data: XOR<EventDiscussionThreadUpdateWithoutEventInput, EventDiscussionThreadUncheckedUpdateWithoutEventInput>
+  }
+
+  export type EventDiscussionThreadUpdateManyWithWhereWithoutEventInput = {
+    where: EventDiscussionThreadScalarWhereInput
+    data: XOR<EventDiscussionThreadUpdateManyMutationInput, EventDiscussionThreadUncheckedUpdateManyWithoutEventInput>
+  }
+
+  export type EventDiscussionThreadScalarWhereInput = {
+    AND?: EventDiscussionThreadScalarWhereInput | EventDiscussionThreadScalarWhereInput[]
+    OR?: EventDiscussionThreadScalarWhereInput[]
+    NOT?: EventDiscussionThreadScalarWhereInput | EventDiscussionThreadScalarWhereInput[]
+    id?: IntFilter<"EventDiscussionThread"> | number
+    eventId?: IntFilter<"EventDiscussionThread"> | number
+    authorId?: StringFilter<"EventDiscussionThread"> | string
+    question?: StringFilter<"EventDiscussionThread"> | string
+    pinned?: BoolFilter<"EventDiscussionThread"> | boolean
+    createdAt?: DateTimeFilter<"EventDiscussionThread"> | Date | string
+    updatedAt?: DateTimeFilter<"EventDiscussionThread"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     role?: $Enums.Role
     id?: string
@@ -13484,6 +21761,10 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -13498,6 +21779,10 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -13528,6 +21813,10 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -13542,6 +21831,10 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -13556,6 +21849,10 @@ export namespace Prisma {
     posts?: PostCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -13570,6 +21867,10 @@ export namespace Prisma {
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
     rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -13600,6 +21901,10 @@ export namespace Prisma {
     posts?: PostUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -13614,6 +21919,10 @@ export namespace Prisma {
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
     rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -13713,6 +22022,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     club: ClubCreateNestedOneWithoutEventsInput
     rsvps?: RSVPCreateNestedManyWithoutEventInput
+    discussionThreads?: EventDiscussionThreadCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateWithoutAuthorInput = {
@@ -13728,6 +22038,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
+    discussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventCreateOrConnectWithoutAuthorInput = {
@@ -13760,6 +22071,102 @@ export namespace Prisma {
 
   export type RSVPCreateManyUserInputEnvelope = {
     data: RSVPCreateManyUserInput | RSVPCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EventDiscussionThreadCreateWithoutAuthorInput = {
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    event: EventCreateNestedOneWithoutDiscussionThreadsInput
+    replies?: EventDiscussionReplyCreateNestedManyWithoutThreadInput
+  }
+
+  export type EventDiscussionThreadUncheckedCreateWithoutAuthorInput = {
+    id?: number
+    eventId: number
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutThreadInput
+  }
+
+  export type EventDiscussionThreadCreateOrConnectWithoutAuthorInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    create: XOR<EventDiscussionThreadCreateWithoutAuthorInput, EventDiscussionThreadUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type EventDiscussionThreadCreateManyAuthorInputEnvelope = {
+    data: EventDiscussionThreadCreateManyAuthorInput | EventDiscussionThreadCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EventDiscussionReplyCreateWithoutAuthorInput = {
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    thread: EventDiscussionThreadCreateNestedOneWithoutRepliesInput
+  }
+
+  export type EventDiscussionReplyUncheckedCreateWithoutAuthorInput = {
+    id?: number
+    threadId: number
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionReplyCreateOrConnectWithoutAuthorInput = {
+    where: EventDiscussionReplyWhereUniqueInput
+    create: XOR<EventDiscussionReplyCreateWithoutAuthorInput, EventDiscussionReplyUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type EventDiscussionReplyCreateManyAuthorInputEnvelope = {
+    data: EventDiscussionReplyCreateManyAuthorInput | EventDiscussionReplyCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type HubFollowCreateWithoutUserInput = {
+    createdAt?: Date | string
+    club: ClubCreateNestedOneWithoutFollowersInput
+  }
+
+  export type HubFollowUncheckedCreateWithoutUserInput = {
+    clubId: number
+    createdAt?: Date | string
+  }
+
+  export type HubFollowCreateOrConnectWithoutUserInput = {
+    where: HubFollowWhereUniqueInput
+    create: XOR<HubFollowCreateWithoutUserInput, HubFollowUncheckedCreateWithoutUserInput>
+  }
+
+  export type HubFollowCreateManyUserInputEnvelope = {
+    data: HubFollowCreateManyUserInput | HubFollowCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ClubMembershipCreateWithoutUserInput = {
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+    club: ClubCreateNestedOneWithoutMembersInput
+  }
+
+  export type ClubMembershipUncheckedCreateWithoutUserInput = {
+    clubId: number
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+  }
+
+  export type ClubMembershipCreateOrConnectWithoutUserInput = {
+    where: ClubMembershipWhereUniqueInput
+    create: XOR<ClubMembershipCreateWithoutUserInput, ClubMembershipUncheckedCreateWithoutUserInput>
+  }
+
+  export type ClubMembershipCreateManyUserInputEnvelope = {
+    data: ClubMembershipCreateManyUserInput | ClubMembershipCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -13883,6 +22290,781 @@ export namespace Prisma {
     data: XOR<RSVPUpdateManyMutationInput, RSVPUncheckedUpdateManyWithoutUserInput>
   }
 
+  export type EventDiscussionThreadUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    update: XOR<EventDiscussionThreadUpdateWithoutAuthorInput, EventDiscussionThreadUncheckedUpdateWithoutAuthorInput>
+    create: XOR<EventDiscussionThreadCreateWithoutAuthorInput, EventDiscussionThreadUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type EventDiscussionThreadUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    data: XOR<EventDiscussionThreadUpdateWithoutAuthorInput, EventDiscussionThreadUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type EventDiscussionThreadUpdateManyWithWhereWithoutAuthorInput = {
+    where: EventDiscussionThreadScalarWhereInput
+    data: XOR<EventDiscussionThreadUpdateManyMutationInput, EventDiscussionThreadUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type EventDiscussionReplyUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: EventDiscussionReplyWhereUniqueInput
+    update: XOR<EventDiscussionReplyUpdateWithoutAuthorInput, EventDiscussionReplyUncheckedUpdateWithoutAuthorInput>
+    create: XOR<EventDiscussionReplyCreateWithoutAuthorInput, EventDiscussionReplyUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type EventDiscussionReplyUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: EventDiscussionReplyWhereUniqueInput
+    data: XOR<EventDiscussionReplyUpdateWithoutAuthorInput, EventDiscussionReplyUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type EventDiscussionReplyUpdateManyWithWhereWithoutAuthorInput = {
+    where: EventDiscussionReplyScalarWhereInput
+    data: XOR<EventDiscussionReplyUpdateManyMutationInput, EventDiscussionReplyUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type EventDiscussionReplyScalarWhereInput = {
+    AND?: EventDiscussionReplyScalarWhereInput | EventDiscussionReplyScalarWhereInput[]
+    OR?: EventDiscussionReplyScalarWhereInput[]
+    NOT?: EventDiscussionReplyScalarWhereInput | EventDiscussionReplyScalarWhereInput[]
+    id?: IntFilter<"EventDiscussionReply"> | number
+    threadId?: IntFilter<"EventDiscussionReply"> | number
+    authorId?: StringFilter<"EventDiscussionReply"> | string
+    message?: StringFilter<"EventDiscussionReply"> | string
+    createdAt?: DateTimeFilter<"EventDiscussionReply"> | Date | string
+    updatedAt?: DateTimeFilter<"EventDiscussionReply"> | Date | string
+  }
+
+  export type HubFollowUpsertWithWhereUniqueWithoutUserInput = {
+    where: HubFollowWhereUniqueInput
+    update: XOR<HubFollowUpdateWithoutUserInput, HubFollowUncheckedUpdateWithoutUserInput>
+    create: XOR<HubFollowCreateWithoutUserInput, HubFollowUncheckedCreateWithoutUserInput>
+  }
+
+  export type HubFollowUpdateWithWhereUniqueWithoutUserInput = {
+    where: HubFollowWhereUniqueInput
+    data: XOR<HubFollowUpdateWithoutUserInput, HubFollowUncheckedUpdateWithoutUserInput>
+  }
+
+  export type HubFollowUpdateManyWithWhereWithoutUserInput = {
+    where: HubFollowScalarWhereInput
+    data: XOR<HubFollowUpdateManyMutationInput, HubFollowUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ClubMembershipUpsertWithWhereUniqueWithoutUserInput = {
+    where: ClubMembershipWhereUniqueInput
+    update: XOR<ClubMembershipUpdateWithoutUserInput, ClubMembershipUncheckedUpdateWithoutUserInput>
+    create: XOR<ClubMembershipCreateWithoutUserInput, ClubMembershipUncheckedCreateWithoutUserInput>
+  }
+
+  export type ClubMembershipUpdateWithWhereUniqueWithoutUserInput = {
+    where: ClubMembershipWhereUniqueInput
+    data: XOR<ClubMembershipUpdateWithoutUserInput, ClubMembershipUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ClubMembershipUpdateManyWithWhereWithoutUserInput = {
+    where: ClubMembershipScalarWhereInput
+    data: XOR<ClubMembershipUpdateManyMutationInput, ClubMembershipUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type EventCreateWithoutDiscussionThreadsInput = {
+    title: string
+    description: string
+    status?: $Enums.EventStatus
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutAuthoredEventsInput
+    club: ClubCreateNestedOneWithoutEventsInput
+    rsvps?: RSVPCreateNestedManyWithoutEventInput
+  }
+
+  export type EventUncheckedCreateWithoutDiscussionThreadsInput = {
+    id?: number
+    title: string
+    description: string
+    status?: $Enums.EventStatus
+    date: Date | string
+    capacity: number
+    location: string
+    imageUrl: string
+    clubId: number
+    authorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutEventInput
+  }
+
+  export type EventCreateOrConnectWithoutDiscussionThreadsInput = {
+    where: EventWhereUniqueInput
+    create: XOR<EventCreateWithoutDiscussionThreadsInput, EventUncheckedCreateWithoutDiscussionThreadsInput>
+  }
+
+  export type UserCreateWithoutAuthoredDiscussionThreadsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuthoredDiscussionThreadsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuthoredDiscussionThreadsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuthoredDiscussionThreadsInput, UserUncheckedCreateWithoutAuthoredDiscussionThreadsInput>
+  }
+
+  export type EventDiscussionReplyCreateWithoutThreadInput = {
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutAuthoredDiscussionRepliesInput
+  }
+
+  export type EventDiscussionReplyUncheckedCreateWithoutThreadInput = {
+    id?: number
+    authorId: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionReplyCreateOrConnectWithoutThreadInput = {
+    where: EventDiscussionReplyWhereUniqueInput
+    create: XOR<EventDiscussionReplyCreateWithoutThreadInput, EventDiscussionReplyUncheckedCreateWithoutThreadInput>
+  }
+
+  export type EventDiscussionReplyCreateManyThreadInputEnvelope = {
+    data: EventDiscussionReplyCreateManyThreadInput | EventDiscussionReplyCreateManyThreadInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EventUpsertWithoutDiscussionThreadsInput = {
+    update: XOR<EventUpdateWithoutDiscussionThreadsInput, EventUncheckedUpdateWithoutDiscussionThreadsInput>
+    create: XOR<EventCreateWithoutDiscussionThreadsInput, EventUncheckedCreateWithoutDiscussionThreadsInput>
+    where?: EventWhereInput
+  }
+
+  export type EventUpdateToOneWithWhereWithoutDiscussionThreadsInput = {
+    where?: EventWhereInput
+    data: XOR<EventUpdateWithoutDiscussionThreadsInput, EventUncheckedUpdateWithoutDiscussionThreadsInput>
+  }
+
+  export type EventUpdateWithoutDiscussionThreadsInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
+    club?: ClubUpdateOneRequiredWithoutEventsNestedInput
+    rsvps?: RSVPUpdateManyWithoutEventNestedInput
+  }
+
+  export type EventUncheckedUpdateWithoutDiscussionThreadsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    status?: EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    capacity?: IntFieldUpdateOperationsInput | number
+    location?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    clubId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
+  }
+
+  export type UserUpsertWithoutAuthoredDiscussionThreadsInput = {
+    update: XOR<UserUpdateWithoutAuthoredDiscussionThreadsInput, UserUncheckedUpdateWithoutAuthoredDiscussionThreadsInput>
+    create: XOR<UserCreateWithoutAuthoredDiscussionThreadsInput, UserUncheckedCreateWithoutAuthoredDiscussionThreadsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAuthoredDiscussionThreadsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAuthoredDiscussionThreadsInput, UserUncheckedUpdateWithoutAuthoredDiscussionThreadsInput>
+  }
+
+  export type UserUpdateWithoutAuthoredDiscussionThreadsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuthoredDiscussionThreadsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type EventDiscussionReplyUpsertWithWhereUniqueWithoutThreadInput = {
+    where: EventDiscussionReplyWhereUniqueInput
+    update: XOR<EventDiscussionReplyUpdateWithoutThreadInput, EventDiscussionReplyUncheckedUpdateWithoutThreadInput>
+    create: XOR<EventDiscussionReplyCreateWithoutThreadInput, EventDiscussionReplyUncheckedCreateWithoutThreadInput>
+  }
+
+  export type EventDiscussionReplyUpdateWithWhereUniqueWithoutThreadInput = {
+    where: EventDiscussionReplyWhereUniqueInput
+    data: XOR<EventDiscussionReplyUpdateWithoutThreadInput, EventDiscussionReplyUncheckedUpdateWithoutThreadInput>
+  }
+
+  export type EventDiscussionReplyUpdateManyWithWhereWithoutThreadInput = {
+    where: EventDiscussionReplyScalarWhereInput
+    data: XOR<EventDiscussionReplyUpdateManyMutationInput, EventDiscussionReplyUncheckedUpdateManyWithoutThreadInput>
+  }
+
+  export type EventDiscussionThreadCreateWithoutRepliesInput = {
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    event: EventCreateNestedOneWithoutDiscussionThreadsInput
+    author: UserCreateNestedOneWithoutAuthoredDiscussionThreadsInput
+  }
+
+  export type EventDiscussionThreadUncheckedCreateWithoutRepliesInput = {
+    id?: number
+    eventId: number
+    authorId: string
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionThreadCreateOrConnectWithoutRepliesInput = {
+    where: EventDiscussionThreadWhereUniqueInput
+    create: XOR<EventDiscussionThreadCreateWithoutRepliesInput, EventDiscussionThreadUncheckedCreateWithoutRepliesInput>
+  }
+
+  export type UserCreateWithoutAuthoredDiscussionRepliesInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutAuthoredDiscussionRepliesInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutAuthoredDiscussionRepliesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAuthoredDiscussionRepliesInput, UserUncheckedCreateWithoutAuthoredDiscussionRepliesInput>
+  }
+
+  export type EventDiscussionThreadUpsertWithoutRepliesInput = {
+    update: XOR<EventDiscussionThreadUpdateWithoutRepliesInput, EventDiscussionThreadUncheckedUpdateWithoutRepliesInput>
+    create: XOR<EventDiscussionThreadCreateWithoutRepliesInput, EventDiscussionThreadUncheckedCreateWithoutRepliesInput>
+    where?: EventDiscussionThreadWhereInput
+  }
+
+  export type EventDiscussionThreadUpdateToOneWithWhereWithoutRepliesInput = {
+    where?: EventDiscussionThreadWhereInput
+    data: XOR<EventDiscussionThreadUpdateWithoutRepliesInput, EventDiscussionThreadUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type EventDiscussionThreadUpdateWithoutRepliesInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    event?: EventUpdateOneRequiredWithoutDiscussionThreadsNestedInput
+    author?: UserUpdateOneRequiredWithoutAuthoredDiscussionThreadsNestedInput
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateWithoutRepliesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutAuthoredDiscussionRepliesInput = {
+    update: XOR<UserUpdateWithoutAuthoredDiscussionRepliesInput, UserUncheckedUpdateWithoutAuthoredDiscussionRepliesInput>
+    create: XOR<UserCreateWithoutAuthoredDiscussionRepliesInput, UserUncheckedCreateWithoutAuthoredDiscussionRepliesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAuthoredDiscussionRepliesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAuthoredDiscussionRepliesInput, UserUncheckedUpdateWithoutAuthoredDiscussionRepliesInput>
+  }
+
+  export type UserUpdateWithoutAuthoredDiscussionRepliesInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAuthoredDiscussionRepliesInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutClubMembershipsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutClubMembershipsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutClubMembershipsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutClubMembershipsInput, UserUncheckedCreateWithoutClubMembershipsInput>
+  }
+
+  export type ClubCreateWithoutMembersInput = {
+    name: string
+    logoUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventCreateNestedManyWithoutClubInput
+    followers?: HubFollowCreateNestedManyWithoutClubInput
+    blocks?: HubBlockCreateNestedManyWithoutClubInput
+  }
+
+  export type ClubUncheckedCreateWithoutMembersInput = {
+    id?: number
+    name: string
+    logoUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventUncheckedCreateNestedManyWithoutClubInput
+    followers?: HubFollowUncheckedCreateNestedManyWithoutClubInput
+    blocks?: HubBlockUncheckedCreateNestedManyWithoutClubInput
+  }
+
+  export type ClubCreateOrConnectWithoutMembersInput = {
+    where: ClubWhereUniqueInput
+    create: XOR<ClubCreateWithoutMembersInput, ClubUncheckedCreateWithoutMembersInput>
+  }
+
+  export type UserUpsertWithoutClubMembershipsInput = {
+    update: XOR<UserUpdateWithoutClubMembershipsInput, UserUncheckedUpdateWithoutClubMembershipsInput>
+    create: XOR<UserCreateWithoutClubMembershipsInput, UserUncheckedCreateWithoutClubMembershipsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutClubMembershipsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutClubMembershipsInput, UserUncheckedUpdateWithoutClubMembershipsInput>
+  }
+
+  export type UserUpdateWithoutClubMembershipsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutClubMembershipsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ClubUpsertWithoutMembersInput = {
+    update: XOR<ClubUpdateWithoutMembersInput, ClubUncheckedUpdateWithoutMembersInput>
+    create: XOR<ClubCreateWithoutMembersInput, ClubUncheckedCreateWithoutMembersInput>
+    where?: ClubWhereInput
+  }
+
+  export type ClubUpdateToOneWithWhereWithoutMembersInput = {
+    where?: ClubWhereInput
+    data: XOR<ClubUpdateWithoutMembersInput, ClubUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type ClubUpdateWithoutMembersInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUpdateManyWithoutClubNestedInput
+    followers?: HubFollowUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUpdateManyWithoutClubNestedInput
+  }
+
+  export type ClubUncheckedUpdateWithoutMembersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUncheckedUpdateManyWithoutClubNestedInput
+    followers?: HubFollowUncheckedUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUncheckedUpdateManyWithoutClubNestedInput
+  }
+
+  export type UserCreateWithoutFollowedHubsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    posts?: PostCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFollowedHubsInput = {
+    role?: $Enums.Role
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    image?: string | null
+    password?: string | null
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
+    authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
+    rsvps?: RSVPUncheckedCreateNestedManyWithoutUserInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFollowedHubsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFollowedHubsInput, UserUncheckedCreateWithoutFollowedHubsInput>
+  }
+
+  export type ClubCreateWithoutFollowersInput = {
+    name: string
+    logoUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventCreateNestedManyWithoutClubInput
+    blocks?: HubBlockCreateNestedManyWithoutClubInput
+    members?: ClubMembershipCreateNestedManyWithoutClubInput
+  }
+
+  export type ClubUncheckedCreateWithoutFollowersInput = {
+    id?: number
+    name: string
+    logoUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventUncheckedCreateNestedManyWithoutClubInput
+    blocks?: HubBlockUncheckedCreateNestedManyWithoutClubInput
+    members?: ClubMembershipUncheckedCreateNestedManyWithoutClubInput
+  }
+
+  export type ClubCreateOrConnectWithoutFollowersInput = {
+    where: ClubWhereUniqueInput
+    create: XOR<ClubCreateWithoutFollowersInput, ClubUncheckedCreateWithoutFollowersInput>
+  }
+
+  export type UserUpsertWithoutFollowedHubsInput = {
+    update: XOR<UserUpdateWithoutFollowedHubsInput, UserUncheckedUpdateWithoutFollowedHubsInput>
+    create: XOR<UserCreateWithoutFollowedHubsInput, UserUncheckedCreateWithoutFollowedHubsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFollowedHubsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFollowedHubsInput, UserUncheckedUpdateWithoutFollowedHubsInput>
+  }
+
+  export type UserUpdateWithoutFollowedHubsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    posts?: PostUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFollowedHubsInput = {
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
+    authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
+    rsvps?: RSVPUncheckedUpdateManyWithoutUserNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ClubUpsertWithoutFollowersInput = {
+    update: XOR<ClubUpdateWithoutFollowersInput, ClubUncheckedUpdateWithoutFollowersInput>
+    create: XOR<ClubCreateWithoutFollowersInput, ClubUncheckedCreateWithoutFollowersInput>
+    where?: ClubWhereInput
+  }
+
+  export type ClubUpdateToOneWithWhereWithoutFollowersInput = {
+    where?: ClubWhereInput
+    data: XOR<ClubUpdateWithoutFollowersInput, ClubUncheckedUpdateWithoutFollowersInput>
+  }
+
+  export type ClubUpdateWithoutFollowersInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUpdateManyWithoutClubNestedInput
+  }
+
+  export type ClubUncheckedUpdateWithoutFollowersInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUncheckedUpdateManyWithoutClubNestedInput
+    blocks?: HubBlockUncheckedUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUncheckedUpdateManyWithoutClubNestedInput
+  }
+
+  export type ClubCreateWithoutBlocksInput = {
+    name: string
+    logoUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventCreateNestedManyWithoutClubInput
+    followers?: HubFollowCreateNestedManyWithoutClubInput
+    members?: ClubMembershipCreateNestedManyWithoutClubInput
+  }
+
+  export type ClubUncheckedCreateWithoutBlocksInput = {
+    id?: number
+    name: string
+    logoUrl: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    events?: EventUncheckedCreateNestedManyWithoutClubInput
+    followers?: HubFollowUncheckedCreateNestedManyWithoutClubInput
+    members?: ClubMembershipUncheckedCreateNestedManyWithoutClubInput
+  }
+
+  export type ClubCreateOrConnectWithoutBlocksInput = {
+    where: ClubWhereUniqueInput
+    create: XOR<ClubCreateWithoutBlocksInput, ClubUncheckedCreateWithoutBlocksInput>
+  }
+
+  export type ClubUpsertWithoutBlocksInput = {
+    update: XOR<ClubUpdateWithoutBlocksInput, ClubUncheckedUpdateWithoutBlocksInput>
+    create: XOR<ClubCreateWithoutBlocksInput, ClubUncheckedCreateWithoutBlocksInput>
+    where?: ClubWhereInput
+  }
+
+  export type ClubUpdateToOneWithWhereWithoutBlocksInput = {
+    where?: ClubWhereInput
+    data: XOR<ClubUpdateWithoutBlocksInput, ClubUncheckedUpdateWithoutBlocksInput>
+  }
+
+  export type ClubUpdateWithoutBlocksInput = {
+    name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUpdateManyWithoutClubNestedInput
+    followers?: HubFollowUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUpdateManyWithoutClubNestedInput
+  }
+
+  export type ClubUncheckedUpdateWithoutBlocksInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: StringFieldUpdateOperationsInput | string
+    logoUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    events?: EventUncheckedUpdateManyWithoutClubNestedInput
+    followers?: HubFollowUncheckedUpdateManyWithoutClubNestedInput
+    members?: ClubMembershipUncheckedUpdateManyWithoutClubNestedInput
+  }
+
   export type UserCreateWithoutRsvpsInput = {
     role?: $Enums.Role
     id?: string
@@ -13895,6 +23077,10 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     posts?: PostCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventCreateNestedManyWithoutAuthorInput
+    authoredDiscussionThreads?: EventDiscussionThreadCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRsvpsInput = {
@@ -13909,6 +23095,10 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     posts?: PostUncheckedCreateNestedManyWithoutCreatedByInput
     authoredEvents?: EventUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutAuthorInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedCreateNestedManyWithoutAuthorInput
+    followedHubs?: HubFollowUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMembershipUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRsvpsInput = {
@@ -13928,6 +23118,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutAuthoredEventsInput
     club: ClubCreateNestedOneWithoutEventsInput
+    discussionThreads?: EventDiscussionThreadCreateNestedManyWithoutEventInput
   }
 
   export type EventUncheckedCreateWithoutRsvpsInput = {
@@ -13943,6 +23134,7 @@ export namespace Prisma {
     authorId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    discussionThreads?: EventDiscussionThreadUncheckedCreateNestedManyWithoutEventInput
   }
 
   export type EventCreateOrConnectWithoutRsvpsInput = {
@@ -13973,6 +23165,10 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     posts?: PostUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRsvpsInput = {
@@ -13987,6 +23183,10 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     posts?: PostUncheckedUpdateManyWithoutCreatedByNestedInput
     authoredEvents?: EventUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutAuthorNestedInput
+    authoredDiscussionReplies?: EventDiscussionReplyUncheckedUpdateManyWithoutAuthorNestedInput
+    followedHubs?: HubFollowUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMembershipUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EventUpsertWithoutRsvpsInput = {
@@ -14012,6 +23212,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
     club?: ClubUpdateOneRequiredWithoutEventsNestedInput
+    discussionThreads?: EventDiscussionThreadUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateWithoutRsvpsInput = {
@@ -14027,6 +23228,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    discussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventCreateManyClubInput = {
@@ -14043,6 +23245,28 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type HubFollowCreateManyClubInput = {
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type HubBlockCreateManyClubInput = {
+    id?: number
+    type: $Enums.HubBlockType
+    title?: string | null
+    content: string
+    linkUrl?: string | null
+    position: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ClubMembershipCreateManyClubInput = {
+    userId: string
+    role: $Enums.ClubRole
+    createdAt?: Date | string
+  }
+
   export type EventUpdateWithoutClubInput = {
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
@@ -14055,6 +23279,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutAuthoredEventsNestedInput
     rsvps?: RSVPUpdateManyWithoutEventNestedInput
+    discussionThreads?: EventDiscussionThreadUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateWithoutClubInput = {
@@ -14070,6 +23295,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
+    discussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateManyWithoutClubInput = {
@@ -14086,11 +23312,85 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type HubFollowUpdateWithoutClubInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFollowedHubsNestedInput
+  }
+
+  export type HubFollowUncheckedUpdateWithoutClubInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubFollowUncheckedUpdateManyWithoutClubInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubBlockUpdateWithoutClubInput = {
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubBlockUncheckedUpdateWithoutClubInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubBlockUncheckedUpdateManyWithoutClubInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    type?: EnumHubBlockTypeFieldUpdateOperationsInput | $Enums.HubBlockType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipUpdateWithoutClubInput = {
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutClubMembershipsNestedInput
+  }
+
+  export type ClubMembershipUncheckedUpdateWithoutClubInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipUncheckedUpdateManyWithoutClubInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RSVPCreateManyEventInput = {
     id?: number
     userId: string
     status?: string
     createdAt?: Date | string
+  }
+
+  export type EventDiscussionThreadCreateManyEventInput = {
+    id?: number
+    authorId: string
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type RSVPUpdateWithoutEventInput = {
@@ -14111,6 +23411,34 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionThreadUpdateWithoutEventInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutAuthoredDiscussionThreadsNestedInput
+    replies?: EventDiscussionReplyUpdateManyWithoutThreadNestedInput
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateWithoutEventInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: EventDiscussionReplyUncheckedUpdateManyWithoutThreadNestedInput
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateManyWithoutEventInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AccountCreateManyUserInput = {
@@ -14159,6 +23487,34 @@ export namespace Prisma {
     id?: number
     eventId: number
     status?: string
+    createdAt?: Date | string
+  }
+
+  export type EventDiscussionThreadCreateManyAuthorInput = {
+    id?: number
+    eventId: number
+    question: string
+    pinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionReplyCreateManyAuthorInput = {
+    id?: number
+    threadId: number
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HubFollowCreateManyUserInput = {
+    clubId: number
+    createdAt?: Date | string
+  }
+
+  export type ClubMembershipCreateManyUserInput = {
+    clubId: number
+    role: $Enums.ClubRole
     createdAt?: Date | string
   }
 
@@ -14257,6 +23613,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     club?: ClubUpdateOneRequiredWithoutEventsNestedInput
     rsvps?: RSVPUpdateManyWithoutEventNestedInput
+    discussionThreads?: EventDiscussionThreadUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateWithoutAuthorInput = {
@@ -14272,6 +23629,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rsvps?: RSVPUncheckedUpdateManyWithoutEventNestedInput
+    discussionThreads?: EventDiscussionThreadUncheckedUpdateManyWithoutEventNestedInput
   }
 
   export type EventUncheckedUpdateManyWithoutAuthorInput = {
@@ -14306,6 +23664,121 @@ export namespace Prisma {
     eventId?: IntFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionThreadUpdateWithoutAuthorInput = {
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    event?: EventUpdateOneRequiredWithoutDiscussionThreadsNestedInput
+    replies?: EventDiscussionReplyUpdateManyWithoutThreadNestedInput
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: EventDiscussionReplyUncheckedUpdateManyWithoutThreadNestedInput
+  }
+
+  export type EventDiscussionThreadUncheckedUpdateManyWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    eventId?: IntFieldUpdateOperationsInput | number
+    question?: StringFieldUpdateOperationsInput | string
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyUpdateWithoutAuthorInput = {
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    thread?: EventDiscussionThreadUpdateOneRequiredWithoutRepliesNestedInput
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    threadId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateManyWithoutAuthorInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    threadId?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubFollowUpdateWithoutUserInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    club?: ClubUpdateOneRequiredWithoutFollowersNestedInput
+  }
+
+  export type HubFollowUncheckedUpdateWithoutUserInput = {
+    clubId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HubFollowUncheckedUpdateManyWithoutUserInput = {
+    clubId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipUpdateWithoutUserInput = {
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    club?: ClubUpdateOneRequiredWithoutMembersNestedInput
+  }
+
+  export type ClubMembershipUncheckedUpdateWithoutUserInput = {
+    clubId?: IntFieldUpdateOperationsInput | number
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ClubMembershipUncheckedUpdateManyWithoutUserInput = {
+    clubId?: IntFieldUpdateOperationsInput | number
+    role?: EnumClubRoleFieldUpdateOperationsInput | $Enums.ClubRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyCreateManyThreadInput = {
+    id?: number
+    authorId: string
+    message: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EventDiscussionReplyUpdateWithoutThreadInput = {
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutAuthoredDiscussionRepliesNestedInput
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateWithoutThreadInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EventDiscussionReplyUncheckedUpdateManyWithoutThreadInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

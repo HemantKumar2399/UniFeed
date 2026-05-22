@@ -3,6 +3,13 @@ import { z } from "zod";
 import { CreateEventSchema } from "@/features/events/components/CreateEventSchema";
 import { matchesAttendeeQuery, resolveAttendeePrn } from "@/features/attendance/checkin-search.utils";
 import { decodeTicketPayloadToken, getTicketPayloadSecret, verifyTicketPayloadToken } from "@/lib/ticket-payload";
+import { canManageDiscussionThread, resolveDiscussionDisplayName } from "@/lib/discussion";
+import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
+import { FEED_RESULT_LIMIT, buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
+import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-week-query";
+import {
+  buildStudentRelevanceProfile,
+} from "@/server/services/feed-ranking";
 import type { db as prismaDb } from "@/server/db";
 import { TRPCError } from "@trpc/server";
 
@@ -143,28 +150,204 @@ club ??= await ctx.db.club.create({
   }),
 
   getFeed: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.event.findMany({
-      where: {
-        status: "PUBLISHED",
-      },
-      take: 10,
-      orderBy: { date: "asc" },
-      include: {
-        club: {
-          select: {
-            id: true,
-            name: true,
-            logoUrl: true,
-          },
-        },
-        _count: {
-          select: {
-            rsvps: true,
-          },
-        },
+    const events = await ctx.db.event.findMany(buildPublishedFeedQuery());
+
+    if (!ctx.session?.user?.id) {
+      return events.slice(0, FEED_RESULT_LIMIT);
+    }
+
+    const followedRows = await ctx.db.hubFollow.findMany({
+      where: { userId: ctx.session.user.id },
+      select: {
+        clubId: true,
       },
     });
+
+    const followedClubIds = followedRows.map((row) => row.clubId);
+    const { courseKeywords, selectedDomains } = deriveFeedPreferenceSignals(ctx.headers);
+
+    const profile = buildStudentRelevanceProfile({
+      courseKeywords,
+      selectedDomains,
+      followedClubIds,
+    });
+
+    return selectTopPersonalizedFeedEvents(events, profile);
   }),
+
+  getHappeningThisWeek: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.event.findMany(buildHappeningThisWeekQuery());
+  }),
+
+  getDiscussionThreads: protectedProcedure
+    .input(z.object({ eventId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      const event = await ctx.db.event.findUnique({
+        where: { id: input.eventId },
+        select: { id: true, authorId: true },
+      });
+
+      if (!event) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      }
+
+      const threads = await ctx.db.eventDiscussionThread.findMany({
+        where: { eventId: input.eventId },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          replies: {
+            orderBy: { createdAt: "asc" },
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
+      });
+
+      const viewerCanManagePin = canManageDiscussionThread({
+        viewerRole: ctx.session.user.role,
+        viewerId: ctx.session.user.id,
+        eventAuthorId: event.authorId,
+      });
+
+      return threads.map((thread) => ({
+        id: thread.id,
+        eventId: thread.eventId,
+        question: thread.question,
+        pinned: thread.pinned,
+        createdAt: thread.createdAt,
+        author: {
+          id: thread.author.id,
+          displayName: resolveDiscussionDisplayName(thread.author.name, thread.author.email),
+        },
+        replies: thread.replies.map((reply) => ({
+          id: reply.id,
+          message: reply.message,
+          createdAt: reply.createdAt,
+          author: {
+            id: reply.author.id,
+            displayName: resolveDiscussionDisplayName(reply.author.name, reply.author.email),
+            isOrganizer: reply.authorId === event.authorId,
+          },
+        })),
+        canManagePin: viewerCanManagePin,
+      }));
+    }),
+
+  createDiscussionThread: protectedProcedure
+    .input(
+      z.object({
+        eventId: z.number().int().positive(),
+        question: z.string().trim().min(8).max(600),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const event = await ctx.db.event.findUnique({
+        where: { id: input.eventId },
+        select: { id: true },
+      });
+
+      if (!event) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      }
+
+      return ctx.db.eventDiscussionThread.create({
+        data: {
+          eventId: input.eventId,
+          authorId: ctx.session.user.id,
+          question: input.question,
+        },
+      });
+    }),
+
+  replyToDiscussionThread: protectedOrganizerProcedure
+    .input(
+      z.object({
+        threadId: z.number().int().positive(),
+        message: z.string().trim().min(3).max(800),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const thread = await ctx.db.eventDiscussionThread.findUnique({
+        where: { id: input.threadId },
+        include: {
+          event: {
+            select: {
+              authorId: true,
+            },
+          },
+        },
+      });
+
+      if (!thread) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Thread not found" });
+      }
+
+      if (thread.event.authorId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only the event organizer can reply with organizer authority",
+        });
+      }
+
+      return ctx.db.eventDiscussionReply.create({
+        data: {
+          threadId: thread.id,
+          authorId: ctx.session.user.id,
+          message: input.message,
+        },
+      });
+    }),
+
+  toggleDiscussionPin: protectedOrganizerProcedure
+    .input(
+      z.object({
+        threadId: z.number().int().positive(),
+        pinned: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const thread = await ctx.db.eventDiscussionThread.findUnique({
+        where: { id: input.threadId },
+        include: {
+          event: {
+            select: {
+              authorId: true,
+            },
+          },
+        },
+      });
+
+      if (!thread) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Thread not found" });
+      }
+
+      if (thread.event.authorId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only the event organizer can pin or unpin threads",
+        });
+      }
+
+      return ctx.db.eventDiscussionThread.update({
+        where: { id: thread.id },
+        data: { pinned: input.pinned },
+        select: { id: true, pinned: true },
+      });
+    }),
 
   getAttendees: protectedOrganizerProcedure
     .input(z.object({ eventId: z.number().int().positive() }))

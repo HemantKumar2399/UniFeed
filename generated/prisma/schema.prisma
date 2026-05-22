@@ -28,30 +28,34 @@ model Post {
 }
 
 model Club {
-  id        Int      @id @default(autoincrement())
+  id        Int              @id @default(autoincrement())
   name      String
   logoUrl   String
   events    Event[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  followers HubFollow[]
+  blocks    HubBlock[]
+  members   ClubMembership[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
 model Event {
-  id          Int         @id @default(autoincrement())
-  title       String
-  description String
-  status      EventStatus @default(PUBLISHED)
-  date        DateTime
-  capacity    Int
-  location    String
-  imageUrl    String
-  clubId      Int
-  authorId    String
-  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  club        Club        @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  rsvps       RSVP[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id                Int                     @id @default(autoincrement())
+  title             String
+  description       String
+  status            EventStatus             @default(PUBLISHED)
+  date              DateTime
+  capacity          Int
+  location          String
+  imageUrl          String
+  clubId            Int
+  authorId          String
+  author            User                    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  club              Club                    @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  rsvps             RSVP[]
+  discussionThreads EventDiscussionThread[]
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
 
   @@index([date])
   @@index([clubId])
@@ -86,18 +90,96 @@ model Session {
 }
 
 model User {
-  role           Role      @default(USER)
-  id             String    @id @default(cuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  password       String? // hashed — only set for credentials-based accounts
-  accounts       Account[]
-  sessions       Session[]
-  posts          Post[]
-  authoredEvents Event[]
-  rsvps          RSVP[]
+  role                      Role                    @default(USER)
+  id                        String                  @id @default(cuid())
+  name                      String?
+  email                     String?                 @unique
+  emailVerified             DateTime?
+  image                     String?
+  password                  String? // hashed — only set for credentials-based accounts
+  accounts                  Account[]
+  sessions                  Session[]
+  posts                     Post[]
+  authoredEvents            Event[]
+  rsvps                     RSVP[]
+  authoredDiscussionThreads EventDiscussionThread[]
+  authoredDiscussionReplies EventDiscussionReply[]
+  followedHubs              HubFollow[]
+  clubMemberships           ClubMembership[]
+}
+
+model EventDiscussionThread {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  authorId  String
+  question  String
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event   Event                  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  author  User                   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies EventDiscussionReply[]
+
+  @@index([eventId, pinned, createdAt])
+  @@index([authorId])
+}
+
+model EventDiscussionReply {
+  id        Int      @id @default(autoincrement())
+  threadId  Int
+  authorId  String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  thread EventDiscussionThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author User                  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+  @@index([authorId])
+}
+
+model ClubMembership {
+  userId    String
+  clubId    Int
+  role      ClubRole
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@id([userId, clubId])
+  @@index([clubId])
+  @@index([userId])
+}
+
+model HubFollow {
+  userId    String
+  clubId    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@id([userId, clubId])
+  @@index([clubId])
+}
+
+model HubBlock {
+  id        Int          @id @default(autoincrement())
+  clubId    Int
+  type      HubBlockType
+  title     String?
+  content   String
+  linkUrl   String?
+  position  Int
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId, position])
 }
 
 model VerificationToken {
@@ -131,4 +213,15 @@ enum Role {
 enum EventStatus {
   DRAFT
   PUBLISHED
+}
+
+enum ClubRole {
+  OWNER
+  EDITOR
+}
+
+enum HubBlockType {
+  TEXT
+  RESOURCE
+  FAQ
 }

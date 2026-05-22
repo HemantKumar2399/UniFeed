@@ -1,4 +1,5 @@
 import { Search, Compass, MapPin } from "lucide-react";
+import { HubsDirectorySection } from "@/features/hubs/components/HubsDirectorySection";
 
 export default function DiscoverPage() {
   return (
@@ -20,6 +21,8 @@ export default function DiscoverPage() {
           />
         </div>
       </header>
+
+      <HubsDirectorySection />
 
       {/* Categories Grid (Bento) */}
       <section className="px-1 md:px-0">
@@ -47,7 +50,7 @@ export default function DiscoverPage() {
                <MapPin className="w-5 h-5 text-white" />
              </div>
              <h3 className="text-white text-[26px] font-bold tracking-tight mb-2">Campus Map</h3>
-             <p className="text-white/80 font-medium text-[15px]">See what's happening around you right now.</p>
+             <p className="text-white/80 font-medium text-[15px]">See what&apos;s happening around you right now.</p>
            </div>
          </div>
       </section>

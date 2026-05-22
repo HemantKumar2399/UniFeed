@@ -1,9 +1,13 @@
 import { Ticket, Calendar, PlayCircle } from "lucide-react";
 import Image from "next/image";
 
+import { HappeningThisWeekCarousel } from "@/features/feed/components/HappeningThisWeekCarousel";
+
 export default function HomePage() {
   return (
     <div className="flex flex-col gap-10 lg:gap-16 pb-32 md:pb-12">
+      <HappeningThisWeekCarousel />
+
       {/* Dynamic Header */}
       <header className="px-1 md:px-0 flex justify-between items-end">
         <div>

@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-03
-last_updated: 2026-04-16
+last_updated: 2026-04-17
 project: Platform
 project_key: NOKEY
 tracking_system: file-system
@@ -125,17 +125,17 @@ development_status:
   12-3-manual-entry-fallback: done
   
 
-  epic-13: backlog
-  13-1-club-public-profiles-and-follow-mechanism: ready-for-dev
-  13-2-static-resource-and-faq-blocks: ready-for-dev
+  epic-13: done
+  13-1-club-public-profiles-and-follow-mechanism: done
+  13-2-static-resource-and-faq-blocks: done
   epic-13-retrospective: optional
 
-  epic-14: backlog
-  14-1-event-qa-board-implementation: ready-for-dev
-  14-2-organizer-thread-resolution-and-highlights: ready-for-dev
+  epic-14: done
+  14-1-event-qa-board-implementation: done
+  14-2-organizer-thread-resolution-and-highlights: done
   epic-14-retrospective: optional
 
-  epic-15: backlog
-  15-1-database-scoring-weight-adjustments: ready-for-dev
-  15-2-the-happening-this-week-carousel: ready-for-dev
+  epic-15: done
+  15-1-database-scoring-weight-adjustments: done
+  15-2-the-happening-this-week-carousel: done
   epic-15-retrospective: optional  

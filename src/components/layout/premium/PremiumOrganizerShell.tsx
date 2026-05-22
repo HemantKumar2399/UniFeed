@@ -3,12 +3,13 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, CalendarDays, BarChart3, Settings } from "lucide-react";
+import { LayoutDashboard, CalendarDays, BarChart3, Settings, Library } from "lucide-react";
 import React from "react";
 
 const mainNavItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Events", href: "/dashboard/events", icon: CalendarDays },
+  { name: "Hubs", href: "/dashboard/hubs", icon: Library },
   { name: "Metrics", href: "/dashboard/metrics", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
