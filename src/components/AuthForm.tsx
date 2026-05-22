@@ -156,7 +156,7 @@ function FormContent() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="student@university.edu"
+                placeholder="student@students.edu.in"
                 required
                 className="h-12 rounded-xl border-black/10 bg-black/5 px-4 text-base focus-visible:ring-2 focus-visible:ring-[var(--color-notion-blue)] focus-visible:border-transparent transition-all shadow-inner"
               />

@@ -63,19 +63,19 @@ const clubs: SeedClub[] = [
 ];
 
 const organizers = [
-  { email: "organizer.coding@university.edu", name: "Aarav Sharma" },
-  { email: "organizer.nss@university.edu", name: "Ananya Verma" },
-  { email: "organizer.robotics@university.edu", name: "Ritik Jain" },
-  { email: "organizer.ecell@university.edu", name: "Ishita Mehta" },
-  { email: "organizer.cultural@university.edu", name: "Kavya Singh" },
+  { email: "organizer.coding@students.edu.in", name: "Aarav Sharma" },
+  { email: "organizer.nss@students.edu.in", name: "Ananya Verma" },
+  { email: "organizer.robotics@students.edu.in", name: "Ritik Jain" },
+  { email: "organizer.ecell@students.edu.in", name: "Ishita Mehta" },
+  { email: "organizer.cultural@students.edu.in", name: "Kavya Singh" },
 ] as const;
 
 const students = [
-  { email: "student.1@university.edu", name: "Rahul Gupta" },
-  { email: "student.2@university.edu", name: "Priya Joshi" },
-  { email: "student.3@university.edu", name: "Aditya Nair" },
-  { email: "student.4@university.edu", name: "Sneha Kapoor" },
-  { email: "student.5@university.edu", name: "Yash Malhotra" },
+  { email: "student.1@students.edu.in", name: "Rahul Gupta" },
+  { email: "student.2@students.edu.in", name: "Priya Joshi" },
+  { email: "student.3@students.edu.in", name: "Aditya Nair" },
+  { email: "student.4@students.edu.in", name: "Sneha Kapoor" },
+  { email: "student.5@students.edu.in", name: "Yash Malhotra" },
 ] as const;
 
 const eventDrafts: SeedEventDraft[] = [
