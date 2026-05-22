@@ -100,11 +100,25 @@ export const eventRouter = createTRPCRouter({
   create: protectedOrganizerProcedure
     .input(CreateEventSchema)
     .mutation(async ({ ctx, input }) => {
-      // In a real multi-tenant system we'd extract the Organizer's selected Club ID
-      let club = await ctx.db.club.findFirst();
-club ??= await ctx.db.club.create({
-        data: { name: "University Club", logoUrl: "https://example.com/logo.png" }
+      const clubMembership = await ctx.db.clubMembership.findFirst({
+        where: { userId: ctx.session.user.id },
+        select: { clubId: true },
+        orderBy: { createdAt: "asc" },
       });
+
+      if (!clubMembership) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "TODO-MVP: assign the organizer to a club before creating events.",
+        });
+      }
+
+      if (!input.imageUrl.trim()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Add a real event image URL before saving this event.",
+        });
+      }
 
       return ctx.db.event.create({
         data: {
@@ -112,9 +126,9 @@ club ??= await ctx.db.club.create({
           description: input.description,
           date: input.date,
           location: input.location,
-          imageUrl: input.imageUrl || "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
+          imageUrl: input.imageUrl,
           capacity: input.capacity,
-          clubId: club.id,
+          clubId: clubMembership.clubId,
           authorId: ctx.session.user.id,
         },
       });

@@ -10,7 +10,7 @@ export const CreateEventSchema = z.object({
     message: "Event date must be in the future",
   }),
   location: z.string().min(2, "Location must be at least 2 characters").max(200, "Location is too long"),
-  imageUrl: z.string().url("Must be a valid image URL").or(z.literal("")),
+  imageUrl: z.string().url("Must be a valid image URL"),
   capacity: z.coerce.number().int("Capacity must be an integer").min(1, "Capacity must be at least 1").max(100000, "Capacity cannot exceed 100000"),
 });
 

@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedOrganizerProcedure } from "@/server/api/trpc
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "@/env";
+import { resolveUploadPublicUrl } from "@/lib/runtime-config";
 import { TRPCError } from "@trpc/server";
 
 export const uploadRouter = createTRPCRouter({
@@ -39,7 +40,11 @@ export const uploadRouter = createTRPCRouter({
         return {
             url: presignedUrl,
             key,
-            finalUrl: `https://${env.UPLOAD_BUCKET_NAME}.s3.${env.UPLOAD_REGION}.amazonaws.com/${key}`
+            finalUrl: resolveUploadPublicUrl({
+              key,
+              presignedUrl,
+              publicBaseUrl: env.UPLOAD_PUBLIC_BASE_URL,
+            }),
         };
       } catch (err) {
         console.error("Presigned URL error", err);

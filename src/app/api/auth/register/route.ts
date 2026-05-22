@@ -17,12 +17,9 @@ export async function POST(req: NextRequest) {
       email?: string;
       password?: string;
       name?: string;
-      role?: string;
     };
 
-    const { email, password, name, role } = body;
-
-    const userRole = role === "ORGANIZER" ? "ORGANIZER" : "USER";
+    const { email, password, name } = body;
 
     if (typeof email !== "string" || typeof password !== "string") {
       return NextResponse.json(
@@ -78,7 +75,7 @@ export async function POST(req: NextRequest) {
         email,
         name: trimmedName,
         password: hashedPassword,
-        role: userRole,
+        role: "USER",
       },
     });
 

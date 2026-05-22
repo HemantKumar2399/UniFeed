@@ -38,8 +38,11 @@ else
 fi
 
 # 3. Prisma Database Setup
+echo "🧬 Generating Prisma client..."
+npm run db:generate
+
 echo "🗄️ Pushing Prisma schema to the database..."
-npx prisma db push
+npm run db:push
 
 echo "🌱 Seeding database with local test data..."
 npm run db:seed

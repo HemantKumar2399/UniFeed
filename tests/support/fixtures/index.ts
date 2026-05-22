@@ -6,9 +6,8 @@ type MyFixtures = {
 };
 
 export const test = base.extend<MyFixtures>({
-  hello: async ({}, use) => {
-    // Setup 
-    await use('world');
+  hello: async ({}, applyHello) => {
+    await applyHello('world');
     // Auto-cleanup here if needed
   },
 });

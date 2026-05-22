@@ -5,6 +5,12 @@ const prisma = new PrismaClient();
 
 const SEED_TEST_PASSWORD = "Test@1234";
 const SALT_ROUNDS = 12;
+const SEED_EMAIL_DOMAIN =
+  process.env.ALLOWED_DOMAINS
+    ?.split(",")
+    .map((domain) => domain.trim().toLowerCase())
+    .find(Boolean) ?? "students.college.edu";
+const SEED_RESOURCE_BASE_URL = "https://campus.example";
 
 const isLocalDatabase = /localhost|127\.0\.0\.1/.test(
   process.env.DATABASE_URL ?? "",
@@ -38,6 +44,15 @@ type SeedHubBlock = {
   linkUrl: string | null;
 };
 
+function buildSeedEmail(localPart: string): string {
+  return `${localPart}@${SEED_EMAIL_DOMAIN}`;
+}
+
+function buildSeedResourceUrl(path: string): string {
+  const normalizedPath = path.replace(/^\/+/, "");
+  return `${SEED_RESOURCE_BASE_URL}/${normalizedPath}`;
+}
+
 const clubs: SeedClub[] = [
   {
     name: "JECRC Coding Club",
@@ -67,19 +82,19 @@ const clubs: SeedClub[] = [
 ];
 
 const organizers = [
-  { email: "organizer.coding@students.edu.in", name: "Aarav Sharma" },
-  { email: "organizer.nss@students.edu.in", name: "Ananya Verma" },
-  { email: "organizer.robotics@students.edu.in", name: "Ritik Jain" },
-  { email: "organizer.ecell@students.edu.in", name: "Ishita Mehta" },
-  { email: "organizer.cultural@students.edu.in", name: "Kavya Singh" },
+  { email: buildSeedEmail("organizer.coding"), name: "Aarav Sharma" },
+  { email: buildSeedEmail("organizer.nss"), name: "Ananya Verma" },
+  { email: buildSeedEmail("organizer.robotics"), name: "Ritik Jain" },
+  { email: buildSeedEmail("organizer.ecell"), name: "Ishita Mehta" },
+  { email: buildSeedEmail("organizer.cultural"), name: "Kavya Singh" },
 ] as const;
 
 const students = [
-  { email: "student.1@students.edu.in", name: "Rahul Gupta" },
-  { email: "student.2@students.edu.in", name: "Priya Joshi" },
-  { email: "student.3@students.edu.in", name: "Aditya Nair" },
-  { email: "student.4@students.edu.in", name: "Sneha Kapoor" },
-  { email: "student.5@students.edu.in", name: "Yash Malhotra" },
+  { email: buildSeedEmail("student.1"), name: "Rahul Gupta" },
+  { email: buildSeedEmail("student.2"), name: "Priya Joshi" },
+  { email: buildSeedEmail("student.3"), name: "Aditya Nair" },
+  { email: buildSeedEmail("student.4"), name: "Sneha Kapoor" },
+  { email: buildSeedEmail("student.5"), name: "Yash Malhotra" },
 ] as const;
 
 const eventDrafts: SeedEventDraft[] = [
@@ -175,7 +190,7 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
       type: "RESOURCE",
       title: "Starter Kit",
       content: "Roadmap, templates, and weekly challenge sheet for new members.",
-      linkUrl: "https://example.edu/coding-club/starter-kit",
+      linkUrl: buildSeedResourceUrl("coding-club/starter-kit"),
     },
     {
       type: "FAQ",
@@ -196,7 +211,7 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
       type: "RESOURCE",
       title: "Volunteer Handbook",
       content: "Volunteer SOP, safety checklist, and campaign calendar.",
-      linkUrl: "https://example.edu/nss/handbook",
+      linkUrl: buildSeedResourceUrl("nss/handbook"),
     },
     {
       type: "FAQ",
@@ -217,7 +232,7 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
       type: "RESOURCE",
       title: "Parts and Tooling Guide",
       content: "Recommended parts list and lab access instructions.",
-      linkUrl: "https://example.edu/robotics/parts-guide",
+      linkUrl: buildSeedResourceUrl("robotics/parts-guide"),
     },
     {
       type: "FAQ",
@@ -238,7 +253,7 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
       type: "RESOURCE",
       title: "Pitch Deck Template",
       content: "Use this template for demo day and investor intro sessions.",
-      linkUrl: "https://example.edu/ecell/pitch-template",
+      linkUrl: buildSeedResourceUrl("ecell/pitch-template"),
     },
     {
       type: "FAQ",
@@ -259,7 +274,7 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
       type: "RESOURCE",
       title: "Performance Sign-up",
       content: "Apply for solo or group performances for upcoming events.",
-      linkUrl: "https://example.edu/cultural/performance-signup",
+      linkUrl: buildSeedResourceUrl("cultural/performance-signup"),
     },
     {
       type: "FAQ",

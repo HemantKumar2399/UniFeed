@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 export default defineConfig({
@@ -20,7 +21,7 @@ export default defineConfig({
   use: {
     actionTimeout: 15000,
     navigationTimeout: 30000,
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL ?? 'http://localhost:3000',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

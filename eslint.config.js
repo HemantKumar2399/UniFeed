@@ -7,7 +7,13 @@ const compat = new FlatCompat({
 
 export default tseslint.config(
   {
-    ignores: [".next"],
+    ignores: [
+      ".next",
+      "generated",
+      "playwright-report",
+      "test-results",
+      "next-env.d.ts",
+    ],
   },
   ...compat.extends("next/core-web-vitals"),
   {
@@ -43,6 +49,12 @@ export default tseslint.config(
       parserOptions: {
         projectService: true,
       },
+    },
+  },
+  {
+    files: ["tests/support/fixtures/**/*.ts"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
     },
   },
 );

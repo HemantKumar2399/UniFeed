@@ -40,7 +40,7 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
   return (
     <section className="rounded-[20px] border border-[var(--border-whisper)] bg-pure-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-notion-black">Manual Fallback</h2>
-      <p className="mt-1 text-sm text-warm-gray-500">Search attendee by name or PRN and force check-in when QR fails.</p>
+      <p className="mt-1 text-sm text-warm-gray-500">Search attendee by name or email and force check-in when QR fails.</p>
 
       <div className="mt-4 flex items-center gap-2">
         <div className="relative flex-1">
@@ -48,7 +48,7 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name, email, or PRN"
+            placeholder="Search name or email"
             className="h-10 w-full rounded-[12px] border border-[var(--border-input)] pl-9 pr-3 text-sm outline-none focus-visible:border-[var(--color-focus-blue)]"
           />
         </div>
@@ -79,7 +79,10 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
                 >
                   <div>
                     <p className="text-sm font-semibold text-notion-black">{attendee.name ?? attendee.email ?? "Unknown"}</p>
-                    <p className="text-xs text-warm-gray-500">{attendee.prn} • {attendee.email ?? "No email"}</p>
+                    <p className="text-xs text-warm-gray-500">
+                      {attendee.email ?? "No email"}
+                      {attendee.prn ? ` • ${attendee.prn}` : " • Profile pending"}
+                    </p>
                   </div>
                   <button
                     type="button"

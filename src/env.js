@@ -16,8 +16,11 @@ export const env = createEnv({
     UPLOAD_REGION: z.string().default("us-east-1"),
     UPLOAD_ACCESS_KEY_ID: z.string().default("test"),
     UPLOAD_SECRET_ACCESS_KEY: z.string().default("test"),
+    UPLOAD_PUBLIC_BASE_URL: z.string().url().optional(),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+  },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
     ALLOWED_DOMAINS: process.env.ALLOWED_DOMAINS,
@@ -27,6 +30,8 @@ export const env = createEnv({
     UPLOAD_REGION: process.env.UPLOAD_REGION,
     UPLOAD_ACCESS_KEY_ID: process.env.UPLOAD_ACCESS_KEY_ID,
     UPLOAD_SECRET_ACCESS_KEY: process.env.UPLOAD_SECRET_ACCESS_KEY,
+    UPLOAD_PUBLIC_BASE_URL: process.env.UPLOAD_PUBLIC_BASE_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
 
 # database
 /prisma/db.sqlite
@@ -53,8 +55,8 @@ yarn-error.log*
 /.trae/
 /.windsurf/
 /.github/skills/
+/generated/
 
 # Keep generated implementation/planning outputs publishable
 !/_bmad-output/
 !/_bmad-output/**
-

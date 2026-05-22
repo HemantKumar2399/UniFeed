@@ -1,10 +1,13 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
-import type { CreateEventInput } from "./CreateEventSchema";
-import { api } from "@/trpc/react";
 import { useState } from "react";
+import type { ChangeEvent } from "react";
+import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+
+import { api } from "@/trpc/react";
+
+import type { CreateEventInput } from "./CreateEventSchema";
 
 export function StepMedia() {
   const {
@@ -16,7 +19,7 @@ export function StepMedia() {
 
   const getPresignedUrl = api.upload.getPresignedUrl.useMutation();
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -28,31 +31,25 @@ export function StepMedia() {
         size: file.size,
       });
 
-      let activeFinalUrl = finalUrl;
+      const activeFinalUrl = finalUrl;
 
-      try {
-        const uploadResponse = await fetch(url, {
-          method: "PUT",
-          body: file,
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
+      const uploadResponse = await fetch(url, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
 
-        if (!uploadResponse.ok) {
-          throw new Error("Failed to upload image to storage");
-        }
-      } catch (uploadError) {
-        console.warn("S3 Upload blocked (mocking for local dev). Error:", uploadError);
-        activeFinalUrl = "https://images.unsplash.com/photo-1540575467063-178a50c2df87";
-        toast.info("Configured for Local Development: Mocking image upload.", { duration: 4000 });
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to upload image to storage");
       }
 
       setValue("imageUrl", activeFinalUrl, { shouldValidate: true });
-      toast.success("Image process completed!");
+      toast.success("Image uploaded successfully.");
     } catch (err) {
-      console.error(err);
-      toast.error("Image upload failed. See console for details.");
+      console.error("Image upload failed", err);
+      toast.error("Image upload failed. Paste a valid image URL to continue.");
     } finally {
       setIsUploading(false);
     }
@@ -82,9 +79,11 @@ export function StepMedia() {
           id="imageUrl"
           className="rounded-[var(--radius-micro)] border border-[var(--border-input)] bg-pure-white px-4 py-2 text-base text-notion-black min-h-[44px] shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] focus-visible:border-[var(--color-focus-blue)]"
           placeholder="https://example.com/image.jpg"
-          readOnly
           {...register("imageUrl")}
         />
+        <p className="text-xs text-warm-gray-500">
+          Use a successful upload or paste a hosted image URL manually.
+        </p>
         {errors.imageUrl?.message && (
           <p className="text-xs font-semibold text-rose-600">{errors.imageUrl.message}</p>
         )}

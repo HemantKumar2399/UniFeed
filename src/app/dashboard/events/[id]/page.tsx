@@ -1,9 +1,13 @@
 "use client";
 
-import { use, useState } from "react";
+import { use } from "react";
 import { api } from "@/trpc/react";
 import Link from "next/link";
-import { ArrowLeft, Check, Download, AlertCircle, ScanLine } from "lucide-react";
+import { ArrowLeft, Download, AlertCircle, ScanLine } from "lucide-react";
+
+function getProfileFieldLabel(): string {
+  return "Pending profile";
+}
 
 export default function EventAttendeesPage({
   params,
@@ -12,7 +16,6 @@ export default function EventAttendeesPage({
 }) {
   const resolvedParams = use(params);
   const eventId = parseInt(resolvedParams.id, 10);
-  const [checkedInIds, setCheckedInIds] = useState<Set<string>>(new Set());
 
   const { data: attendees, isLoading, error } = api.event.getAttendees.useQuery(
     { eventId },
@@ -37,17 +40,13 @@ export default function EventAttendeesPage({
 
       // Data rows
       const rows = attendees.map((rsvp) => {
-        // @ts-expect-error - Fallbacks for fields not strictly typed yet
-        const prn = rsvp.user.prn ? String(rsvp.user.prn) : `PRN-${rsvp.user.id.substring(0, 6).padEnd(6, '0')}`;
-        // @ts-expect-error - Fallbacks for fields not strictly typed yet
-        const branch = rsvp.user.branch ? String(rsvp.user.branch) : "N/A";
-        const isCheckedIn = checkedInIds.has(rsvp.user.id) ? "Yes" : "No";       
-        
+        const isCheckedIn = rsvp.status === "ATTENDED" ? "Yes" : "No";
+
         return [
           sanitizeCsvField(rsvp.user.name),
           sanitizeCsvField(rsvp.user.email),
-          sanitizeCsvField(prn),
-          sanitizeCsvField(branch),
+          sanitizeCsvField(getProfileFieldLabel()),
+          sanitizeCsvField(getProfileFieldLabel()),
           sanitizeCsvField(rsvp.status),
           sanitizeCsvField(isCheckedIn)
         ].join(",");
@@ -68,16 +67,6 @@ export default function EventAttendeesPage({
     } catch (err) {
       console.error("Export failed", err);
     }
-  };
-
-  const toggleCheckIn = (userId: string) => {
-    const next = new Set(checkedInIds);
-    if (next.has(userId)) {
-      next.delete(userId);
-    } else {
-      next.add(userId);
-    }
-    setCheckedInIds(next);
   };
 
   if (isNaN(eventId)) {
@@ -147,6 +136,9 @@ export default function EventAttendeesPage({
             <span className="font-semibold text-notion-black mr-1">{attendeesList.length}</span> 
             {attendeesList.length === 1 ? 'person' : 'people'} registered for this event.
           </p>
+          <p className="mt-2 text-sm text-warm-gray-500">
+            TODO-MVP: student PRN and branch fields will appear here after Epic 1 adds the real student profile model.
+          </p>
         </div>
         
         <div className="flex items-center gap-2">
@@ -189,11 +181,7 @@ export default function EventAttendeesPage({
                 </tr>
               ) : (
                 attendeesList.map((rsvp) => {
-                  const isCheckedIn = checkedInIds.has(rsvp.user.id);
-                  // @ts-expect-error - Use fallbacks
-                  const prn = rsvp.user.prn ? String(rsvp.user.prn) : `PRN-${rsvp.user.id.substring(0, 6).padEnd(6, '0')}`;
-                  // @ts-expect-error - Use fallbacks
-                  const branch = rsvp.user.branch ? String(rsvp.user.branch) : "N/A";
+                  const isCheckedIn = rsvp.status === "ATTENDED";
 
                   return (
                     <tr 
@@ -208,25 +196,23 @@ export default function EventAttendeesPage({
                           <div className="text-xs text-warm-gray-500 mt-0.5">{rsvp.user.email}</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 align-middle font-mono text-xs text-notion-black">{prn}</td>
-                      <td className="px-6 py-4 align-middle text-warm-gray-500 font-medium">{branch}</td>
+                      <td className="px-6 py-4 align-middle font-mono text-xs text-warm-gray-500">{getProfileFieldLabel()}</td>
+                      <td className="px-6 py-4 align-middle text-warm-gray-500 font-medium">{getProfileFieldLabel()}</td>
                       <td className="px-6 py-4 align-middle">
                         <span className="inline-flex items-center rounded-pill bg-green-50 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge text-green-700">
                           {rsvp.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 align-middle text-center">
-                        <button
-                          onClick={() => toggleCheckIn(rsvp.user.id)}
-                          className={`inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-micro)] border transition-all duration-haptic active:scale-95 ${
-                            isCheckedIn 
-                              ? 'bg-notion-blue border-notion-blue text-pure-white shadow-none' 
-                              : 'bg-pure-white border-[var(--border-input)] text-notion-black hover:bg-warm-white'
+                        <span
+                          className={`inline-flex min-w-[90px] items-center justify-center rounded-pill px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge ${
+                            isCheckedIn
+                              ? "bg-notion-blue text-pure-white"
+                              : "bg-warm-white text-warm-gray-500"
                           }`}
-                          aria-label={isCheckedIn ? "Undo check-in" : "Check in"}
                         >
-                          {isCheckedIn && <Check className="h-4 w-4" />}
-                        </button>
+                          {isCheckedIn ? "Checked In" : "Not Checked In"}
+                        </span>
                       </td>
                     </tr>
                   );

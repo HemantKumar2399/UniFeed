@@ -1,5 +1,4 @@
-import { Ticket, Calendar, PlayCircle } from "lucide-react";
-import Image from "next/image";
+import { Calendar, PlayCircle } from "lucide-react";
 
 import { HappeningThisWeekCarousel } from "@/features/feed/components/HappeningThisWeekCarousel";
 

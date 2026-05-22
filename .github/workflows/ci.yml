@@ -9,6 +9,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ALLOWED_DOMAINS: students.edu.in
+      DATABASE_URL: postgresql://postgres:password@localhost:5432/Platform
+      UPLOAD_BUCKET_NAME: test-bucket
+      UPLOAD_REGION: us-east-1
+      UPLOAD_ACCESS_KEY_ID: test
+      UPLOAD_SECRET_ACCESS_KEY: test
 
     steps:
     - uses: actions/checkout@v4
@@ -22,9 +29,14 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    # We will uncomment these once we run npx create-t3-app
-    # - name: Run Lint
-    #   run: npm run lint
-      
-    # - name: Run Build
-    #   run: npm run build
+    - name: Run Lint
+      run: npm run lint
+
+    - name: Run Typecheck
+      run: npm run typecheck
+
+    - name: Run Build
+      run: npm run build
+
+    - name: Run Unit Tests
+      run: npm run test:unit
