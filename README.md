@@ -40,7 +40,8 @@ Built on the T3-style stack:
 
 ## Quick Start
 
-Epic 0 stabilizes local setup around this order:
+Epic 0 stabilizes local setup.
+Epic 1 (College, Role, and Identity Data Foundation) and Epic 2 (Authentication, Registration, and Permission Safety) are successfully implemented.
 
 1. Install dependencies
 2. Copy `.env`
