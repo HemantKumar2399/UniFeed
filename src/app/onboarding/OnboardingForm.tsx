@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { api } from "@/trpc/react";
-import { useRouter } from "next/navigation";
 
 interface OnboardingFormProps {
   userName: string | null;
@@ -10,7 +9,6 @@ interface OnboardingFormProps {
 }
 
 export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
-  const router = useRouter();
   const [prn, setPrn] = useState("");
   const [branch, setBranch] = useState("");
   const [course, setCourse] = useState("");
@@ -63,8 +61,8 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
   const years = Array.from({ length: 11 }, (_, i) => new Date().getFullYear() - 3 + i);
 
   return (
-    <div className="w-full max-w-md bg-white border border-[var(--border-whisper)] rounded-[var(--radius-large)] shadow-[var(--shadow-deep)] overflow-hidden relative">
-      <div className="p-8 lg:p-10">
+    <div className="w-full flex flex-col justify-between h-full">
+      <div>
         <div className="mb-8 text-center">
           <div className="w-16 h-16 bg-[var(--color-badge-bg)] text-[var(--color-notion-blue)] rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-[inset_0_1px_0_rgba(255,255,255,0.5),0_4px_12px_rgba(0,0,0,0.02)]">
             🎓
@@ -73,7 +71,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
             Complete your profile
           </h1>
           <p className="text-[15px] font-medium text-[var(--color-warm-gray-500)] leading-relaxed">
-            Welcome{userName ? `, ${userName}` : ""}! Let's set up your student passport at <span className="font-semibold text-[var(--color-notion-black)]">{collegeName}</span>.
+            Welcome{userName ? `, ${userName}` : ""}! Let&apos;s set up your student passport at <span className="font-semibold text-[var(--color-notion-black)]">{collegeName}</span>.
           </p>
         </div>
 
@@ -207,7 +205,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           </div>
         </form>
       </div>
-      <div className="bg-[var(--color-warm-white)] border-t border-[var(--border-whisper)] px-8 py-5 text-center flex justify-center items-center gap-2">
+      <div className="bg-[var(--color-warm-white)] border-t border-[var(--border-whisper)] -mx-6 sm:-mx-10 lg:-mx-12 mt-8 -mb-6 sm:-mb-10 lg:-mb-12 py-5 px-6 sm:px-10 lg:px-12 text-center flex justify-center items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-warm-gray-300)]"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <p className="text-[13px] font-medium text-[var(--color-warm-gray-500)]">
           Onboarding is required to access events securely.
