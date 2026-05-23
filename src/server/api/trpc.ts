@@ -135,17 +135,21 @@ export const protectedProcedure = t.procedure
 /**
  * Protected Organizer procedure
  *
- * Use this to restrict access to users with the 'ORGANIZER' role.
+ * Use this to restrict access to users who can work in organizer surfaces.
  */
 export const protectedOrganizerProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (ctx.session?.user?.role !== "ORGANIZER") {
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Only organizers can access this procedure." });
+    const role = ctx.session?.user?.role;
+    if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Only organizers or administrators can access this procedure.",
+      });
     }
     return next({
       ctx: {
-        session: { ...ctx.session, user: ctx.session.user },
+        session: { ...ctx.session!, user: ctx.session!.user },
       },
     });
   });

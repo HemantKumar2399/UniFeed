@@ -3,10 +3,18 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, CalendarDays, BarChart3, Settings, Library } from "lucide-react";
+import {
+  LayoutDashboard,
+  CalendarDays,
+  BarChart3,
+  Settings,
+  Library,
+  ShieldCheck,
+  ArrowUpRight,
+} from "lucide-react";
 import React from "react";
 
-const mainNavItems = [
+const baseNavItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Events", href: "/dashboard/events", icon: CalendarDays },
   { name: "Hubs", href: "/dashboard/hubs", icon: Library },
@@ -24,6 +32,10 @@ export function PremiumOrganizerShell({
   userRole?: string;
 }) {
   const pathname = usePathname();
+  const isAdmin = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
+  const navItems = isAdmin
+    ? [...baseNavItems, { name: "Admin", href: "/admin", icon: ShieldCheck }]
+    : baseNavItems;
 
   return (
     <div className="min-h-screen bg-[#f6f5f4] selection:bg-[#0075de]/20 flex">
@@ -35,7 +47,7 @@ export function PremiumOrganizerShell({
         </div>
 
         <nav className="flex flex-col gap-1 flex-1">
-          {mainNavItems.map((item) => {
+          {navItems.map((item) => {
             // Precise active matching for /dashboard vs /dashboard/events
             const isActive = item.href === '/dashboard' 
               ? pathname === '/dashboard' 
@@ -62,6 +74,30 @@ export function PremiumOrganizerShell({
             );
           })}
         </nav>
+
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="rounded-2xl border border-black/10 bg-white px-4 py-4 shadow-[0_12px_30px_rgba(0,0,0,0.05)] transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.08)]"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#a39e98]">
+                  Admin Access
+                </p>
+                <h3 className="mt-2 text-[16px] font-bold tracking-tight text-black/95">
+                  Open Control Center
+                </h3>
+                <p className="mt-1 text-[13px] font-medium leading-relaxed text-[#615d59]">
+                  Manage college roles, community ownership, and route shortcuts from one place.
+                </p>
+              </div>
+              <div className="rounded-full bg-[#f2f9ff] p-2 text-[#097fe8]">
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+            </div>
+          </Link>
+        )}
         
         {/* User Card */}
         <div className="mt-auto mb-8 p-3 rounded-xl border border-transparent hover:bg-white hover:border-black/5 hover:shadow-[rgba(0,0,0,0.04)_0px_4px_18px] transition-all cursor-pointer active:scale-95">
@@ -92,8 +128,8 @@ export function PremiumOrganizerShell({
 
       {/* Mobile Floating Nav (Light Theme for Organizer) */}
       <div className="md:hidden fixed bottom-6 inset-x-4 z-[100] pointer-events-none">
-        <nav className="flex items-center justify-around px-2 py-1.5 bg-white/80 backdrop-blur-xl border border-black/10 shadow-[0_23px_52px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(0,0,0,0.05)] rounded-2xl pointer-events-auto">
-          {mainNavItems.map((item) => {
+        <nav className="flex items-center justify-around gap-1 px-2 py-1.5 bg-white/80 backdrop-blur-xl border border-black/10 shadow-[0_23px_52px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(0,0,0,0.05)] rounded-2xl pointer-events-auto">
+          {navItems.map((item) => {
             const isActive = item.href === '/dashboard' 
               ? pathname === '/dashboard' 
               : pathname.startsWith(item.href);
@@ -102,7 +138,7 @@ export function PremiumOrganizerShell({
               <Link
                 key={item.name}
                 href={item.href}
-                className="relative flex flex-col items-center justify-center w-14 py-2 active:scale-90 transition-transform outline-none rounded-xl"
+                className="relative flex min-w-0 flex-1 flex-col items-center justify-center py-2 active:scale-90 transition-transform outline-none rounded-xl"
               >
                 {isActive && (
                   <motion.div

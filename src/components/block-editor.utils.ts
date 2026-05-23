@@ -1,13 +1,16 @@
 export type BlockEditorDraft = {
+  clubId: string;
   title: string;
   description: string;
   date: string;
   time: string;
   location: string;
+  imageUrl: string;
   capacity: string;
 };
 
 export type CreateEventPayload = {
+  clubId: number;
   title: string;
   description: string;
   date: Date;
@@ -36,11 +39,12 @@ function toLocalDateTime(dateValue: string, timeValue: string): Date {
 
 export function buildCreateEventPayload(draft: BlockEditorDraft): CreateEventPayload {
   return {
+    clubId: Number.parseInt(draft.clubId, 10),
     title: draft.title.trim(),
     description: draft.description.trim(),
     date: toLocalDateTime(draft.date, draft.time),
     location: draft.location.trim(),
-    imageUrl: "",
+    imageUrl: draft.imageUrl.trim(),
     capacity: Number.parseInt(draft.capacity, 10),
   };
 }

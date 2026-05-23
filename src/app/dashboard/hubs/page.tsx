@@ -37,6 +37,7 @@ export default function DashboardHubsPage() {
 
   const { data: editableHubs, isLoading: isLoadingHubs } = api.hub.getEditableHubs.useQuery();
   const [activeHubId, setActiveHubId] = useState<number | null>(null);
+  const [newEditorUserId, setNewEditorUserId] = useState("");
   const [draftBlocks, setDraftBlocks] = useState<EditableBlock[]>([]);
 
   useEffect(() => {
@@ -72,6 +73,10 @@ export default function DashboardHubsPage() {
     );
   }, [activeHub]);
 
+  const activeHubMembershipRole = useMemo(() => {
+    return editableHubs?.find((hub) => hub.id === activeHubId)?.role ?? null;
+  }, [activeHubId, editableHubs]);
+
   const saveBlocks = api.hub.saveBlocks.useMutation({
     onSuccess: async (_result, variables) => {
       toast.success("Hub content saved");
@@ -79,6 +84,41 @@ export default function DashboardHubsPage() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to save hub content");
+    },
+  });
+
+  const {
+    data: editorManagement,
+    isLoading: isLoadingEditorManagement,
+  } = api.club.getEditorManagement.useQuery(
+    { clubId: activeHubId ?? 0 },
+    {
+      enabled: activeHubId !== null && activeHubMembershipRole === "OWNER",
+    },
+  );
+
+  const assignEditor = api.club.assignEditor.useMutation({
+    onSuccess: async () => {
+      toast.success("Editor assigned");
+      setNewEditorUserId("");
+      if (activeHubId) {
+        await utils.club.getEditorManagement.invalidate({ clubId: activeHubId });
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to assign editor");
+    },
+  });
+
+  const removeEditor = api.club.removeEditor.useMutation({
+    onSuccess: async () => {
+      toast.success("Editor removed");
+      if (activeHubId) {
+        await utils.club.getEditorManagement.invalidate({ clubId: activeHubId });
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to remove editor");
     },
   });
 
@@ -142,7 +182,7 @@ export default function DashboardHubsPage() {
             >
               {editableHubs?.map((hub) => (
                 <option key={hub.id} value={hub.id}>
-                  {hub.name} ({hub.role.toLowerCase()})
+                  {hub.name} ({(hub.role ?? "EDITOR").toLowerCase()})
                 </option>
               ))}
             </select>
@@ -163,6 +203,7 @@ export default function DashboardHubsPage() {
       </section>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="space-y-6">
         <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4">
           {!isLoadingHubs && !editableHubs?.length ? (
             <div className="mb-4 rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4 text-[14px] text-[#615d59]">
@@ -270,6 +311,114 @@ export default function DashboardHubsPage() {
             </Button>
           </div>
         </section>
+
+        {activeHubMembershipRole === "OWNER" ? (
+          <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4">
+            <div className="mb-4">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Editor Management</p>
+              <h2 className="mt-2 text-[20px] font-bold tracking-[-0.02em] text-black/95">Manage Club Editors</h2>
+              <p className="mt-1 text-[14px] leading-relaxed text-[#615d59]">
+                Owners can add or remove editors for the active community. Owner assignments stay in the admin panel.
+              </p>
+            </div>
+
+            {isLoadingEditorManagement ? (
+              <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4 text-[14px] text-[#615d59]">
+                Loading editor management details...
+              </div>
+            ) : editorManagement ? (
+              <div className="space-y-4">
+                <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Owners</p>
+                  <div className="mt-3 space-y-2">
+                    {editorManagement.owners.map((owner) => (
+                      <div key={owner.id} className="flex items-center justify-between rounded-[12px] border border-[rgba(0,0,0,0.08)] px-3 py-2">
+                        <div>
+                          <p className="text-[14px] font-semibold text-black/90">{owner.name ?? owner.email ?? "Unnamed owner"}</p>
+                          <p className="text-[12px] text-[#8a847d]">{owner.email ?? "No email"}</p>
+                        </div>
+                        <span className="rounded-full border border-[rgba(0,0,0,0.08)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">
+                          Owner
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Editors</p>
+                    <span className="text-[12px] text-[#8a847d]">{editorManagement.editors.length} assigned</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {editorManagement.editors.length === 0 ? (
+                      <p className="text-[14px] text-[#615d59]">No editors are assigned yet.</p>
+                    ) : (
+                      editorManagement.editors.map((editor) => (
+                        <div key={editor.id} className="flex items-center justify-between rounded-[12px] border border-[rgba(0,0,0,0.08)] px-3 py-2">
+                          <div>
+                            <p className="text-[14px] font-semibold text-black/90">{editor.name ?? editor.email ?? "Unnamed editor"}</p>
+                            <p className="text-[12px] text-[#8a847d]">{editor.email ?? "No email"}</p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (!activeHubId) {
+                                return;
+                              }
+                              removeEditor.mutate({ clubId: activeHubId, userId: editor.id });
+                            }}
+                            disabled={removeEditor.isPending}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Add Editor</p>
+                  <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                    <select
+                      value={newEditorUserId}
+                      onChange={(event) => setNewEditorUserId(event.target.value)}
+                      className="h-10 flex-1 rounded-[10px] border border-[rgba(0,0,0,0.1)] bg-white px-3 text-[14px] font-medium text-black/90 outline-none focus:ring-2 focus:ring-[#097fe8]"
+                    >
+                      <option value="">Select an organizer or admin</option>
+                      {editorManagement.eligibleUsers.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.name ?? user.email ?? "Unnamed user"} ({user.role})
+                        </option>
+                      ))}
+                    </select>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (!activeHubId || !newEditorUserId) {
+                          return;
+                        }
+                        assignEditor.mutate({ clubId: activeHubId, userId: newEditorUserId });
+                      }}
+                      disabled={!newEditorUserId || assignEditor.isPending}
+                    >
+                      Assign Editor
+                    </Button>
+                  </div>
+                  {editorManagement.eligibleUsers.length === 0 ? (
+                    <p className="mt-3 text-[13px] text-[#615d59]">
+                      Everyone eligible is already assigned to this club. Use the admin panel to promote more organizers if needed.
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
+        </div>
 
         <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-white p-4">
           <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Public Hub Preview</p>

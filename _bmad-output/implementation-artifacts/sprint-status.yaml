@@ -69,12 +69,12 @@ development_status:
   2-6-align-middleware-and-server-auth-config: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-replace-default-club-selection-in-event-creation: backlog
-  3-2-build-club-getmymanagedclubs: backlog
-  3-3-build-community-selector-in-event-creation-ui: backlog
-  3-4-replace-author-only-authorization-with-membership-authorization: backlog
-  3-5-add-basic-community-management: backlog
+  epic-3: done
+  3-1-replace-default-club-selection-in-event-creation: done
+  3-2-build-club-getmymanagedclubs: done
+  3-3-build-community-selector-in-event-creation-ui: done
+  3-4-replace-author-only-authorization-with-membership-authorization: done
+  3-5-add-basic-community-management: done
   epic-3-retrospective: optional
 
   epic-4: backlog

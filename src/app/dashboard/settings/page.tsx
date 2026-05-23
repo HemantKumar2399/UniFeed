@@ -1,4 +1,5 @@
-import { User, Settings, CreditCard, Users, LogOut } from "lucide-react";
+import Link from "next/link";
+import { User, Settings, CreditCard, Users, LogOut, ShieldCheck, ArrowUpRight } from "lucide-react";
 import { auth } from "@/server/auth";
 import { SignOutForm } from "@/components/SignOutForm";
 
@@ -6,6 +7,7 @@ export default async function DashboardSettingsPage() {
   const session = await auth();
   const userName = session?.user?.name ?? "Organizer";
   const userInitial = userName.charAt(0) || "O";
+  const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
 
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12 max-w-4xl">
@@ -24,6 +26,29 @@ export default async function DashboardSettingsPage() {
           </div>
         </div>
       </header>
+
+      {isAdmin && (
+        <section className="px-1 md:px-0">
+          <Link
+            href="/admin"
+            className="flex items-center justify-between gap-4 rounded-[24px] border border-black/10 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_32px_rgba(0,0,0,0.06)]"
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f2f9ff] text-[#097fe8]">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Admin Access</p>
+                <h2 className="text-[18px] font-bold tracking-tight text-black/95">Open College Control Center</h2>
+                <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                  Jump to role management, community ownership, and route shortcuts for admin workflows.
+                </p>
+              </div>
+            </div>
+            <ArrowUpRight className="h-5 w-5 shrink-0 text-[#097fe8]" />
+          </Link>
+        </section>
+      )}
 
       {/* Settings Grid */}
       <section className="px-1 md:px-0 flex flex-col gap-2">

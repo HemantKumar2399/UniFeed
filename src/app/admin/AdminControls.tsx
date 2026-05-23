@@ -14,6 +14,8 @@ interface UserItem {
 interface ClubItem {
   id: number;
   name: string;
+  memberCount?: number;
+  eventCount?: number;
 }
 
 interface AdminControlsProps {
@@ -23,6 +25,7 @@ interface AdminControlsProps {
 
 export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
   const [users, setUsers] = useState<UserItem[]>(initialUsers);
+  const [clubOptions, setClubOptions] = useState<ClubItem[]>(clubs);
 
   // Form 1 State: Promote User
   const [promoteUserId, setPromoteUserId] = useState("");
@@ -37,19 +40,25 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
   const [membershipError, setMembershipError] = useState<string | null>(null);
   const [membershipSuccess, setMembershipSuccess] = useState<string | null>(null);
 
+  // Form 3 State: Create Club
+  const [clubName, setClubName] = useState("");
+  const [clubLogoUrl, setClubLogoUrl] = useState("");
+  const [clubCreateError, setClubCreateError] = useState<string | null>(null);
+  const [clubCreateSuccess, setClubCreateSuccess] = useState<string | null>(null);
+
   // tRPC Mutations
   const promoteUserMutation = api.admin.promoteUser.useMutation({
     onSuccess: (updatedUser) => {
-      setPromoteSuccess(`Successfully updated ${updatedUser.name || updatedUser.email}'s role to ${updatedUser.role}.`);
+      setPromoteSuccess(`Successfully updated ${updatedUser.name ?? updatedUser.email}'s role to ${updatedUser.role}.`);
       setPromoteError(null);
       // Update local state
       setUsers((prev) =>
-        prev.map((u) => (u.id === updatedUser.id ? { ...u, role: updatedUser.role as any } : u))
+        prev.map((u) => (u.id === updatedUser.id ? { ...u, role: updatedUser.role as UserItem["role"] } : u))
       );
       setPromoteUserId("");
     },
     onError: (err) => {
-      setPromoteError(err.message || "Failed to promote user.");
+      setPromoteError(err.message ?? "Failed to promote user.");
       setPromoteSuccess(null);
     },
   });
@@ -57,17 +66,35 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
   const assignMembershipMutation = api.admin.assignClubMembership.useMutation({
     onSuccess: () => {
       const selectedUser = users.find((u) => u.id === membershipUserId);
-      const selectedClub = clubs.find((c) => c.id === Number(membershipClubId));
+      const selectedClub = clubOptions.find((c) => c.id === Number(membershipClubId));
       setMembershipSuccess(
-        `Successfully assigned ${selectedUser?.name || selectedUser?.email} as ${membershipRole} of "${selectedClub?.name}".`
+        `Successfully assigned ${selectedUser?.name ?? selectedUser?.email} as ${membershipRole} of "${selectedClub?.name}".`
       );
       setMembershipError(null);
       setMembershipUserId("");
       setMembershipClubId("");
     },
     onError: (err) => {
-      setMembershipError(err.message || "Failed to assign club membership.");
+      setMembershipError(err.message ?? "Failed to assign club membership.");
       setMembershipSuccess(null);
+    },
+  });
+
+  const createClubMutation = api.club.create.useMutation({
+    onSuccess: (createdClub) => {
+      setClubCreateSuccess(`Successfully created "${createdClub.name}".`);
+      setClubCreateError(null);
+      setClubName("");
+      setClubLogoUrl("");
+      setClubOptions((previous) =>
+        [...previous, { id: createdClub.id, name: createdClub.name }].sort((a, b) =>
+          a.name.localeCompare(b.name),
+        ),
+      );
+    },
+    onError: (err) => {
+      setClubCreateError(err.message ?? "Failed to create club.");
+      setClubCreateSuccess(null);
     },
   });
 
@@ -102,13 +129,38 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
     });
   };
 
+  const handleCreateClubSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createClubMutation.mutate({
+      name: clubName,
+      logoUrl: clubLogoUrl,
+    });
+  };
+
   // Filter users to only show Organizers or Admins for club assignments
-  const organizerEligibleUsers = users.filter((u) => u.role === "ORGANIZER" || u.role === "ADMIN");
+  const organizerEligibleUsers = users.filter(
+    (u) => u.role === "ORGANIZER" || u.role === "ADMIN" || u.role === "SUPER_ADMIN",
+  );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Promotion Form */}
       <div className="col-span-1 lg:col-span-2 space-y-8">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] px-4 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Users In Scope</p>
+            <p className="mt-2 text-[24px] font-bold tracking-tight text-black/95">{users.length}</p>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] px-4 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Assignable People</p>
+            <p className="mt-2 text-[24px] font-bold tracking-tight text-black/95">{organizerEligibleUsers.length}</p>
+          </div>
+          <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] px-4 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Communities</p>
+            <p className="mt-2 text-[24px] font-bold tracking-tight text-black/95">{clubOptions.length}</p>
+          </div>
+        </div>
+
         <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-xl shadow-[0_4px_18px_rgba(0,0,0,0.02)] p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-[#f2f9ff] text-[#097fe8] rounded-xl flex items-center justify-center">
@@ -148,7 +200,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                 <option value="">-- Choose a user in your college --</option>
                 {users.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.name || "No name"} ({u.email}) [{u.role}]
+                    {u.name ?? "No name"} ({u.email}) [{u.role}]
                   </option>
                 ))}
               </select>
@@ -158,12 +210,12 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
               <label htmlFor="targetRole" className="block text-xs font-semibold text-[#615d59] uppercase tracking-wider mb-2">
                 Target Role
               </label>
-              <select
-                id="targetRole"
-                value={targetRole}
-                onChange={(e) => setTargetRole(e.target.value as any)}
-                className="w-full bg-white text-[rgba(0,0,0,0.9)] border border-[#dddddd] p-[8px] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#097fe8] text-sm"
-              >
+                <select
+                  id="targetRole"
+                  value={targetRole}
+                  onChange={(e) => setTargetRole(e.target.value as "STUDENT" | "ORGANIZER" | "ADMIN")}
+                  className="w-full bg-white text-[rgba(0,0,0,0.9)] border border-[#dddddd] p-[8px] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#097fe8] text-sm"
+                >
                 <option value="STUDENT">STUDENT (Demote / Reset)</option>
                 <option value="ORGANIZER">ORGANIZER</option>
                 <option value="ADMIN">ADMIN (College Admin)</option>
@@ -220,7 +272,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                 <option value="">-- Choose an eligible user --</option>
                 {organizerEligibleUsers.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.name || "No name"} ({u.email}) [{u.role}]
+                    {u.name ?? "No name"} ({u.email}) [{u.role}]
                   </option>
                 ))}
               </select>
@@ -243,7 +295,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                   className="w-full bg-white text-[rgba(0,0,0,0.9)] border border-[#dddddd] p-[8px] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#097fe8] text-sm"
                 >
                   <option value="">-- Choose a club --</option>
-                  {clubs.map((c) => (
+                  {clubOptions.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
                     </option>
@@ -258,7 +310,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                 <select
                   id="membershipRole"
                   value={membershipRole}
-                  onChange={(e) => setMembershipRole(e.target.value as any)}
+                  onChange={(e) => setMembershipRole(e.target.value as "OWNER" | "EDITOR")}
                   className="w-full bg-white text-[rgba(0,0,0,0.9)] border border-[#dddddd] p-[8px] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#097fe8] text-sm"
                 >
                   <option value="EDITOR">EDITOR (Manage and update events)</option>
@@ -276,47 +328,148 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
             </button>
           </form>
         </div>
+
+        <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-xl shadow-[0_4px_18px_rgba(0,0,0,0.02)] p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-[#f2f9ff] text-[#097fe8] rounded-xl flex items-center justify-center">
+              <Shield className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-[18px] font-bold text-black/95">Create Community</h3>
+              <p className="text-xs text-[#615d59]">Create a new club for this college with its required identity fields.</p>
+            </div>
+          </div>
+
+          {clubCreateSuccess && (
+            <div className="mb-4 p-4 bg-emerald-50 border border-emerald-100 rounded-lg flex items-start gap-2 text-emerald-800 text-sm">
+              <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>{clubCreateSuccess}</span>
+            </div>
+          )}
+
+          {clubCreateError && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-100 rounded-lg flex items-start gap-2 text-red-800 text-sm">
+              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>{clubCreateError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleCreateClubSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="clubName" className="block text-xs font-semibold text-[#615d59] uppercase tracking-wider mb-2">
+                Club Name
+              </label>
+              <input
+                id="clubName"
+                type="text"
+                value={clubName}
+                onChange={(e) => setClubName(e.target.value)}
+                className="w-full bg-white text-[rgba(0,0,0,0.9)] border border-[#dddddd] p-[8px] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#097fe8] text-sm"
+                placeholder="Example: Design Collective"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="clubLogoUrl" className="block text-xs font-semibold text-[#615d59] uppercase tracking-wider mb-2">
+                Logo URL
+              </label>
+              <input
+                id="clubLogoUrl"
+                type="url"
+                value={clubLogoUrl}
+                onChange={(e) => setClubLogoUrl(e.target.value)}
+                className="w-full bg-white text-[rgba(0,0,0,0.9)] border border-[#dddddd] p-[8px] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#097fe8] text-sm"
+                placeholder="https://example.com/logo.png"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={createClubMutation.isPending}
+              className="bg-[#0075de] hover:bg-[#005bab] text-white px-5 py-2.5 rounded-[6px] font-semibold text-[14px] active:scale-95 transition-all shadow-[0_2px_4px_rgba(0,0,0,0.05)] disabled:opacity-50"
+            >
+              {createClubMutation.isPending ? "Creating Club..." : "Create Club"}
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Directory Sidebar */}
       <div className="col-span-1">
-        <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-xl shadow-[0_4px_18px_rgba(0,0,0,0.02)] p-6 h-full flex flex-col">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-[#f2f9ff] text-[#097fe8] rounded-xl flex items-center justify-center">
-              <Users className="w-5 h-5" />
+        <div className="space-y-6">
+          <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-xl shadow-[0_4px_18px_rgba(0,0,0,0.02)] p-6 flex flex-col">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-[#f2f9ff] text-[#097fe8] rounded-xl flex items-center justify-center">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-[18px] font-bold text-black/95">College Registry</h3>
+                <p className="text-xs text-[#615d59]">Registered users summary in your scope.</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-[18px] font-bold text-black/95">College Registry</h3>
-              <p className="text-xs text-[#615d59]">Registered users summary in your scope.</p>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[360px]">
+              {users.map((u) => {
+                const badgeColors =
+                  u.role === "SUPER_ADMIN"
+                    ? "bg-purple-50 text-purple-700 border-purple-100"
+                    : u.role === "ADMIN"
+                    ? "bg-red-50 text-red-700 border-red-100"
+                    : u.role === "ORGANIZER"
+                    ? "bg-blue-50 text-blue-700 border-blue-100"
+                    : "bg-zinc-50 text-zinc-600 border-zinc-100";
+
+                return (
+                  <div
+                    key={u.id}
+                    className="p-3 border border-black/5 rounded-lg flex items-center justify-between text-xs transition-colors hover:bg-[#f6f5f4]"
+                  >
+                    <div className="truncate pr-2">
+                      <p className="font-semibold text-black/95 truncate">{u.name ?? "No Name"}</p>
+                      <p className="text-[10px] text-[#a39e98] truncate">{u.email}</p>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded-full border text-[10px] font-semibold tracking-wide uppercase ${badgeColors}`}>
+                      {u.role}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[480px]">
-            {users.map((u) => {
-              const badgeColors =
-                u.role === "SUPER_ADMIN"
-                  ? "bg-purple-50 text-purple-700 border-purple-100"
-                  : u.role === "ADMIN"
-                  ? "bg-red-50 text-red-700 border-red-100"
-                  : u.role === "ORGANIZER"
-                  ? "bg-blue-50 text-blue-700 border-blue-100"
-                  : "bg-zinc-50 text-zinc-600 border-zinc-100";
+          <div className="bg-white border border-[rgba(0,0,0,0.1)] rounded-xl shadow-[0_4px_18px_rgba(0,0,0,0.02)] p-6 flex flex-col">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-[#f2f9ff] text-[#097fe8] rounded-xl flex items-center justify-center">
+                <Shield className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-[18px] font-bold text-black/95">Community Registry</h3>
+                <p className="text-xs text-[#615d59]">Clubs available for event and hub ownership mapping.</p>
+              </div>
+            </div>
 
-              return (
-                <div
-                  key={u.id}
-                  className="p-3 border border-black/5 rounded-lg flex items-center justify-between text-xs transition-colors hover:bg-[#f6f5f4]"
-                >
-                  <div className="truncate pr-2">
-                    <p className="font-semibold text-black/95 truncate">{u.name || "No Name"}</p>
-                    <p className="text-[10px] text-[#a39e98] truncate">{u.email}</p>
+            <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1">
+              {clubOptions.map((club) => (
+                <div key={club.id} className="rounded-xl border border-black/5 bg-[#f6f5f4] p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[14px] font-semibold text-black/95">{club.name}</p>
+                      <p className="mt-1 text-[12px] font-medium text-[#615d59]">
+                        {club.memberCount ?? 0} members mapped
+                      </p>
+                    </div>
+                    <span className="rounded-full border border-black/10 bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#a39e98]">
+                      {club.eventCount ?? 0} events
+                    </span>
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full border text-[10px] font-semibold tracking-wide uppercase ${badgeColors}`}>
-                    {u.role}
-                  </span>
                 </div>
-              );
-            })}
+              ))}
+              {clubOptions.length === 0 && (
+                <div className="rounded-xl border border-dashed border-black/10 bg-[#f6f5f4] p-4 text-[13px] font-medium text-[#615d59]">
+                  No communities exist yet. Create the first one from the form on this page.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { normalizeHubBlocksForSave } from "@/features/hubs/hub-blocks.utils";
 import { createTRPCRouter, protectedOrganizerProcedure, protectedProcedure, publicProcedure } from "@/server/api/trpc";
-import type { db as prismaDb } from "@/server/db";
+import { assertCanManageClub, getManageableClubsForUser } from "@/server/permissions/club-management";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -11,34 +11,6 @@ const hubBlockInputSchema = z.object({
   linkUrl: z.string().url().nullable().optional(),
   position: z.number().int().min(0),
 });
-
-type OrganizerHubCtx = {
-  db: typeof prismaDb;
-  session: {
-    user: {
-      id: string;
-    };
-  };
-};
-
-async function assertOrganizerCanManageHub(ctx: OrganizerHubCtx, clubId: number) {
-  const membership = await ctx.db.clubMembership.findUnique({
-    where: {
-      userId_clubId: {
-        userId: ctx.session.user.id,
-        clubId,
-      },
-    },
-    select: { role: true },
-  });
-
-  if (!membership || (membership.role !== "OWNER" && membership.role !== "EDITOR")) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "You can only edit hubs for clubs you manage.",
-    });
-  }
-}
 
 export const hubRouter = createTRPCRouter({
   getDirectory: protectedProcedure.query(async ({ ctx }) => {
@@ -162,33 +134,12 @@ export const hubRouter = createTRPCRouter({
     }),
 
   getEditableHubs: protectedOrganizerProcedure.query(async ({ ctx }) => {
-    const memberships = await ctx.db.clubMembership.findMany({
-      where: {
-        userId: ctx.session.user.id,
-        role: {
-          in: ["OWNER", "EDITOR"],
-        },
-      },
-      orderBy: {
-        club: {
-          name: "asc",
-        },
-      },
-      select: {
-        role: true,
-        club: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    });
+    const clubs = await getManageableClubsForUser(ctx);
 
-    return memberships.map((membership) => ({
-      id: membership.club.id,
-      name: membership.club.name,
-      role: membership.role,
+    return clubs.map((club) => ({
+      id: club.id,
+      name: club.name,
+      role: club.role,
     }));
   }),
 
@@ -209,7 +160,9 @@ export const hubRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Hub not found" });
       }
 
-      await assertOrganizerCanManageHub(ctx, input.clubId);
+      await assertCanManageClub(ctx, input.clubId, {
+        forbiddenMessage: "You can only edit hubs for clubs you manage.",
+      });
 
       const normalizedBlocks = normalizeHubBlocksForSave(input.blocks);
 

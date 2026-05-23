@@ -1,9 +1,10 @@
+import type { ClubRole } from "@prisma/client";
 import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { CreateEventSchema } from "@/features/events/components/CreateEventSchema";
 import { matchesAttendeeQuery, resolveAttendeePrn } from "@/features/attendance/checkin-search.utils";
 import { decodeTicketPayloadToken, getTicketPayloadSecret, verifyTicketPayloadToken } from "@/lib/ticket-payload";
-import { canManageDiscussionThread, resolveDiscussionDisplayName } from "@/lib/discussion";
+import { resolveDiscussionDisplayName } from "@/lib/discussion";
 import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
 import { FEED_RESULT_LIMIT, buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
 import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-week-query";
@@ -11,6 +12,7 @@ import {
   buildStudentRelevanceProfile,
 } from "@/server/services/feed-ranking";
 import type { db as prismaDb } from "@/server/db";
+import { assertCanManageEvent, getClubManagementRole, isAdminUserRole } from "@/server/permissions/club-management";
 import { TRPCError } from "@trpc/server";
 
 type OrganizerCtx = {
@@ -22,19 +24,12 @@ type OrganizerCtx = {
   };
 };
 
+const manageableClubRoles: ClubRole[] = ["OWNER", "EDITOR"];
+
 async function assertOrganizerOwnsEvent(ctx: OrganizerCtx, eventId: number): Promise<void> {
-  const event = await ctx.db.event.findUnique({
-    where: { id: eventId },
-    select: { authorId: true },
+  await assertCanManageEvent(ctx, eventId, {
+    forbiddenMessage: "Unauthorized for this event",
   });
-
-  if (!event) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
-  }
-
-  if (event.authorId !== ctx.session.user.id) {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Unauthorized for this event" });
-  }
 }
 
 async function markAttendedRsvp(
@@ -77,9 +72,9 @@ export const eventRouter = createTRPCRouter({
   delete: protectedOrganizerProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ ctx, input }) => {
-      const event = await ctx.db.event.findUnique({ where: { id: input.id } });
-      if (!event) throw new TRPCError({ code: "NOT_FOUND" });
-      if (event.authorId !== ctx.session.user.id) throw new TRPCError({ code: "FORBIDDEN" });
+      await assertCanManageEvent(ctx, input.id, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
       
       return ctx.db.event.delete({ where: { id: input.id } });
     }),
@@ -87,9 +82,9 @@ export const eventRouter = createTRPCRouter({
   updateStatus: protectedOrganizerProcedure
     .input(z.object({ id: z.number().int(), status: z.enum(["DRAFT", "SUBMITTED", "APPROVED", "PUBLISHED", "REJECTED", "CANCELLED"]) }))
     .mutation(async ({ ctx, input }) => {
-      const event = await ctx.db.event.findUnique({ where: { id: input.id } });
-      if (!event) throw new TRPCError({ code: "NOT_FOUND" });
-      if (event.authorId !== ctx.session.user.id) throw new TRPCError({ code: "FORBIDDEN" });
+      await assertCanManageEvent(ctx, input.id, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
       
       return ctx.db.event.update({
         where: { id: input.id },
@@ -100,19 +95,6 @@ export const eventRouter = createTRPCRouter({
   create: protectedOrganizerProcedure
     .input(CreateEventSchema)
     .mutation(async ({ ctx, input }) => {
-      const clubMembership = await ctx.db.clubMembership.findFirst({
-        where: { userId: ctx.session.user.id },
-        select: { clubId: true },
-        orderBy: { createdAt: "asc" },
-      });
-
-      if (!clubMembership) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "TODO-MVP: assign the organizer to a club before creating events.",
-        });
-      }
-
       if (!input.imageUrl.trim()) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -120,10 +102,12 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
-      if (!ctx.session.user.collegeId) {
+      const { club } = await assertCanManageClubForCreation(ctx, input.clubId);
+
+      if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User session is not associated with a college.",
+          message: "User session is not associated with the selected club's college.",
         });
       }
 
@@ -135,9 +119,9 @@ export const eventRouter = createTRPCRouter({
           location: input.location,
           imageUrl: input.imageUrl,
           capacity: input.capacity,
-          clubId: clubMembership.clubId,
+          clubId: input.clubId,
           authorId: ctx.session.user.id,
-          collegeId: ctx.session.user.collegeId,
+          collegeId: club.collegeId,
         },
       });
     }),
@@ -158,10 +142,26 @@ export const eventRouter = createTRPCRouter({
       });
     }),
   getOrganizerDrafts: protectedOrganizerProcedure.query(async ({ ctx }) => {    
+    const where =
+      isAdminUserRole(ctx.session.user.role) && ctx.session.user.collegeId
+        ? { collegeId: ctx.session.user.collegeId }
+        : {
+            club: {
+              is: {
+                members: {
+                  some: {
+                    userId: ctx.session.user.id,
+                    role: {
+                      in: manageableClubRoles,
+                    },
+                  },
+                },
+              },
+            },
+          };
+
     return ctx.db.event.findMany({
-      where: {
-        authorId: ctx.session.user.id,
-      },
+      where,
       include: {
         _count: {
           select: { rsvps: true }
@@ -206,7 +206,7 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const event = await ctx.db.event.findUnique({
         where: { id: input.eventId },
-        select: { id: true, authorId: true },
+        select: { id: true, authorId: true, clubId: true, collegeId: true },
       });
 
       if (!event) {
@@ -239,11 +239,13 @@ export const eventRouter = createTRPCRouter({
         orderBy: [{ pinned: "desc" }, { createdAt: "desc" }],
       });
 
-      const viewerCanManagePin = canManageDiscussionThread({
-        viewerRole: ctx.session.user.role,
-        viewerId: ctx.session.user.id,
-        eventAuthorId: event.authorId,
-      });
+      const viewerCanManagePin = Boolean(
+        await getClubManagementRole(
+          ctx,
+          { id: event.clubId, collegeId: event.collegeId },
+          undefined,
+        ),
+      );
 
       return threads.map((thread) => ({
         id: thread.id,
@@ -305,12 +307,9 @@ export const eventRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const thread = await ctx.db.eventDiscussionThread.findUnique({
         where: { id: input.threadId },
-        include: {
-          event: {
-            select: {
-              authorId: true,
-            },
-          },
+        select: {
+          id: true,
+          eventId: true,
         },
       });
 
@@ -318,12 +317,9 @@ export const eventRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Thread not found" });
       }
 
-      if (thread.event.authorId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only the event organizer can reply with organizer authority",
-        });
-      }
+      await assertCanManageEvent(ctx, thread.eventId, {
+        forbiddenMessage: "Only club managers can reply with organizer authority",
+      });
 
       return ctx.db.eventDiscussionReply.create({
         data: {
@@ -344,12 +340,9 @@ export const eventRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const thread = await ctx.db.eventDiscussionThread.findUnique({
         where: { id: input.threadId },
-        include: {
-          event: {
-            select: {
-              authorId: true,
-            },
-          },
+        select: {
+          id: true,
+          eventId: true,
         },
       });
 
@@ -357,12 +350,9 @@ export const eventRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Thread not found" });
       }
 
-      if (thread.event.authorId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only the event organizer can pin or unpin threads",
-        });
-      }
+      await assertCanManageEvent(ctx, thread.eventId, {
+        forbiddenMessage: "Only club managers can pin or unpin threads",
+      });
 
       return ctx.db.eventDiscussionThread.update({
         where: { id: thread.id },
@@ -400,12 +390,9 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
-      if (event.authorId !== ctx.session.user.id) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Unauthorized to view attendees for this event",
-        });
-      }
+      await assertCanManageEvent(ctx, input.eventId, {
+        forbiddenMessage: "Unauthorized to view attendees for this event",
+      });
 
       return event.rsvps;
     }),
@@ -499,7 +486,7 @@ export const eventRouter = createTRPCRouter({
           userId: rsvp.user.id,
           name: rsvp.user.name,
           email: rsvp.user.email,
-            prn: resolveAttendeePrn({ userId: rsvp.user.id, email: rsvp.user.email }),
+          prn: resolveAttendeePrn({ userId: rsvp.user.id, email: rsvp.user.email }),
           status: rsvp.status,
         }));
     }),
@@ -577,3 +564,30 @@ export const eventRouter = createTRPCRouter({
     });
   }),
 });
+
+async function assertCanManageClubForCreation(ctx: OrganizerCtx, clubId: number) {
+  const club = await ctx.db.club.findUnique({
+    where: { id: clubId },
+    select: {
+      id: true,
+      collegeId: true,
+    },
+  });
+
+  if (!club) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Selected club was not found.",
+    });
+  }
+
+  const accessRole = await getClubManagementRole(ctx, club);
+  if (!accessRole) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You can only create events for clubs you manage.",
+    });
+  }
+
+  return { club, accessRole };
+}

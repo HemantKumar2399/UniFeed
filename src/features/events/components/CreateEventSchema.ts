@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const CreateEventSchema = z.object({
+  clubId: z.coerce.number().int("Select a valid community").positive("Select a community before creating the event"),
   title: z.string().min(3, "Title must be at least 3 characters").max(100, "Title is too long"),
   description: z.string().min(10, "Description must be at least 10 characters").max(2000, "Description is too long"),
   date: z.coerce.date({

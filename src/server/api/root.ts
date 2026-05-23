@@ -1,4 +1,5 @@
 import { eventRouter } from "@/server/api/routers/event";
+import { clubRouter } from "@/server/api/routers/club";
 import { hubRouter } from "@/server/api/routers/hub";
 import { postRouter } from "@/server/api/routers/post";
 import { rsvpRouter } from "@/server/api/routers/rsvp";
@@ -14,6 +15,7 @@ import { adminRouter } from "@/server/api/routers/admin";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  club: clubRouter,
   event: eventRouter,
   hub: hubRouter,
   post: postRouter,
