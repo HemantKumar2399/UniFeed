@@ -119,8 +119,7 @@ export function EventCard({ event }: { event: EventFeedItem }) {
 
               <div className="mt-2 w-full">
                 <CapacityBar
-                  eventId={event.id}
-                  initialCount={event._count.rsvps}
+                  count={event._count.rsvps}
                   totalCapacity={event.capacity}
                 />
               </div>

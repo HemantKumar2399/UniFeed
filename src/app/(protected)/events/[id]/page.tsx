@@ -132,8 +132,7 @@ export default async function EventDetailPage({ params }: PageProps) {
 
           <div className="mb-8 max-w-md">
             <CapacityBar
-              eventId={event.id}
-              initialCount={event._count.rsvps}
+              count={event._count.rsvps}
               totalCapacity={event.capacity}
             />
           </div>
