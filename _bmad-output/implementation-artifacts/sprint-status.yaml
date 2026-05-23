@@ -1,5 +1,5 @@
 # generated: 2026-05-23
-# last_updated: 2026-05-23
+# last_updated: 2026-05-24
 # project: Platform
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-23
-last_updated: 2026-05-23
+last_updated: 2026-05-24
 project: Platform
 project_key: NOKEY
 tracking_system: file-system
@@ -120,11 +120,11 @@ development_status:
   8-6-decommission-or-repurpose-event-specific-qr-tickets: done
   epic-8-retrospective: optional
 
-  epic-9: backlog
-  9-1-replace-fake-attendee-identity-fields: backlog
-  9-2-persist-manual-check-in: backlog
-  9-3-add-attendee-filters-and-search: backlog
-  9-4-improve-csv-export: backlog
+  epic-9: done
+  9-1-replace-fake-attendee-identity-fields: done
+  9-2-persist-manual-check-in: done
+  9-3-add-attendee-filters-and-search: done
+  9-4-improve-csv-export: done
   epic-9-retrospective: optional
 
   epic-10: backlog
