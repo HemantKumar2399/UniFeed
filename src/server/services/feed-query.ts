@@ -1,3 +1,4 @@
+import type { RSVPStatus } from "@prisma/client";
 import type { StudentRelevanceProfile, RelevanceRankedEvent } from "./feed-ranking";
 import { rankEventsByRelevance, rankEventsWithFollowBoost } from "./feed-ranking";
 
@@ -23,7 +24,13 @@ export function buildPublishedFeedQuery(collegeId?: string, userId?: string) {
       },
       _count: {
         select: {
-          rsvps: true,
+          rsvps: {
+            where: {
+              status: {
+                in: ["GOING", "ATTENDED"] as RSVPStatus[],
+              },
+            },
+          },
         },
       },
       rsvps: {

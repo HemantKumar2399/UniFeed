@@ -80,17 +80,6 @@ export const rsvpRouter = createTRPCRouter({
         });
       }
 
-      // Verify student profile exists and is verified
-      const profile = await ctx.db.studentProfile.findUnique({
-        where: { userId },
-      });
-      if (!profile?.isVerified) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "PROFILE_UNVERIFIED",
-        });
-      }
-
       try {
         const { rsvp, remainingCapacity } = await createRsvpPessimistic(userId, input.eventId);
         ee.emit("capacityChange", { eventId: input.eventId, newCapacity: remainingCapacity });

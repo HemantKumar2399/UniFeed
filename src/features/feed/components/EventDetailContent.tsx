@@ -132,13 +132,20 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
     },
     onError: (err) => {
       setRegisterState("ERROR");
-      if (err.data?.code === "PRECONDITION_FAILED" && err.message === "EVENT_FULL") {
-        toast.error("Event is full!");
-      } else if (err.data?.code === "CONFLICT" && err.message === "ALREADY_REGISTERED") {
-        toast.error("You are already registered.");
-      } else {
-        toast.error(err.message || "Failed to register. Please try again.");
-      }
+
+      const errorMessageMap: Record<string, string> = {
+        EVENT_FULL: "This event is full. You've been added to the waitlist.",
+        ALREADY_REGISTERED: "You're already registered for this event.",
+        EVENT_NOT_PUBLISHED: "This event is not accepting registrations yet.",
+        EVENT_CANCELLED: "This event has been cancelled.",
+        EVENT_PAST: "This event has already passed.",
+        COLLEGE_MISMATCH: "You can only register for events at your college.",
+        USER_NO_COLLEGE: "Your account is not linked to a college. Please contact support.",
+        PROFILE_UNVERIFIED: "Please complete your student profile before registering.",
+      };
+
+      const friendly = errorMessageMap[err.message];
+      toast.error(friendly ?? err.message ?? "Failed to register. Please try again.");
 
       setTimeout(() => setRegisterState("IDLE"), 3000);
     },
