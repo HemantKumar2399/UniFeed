@@ -9,92 +9,65 @@ export class CapacityError extends Error {
 }
 
 export async function createRsvpPessimistic(userId: string, eventId: number) {
-  // Use $transaction to ensure atomicity
-  return await db.$transaction(async (tx: Prisma.TransactionClient) => {
-    // Execute raw query for the lock using template tag directly
-    const events = await tx.$queryRaw<{ id: number; capacity: number }[]>`
-      SELECT id, capacity, "createdAt", "updatedAt"
-      FROM "Event"
-      WHERE id = ${eventId}
-      FOR UPDATE
-    `;
+  return await db.$transaction(
+    async (tx: Prisma.TransactionClient) => {
+      // Fetch event capacity — no raw FOR UPDATE lock needed; REPEATABLE READ
+      // isolation on the transaction prevents phantom reads at the count level.
+      const event = await tx.event.findUnique({
+        where: { id: eventId },
+        select: { id: true, capacity: true },
+      });
 
-    if (!events || events.length === 0) {
-      throw new Error("Event not found");
-    }
-
-    const event = events[0];
-    if (!event) {
-      throw new Error("Event not found");
-    }
-
-    // Check how many active (GOING or ATTENDED) RSVPs currently exist
-    const activeCount = await tx.rSVP.count({
-      where: {
-        eventId,
-        status: {
-          in: ["GOING", "ATTENDED"],
-        },
-      },
-    });
-
-    const existingRsvp = await tx.rSVP.findUnique({
-      where: {
-        userId_eventId: {
-          userId,
-          eventId,
-        },
-      },
-    });
-
-    if (existingRsvp && existingRsvp.status !== "CANCELLED") {
-      const p2002 = new Error("Unique constraint failed") as Error & { code?: string };
-      p2002.code = "P2002";
-      throw p2002;
-    }
-
-    if (existingRsvp) {
-      // Re-use cancelled RSVP
-      if (activeCount < event.capacity) {
-        const rsvp = await tx.rSVP.update({
-          where: { id: existingRsvp.id },
-          data: {
-            status: "GOING",
-            createdAt: new Date(),
-          },
-        });
-        return { rsvp, remainingCapacity: event.capacity - activeCount - 1 };
-      } else {
-        const rsvp = await tx.rSVP.update({
-          where: { id: existingRsvp.id },
-          data: {
-            status: "WAITLISTED",
-            createdAt: new Date(),
-          },
-        });
-        return { rsvp, remainingCapacity: 0 };
+      if (!event) {
+        throw new Error("Event not found");
       }
-    }
 
-    // Create new RSVP
-    if (activeCount < event.capacity) {
-      const rsvp = await tx.rSVP.create({
-        data: {
-          userId,
-          eventId,
-          status: "GOING",
+      // Check for an existing (possibly cancelled) RSVP
+      const existingRsvp = await tx.rSVP.findUnique({
+        where: {
+          userId_eventId: { userId, eventId },
         },
       });
-      return { rsvp, remainingCapacity: event.capacity - activeCount - 1 };
-    } else {
-      const rsvp = await tx.rSVP.create({
-        data: {
-          userId,
+
+      if (existingRsvp && existingRsvp.status !== "CANCELLED") {
+        // Already has an active RSVP — surface as a unique constraint error
+        // so the router can map it to ALREADY_REGISTERED.
+        const err = new Error("Unique constraint failed") as Error & { code?: string };
+        err.code = "P2002";
+        throw err;
+      }
+
+      // Count active RSVPs to determine seat availability
+      const activeCount = await tx.rSVP.count({
+        where: {
           eventId,
-          status: "WAITLISTED",
+          status: { in: ["GOING", "ATTENDED"] },
         },
       });
-      return { rsvp, remainingCapacity: 0 };
-    }
-  });
+
+      const hasSeat = activeCount < event.capacity;
+      const targetStatus = hasSeat ? "GOING" : "WAITLISTED";
+      const remainingCapacity = hasSeat ? event.capacity - activeCount - 1 : 0;
+
+      if (existingRsvp) {
+        // Re-activate a previously cancelled RSVP
+        const rsvp = await tx.rSVP.update({
+          where: { id: existingRsvp.id },
+          data: { status: targetStatus, createdAt: new Date() },
+        });
+        return { rsvp, remainingCapacity };
+      }
+
+      // Create a fresh RSVP
+      const rsvp = await tx.rSVP.create({
+        data: { userId, eventId, status: targetStatus },
+      });
+      return { rsvp, remainingCapacity };
+    },
+    {
+      // REPEATABLE READ prevents a concurrent transaction from inserting an RSVP
+      // between our count check and our create, without requiring explicit row locks.
+      isolationLevel: "RepeatableRead",
+    },
+  );
 }

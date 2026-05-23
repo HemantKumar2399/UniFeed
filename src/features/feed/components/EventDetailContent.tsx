@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { LongPressButton } from "@/components/ui/LongPressButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -115,7 +114,7 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
     return sortDiscussionThreads<DiscussionThread>(discussionThreads ?? []);
   }, [discussionThreads]);
 
-  const { mutate: registerRsvp } = api.rsvp.register.useMutation({
+  const { mutate: registerRsvp, isPending: isRegistering } = api.rsvp.register.useMutation({
     onMutate: () => {
       setRegisterState("LOCKING");
     },
@@ -246,22 +245,17 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                 </Button>
               )}
 
-              <LongPressButton
-                onComplete={() => handleRegister()}
+              <Button
+                type="button"
+                onClick={handleRegister}
                 disabled={
-                  registerState === "LOCKING" ||
+                  isRegistering ||
                   registerState === "SECURED" ||
                   registerState === "WAITLISTED"
                 }
-                className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-8 text-[15px] font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
+                className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-8 text-[15px] font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
               >
-                {registerState === "IDLE" || registerState === "ERROR" ? (
-                  event._count.rsvps >= event.capacity ? (
-                    "Join Waitlist"
-                  ) : (
-                    "Reserve Spot"
-                  )
-                ) : registerState === "LOCKING" ? (
+                {isRegistering ? (
                   <span className="flex items-center gap-2">
                     <svg
                       className="h-4 w-4 animate-spin"
@@ -283,14 +277,18 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Locking...
+                    Registering...
                   </span>
+                ) : registerState === "SECURED" ? (
+                  "Registered ✓"
                 ) : registerState === "WAITLISTED" ? (
                   "Waitlisted"
+                ) : event._count.rsvps >= event.capacity ? (
+                  "Join Waitlist"
                 ) : (
-                  "Secured"
+                  "Reserve Spot"
                 )}
-              </LongPressButton>
+              </Button>
             </footer>
           </>
         ) : (
