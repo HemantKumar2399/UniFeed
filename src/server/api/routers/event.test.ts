@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 process.env.SKIP_ENV_VALIDATION = "1";
 
 import assert from "node:assert/strict";
@@ -18,6 +19,13 @@ const validCreateInput = {
   location: "Innovation Lab",
   imageUrl: "https://example.com/poster.png",
   capacity: 180,
+  category: "Technical" as const,
+  tags: ["coding", "workshop"],
+  domain: "Engineering" as const,
+  isFreeFood: true,
+  hasCertificate: true,
+  isPaid: false,
+  targetBranches: ["Computer Science", "Information Technology"],
 };
 
 void test("eventRouter.create succeeds for a managed club", async () => {
@@ -39,6 +47,14 @@ void test("eventRouter.create succeeds for a managed club", async () => {
           createCalled = true;
           assert.equal(args.data.clubId, 10);
           assert.equal(args.data.collegeId, "college-1");
+          assert.equal(args.data.status, "DRAFT");
+          assert.equal(args.data.category, "Technical");
+          assert.deepEqual(args.data.tags, ["coding", "workshop"]);
+          assert.equal(args.data.domain, "Engineering");
+          assert.equal(args.data.isFreeFood, true);
+          assert.equal(args.data.hasCertificate, true);
+          assert.equal(args.data.isPaid, false);
+          assert.deepEqual(args.data.targetBranches, ["Computer Science", "Information Technology"]);
           return { id: 55, ...args.data };
         },
       },
@@ -359,7 +375,7 @@ void test("eventRouter.submitForReview moves a draft into submitted status and r
   assert.equal(result.status, "SUBMITTED");
 });
 
-void test("eventRouter.submitForReview rejects non-draft events", async () => {
+void test("eventRouter.submitForReview rejects non-editable events", async () => {
   const mockedCtx = {
     db: {
       event: {
@@ -403,10 +419,68 @@ void test("eventRouter.submitForReview rejects non-draft events", async () => {
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.equal(err.message, "Only draft events can be submitted for review.");
+      assert.equal(err.message, "Only draft or rejected events can be submitted for review.");
       return true;
     },
   );
+});
+
+void test("eventRouter.submitForReview allows rejected events to be resubmitted", async () => {
+  let updatedToSubmitted = false;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 92,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Rejected Event",
+          status: "REJECTED",
+        }),
+        update: async (args: any) => {
+          updatedToSubmitted = true;
+          assert.equal(args.where.id, 92);
+          assert.equal(args.data.status, "SUBMITTED");
+          return { id: 92, title: "Rejected Event", status: "SUBMITTED", submittedAt: args.data.submittedAt };
+        },
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      eventApprovalLog: {
+        create: async (args: any) => {
+          assert.equal(args.data.action, "SUBMITTED");
+          return { id: 8, ...args.data };
+        },
+      },
+      $transaction: async (ops: any[]) => Promise.all(ops),
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.submitForReview({ id: 92 });
+
+  assert.ok(updatedToSubmitted);
+  assert.equal(result.status, "SUBMITTED");
 });
 
 void test("eventRouter.publishApproved publishes an approved event", async () => {
@@ -505,6 +579,229 @@ void test("eventRouter.publishApproved rejects non-approved events", async () =>
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
       assert.equal(err.message, "Only approved events can be published.");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.update saves metadata changes for editable events", async () => {
+  let updatedEvent = false;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 205,
+          clubId: 10,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Draft Event",
+          status: "DRAFT",
+        }),
+        update: async (args: any) => {
+          updatedEvent = true;
+          assert.equal(args.where.id, 205);
+          assert.equal(args.data.category, "Technical");
+          assert.deepEqual(args.data.tags, ["coding", "workshop"]);
+          return { id: 205, title: args.data.title, status: "DRAFT", updatedAt: new Date("2030-05-10T00:00:00.000Z") };
+        },
+      },
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-1" }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.update({
+    id: 205,
+    data: validCreateInput,
+  });
+
+  assert.ok(updatedEvent);
+  assert.equal(result.status, "DRAFT");
+});
+
+void test("eventRouter.update rejects submitted events", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 206,
+          clubId: 10,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Locked Event",
+          status: "SUBMITTED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-1" }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.update({
+        id: 206,
+        data: validCreateInput,
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "BAD_REQUEST");
+      assert.equal(err.message, "Only draft or rejected events can be edited.");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.cancel marks a published event as cancelled and writes audit history", async () => {
+  let cancelled = false;
+  let loggedCancellation = false;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 301,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+        update: async (args: any) => {
+          cancelled = true;
+          assert.equal(args.where.id, 301);
+          assert.equal(args.data.status, "CANCELLED");
+          assert.equal(args.data.cancellationReason, "Venue maintenance requires cancellation.");
+          return {
+            id: 301,
+            title: "Published Event",
+            status: "CANCELLED",
+            cancelledAt: args.data.cancelledAt,
+            cancellationReason: args.data.cancellationReason,
+          };
+        },
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "EDITOR" }),
+      },
+      eventApprovalLog: {
+        create: async (args: any) => {
+          loggedCancellation = true;
+          assert.equal(args.data.action, "CANCELLED");
+          assert.equal(args.data.reason, "Venue maintenance requires cancellation.");
+          return { id: 15, ...args.data };
+        },
+      },
+      $transaction: async (ops: any[]) => Promise.all(ops),
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.cancel({
+    id: 301,
+    reason: "Venue maintenance requires cancellation.",
+  });
+
+  assert.ok(cancelled);
+  assert.ok(loggedCancellation);
+  assert.equal(result.status, "CANCELLED");
+});
+
+void test("eventRouter.forceCheckIn rejects cancelled events", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 88,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Cancelled Event",
+          status: "CANCELLED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.forceCheckIn({
+        eventId: 88,
+        userId: "student-1",
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "BAD_REQUEST");
+      assert.equal(err.message, "Cancelled events do not allow check-in.");
       return true;
     },
   );

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { BlockEditor } from "@/components/BlockEditor";
+import { EventEditor } from "@/features/events/components/EventEditor";
 import { auth } from "@/server/auth";
 
 export default async function NewEventPage() {
@@ -11,5 +11,5 @@ export default async function NewEventPage() {
     redirect("/unauthorized");
   }
 
-  return <BlockEditor />;
+  return <EventEditor mode="create" />;
 }

@@ -12,10 +12,10 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    UPLOAD_BUCKET_NAME: z.string().default("my-bucket"),
-    UPLOAD_REGION: z.string().default("us-east-1"),
-    UPLOAD_ACCESS_KEY_ID: z.string().default("test"),
-    UPLOAD_SECRET_ACCESS_KEY: z.string().default("test"),
+    UPLOAD_BUCKET_NAME: z.string().min(1).optional(),
+    UPLOAD_REGION: z.string().min(1).optional(),
+    UPLOAD_ACCESS_KEY_ID: z.string().min(1).optional(),
+    UPLOAD_SECRET_ACCESS_KEY: z.string().min(1).optional(),
     UPLOAD_PUBLIC_BASE_URL: z.string().url().optional(),
   },
   client: {

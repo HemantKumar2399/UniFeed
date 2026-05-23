@@ -33,11 +33,33 @@ export const rsvpRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
 
+      const event = await ctx.db.event.findUnique({
+        where: { id: input.eventId },
+        select: {
+          id: true,
+          status: true,
+        },
+      });
+
+      if (!event) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "EVENT_NOT_FOUND",
+        });
+      }
+
+      if (event.status === "CANCELLED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "EVENT_CANCELLED",
+        });
+      }
+
       // Verify student profile exists and is verified
       const profile = await ctx.db.studentProfile.findUnique({
         where: { userId },
       });
-      if (!profile || !profile.isVerified) {
+      if (!profile?.isVerified) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "PROFILE_UNVERIFIED",

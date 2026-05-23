@@ -1,7 +1,7 @@
-import type { ClubRole, EventApprovalAction } from "@prisma/client";
+import type { ClubRole, EventApprovalAction, EventStatus } from "@prisma/client";
 import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
 import { z } from "zod";
-import { CreateEventSchema } from "@/features/events/components/CreateEventSchema";
+import { CreateEventSchema, type CreateEventInput } from "@/features/events/components/CreateEventSchema";
 import { matchesAttendeeQuery, resolveAttendeePrn } from "@/features/attendance/checkin-search.utils";
 import { decodeTicketPayloadToken, getTicketPayloadSecret, verifyTicketPayloadToken } from "@/lib/ticket-payload";
 import { resolveDiscussionDisplayName } from "@/lib/discussion";
@@ -27,11 +27,25 @@ type OrganizerCtx = {
 };
 
 const manageableClubRoles: ClubRole[] = ["OWNER", "EDITOR"];
+const editableEventStatuses: EventStatus[] = ["DRAFT", "REJECTED"];
 
-async function assertOrganizerOwnsEvent(ctx: OrganizerCtx, eventId: number): Promise<void> {
-  await assertCanManageEvent(ctx, eventId, {
+function isEditableEventStatus(status: EventStatus): boolean {
+  return editableEventStatuses.includes(status);
+}
+
+async function assertCanCheckInToEvent(ctx: OrganizerCtx, eventId: number) {
+  const { event } = await assertCanManageEvent(ctx, eventId, {
     forbiddenMessage: "Unauthorized for this event",
   });
+
+  if (event.status === "CANCELLED") {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Cancelled events do not allow check-in.",
+    });
+  }
+
+  return event;
 }
 
 async function markAttendedRsvp(
@@ -84,6 +98,53 @@ function createApprovalLog(
   });
 }
 
+function buildEventCreateData(
+  input: CreateEventInput,
+  params: { authorId: string; collegeId: string },
+) {
+  return {
+    title: input.title,
+    description: input.description,
+    date: input.date,
+    location: input.location,
+    imageUrl: input.imageUrl,
+    capacity: input.capacity,
+    clubId: input.clubId,
+    collegeId: params.collegeId,
+    category: input.category,
+    tags: input.tags,
+    domain: input.domain,
+    isFreeFood: input.isFreeFood,
+    hasCertificate: input.hasCertificate,
+    isPaid: input.isPaid,
+    targetBranches: input.targetBranches,
+    authorId: params.authorId,
+  };
+}
+
+function buildEventUpdateData(
+  input: CreateEventInput,
+  params: { collegeId: string },
+) {
+  return {
+    title: input.title,
+    description: input.description,
+    date: input.date,
+    location: input.location,
+    imageUrl: input.imageUrl,
+    capacity: input.capacity,
+    clubId: input.clubId,
+    collegeId: params.collegeId,
+    category: input.category,
+    tags: input.tags,
+    domain: input.domain,
+    isFreeFood: input.isFreeFood,
+    hasCertificate: input.hasCertificate,
+    isPaid: input.isPaid,
+    targetBranches: input.targetBranches,
+  };
+}
+
 export const eventRouter = createTRPCRouter({
   delete: protectedOrganizerProcedure
     .input(z.object({ id: z.number().int() }))
@@ -102,8 +163,62 @@ export const eventRouter = createTRPCRouter({
       return ctx.db.event.delete({ where: { id: input.id } });
     }),
 
-  updateStatus: protectedOrganizerProcedure
-    .input(z.object({ id: z.number().int(), status: z.literal("CANCELLED") }))
+  update: protectedOrganizerProcedure
+    .input(
+      z.object({
+        id: z.number().int().positive(),
+        data: CreateEventSchema,
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { event } = await assertCanManageEvent(ctx, input.id, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
+
+      if (!isEditableEventStatus(event.status)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only draft or rejected events can be edited.",
+        });
+      }
+
+      if (!input.data.imageUrl.trim()) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Add a real event image URL before saving this event.",
+        });
+      }
+
+      const { club } = await assertCanManageClubForCreation(ctx, input.data.clubId);
+
+      if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User session is not associated with the selected club's college.",
+        });
+      }
+
+      return ctx.db.event.update({
+        where: { id: input.id },
+        data: buildEventUpdateData(input.data, {
+          collegeId: club.collegeId,
+        }),
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          updatedAt: true,
+        },
+      });
+    }),
+
+  cancel: protectedOrganizerProcedure
+    .input(
+      z.object({
+        id: z.number().int().positive(),
+        reason: z.string().trim().min(10, "Cancellation reason must be at least 10 characters.").max(500),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { event } = await assertCanManageEvent(ctx, input.id, {
         forbiddenMessage: "Unauthorized for this event",
@@ -115,11 +230,32 @@ export const eventRouter = createTRPCRouter({
           message: "Only published events can be cancelled.",
         });
       }
-      
-      return ctx.db.event.update({
-        where: { id: input.id },
-        data: { status: input.status },
-      });
+
+      const cancelledAt = new Date();
+      const [updatedEvent] = await ctx.db.$transaction([
+        ctx.db.event.update({
+          where: { id: input.id },
+          data: {
+            status: "CANCELLED",
+            cancelledAt,
+            cancellationReason: input.reason,
+          },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            cancelledAt: true,
+            cancellationReason: true,
+          },
+        }),
+        createApprovalLog(ctx, {
+          eventId: input.id,
+          action: "CANCELLED",
+          reason: input.reason,
+        }),
+      ]);
+
+      return updatedEvent;
     }),
 
   create: protectedOrganizerProcedure
@@ -143,15 +279,14 @@ export const eventRouter = createTRPCRouter({
 
       return ctx.db.event.create({
         data: {
-          title: input.title,
-          description: input.description,
-          date: input.date,
-          location: input.location,
-          imageUrl: input.imageUrl,
-          capacity: input.capacity,
-          clubId: input.clubId,
-          authorId: ctx.session.user.id,
-          collegeId: club.collegeId,
+          ...buildEventCreateData(input, {
+            authorId: ctx.session.user.id,
+            collegeId: club.collegeId,
+          }),
+          status: "DRAFT",
+          submittedAt: null,
+          cancelledAt: null,
+          cancellationReason: null,
         },
       });
     }),
@@ -163,10 +298,10 @@ export const eventRouter = createTRPCRouter({
         forbiddenMessage: "Unauthorized for this event",
       });
 
-      if (event.status !== "DRAFT") {
+      if (!isEditableEventStatus(event.status)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Only draft events can be submitted for review.",
+          message: "Only draft or rejected events can be submitted for review.",
         });
       }
 
@@ -511,7 +646,7 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await assertOrganizerOwnsEvent(ctx, input.eventId);
+      await assertCanCheckInToEvent(ctx, input.eventId);
 
       let payloadSecret: string;
       try {
@@ -563,7 +698,7 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      await assertOrganizerOwnsEvent(ctx, input.eventId);
+      await assertCanCheckInToEvent(ctx, input.eventId);
 
       const attendees = await ctx.db.rSVP.findMany({
         where: { eventId: input.eventId },
@@ -605,7 +740,7 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await assertOrganizerOwnsEvent(ctx, input.eventId);
+      await assertCanCheckInToEvent(ctx, input.eventId);
 
       const rsvp = await ctx.db.rSVP.findFirst({
         where: {

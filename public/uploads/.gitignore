@@ -1,0 +1,6 @@
+# Local dev uploaded images — do not commit real images
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.gif

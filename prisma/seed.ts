@@ -337,7 +337,7 @@ async function main() {
     },
   });
 
-  const spuCollege = await prisma.college.create({
+  await prisma.college.create({
     data: {
       name: "Sankalchand Patel University",
       slug: "spu",

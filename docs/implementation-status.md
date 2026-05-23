@@ -15,10 +15,10 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Passport | `/passport` | `partial` | Uses real RSVP-backed ticket data, but still relies on the old event-ticket QR model. |
 | Profile | `/profile` | `partial` | Shows real session identity, but actions and saved/preference flows are not wired. |
 | Organizer overview | `/dashboard` | `placeholder` | Demo KPI cards were removed in Epic 0; real organizer analytics are deferred. |
-| Organizer events list | `/dashboard/events` | `placeholder` | Demo event cards were removed in Epic 0; real list lands in Epic 5. |
+| Organizer events list | `/dashboard/events` | `real` | URL-driven tabs, filters, and real lifecycle actions now use managed-club event data. |
 | Organizer metrics | `/dashboard/metrics` | `placeholder` | Demo metrics were removed in Epic 0; real reporting lands in Epic 11. |
-| Event creation | `/dashboard/events/new` | `partial` | Wizard exists and can create events only for an organizer's existing club membership with a real image URL. |
-| Event edit | `/dashboard/events/[id]/edit` | `placeholder` | Explicit "coming soon" page. |
+| Event creation | `/dashboard/events/new` | `real` | Shared event editor supports full metadata, draft saving, submission, and upload/manual image flows. |
+| Event edit | `/dashboard/events/[id]/edit` | `real` | Shared event editor now loads existing events with status-aware locking and actions. |
 | Event attendees | `/dashboard/events/[id]` | `partial` | Real attendee list and CSV export exist, but student profile fields are not in the schema yet. |
 | Event scanner | `/dashboard/events/[id]/scan` | `partial` | Scanner and manual fallback exist, but they still use the legacy event-ticket QR model. |
 | Hub public pages | `/hubs/[clubId]` | `partial` | Club pages and follow logic exist, but later epics add college scoping and moderation controls. |
@@ -32,7 +32,7 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Unit test suite | `real` | Existing `node:test` files now run through `tsx` via `npm run test:unit`. |
 | Playwright setup | `partial` | Runner config is valid and test discovery works, but only example smoke coverage exists. |
 | CI workflow | `real` | Epic 0 enables lint, typecheck, build, and unit-test steps with local-safe env defaults. |
-| Upload pipeline | `partial` | Presigned URL generation exists, but local/mock fallback behavior was removed and real storage config is still required for uploads. |
+| Upload pipeline | `partial` | Presigned upload generation is real and failure states are explicit, but deployment-specific storage env values are still required for direct uploads. |
 | Organizer event authorization | `partial` | Still author-based; club-membership-based ownership is a later epic. |
 | Attendee identity data | `placeholder` | PRN/branch are intentionally not fabricated anymore; real student profile fields arrive in Epic 1. |
 

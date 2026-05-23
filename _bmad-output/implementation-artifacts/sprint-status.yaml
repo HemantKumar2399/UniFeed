@@ -87,14 +87,14 @@ development_status:
   4-7-notify-organizer-about-approval-decision: done
   epic-4-retrospective: optional
 
-  epic-5: backlog
-  5-1-update-event-creation-backend: backlog
-  5-2-improve-event-creation-wizard: backlog
-  5-3-build-real-organizer-event-list: backlog
-  5-4-build-event-editing-backend: backlog
-  5-5-build-event-editing-ui: backlog
-  5-6-add-event-cancellation-flow: backlog
-  5-7-complete-image-upload-pipeline: backlog
+  epic-5: done
+  5-1-update-event-creation-backend: done
+  5-2-improve-event-creation-wizard: done
+  5-3-build-real-organizer-event-list: done
+  5-4-build-event-editing-backend: done
+  5-5-build-event-editing-ui: done
+  5-6-add-event-cancellation-flow: done
+  5-7-complete-image-upload-pipeline: done
   epic-5-retrospective: optional
 
   epic-6: backlog

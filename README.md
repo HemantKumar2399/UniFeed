@@ -110,8 +110,14 @@ Optional deployment values:
 
 ```env
 NEXT_PUBLIC_APP_URL=""
+UPLOAD_BUCKET_NAME=""
+UPLOAD_REGION=""
+UPLOAD_ACCESS_KEY_ID=""
+UPLOAD_SECRET_ACCESS_KEY=""
 UPLOAD_PUBLIC_BASE_URL=""
 ```
+
+When the upload variables are not configured, organizer image uploads will return a clear configuration error and the event editor will fall back to manual hosted-image URLs.
 
 ### Seed Credentials
 
