@@ -1,3 +1,4 @@
+import { discoveryRouter } from "@/server/api/routers/discovery";
 import { eventRouter } from "@/server/api/routers/event";
 import { clubRouter } from "@/server/api/routers/club";
 import { hubRouter } from "@/server/api/routers/hub";
@@ -16,6 +17,7 @@ import { adminRouter } from "@/server/api/routers/admin";
  */
 export const appRouter = createTRPCRouter({
   club: clubRouter,
+  discovery: discoveryRouter,
   event: eventRouter,
   hub: hubRouter,
   post: postRouter,

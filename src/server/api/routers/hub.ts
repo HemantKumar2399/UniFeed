@@ -14,6 +14,10 @@ const hubBlockInputSchema = z.object({
 
 export const hubRouter = createTRPCRouter({
   getDirectory: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.session.user.collegeId) {
+      return [];
+    }
+
     const followedRows = await ctx.db.hubFollow.findMany({
       where: { userId: ctx.session.user.id },
       select: { clubId: true },
@@ -22,6 +26,9 @@ export const hubRouter = createTRPCRouter({
     const followedClubIds = new Set(followedRows.map((row) => row.clubId));
 
     const clubs = await ctx.db.club.findMany({
+      where: {
+        collegeId: ctx.session.user.collegeId,
+      },
       orderBy: { name: "asc" },
       take: 24,
       include: {

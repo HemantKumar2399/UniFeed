@@ -473,21 +473,6 @@ export const eventRouter = createTRPCRouter({
       });
     }),
 
-  search: protectedProcedure
-    .input(z.object({ query: z.string().min(1).max(100) }))
-    .query(async ({ ctx, input }) => {
-      return ctx.db.event.findMany({
-        where: {
-          status: "PUBLISHED",
-          OR: [
-            { title: { contains: input.query, mode: "insensitive" } },
-            { description: { contains: input.query, mode: "insensitive" } },
-          ],
-        },
-        take: 5,
-        orderBy: { date: "asc" },
-      });
-    }),
   getOrganizerDrafts: protectedOrganizerProcedure.query(async ({ ctx }) => {    
     const where =
       isAdminUserRole(ctx.session.user.role) && ctx.session.user.collegeId

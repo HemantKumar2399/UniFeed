@@ -127,11 +127,11 @@ development_status:
   9-4-improve-csv-export: done
   epic-9-retrospective: optional
 
-  epic-10: backlog
-  10-1-build-functional-search-page: backlog
-  10-2-expand-backend-search: backlog
-  10-3-build-functional-discover-page: backlog
-  10-4-decide-campus-map-scope: backlog
+  epic-10: done
+  10-1-build-functional-search-page: done
+  10-2-expand-backend-search: done
+  10-3-build-functional-discover-page: done
+  10-4-decide-campus-map-scope: done
   epic-10-retrospective: optional
 
   epic-11: backlog
