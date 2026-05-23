@@ -1,4 +1,3 @@
-import type { RSVPStatus } from "@prisma/client";
 import { getHappeningThisWeekWindow, isInHappeningThisWeekWindow } from "./happening-this-week";
 
 export const HAPPENING_THIS_WEEK_LIMIT = 12;
@@ -29,7 +28,7 @@ export function buildHappeningThisWeekQuery(referenceDate: Date = new Date()) {
           rsvps: {
             where: {
               status: {
-                in: ["GOING", "ATTENDED"] as RSVPStatus[],
+                in: ["GOING", "ATTENDED"] as ("GOING" | "ATTENDED")[],
               },
             },
           },
