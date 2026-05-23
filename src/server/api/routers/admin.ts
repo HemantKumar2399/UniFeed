@@ -1,6 +1,86 @@
-import { z } from "zod";
-import { createTRPCRouter, adminProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { createTRPCRouter, adminProcedure, collegeAdminProcedure } from "@/server/api/trpc";
+import type { db as prismaDb } from "@/server/db";
+
+type AdminReviewCtx = {
+  db: typeof prismaDb;
+  session: {
+    user: {
+      id: string;
+      role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+      collegeId?: string | null;
+    };
+  };
+};
+
+function assertCollegeScope(
+  sessionUser: { role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN"; collegeId?: string | null },
+  targetCollegeId: string,
+  message: string,
+) {
+  if (sessionUser.role === "SUPER_ADMIN") {
+    return;
+  }
+
+  if (!sessionUser.collegeId || sessionUser.collegeId !== targetCollegeId) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message,
+    });
+  }
+}
+
+async function getScopedReviewEvent(
+  ctx: AdminReviewCtx,
+  eventId: number,
+) {
+  const event = await ctx.db.event.findUnique({
+    where: { id: eventId },
+    include: {
+      club: {
+        select: {
+          id: true,
+          name: true,
+          logoUrl: true,
+          collegeId: true,
+        },
+      },
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      approvalLogs: {
+        orderBy: { createdAt: "desc" },
+        include: {
+          actor: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!event) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Event not found.",
+    });
+  }
+
+  assertCollegeScope(ctx.session.user, event.collegeId, "Cannot review events outside your college.");
+
+  return event;
+}
 
 export const adminRouter = createTRPCRouter({
   promoteUser: adminProcedure
@@ -8,14 +88,13 @@ export const adminRouter = createTRPCRouter({
       z.object({
         userId: z.string(),
         role: z.enum(["STUDENT", "ORGANIZER", "ADMIN", "SUPER_ADMIN"]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const callerId = ctx.session.user.id;
       const callerRole = ctx.session.user.role;
       const callerCollegeId = ctx.session.user.collegeId;
 
-      // Prevent self modification
       if (input.userId === callerId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -23,7 +102,6 @@ export const adminRouter = createTRPCRouter({
         });
       }
 
-      // Fetch target user
       const userToPromote = await ctx.db.user.findUnique({
         where: { id: input.userId },
       });
@@ -35,7 +113,6 @@ export const adminRouter = createTRPCRouter({
         });
       }
 
-      // Enforce college-scope boundaries for standard ADMIN
       if (callerRole === "ADMIN") {
         if (userToPromote.collegeId !== callerCollegeId) {
           throw new TRPCError({
@@ -51,7 +128,6 @@ export const adminRouter = createTRPCRouter({
         }
       }
 
-      // Perform promotion
       return ctx.db.user.update({
         where: { id: input.userId },
         data: { role: input.role },
@@ -64,13 +140,12 @@ export const adminRouter = createTRPCRouter({
         userId: z.string(),
         clubId: z.number().int().positive(),
         role: z.enum(["OWNER", "EDITOR"]),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const callerRole = ctx.session.user.role;
       const callerCollegeId = ctx.session.user.collegeId;
 
-      // Fetch the target club
       const club = await ctx.db.club.findUnique({
         where: { id: input.clubId },
       });
@@ -82,7 +157,6 @@ export const adminRouter = createTRPCRouter({
         });
       }
 
-      // Fetch the target user
       const targetUser = await ctx.db.user.findUnique({
         where: { id: input.userId },
       });
@@ -94,7 +168,6 @@ export const adminRouter = createTRPCRouter({
         });
       }
 
-      // Enforce college-scope boundaries for standard ADMIN
       if (callerRole === "ADMIN") {
         if (club.collegeId !== callerCollegeId) {
           throw new TRPCError({
@@ -110,7 +183,6 @@ export const adminRouter = createTRPCRouter({
         }
       }
 
-      // Target user must not be a basic student (they must have organizer permissions to manage clubs)
       if (targetUser.role === "STUDENT") {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -118,7 +190,6 @@ export const adminRouter = createTRPCRouter({
         });
       }
 
-      // Upsert membership
       return ctx.db.clubMembership.upsert({
         where: {
           userId_clubId: {
@@ -135,5 +206,174 @@ export const adminRouter = createTRPCRouter({
           role: input.role,
         },
       });
+    }),
+
+  getCollegeCommunities: collegeAdminProcedure.query(async ({ ctx }) => {
+    return ctx.db.club.findMany({
+      where: { collegeId: ctx.collegeId },
+      orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            events: true,
+          },
+        },
+      },
+    });
+  }),
+
+  getPendingEvents: collegeAdminProcedure
+    .input(
+      z
+        .object({
+          query: z.string().trim().max(100).optional(),
+          clubId: z.number().int().positive().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      const query = input?.query;
+      const clubId = input?.clubId;
+
+      return ctx.db.event.findMany({
+        where: {
+          collegeId: ctx.collegeId,
+          status: "SUBMITTED",
+          ...(clubId ? { clubId } : {}),
+          ...(query
+            ? {
+                OR: [
+                  { title: { contains: query, mode: "insensitive" } },
+                  { description: { contains: query, mode: "insensitive" } },
+                  { author: { name: { contains: query, mode: "insensitive" } } },
+                  { author: { email: { contains: query, mode: "insensitive" } } },
+                ],
+              }
+            : {}),
+        },
+        orderBy: [{ submittedAt: "asc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          date: true,
+          capacity: true,
+          location: true,
+          submittedAt: true,
+          createdAt: true,
+          club: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    }),
+
+  getEventReviewDetail: adminProcedure
+    .input(z.object({ eventId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      const event = await getScopedReviewEvent(ctx, input.eventId);
+
+      return {
+        ...event,
+        approvalLogs: event.approvalLogs,
+      };
+    }),
+
+  getApprovalHistory: adminProcedure
+    .input(z.object({ eventId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      const event = await getScopedReviewEvent(ctx, input.eventId);
+
+      return event.approvalLogs;
+    }),
+
+  approveEvent: adminProcedure
+    .input(z.object({ eventId: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      const event = await getScopedReviewEvent(ctx, input.eventId);
+
+      if (event.status !== "SUBMITTED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only submitted events can be approved.",
+        });
+      }
+
+      const [updatedEvent] = await ctx.db.$transaction([
+        ctx.db.event.update({
+          where: { id: event.id },
+          data: { status: "APPROVED" },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            clubId: true,
+            collegeId: true,
+          },
+        }),
+        ctx.db.eventApprovalLog.create({
+          data: {
+            eventId: event.id,
+            actorId: ctx.session.user.id,
+            action: "APPROVED",
+          },
+        }),
+      ]);
+
+      return updatedEvent;
+    }),
+
+  rejectEvent: adminProcedure
+    .input(
+      z.object({
+        eventId: z.number().int().positive(),
+        reason: z.string().trim().min(10, "Rejection reason must be at least 10 characters.").max(500),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const event = await getScopedReviewEvent(ctx, input.eventId);
+
+      if (event.status !== "SUBMITTED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only submitted events can be rejected.",
+        });
+      }
+
+      const [updatedEvent] = await ctx.db.$transaction([
+        ctx.db.event.update({
+          where: { id: event.id },
+          data: { status: "REJECTED" },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            clubId: true,
+            collegeId: true,
+          },
+        }),
+        ctx.db.eventApprovalLog.create({
+          data: {
+            eventId: event.id,
+            actorId: ctx.session.user.id,
+            action: "REJECTED",
+            reason: input.reason,
+          },
+        }),
+      ]);
+
+      return updatedEvent;
     }),
 });

@@ -315,6 +315,7 @@ async function main() {
 
   // Clean existing records in correct order to avoid FK constraints
   await prisma.rSVP.deleteMany();
+  await prisma.eventApprovalLog.deleteMany();
   await prisma.hubFollow.deleteMany();
   await prisma.hubBlock.deleteMany();
   await prisma.clubMembership.deleteMany();

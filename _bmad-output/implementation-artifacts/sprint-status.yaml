@@ -77,14 +77,14 @@ development_status:
   3-5-add-basic-community-management: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-create-admin-route-group-and-shell: backlog
-  4-2-add-admin-trpc-router: backlog
-  4-3-add-event-submission-flow-for-organizers: backlog
-  4-4-build-pending-approval-queue: backlog
-  4-5-build-event-review-detail-page: backlog
-  4-6-add-approval-audit-log: backlog
-  4-7-notify-organizer-about-approval-decision: backlog
+  epic-4: done
+  4-1-create-admin-route-group-and-shell: done
+  4-2-add-admin-trpc-router: done
+  4-3-add-event-submission-flow-for-organizers: done
+  4-4-build-pending-approval-queue: done
+  4-5-build-event-review-detail-page: done
+  4-6-add-approval-audit-log: done
+  4-7-notify-organizer-about-approval-decision: done
   epic-4-retrospective: optional
 
   epic-5: backlog

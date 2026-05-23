@@ -1,6 +1,7 @@
-import { type ReactNode } from "react";
+"use client";
 
-import { signOut } from "@/server/auth";
+import { type ReactNode, useTransition } from "react";
+import { signOut } from "next-auth/react";
 
 type SignOutFormProps = {
   children: ReactNode;
@@ -13,17 +14,22 @@ export function SignOutForm({
   className,
   redirectTo = "/login",
 }: SignOutFormProps) {
-  async function signOutAction() {
-    "use server";
+  const [isPending, startTransition] = useTransition();
 
-    await signOut({ redirectTo });
+  function handleSignOut() {
+    startTransition(() => {
+      void signOut({ redirectTo });
+    });
   }
 
   return (
-    <form action={signOutAction}>
-      <button type="submit" className={className}>
-        {children}
-      </button>
-    </form>
+    <button
+      type="button"
+      className={className}
+      disabled={isPending}
+      onClick={handleSignOut}
+    >
+      {children}
+    </button>
   );
 }

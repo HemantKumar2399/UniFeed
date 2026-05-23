@@ -174,3 +174,164 @@ void test("adminRouter.assignClubMembership fails when target user is a basic st
     }
   );
 });
+
+void test("adminRouter.getPendingEvents stays college-scoped and only requests submitted events", async () => {
+  let whereArg: Record<string, unknown> | null = null;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findMany: async (args: any) => {
+          whereArg = args.where;
+          return [
+            {
+              id: 77,
+              title: "Submitted Event",
+              status: "SUBMITTED",
+              date: new Date("2030-05-15T18:00:00.000Z"),
+              capacity: 120,
+              location: "Auditorium",
+              submittedAt: new Date("2030-05-10T12:00:00.000Z"),
+              createdAt: new Date("2030-05-09T12:00:00.000Z"),
+              club: { id: 10, name: "Coding Club" },
+              author: { id: "organizer-user-id", name: "Organizer", email: "organizer@example.com" },
+            },
+          ];
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.admin.getPendingEvents({ query: "Submitted" });
+
+  assert.equal(result.length, 1);
+  assert.deepEqual(whereArg, {
+    collegeId: "college-1",
+    status: "SUBMITTED",
+    OR: [
+      { title: { contains: "Submitted", mode: "insensitive" } },
+      { description: { contains: "Submitted", mode: "insensitive" } },
+      { author: { name: { contains: "Submitted", mode: "insensitive" } } },
+      { author: { email: { contains: "Submitted", mode: "insensitive" } } },
+    ],
+  });
+});
+
+void test("adminRouter.approveEvent approves submitted events in the same college and records audit history", async () => {
+  let updated = false;
+  let approvalLogged = false;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 88,
+          title: "Submitted Event",
+          description: "Pending review.",
+          status: "SUBMITTED",
+          submittedAt: new Date("2030-05-10T12:00:00.000Z"),
+          date: new Date("2030-05-15T18:00:00.000Z"),
+          capacity: 120,
+          location: "Auditorium",
+          imageUrl: "https://example.com/poster.png",
+          clubId: 10,
+          collegeId: "college-1",
+          createdAt: new Date("2030-05-09T12:00:00.000Z"),
+          club: { id: 10, name: "Coding Club", logoUrl: "https://example.com/logo.png", collegeId: "college-1" },
+          author: { id: "organizer-user-id", name: "Organizer", email: "organizer@example.com" },
+          approvalLogs: [],
+        }),
+        update: async (args: any) => {
+          updated = true;
+          assert.equal(args.where.id, 88);
+          assert.equal(args.data.status, "APPROVED");
+          return { id: 88, title: "Submitted Event", status: "APPROVED", clubId: 10, collegeId: "college-1" };
+        },
+      },
+      eventApprovalLog: {
+        create: async (args: any) => {
+          approvalLogged = true;
+          assert.equal(args.data.eventId, 88);
+          assert.equal(args.data.actorId, "admin-user-id");
+          assert.equal(args.data.action, "APPROVED");
+          return { id: 1, ...args.data };
+        },
+      },
+      $transaction: async (ops: any[]) => Promise.all(ops),
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.admin.approveEvent({ eventId: 88 });
+
+  assert.ok(updated);
+  assert.ok(approvalLogged);
+  assert.equal(result.status, "APPROVED");
+});
+
+void test("adminRouter.rejectEvent blocks cross-college review attempts", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 89,
+          title: "Other College Event",
+          description: "Pending review.",
+          status: "SUBMITTED",
+          submittedAt: new Date("2030-05-10T12:00:00.000Z"),
+          date: new Date("2030-05-15T18:00:00.000Z"),
+          capacity: 120,
+          location: "Auditorium",
+          imageUrl: "https://example.com/poster.png",
+          clubId: 20,
+          collegeId: "college-2",
+          createdAt: new Date("2030-05-09T12:00:00.000Z"),
+          club: { id: 20, name: "Other Club", logoUrl: "https://example.com/logo.png", collegeId: "college-2" },
+          author: { id: "organizer-user-id", name: "Organizer", email: "organizer@example.com" },
+          approvalLogs: [],
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.rejectEvent({ eventId: 89, reason: "This event is not in the correct college scope." });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Cannot review events outside your college.");
+      return true;
+    },
+  );
+});

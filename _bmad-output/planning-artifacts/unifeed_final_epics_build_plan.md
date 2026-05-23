@@ -446,6 +446,8 @@ Event manage checks mostly compare `authorId` with current user.
 
 # Epic 4: College Admin Approval System
 
+Status: Completed on 2026-05-23.
+
 ## Goal
 Implement the new requirement: college-specific admins approve community-created events.
 

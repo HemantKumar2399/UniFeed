@@ -45,6 +45,7 @@ model Event {
   title       String
   description String
   status      EventStatus @default(DRAFT)
+  submittedAt DateTime?
   date        DateTime
   capacity    Int
   location    String
@@ -57,6 +58,7 @@ model Event {
   club        Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   rsvps       RSVP[]
   discussionThreads EventDiscussionThread[]
+  approvalLogs EventApprovalLog[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -71,6 +73,7 @@ model Event {
 
   @@index([date])
   @@index([clubId])
+  @@index([collegeId, status, submittedAt])
 }
 
 // Necessary for Next auth
@@ -121,6 +124,22 @@ model User {
   authoredDiscussionReplies EventDiscussionReply[]
   followedHubs   HubFollow[]
   clubMemberships ClubMembership[]
+  eventApprovalLogs EventApprovalLog[]
+}
+
+model EventApprovalLog {
+  id        Int                 @id @default(autoincrement())
+  eventId    Int
+  actorId    String
+  action     EventApprovalAction
+  reason     String?
+  createdAt  DateTime            @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, createdAt])
+  @@index([actorId])
 }
 
 model EventDiscussionThread {
@@ -293,4 +312,10 @@ enum HubBlockType {
   TEXT
   RESOURCE
   FAQ
+}
+
+enum EventApprovalAction {
+  SUBMITTED
+  APPROVED
+  REJECTED
 }

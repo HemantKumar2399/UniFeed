@@ -34,12 +34,30 @@ export default auth((req) => {
 
   const isDashboard = path.startsWith("/dashboard");
   const isAdmin = path.startsWith("/admin");
+  const isStudentArea =
+    path.startsWith("/home") ||
+    path.startsWith("/discover") ||
+    path.startsWith("/passport") ||
+    path.startsWith("/profile") ||
+    path.startsWith("/search") ||
+    path.startsWith("/global") ||
+    path.startsWith("/tickets");
 
-  if (isDashboard || isAdmin) {
+  if (isDashboard || isAdmin || isStudentArea) {
     if (!user) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("callbackUrl", path);
       return NextResponse.redirect(loginUrl);
+    }
+
+    if (isStudentArea) {
+      if (role === "ADMIN" || role === "SUPER_ADMIN") {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
+
+      if (role === "ORGANIZER") {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
     }
 
     if (isDashboard) {
@@ -59,5 +77,24 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/dashboard", "/dashboard/:path*", "/admin", "/admin/:path*"],
+  matcher: [
+    "/dashboard",
+    "/dashboard/:path*",
+    "/admin",
+    "/admin/:path*",
+    "/home",
+    "/home/:path*",
+    "/discover",
+    "/discover/:path*",
+    "/passport",
+    "/passport/:path*",
+    "/profile",
+    "/profile/:path*",
+    "/search",
+    "/search/:path*",
+    "/global",
+    "/global/:path*",
+    "/tickets",
+    "/tickets/:path*",
+  ],
 };

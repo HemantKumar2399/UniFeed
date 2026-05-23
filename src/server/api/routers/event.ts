@@ -1,4 +1,4 @@
-import type { ClubRole } from "@prisma/client";
+import type { ClubRole, EventApprovalAction } from "@prisma/client";
 import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { CreateEventSchema } from "@/features/events/components/CreateEventSchema";
@@ -20,6 +20,8 @@ type OrganizerCtx = {
   session: {
     user: {
       id: string;
+      role?: "ORGANIZER" | "ADMIN" | "SUPER_ADMIN" | "STUDENT";
+      collegeId?: string | null;
     };
   };
 };
@@ -68,23 +70,51 @@ async function markAttendedRsvp(
   });
 }
 
+function createApprovalLog(
+  ctx: OrganizerCtx,
+  params: { eventId: number; action: EventApprovalAction; reason?: string },
+) {
+  return ctx.db.eventApprovalLog.create({
+    data: {
+      eventId: params.eventId,
+      actorId: ctx.session.user.id,
+      action: params.action,
+      reason: params.reason,
+    },
+  });
+}
+
 export const eventRouter = createTRPCRouter({
   delete: protectedOrganizerProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ ctx, input }) => {
-      await assertCanManageEvent(ctx, input.id, {
+      const { event } = await assertCanManageEvent(ctx, input.id, {
         forbiddenMessage: "Unauthorized for this event",
       });
+
+      if (event.status !== "DRAFT" && event.status !== "REJECTED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only draft or rejected events can be deleted.",
+        });
+      }
       
       return ctx.db.event.delete({ where: { id: input.id } });
     }),
 
   updateStatus: protectedOrganizerProcedure
-    .input(z.object({ id: z.number().int(), status: z.enum(["DRAFT", "SUBMITTED", "APPROVED", "PUBLISHED", "REJECTED", "CANCELLED"]) }))
+    .input(z.object({ id: z.number().int(), status: z.literal("CANCELLED") }))
     .mutation(async ({ ctx, input }) => {
-      await assertCanManageEvent(ctx, input.id, {
+      const { event } = await assertCanManageEvent(ctx, input.id, {
         forbiddenMessage: "Unauthorized for this event",
       });
+
+      if (event.status !== "PUBLISHED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only published events can be cancelled.",
+        });
+      }
       
       return ctx.db.event.update({
         where: { id: input.id },
@@ -126,6 +156,71 @@ export const eventRouter = createTRPCRouter({
       });
     }),
 
+  submitForReview: protectedOrganizerProcedure
+    .input(z.object({ id: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      const { event } = await assertCanManageEvent(ctx, input.id, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
+
+      if (event.status !== "DRAFT") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only draft events can be submitted for review.",
+        });
+      }
+
+      const submittedAt = new Date();
+      const [updatedEvent] = await ctx.db.$transaction([
+        ctx.db.event.update({
+          where: { id: event.id },
+          data: {
+            status: "SUBMITTED",
+            submittedAt,
+          },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            submittedAt: true,
+          },
+        }),
+        createApprovalLog(ctx, {
+          eventId: event.id,
+          action: "SUBMITTED",
+        }),
+      ]);
+
+      return updatedEvent;
+    }),
+
+  publishApproved: protectedOrganizerProcedure
+    .input(z.object({ id: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      const { event } = await assertCanManageEvent(ctx, input.id, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
+
+      if (event.status !== "APPROVED") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only approved events can be published.",
+        });
+      }
+
+      return ctx.db.event.update({
+        where: { id: event.id },
+        data: {
+          status: "PUBLISHED",
+        },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+        },
+      });
+    }),
+
   search: protectedProcedure
     .input(z.object({ query: z.string().min(1).max(100) }))
     .query(async ({ ctx, input }) => {
@@ -163,6 +258,17 @@ export const eventRouter = createTRPCRouter({
     return ctx.db.event.findMany({
       where,
       include: {
+        approvalLogs: {
+          where: {
+            action: "REJECTED",
+          },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: {
+            reason: true,
+            createdAt: true,
+          },
+        },
         _count: {
           select: { rsvps: true }
         }

@@ -14,6 +14,14 @@ export default async function ProtectedLayout({
     redirect("/");
   }
 
+  if (session.user.role === "ADMIN" || session.user.role === "SUPER_ADMIN") {
+    redirect("/dashboard");
+  }
+
+  if (session.user.role === "ORGANIZER") {
+    redirect("/dashboard");
+  }
+
   if (session.user.role === "STUDENT") {
     const profile = await db.studentProfile.findUnique({
       where: { userId: session.user.id },

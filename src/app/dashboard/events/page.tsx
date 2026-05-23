@@ -50,6 +50,19 @@ export default async function DashboardEventsPage() {
               name: true,
             },
           },
+          approvalLogs: {
+            where: {
+              action: "REJECTED",
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            take: 1,
+            select: {
+              reason: true,
+              createdAt: true,
+            },
+          },
           _count: {
             select: {
               rsvps: true,
@@ -67,7 +80,7 @@ export default async function DashboardEventsPage() {
             Events
           </h1>
           <p className="text-[16px] text-[#615d59] font-medium leading-relaxed">
-            Manage your experiences, track RSVPs, and edit event details.
+            Track every event through draft, review, approval, and publish states without leaving your dashboard.
           </p>
         </div>
         <Link 
@@ -123,11 +136,22 @@ export default async function DashboardEventsPage() {
                     <div className="flex flex-wrap gap-4 text-[13px] font-medium text-[#615d59]">
                       <span>{event.capacity} seats</span>
                       <span>{event._count.rsvps} RSVPs</span>
+                      {event.submittedAt ? <span>Submitted {formatEventDate(event.submittedAt)}</span> : null}
                     </div>
+
+                    {event.status === "REJECTED" && event.approvalLogs[0]?.reason ? (
+                      <div className="max-w-3xl rounded-[16px] border border-[#e8503a]/15 bg-[#fff4f2] px-4 py-3 text-[13px] leading-relaxed text-[#8c372a]">
+                        <span className="font-semibold text-[#e8503a]">Admin feedback:</span> {event.approvalLogs[0].reason}
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="w-full md:w-auto md:min-w-[240px]">
-                    <EventActions eventId={event.id} status={event.status} />
+                    <EventActions
+                      eventId={event.id}
+                      status={event.status}
+                      rejectionReason={event.approvalLogs[0]?.reason ?? null}
+                    />
                   </div>
                 </div>
               </article>

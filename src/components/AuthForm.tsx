@@ -14,6 +14,18 @@ const AUTH_ERRORS: Record<string, string> = {
   default: "Something went wrong. Please try again.",
 };
 
+function resolveDefaultRouteForRole(role: string | undefined): string {
+  if (role === "ADMIN" || role === "SUPER_ADMIN") {
+    return "/dashboard";
+  }
+
+  if (role === "ORGANIZER") {
+    return "/dashboard";
+  }
+
+  return "/home";
+}
+
 function sanitizeCallbackUrl(raw: string | null): string {
   if (!raw) return "/home";
   if (raw === "/feed") return "/home";
@@ -79,18 +91,24 @@ function FormContent() {
     }
 
     if (result?.ok) {
-      if (callbackUrl === "/home") {
-        try {
-          const sessionRes = await fetch("/api/auth/session");
-          const sessionData = (await sessionRes.json()) as {
-            user?: { role?: string };
-          };
-          if (sessionData?.user?.role === "ORGANIZER") {
-            window.location.href = "/dashboard";
-            return;
-          }
-        } catch {}
-      }
+      try {
+        const sessionRes = await fetch("/api/auth/session");
+        const sessionData = (await sessionRes.json()) as {
+          user?: { role?: string };
+        };
+        const roleDefaultRoute = resolveDefaultRouteForRole(sessionData?.user?.role);
+
+        if (sessionData?.user?.role === "ADMIN" || sessionData?.user?.role === "SUPER_ADMIN") {
+          window.location.href = roleDefaultRoute;
+          return;
+        }
+
+        if (callbackUrl === "/home") {
+          window.location.href = roleDefaultRoute;
+          return;
+        }
+      } catch {}
+
       window.location.href = callbackUrl;
     }
   }
