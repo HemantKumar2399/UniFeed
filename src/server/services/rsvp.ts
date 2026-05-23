@@ -1,5 +1,5 @@
 import { db } from "@/server/db";
-import { Prisma } from "../../../generated/prisma";
+import { Prisma } from "@prisma/client";
 
 export class CapacityError extends Error {
   constructor(message: string) {

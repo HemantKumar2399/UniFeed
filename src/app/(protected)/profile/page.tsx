@@ -1,5 +1,6 @@
 import { Heart, LogOut, Settings, User } from "lucide-react";
 import { auth } from "@/server/auth";
+import { SignOutForm } from "@/components/SignOutForm";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -55,10 +56,10 @@ export default async function ProfilePage() {
       
       {/* Sign Out */}
       <div className="px-1 md:px-0 mt-4">
-        <button className="w-full flex justify-center items-center gap-2 py-4 rounded-[12px] bg-[rgba(0,0,0,0.05)] text-black/90 font-semibold active:scale-[0.98] transition-all">
+        <SignOutForm className="w-full flex justify-center items-center gap-2 py-4 rounded-[12px] bg-[rgba(0,0,0,0.05)] text-black/90 font-semibold active:scale-[0.98] transition-all">
           <LogOut className="w-[18px] h-[18px]" />
           Sign Out
-        </button>
+        </SignOutForm>
       </div>
 
     </div>

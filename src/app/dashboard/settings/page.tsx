@@ -1,5 +1,6 @@
 import { User, Settings, CreditCard, Users, LogOut } from "lucide-react";
 import { auth } from "@/server/auth";
+import { SignOutForm } from "@/components/SignOutForm";
 
 export default async function DashboardSettingsPage() {
   const session = await auth();
@@ -77,10 +78,10 @@ export default async function DashboardSettingsPage() {
       
       {/* Sign Out */}
       <div className="px-1 md:px-0 mt-4">
-        <button className="w-full flex justify-center items-center gap-2 py-4 rounded-[12px] text-[#e8503a] font-semibold hover:bg-[#fff4f2] active:scale-[0.98] transition-all">
+        <SignOutForm className="w-full flex justify-center items-center gap-2 py-4 rounded-[12px] text-[#e8503a] font-semibold hover:bg-[#fff4f2] active:scale-[0.98] transition-all">
           <LogOut className="w-[18px] h-[18px]" />
           Sign Out of Command Center
-        </button>
+        </SignOutForm>
       </div>
 
     </div>
