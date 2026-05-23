@@ -2,7 +2,13 @@ import type { ClubRole, EventApprovalAction, EventStatus } from "@prisma/client"
 import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { CreateEventSchema, type CreateEventInput } from "@/features/events/components/CreateEventSchema";
-import { matchesAttendeeQuery, resolveAttendeePrn } from "@/features/attendance/checkin-search.utils";
+import {
+  attendeeFilterStatuses,
+  attendeeSortOptions,
+  filterAndSortAttendees,
+  getAttendeeCounts,
+  mapAttendeeRow,
+} from "@/features/attendance/attendee-management";
 import { resolveDiscussionDisplayName } from "@/lib/discussion";
 import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
 import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
@@ -56,6 +62,71 @@ function isScannableEventStatus(status: EventStatus): boolean {
   return scannableEventStatuses.includes(status);
 }
 
+async function getEventAttendanceSnapshot(ctx: OrganizerCtx, eventId: number) {
+  const event = await ctx.db.event.findUnique({
+    where: { id: eventId },
+    select: {
+      id: true,
+      title: true,
+      date: true,
+      club: {
+        select: {
+          name: true,
+        },
+      },
+      college: {
+        select: {
+          name: true,
+        },
+      },
+      rsvps: {
+        orderBy: {
+          createdAt: "desc",
+        },
+        select: {
+          id: true,
+          userId: true,
+          status: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              studentProfile: {
+                select: {
+                  prn: true,
+                  branch: true,
+                  course: true,
+                  graduationYear: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!event) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Event not found",
+    });
+  }
+
+  return {
+    event: {
+      id: event.id,
+      title: event.title,
+      date: event.date,
+      clubName: event.club.name,
+      collegeName: event.college.name,
+    },
+    attendees: event.rsvps.map(mapAttendeeRow),
+  };
+}
+
 async function assertCanCheckInToEvent(ctx: OrganizerCtx, eventId: number) {
   const { event } = await assertCanManageEvent(ctx, eventId, {
     forbiddenMessage: "Unauthorized for this event",
@@ -84,6 +155,10 @@ async function markAttendedRsvp(
     },
   });
 
+  if (!rsvp) {
+    throw new TRPCError({ code: "NOT_FOUND", message: "Attendee ticket not found" });
+  }
+
   if (rsvp?.eventId !== params.eventId) {
     throw new TRPCError({ code: "BAD_REQUEST", message: "Ticket does not belong to this event" });
   }
@@ -94,6 +169,13 @@ async function markAttendedRsvp(
 
   if (rsvp.status === "ATTENDED") {
     return rsvp;
+  }
+
+  if (rsvp.status !== "GOING") {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Only confirmed attendees can be checked in.",
+    });
   }
 
   return ctx.db.rSVP.update({
@@ -640,39 +722,26 @@ export const eventRouter = createTRPCRouter({
     }),
 
   getAttendees: protectedOrganizerProcedure
-    .input(z.object({ eventId: z.number().int().positive() }))
+    .input(
+      z.object({
+        eventId: z.number().int().positive(),
+        q: z.string().trim().max(100).optional(),
+        status: z.enum(attendeeFilterStatuses).optional(),
+        sort: z.enum(attendeeSortOptions).optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      const event = await ctx.db.event.findUnique({
-        where: {
-          id: input.eventId,
-        },
-        include: {
-          rsvps: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
-      if (!event) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Event not found",
-        });
-      }
-
       await assertCanManageEvent(ctx, input.eventId, {
         forbiddenMessage: "Unauthorized to view attendees for this event",
       });
 
-      return event.rsvps;
+      const { event, attendees } = await getEventAttendanceSnapshot(ctx, input.eventId);
+
+      return {
+        event,
+        attendees: filterAndSortAttendees(attendees, input),
+        counts: getAttendeeCounts(attendees),
+      };
     }),
 
   verifyStudentQrForEvent: protectedOrganizerProcedure
@@ -823,42 +892,18 @@ export const eventRouter = createTRPCRouter({
     .input(
       z.object({
         eventId: z.number().int().positive(),
-        query: z.string().min(1).max(100),
+        query: z.string().trim().min(1).max(100),
       }),
     )
     .query(async ({ ctx, input }) => {
       await assertCanCheckInToEvent(ctx, input.eventId);
 
-      const attendees = await ctx.db.rSVP.findMany({
-        where: { eventId: input.eventId },
-        include: {
-          user: {
-            select: { id: true, name: true, email: true },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-      });
+      const { attendees } = await getEventAttendanceSnapshot(ctx, input.eventId);
 
-      return attendees
-        .filter((rsvp) =>
-          matchesAttendeeQuery(
-            {
-              userId: rsvp.user.id,
-              name: rsvp.user.name,
-              email: rsvp.user.email,
-            },
-            input.query,
-          ),
-        )
-        .slice(0, 20)
-        .map((rsvp) => ({
-          rsvpId: rsvp.id,
-          userId: rsvp.user.id,
-          name: rsvp.user.name,
-          email: rsvp.user.email,
-          prn: resolveAttendeePrn({ userId: rsvp.user.id, email: rsvp.user.email }),
-          status: rsvp.status,
-        }));
+      return filterAndSortAttendees(attendees, {
+        q: input.query,
+        sort: "registered_desc",
+      }).slice(0, 20);
     }),
 
   forceCheckIn: protectedOrganizerProcedure

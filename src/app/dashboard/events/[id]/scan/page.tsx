@@ -61,7 +61,7 @@ export default function EventScanModePage({
   );
 
   const checkedInCount = useMemo(
-    () => (attendees ?? []).filter((attendee) => attendee.status === "ATTENDED").length,
+    () => attendees?.counts.attended ?? 0,
     [attendees],
   );
 
@@ -102,7 +102,7 @@ export default function EventScanModePage({
               <ScanLine className="h-7 w-7" />
               Scan Mode
             </h1>
-            <p className="mt-1 text-sm text-warm-gray-500">
+            <p aria-live="polite" className="mt-1 text-sm text-warm-gray-500">
               {feedbackMessage}
             </p>
             <p className="mt-1 text-xs font-medium uppercase tracking-badge text-warm-gray-500">

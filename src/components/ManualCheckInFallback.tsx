@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Loader2, Search, UserCheck } from "lucide-react";
+import { Loader2, Search, UserCheck, X } from "lucide-react";
 
 import { api } from "@/trpc/react";
 
@@ -11,8 +11,27 @@ type ManualCheckInFallbackProps = {
   onCheckInError: (message: string) => void;
 };
 
-export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInError }: ManualCheckInFallbackProps) {
+function formatAcademicSummary(attendee: {
+  branch: string | null;
+  course: string | null;
+  graduationYear: number | null;
+}) {
+  const parts = [
+    attendee.branch,
+    attendee.course,
+    attendee.graduationYear?.toString(),
+  ].filter(Boolean);
+
+  return parts.length > 0 ? parts.join(" • ") : "Academic profile missing";
+}
+
+export function ManualCheckInFallback({
+  eventId,
+  onCheckInSuccess,
+  onCheckInError,
+}: ManualCheckInFallbackProps) {
   const [query, setQuery] = useState("");
+  const [confirmingRsvpId, setConfirmingRsvpId] = useState<number | null>(null);
   const normalizedQuery = useMemo(() => query.trim(), [query]);
 
   const utils = api.useUtils();
@@ -28,11 +47,13 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
 
   const forceCheckIn = api.event.forceCheckIn.useMutation({
     onSuccess: async (payload) => {
+      setConfirmingRsvpId(null);
       onCheckInSuccess(`Manual check-in complete: ${payload.attendeeName}`);
       await utils.event.getAttendees.invalidate({ eventId });
-      await utils.event.searchAttendees.invalidate({ eventId, query: normalizedQuery || "a" });
+      await utils.event.searchAttendees.invalidate();
     },
     onError: (error) => {
+      setConfirmingRsvpId(null);
       onCheckInError(error.message);
     },
   });
@@ -40,7 +61,9 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
   return (
     <section className="rounded-[20px] border border-[var(--border-whisper)] bg-pure-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-notion-black">Manual Fallback</h2>
-      <p className="mt-1 text-sm text-warm-gray-500">Search attendee by name or email and force check-in when QR fails.</p>
+      <p className="mt-1 text-sm text-warm-gray-500">
+        Search by student name, email, or PRN and confirm a manual check-in when QR scanning fails.
+      </p>
 
       <div className="mt-4 flex items-center gap-2">
         <div className="relative flex-1">
@@ -48,18 +71,23 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name or email"
+            placeholder="Search name, email, or PRN"
             className="h-10 w-full rounded-[12px] border border-[var(--border-input)] pl-9 pr-3 text-sm outline-none focus-visible:border-[var(--color-focus-blue)]"
           />
         </div>
       </div>
 
       {normalizedQuery.length < 2 ? (
-        <p className="mt-3 text-xs text-warm-gray-500">Type at least 2 characters to search attendees.</p>
+        <p className="mt-3 text-xs text-warm-gray-500">
+          Type at least 2 characters to search attendees.
+        </p>
       ) : null}
 
       {isFetching ? (
-        <div className="mt-3 inline-flex items-center gap-2 text-sm text-warm-gray-500">
+        <div
+          aria-live="polite"
+          className="mt-3 inline-flex items-center gap-2 text-sm text-warm-gray-500"
+        >
           <Loader2 className="h-4 w-4 animate-spin" />
           Searching attendees...
         </div>
@@ -72,29 +100,67 @@ export function ManualCheckInFallback({ eventId, onCheckInSuccess, onCheckInErro
           ) : (
             (results ?? []).map((attendee) => {
               const alreadyCheckedIn = attendee.status === "ATTENDED";
+              const canCheckIn = attendee.status === "GOING";
+              const isConfirming = confirmingRsvpId === attendee.rsvpId;
+
               return (
                 <div
                   key={attendee.rsvpId}
-                  className="flex items-center justify-between rounded-[12px] border border-[var(--border-whisper)] px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-[12px] border border-[var(--border-whisper)] px-3 py-2"
                 >
                   <div>
-                    <p className="text-sm font-semibold text-notion-black">{attendee.name ?? attendee.email ?? "Unknown"}</p>
+                    <p className="text-sm font-semibold text-notion-black">
+                      {attendee.name ?? attendee.email ?? "Unknown"}
+                    </p>
                     <p className="text-xs text-warm-gray-500">
                       {attendee.email ?? "No email"}
-                      {attendee.prn ? ` • ${attendee.prn}` : " • Profile pending"}
+                      {attendee.prn ? ` • ${attendee.prn}` : " • Profile missing"}
+                    </p>
+                    <p className="mt-1 text-xs text-warm-gray-500">
+                      {formatAcademicSummary(attendee)}
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    disabled={alreadyCheckedIn || forceCheckIn.isPending}
-                    onClick={() => {
-                      forceCheckIn.mutate({ eventId, userId: attendee.userId });
-                    }}
-                    className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-notion-black px-3 text-xs font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <UserCheck className="h-3.5 w-3.5" />
-                    {alreadyCheckedIn ? "Checked-In" : "Force Check-In"}
-                  </button>
+
+                  <div className="flex items-center gap-2">
+                    {isConfirming ? (
+                      <>
+                        <button
+                          type="button"
+                          disabled={forceCheckIn.isPending}
+                          onClick={() => {
+                            forceCheckIn.mutate({ eventId, userId: attendee.userId });
+                          }}
+                          className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-notion-black px-3 text-xs font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <UserCheck className="h-3.5 w-3.5" />
+                          {forceCheckIn.isPending ? "Saving..." : "Confirm"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={forceCheckIn.isPending}
+                          onClick={() => setConfirmingRsvpId(null)}
+                          className="inline-flex h-9 items-center gap-1 rounded-[10px] border border-[var(--border-input)] px-3 text-xs font-semibold text-notion-black transition-colors hover:bg-warm-white disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={!canCheckIn || forceCheckIn.isPending}
+                        onClick={() => setConfirmingRsvpId(attendee.rsvpId)}
+                        className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-notion-black px-3 text-xs font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <UserCheck className="h-3.5 w-3.5" />
+                        {alreadyCheckedIn
+                          ? "Checked-In"
+                          : canCheckIn
+                            ? "Force Check-In"
+                            : "Unavailable"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })

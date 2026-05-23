@@ -154,11 +154,32 @@ void test("eventRouter.getAttendees allows club editors to manage event attendan
     db: {
       event: {
         findUnique: async (args: any) => {
-          if (args.include) {
+          if (args.select?.rsvps) {
             return {
               id: 73,
-              authorId: "another-organizer-id",
-              rsvps: [{ id: 1, status: "GOING", user: { id: "student-1", name: "Student One", email: "student@example.com" } }],
+              title: "Demo Event",
+              date: new Date("2030-05-14T18:45:00.000Z"),
+              club: { name: "Coding Club" },
+              college: { name: "North Campus" },
+              rsvps: [
+                {
+                  id: 1,
+                  userId: "student-1",
+                  status: "GOING",
+                  createdAt: new Date("2030-05-10T10:00:00.000Z"),
+                  user: {
+                    id: "student-1",
+                    name: "Student One",
+                    email: "student@example.com",
+                    studentProfile: {
+                      prn: "PRN-2026-001",
+                      branch: "Computer Science",
+                      course: "BTech",
+                      graduationYear: 2026,
+                    },
+                  },
+                },
+              ],
             };
           }
 
@@ -198,8 +219,12 @@ void test("eventRouter.getAttendees allows club editors to manage event attendan
   const caller = createCaller(mockedCtx as any);
   const result = await caller.event.getAttendees({ eventId: 73 });
 
-  assert.equal(result.length, 1);
-  assert.equal(result[0]?.status, "GOING");
+  assert.equal(result.event.title, "Demo Event");
+  assert.equal(result.counts.all, 1);
+  assert.equal(result.attendees.length, 1);
+  assert.equal(result.attendees[0]?.status, "GOING");
+  assert.equal(result.attendees[0]?.prn, "PRN-2026-001");
+  assert.equal(result.attendees[0]?.branch, "Computer Science");
 });
 
 void test("eventRouter.getAttendees rejects unrelated organizers", async () => {
@@ -267,11 +292,32 @@ void test("eventRouter.getAttendees allows same-college admins without club memb
     db: {
       event: {
         findUnique: async (args: any) => {
-          if (args.include) {
+          if (args.select?.rsvps) {
             return {
               id: 73,
-              authorId: "another-organizer-id",
-              rsvps: [{ id: 5, status: "ATTENDED", user: { id: "student-2", name: "Student Two", email: "student2@example.com" } }],
+              title: "Demo Event",
+              date: new Date("2030-05-14T18:45:00.000Z"),
+              club: { name: "Coding Club" },
+              college: { name: "North Campus" },
+              rsvps: [
+                {
+                  id: 5,
+                  userId: "student-2",
+                  status: "ATTENDED",
+                  createdAt: new Date("2030-05-12T10:00:00.000Z"),
+                  user: {
+                    id: "student-2",
+                    name: "Student Two",
+                    email: "student2@example.com",
+                    studentProfile: {
+                      prn: "PRN-2026-002",
+                      branch: "Information Technology",
+                      course: "BTech",
+                      graduationYear: 2026,
+                    },
+                  },
+                },
+              ],
             };
           }
 
@@ -311,7 +357,106 @@ void test("eventRouter.getAttendees allows same-college admins without club memb
   const caller = createCaller(mockedCtx as any);
   const result = await caller.event.getAttendees({ eventId: 73 });
 
-  assert.equal(result[0]?.status, "ATTENDED");
+  assert.equal(result.attendees[0]?.status, "ATTENDED");
+  assert.equal(result.attendees[0]?.course, "BTech");
+});
+
+void test("eventRouter.getAttendees filters and sorts attendee results on the server", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async (args: any) => {
+          if (args.select?.rsvps) {
+            return {
+              id: 73,
+              title: "Demo Event",
+              date: new Date("2030-05-14T18:45:00.000Z"),
+              club: { name: "Coding Club" },
+              college: { name: "North Campus" },
+              rsvps: [
+                {
+                  id: 1,
+                  userId: "student-1",
+                  status: "GOING",
+                  createdAt: new Date("2030-05-10T10:00:00.000Z"),
+                  user: {
+                    id: "student-1",
+                    name: "Aarav Sharma",
+                    email: "aarav@college.edu",
+                    studentProfile: {
+                      prn: "PRN-2026-001",
+                      branch: "Computer Science",
+                      course: "BTech",
+                      graduationYear: 2026,
+                    },
+                  },
+                },
+                {
+                  id: 2,
+                  userId: "student-2",
+                  status: "ATTENDED",
+                  createdAt: new Date("2030-05-12T10:00:00.000Z"),
+                  user: {
+                    id: "student-2",
+                    name: "Mira Patel",
+                    email: "mira@college.edu",
+                    studentProfile: {
+                      prn: "PRN-2026-002",
+                      branch: "Information Technology",
+                      course: "BTech",
+                      graduationYear: 2026,
+                    },
+                  },
+                },
+              ],
+            };
+          }
+
+          return {
+            id: 73,
+            clubId: 12,
+            authorId: "another-organizer-id",
+            collegeId: "college-1",
+            title: "Demo Event",
+            status: "PUBLISHED",
+          };
+        },
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "EDITOR" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "editor-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.getAttendees({
+    eventId: 73,
+    status: "ALL",
+    q: "2026-002",
+    sort: "checked_in_first",
+  });
+
+  assert.equal(result.counts.all, 2);
+  assert.equal(result.counts.attended, 1);
+  assert.equal(result.attendees.length, 1);
+  assert.equal(result.attendees[0]?.userId, "student-2");
 });
 
 void test("eventRouter.submitForReview moves a draft into submitted status and records audit history", async () => {
@@ -754,6 +899,254 @@ void test("eventRouter.cancel marks a published event as cancelled and writes au
   assert.ok(cancelled);
   assert.ok(loggedCancellation);
   assert.equal(result.status, "CANCELLED");
+});
+
+void test("eventRouter.searchAttendees matches real PRN values without fabricating them", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async (args: any) => {
+          if (args.select?.rsvps) {
+            return {
+              id: 88,
+              title: "Published Event",
+              date: new Date("2030-05-14T18:45:00.000Z"),
+              club: { name: "Coding Club" },
+              college: { name: "North Campus" },
+              rsvps: [
+                {
+                  id: 1,
+                  userId: "student-1",
+                  status: "GOING",
+                  createdAt: new Date("2030-05-10T10:00:00.000Z"),
+                  user: {
+                    id: "student-1",
+                    name: "Aarav Sharma",
+                    email: "aarav@college.edu",
+                    studentProfile: {
+                      prn: "PRN-2026-001",
+                      branch: "Computer Science",
+                      course: "BTech",
+                      graduationYear: 2026,
+                    },
+                  },
+                },
+                {
+                  id: 2,
+                  userId: "stu001abc",
+                  status: "GOING",
+                  createdAt: new Date("2030-05-09T10:00:00.000Z"),
+                  user: {
+                    id: "stu001abc",
+                    name: "Campus User",
+                    email: "campus@college.edu",
+                    studentProfile: null,
+                  },
+                },
+              ],
+            };
+          }
+
+          return {
+            id: 88,
+            clubId: 12,
+            authorId: "organizer-user-id",
+            collegeId: "college-1",
+            title: "Published Event",
+            status: "PUBLISHED",
+          };
+        },
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const prnResults = await caller.event.searchAttendees({
+    eventId: 88,
+    query: "2026-001",
+  });
+  const fabricatedResults = await caller.event.searchAttendees({
+    eventId: 88,
+    query: "stu001",
+  });
+
+  assert.equal(prnResults.length, 1);
+  assert.equal(prnResults[0]?.userId, "student-1");
+  assert.equal(fabricatedResults.length, 0);
+});
+
+void test("eventRouter.forceCheckIn persists attended state and is idempotent for repeated scans", async () => {
+  let currentStatus = "GOING";
+  let updateCount = 0;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 88,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      rSVP: {
+        findFirst: async () => ({
+          id: 77,
+        }),
+        findUnique: async () => ({
+          id: 77,
+          eventId: 88,
+          userId: "student-1",
+          status: currentStatus,
+          user: {
+            id: "student-1",
+            name: "Student One",
+            email: "student@example.com",
+          },
+        }),
+        update: async () => {
+          updateCount += 1;
+          currentStatus = "ATTENDED";
+          return {
+            id: 77,
+            eventId: 88,
+            userId: "student-1",
+            status: "ATTENDED",
+            user: {
+              id: "student-1",
+              name: "Student One",
+              email: "student@example.com",
+            },
+          };
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const firstResult = await caller.event.forceCheckIn({
+    eventId: 88,
+    userId: "student-1",
+  });
+  const secondResult = await caller.event.forceCheckIn({
+    eventId: 88,
+    userId: "student-1",
+  });
+
+  assert.equal(firstResult.status, "ATTENDED");
+  assert.equal(secondResult.status, "ATTENDED");
+  assert.equal(updateCount, 1);
+});
+
+void test("eventRouter.forceCheckIn rejects waitlisted attendees", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 88,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      rSVP: {
+        findFirst: async () => ({
+          id: 77,
+        }),
+        findUnique: async () => ({
+          id: 77,
+          eventId: 88,
+          userId: "student-1",
+          status: "WAITLISTED",
+          user: {
+            id: "student-1",
+            name: "Student One",
+            email: "student@example.com",
+          },
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.forceCheckIn({
+        eventId: 88,
+        userId: "student-1",
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "BAD_REQUEST");
+      assert.equal(err.message, "Only confirmed attendees can be checked in.");
+      return true;
+    },
+  );
 });
 
 void test("eventRouter.forceCheckIn rejects cancelled events", async () => {

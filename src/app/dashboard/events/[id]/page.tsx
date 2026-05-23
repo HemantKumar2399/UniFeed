@@ -1,80 +1,49 @@
-"use client";
-
-import { use } from "react";
-import { api } from "@/trpc/react";
+import { AlertCircle, ArrowLeft, Filter, ScanLine, Search } from "lucide-react";
 import Link from "next/link";
-import { ArrowLeft, Download, AlertCircle, ScanLine } from "lucide-react";
 
-function getProfileFieldLabel(): string {
-  return "Pending profile";
-}
+import {
+  attendeeFilterStatuses,
+  buildAttendeeDashboardHref,
+  normalizeAttendeeFilters,
+  type AttendeeFilterStatus,
+} from "@/features/attendance/attendee-management";
+import { EventAttendeesClient } from "@/features/attendance/components/EventAttendeesClient";
 
-export default function EventAttendeesPage({
-  params,
-}: {
+type EventAttendeesPageProps = {
   params: Promise<{ id: string }>;
-}) {
-  const resolvedParams = use(params);
-  const eventId = parseInt(resolvedParams.id, 10);
+  searchParams: Promise<{
+    q?: string;
+    sort?: string;
+    status?: string;
+  }>;
+};
 
-  const { data: attendees, isLoading, error } = api.event.getAttendees.useQuery(
-    { eventId },
-    {
-      enabled: !isNaN(eventId),
-    }
-  );
+const attendeeStatusLabels: Record<AttendeeFilterStatus, string> = {
+  ALL: "All",
+  GOING: "Going",
+  ATTENDED: "Attended",
+  CANCELLED: "Cancelled",
+  WAITLISTED: "Waitlisted",
+};
 
-  const handleExportCsv = () => {
-    try {
-      if (!attendees || attendees.length === 0) return;
+export default async function EventAttendeesPage({
+  params,
+  searchParams,
+}: EventAttendeesPageProps) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
+  const eventId = Number.parseInt(resolvedParams.id, 10);
+  const filters = normalizeAttendeeFilters(resolvedSearchParams);
 
-      // Header row
-      const headers = ["Name", "Email", "PRN", "Branch", "RSVP Status", "Checked In"];
-      
-      // Prevent formula injection
-      const sanitizeCsvField = (value: string | null | undefined) => {
-        const str = String(value ?? "N/A");
-        if (/^[=+\-@\t]/.test(str)) return `'${str}`;
-        return `"${str.replace(/"/g, '""')}"`;
-      };
-
-      // Data rows
-      const rows = attendees.map((rsvp) => {
-        const isCheckedIn = rsvp.status === "ATTENDED" ? "Yes" : "No";
-
-        return [
-          sanitizeCsvField(rsvp.user.name),
-          sanitizeCsvField(rsvp.user.email),
-          sanitizeCsvField(getProfileFieldLabel()),
-          sanitizeCsvField(getProfileFieldLabel()),
-          sanitizeCsvField(rsvp.status),
-          sanitizeCsvField(isCheckedIn)
-        ].join(",");
-      });
-
-      const csvContent = [headers.join(","), ...rows].join("\r\n");
-      const blob = new Blob([new Uint8Array([0xef, 0xbb, 0xbf]), csvContent], { type: 'text/csv;charset=utf-8;' });
-      const encodedUri = URL.createObjectURL(blob);
-      
-      // Create download trigger
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `event-${eventId}-attendees.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(encodedUri);
-    } catch (err) {
-      console.error("Export failed", err);
-    }
-  };
-
-  if (isNaN(eventId)) {
+  if (!Number.isInteger(eventId) || eventId <= 0) {
     return (
-      <div className="p-8 text-center text-muted-foreground flex flex-col items-center">
+      <div className="flex flex-col items-center p-8 text-center text-muted-foreground">
         <AlertCircle className="mb-2 h-8 w-8 text-destructive" />
         <p>Invalid event ID.</p>
-        <Link href="/dashboard" className="text-primary hover:underline mt-4 inline-flex items-center">
+        <Link
+          href="/dashboard"
+          className="mt-4 inline-flex items-center text-primary hover:underline"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Dashboard
         </Link>
@@ -82,146 +51,104 @@ export default function EventAttendeesPage({
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="h-8 w-64 animate-pulse rounded-md bg-muted" />
-            <div className="h-4 w-32 animate-pulse rounded-md bg-muted" />
-          </div>
-        </div>
-        <div className="rounded-md border border-border">
-          <div className="h-10 border-b border-border bg-muted/50" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-14 border-b border-border last:border-0 animate-pulse bg-muted/20" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive flex items-start">
-        <AlertCircle className="mt-0.5 mr-3 h-5 w-5 shrink-0" />
-        <div>
-          <h3 className="font-semibold">Error Loading Attendees</h3>
-          <p className="text-sm mt-1">{error.message}</p>
-          <Link href="/dashboard" className="inline-flex items-center mt-4 text-sm font-medium hover:underline text-foreground">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Go back
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const attendeesList = attendees ?? [];
-
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2 mb-2">
-            <Link 
-              href="/dashboard/events" 
-              className="text-sm font-semibold tracking-badge uppercase text-warm-gray-500 hover:text-notion-black inline-flex items-center transition-colors duration-haptic active:scale-95"
+          <div className="mb-2 flex items-center gap-2">
+            <Link
+              href="/dashboard/events"
+              className="inline-flex items-center text-sm font-semibold uppercase tracking-badge text-warm-gray-500 transition-colors duration-haptic hover:text-notion-black active:scale-95"
             >
               <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
               Back to Events
             </Link>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-notion-black">Attendees</h1>
-          <p className="text-warm-gray-500 mt-1 text-base">
-            <span className="font-semibold text-notion-black mr-1">{attendeesList.length}</span> 
-            {attendeesList.length === 1 ? 'person' : 'people'} registered for this event.
-          </p>
-          <p className="mt-2 text-sm text-warm-gray-500">
-            TODO-MVP: student PRN and branch fields will appear here after Epic 1 adds the real student profile model.
+
+          <h1 className="text-3xl font-bold tracking-tight text-notion-black">
+            Attendee Management
+          </h1>
+          <p className="mt-1 text-base text-warm-gray-500">
+            Review real student records, filter large rosters, and export the current attendance view.
           </p>
         </div>
-        
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/dashboard/events/${eventId}/scan`}
-            className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] border border-[var(--border-input)] bg-pure-white px-4 py-2 text-sm font-medium text-notion-black transition-colors duration-haptic active:scale-95 hover:bg-warm-white"
-          >
-            <ScanLine className="mr-2 h-4 w-4" />
-            Scan Mode
-          </Link>
+
+        <Link
+          href={`/dashboard/events/${eventId}/scan`}
+          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] border border-[var(--border-input)] bg-pure-white px-4 py-2 text-sm font-medium text-notion-black transition-colors duration-haptic hover:bg-warm-white active:scale-95"
+        >
+          <ScanLine className="mr-2 h-4 w-4" />
+          Scan Mode
+        </Link>
+      </div>
+
+      <section className="space-y-4 rounded-[var(--radius-comfortable)] border border-[var(--border-whisper)] bg-pure-white p-5 shadow-none">
+        <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-badge text-warm-gray-500">
+          <Filter className="h-4 w-4" />
+          Filters
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {attendeeFilterStatuses.map((status) => {
+            const isActive = filters.status === status;
+
+            return (
+              <Link
+                key={status}
+                href={buildAttendeeDashboardHref(eventId, {
+                  q: filters.q,
+                  status,
+                  sort: filters.sort,
+                })}
+                className={`inline-flex min-h-[44px] items-center justify-center rounded-pill border px-4 py-2 text-sm font-semibold transition-colors active:scale-95 ${
+                  isActive
+                    ? "border-notion-black bg-notion-black text-pure-white"
+                    : "border-[var(--border-input)] bg-warm-white text-notion-black hover:bg-pure-white"
+                }`}
+              >
+                {attendeeStatusLabels[status]}
+              </Link>
+            );
+          })}
+        </div>
+
+        <form method="get" className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px_auto]">
+          <input type="hidden" name="status" value={filters.status} />
+
+          <label className="flex min-h-[44px] items-center rounded-[16px] border border-input bg-warm-white px-3 py-2 shadow-sm">
+            <Search className="h-4 w-4 text-warm-gray" />
+            <input
+              type="search"
+              name="q"
+              defaultValue={filters.q}
+              placeholder="Search by name, email, or PRN"
+              className="w-full bg-transparent px-3 py-1 text-sm text-notion-black outline-none placeholder:text-warm-gray-muted"
+            />
+          </label>
+
+          <label className="flex min-h-[44px] items-center rounded-[16px] border border-input bg-warm-white px-3 py-2 shadow-sm">
+            <Filter className="h-4 w-4 text-warm-gray" />
+            <select
+              name="sort"
+              defaultValue={filters.sort}
+              className="w-full bg-transparent px-3 py-1 text-sm text-notion-black outline-none"
+            >
+              <option value="registered_desc">Newest registrations</option>
+              <option value="registered_asc">Oldest registrations</option>
+              <option value="checked_in_first">Checked in first</option>
+            </select>
+          </label>
+
           <button
-            onClick={handleExportCsv}
-            disabled={attendeesList.length === 0}
-            className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-pure-white transition-colors duration-haptic active:scale-95 shadow-none hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] focus-visible:border-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50"
+            type="submit"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[16px] border border-input bg-white px-4 py-2 text-sm font-semibold text-notion-black transition-colors hover:bg-warm-white active:scale-95"
           >
-            <Download className="mr-2 h-4 w-4" />
-            Export CSV
+            Apply Filters
           </button>
-        </div>
-      </div>
+        </form>
+      </section>
 
-      <div className="overflow-hidden rounded-[var(--radius-comfortable)] border border-[var(--border-whisper)] shadow-none">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-warm-white text-left border-b border-[var(--border-whisper)]">
-              <tr>
-                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs">Name</th>
-                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs truncate">PRN</th>
-                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs truncate">Branch</th>
-                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs">Status</th>
-                <th className="px-6 py-4 font-semibold text-warm-gray-500 uppercase tracking-badge text-xs text-center">Check In</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--border-whisper)] bg-pure-white">
-              {attendeesList.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-warm-gray-500 bg-pure-white">
-                    <p className="font-medium">No attendees have registered yet.</p>
-                  </td>
-                </tr>
-              ) : (
-                attendeesList.map((rsvp) => {
-                  const isCheckedIn = rsvp.status === "ATTENDED";
-
-                  return (
-                    <tr 
-                      key={rsvp.userId} 
-                      className={`hover:bg-warm-white/50 transition-colors duration-200 ${isCheckedIn ? 'bg-teal-50/50' : ''}`}
-                    >
-                      <td className="px-6 py-4 align-middle">
-                        <div className="font-semibold text-notion-black">
-                          {rsvp.user.name ?? rsvp.user.email?.split('@')[0] ?? "Unknown User"}
-                        </div>
-                        {rsvp.user.email && (
-                          <div className="text-xs text-warm-gray-500 mt-0.5">{rsvp.user.email}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 align-middle font-mono text-xs text-warm-gray-500">{getProfileFieldLabel()}</td>
-                      <td className="px-6 py-4 align-middle text-warm-gray-500 font-medium">{getProfileFieldLabel()}</td>
-                      <td className="px-6 py-4 align-middle">
-                        <span className="inline-flex items-center rounded-pill bg-green-50 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge text-green-700">
-                          {rsvp.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 align-middle text-center">
-                        <span
-                          className={`inline-flex min-w-[90px] items-center justify-center rounded-pill px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge ${
-                            isCheckedIn
-                              ? "bg-notion-blue text-pure-white"
-                              : "bg-warm-white text-warm-gray-500"
-                          }`}
-                        >
-                          {isCheckedIn ? "Checked In" : "Not Checked In"}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <EventAttendeesClient eventId={eventId} filters={filters} />
     </div>
   );
 }
