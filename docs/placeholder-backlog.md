@@ -35,8 +35,8 @@ Current state: many organizer actions still authorize against `authorId` instead
 Target epic: Epic 3 / Story 3.4.
 
 3. Legacy event-ticket QR dependency
-Current state: passport and scan mode still depend on event-ticket QR payloads.
-Target epic: Epic 8.
+Current state: Resolved in Epic 8. Passport and scan mode now use the permanent student QR contract.
+Target epic: Completed in Epic 8.
 
 4. Playwright coverage expansion
 Current state: only the example smoke suite exists.

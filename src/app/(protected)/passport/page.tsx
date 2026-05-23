@@ -1,7 +1,7 @@
-import { ShieldCheck, Ticket } from "lucide-react";
+import { CalendarClock, ShieldAlert, ShieldCheck, Ticket } from "lucide-react";
 
-import { DigitalTicket } from "@/components/DigitalTicket";
-import { createTicketPayloadToken, getTicketPayloadSecret } from "@/lib/ticket-payload";
+import { StudentQrCard } from "@/components/StudentQrCard";
+import { createStudentQrToken, getStudentQrSecret } from "@/lib/student-qr";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 
@@ -12,56 +12,60 @@ export default async function PassportPage() {
     return null;
   }
 
-  const securedTicketCount = await db.rSVP.count({
-    where: {
-      userId: session.user.id,
-      status: "GOING",
-    },
-  });
-
-  const latestTicket = await db.rSVP.findFirst({
-    where: {
-      userId: session.user.id,
-      status: "GOING",
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: {
-      event: {
-        select: {
-          title: true,
-          date: true,
-          location: true,
+  const [studentProfile, activeRegistrations] = await Promise.all([
+    db.studentProfile.findUnique({
+      where: { userId: session.user.id },
+      include: {
+        college: true,
+      },
+    }),
+    db.rSVP.findMany({
+      where: {
+        userId: session.user.id,
+        status: {
+          in: ["GOING", "WAITLISTED"],
         },
       },
-    },
-  });
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        event: {
+          select: {
+            id: true,
+            title: true,
+            date: true,
+            location: true,
+            status: true,
+            club: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
 
   let qrPayload: string | null = null;
   let tokenUnavailable = false;
+  const qrRevoked = Boolean(studentProfile?.qrRevokedAt);
 
-  if (latestTicket) {
+  if (studentProfile?.studentQrId && !qrRevoked) {
     try {
-      qrPayload = createTicketPayloadToken(
+      qrPayload = createStudentQrToken(
         {
-          studentId: session.user.id,
-          eventTicketId: String(latestTicket.id),
+          studentQrId: studentProfile.studentQrId,
+          studentQrSecretVersion: studentProfile.studentQrSecretVersion,
           issuedAt: Date.now(),
         },
-        getTicketPayloadSecret(),
+        getStudentQrSecret(),
       );
     } catch {
       tokenUnavailable = true;
     }
   }
-
-  const formattedMeta = latestTicket
-    ? new Intl.DateTimeFormat("en-US", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }).format(latestTicket.event.date)
-    : null;
 
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
@@ -89,37 +93,78 @@ export default async function PassportPage() {
               </p>
             </div>
             <div className="rounded-[12px] bg-white/15 p-3 border border-white/20">
-              <ShieldCheck className="w-6 h-6" />
+              {studentProfile?.isVerified ? <ShieldCheck className="w-6 h-6" /> : <ShieldAlert className="w-6 h-6" />}
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-wider text-white/75">Role</p>
-              <p className="text-[15px] font-semibold mt-1">{session.user.role}</p>
+              <p className="text-[11px] uppercase tracking-wider text-white/75">College</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.college.name ?? "College pending"}</p>
             </div>
             <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-wider text-white/75">Secured Tickets</p>
-              <p className="text-[15px] font-semibold mt-1">{securedTicketCount}</p>
+              <p className="text-[11px] uppercase tracking-wider text-white/75">PRN</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.prn ?? "Profile incomplete"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Verification</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.isVerified ? "Verified" : "Pending review"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Branch</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.branch ?? "Not available"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Course</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.course ?? "Not available"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Graduation Year</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.graduationYear ?? "Not available"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Section</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.section ?? "Not set"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Phone</p>
+              <p className="text-[15px] font-semibold mt-1">{studentProfile?.phone ?? "Not set"}</p>
+            </div>
+            <div className="rounded-[14px] bg-white/10 border border-white/20 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-wider text-white/75">Active Registrations</p>
+              <p className="text-[15px] font-semibold mt-1">{activeRegistrations.length}</p>
             </div>
           </div>
         </article>
       </section>
 
       <section className="px-1 md:px-0">
-        {latestTicket && qrPayload && formattedMeta ? (
-          <DigitalTicket
-            eventTitle={latestTicket.event.title}
-            eventMeta={formattedMeta}
-            location={latestTicket.event.location}
-            ticketId={String(latestTicket.id)}
+        {!studentProfile ? (
+          <div className="rounded-[20px] border border-yellow-200 bg-yellow-50 p-5 shadow-sm">
+            <h3 className="text-[17px] font-bold tracking-tight text-yellow-900">Complete your student profile first</h3>
+            <p className="mt-1 text-[14px] font-medium text-yellow-800">
+              Your permanent passport QR appears once your profile details are available.
+            </p>
+          </div>
+        ) : qrPayload ? (
+          <StudentQrCard
+            collegeName={studentProfile.college.name}
+            qrId={studentProfile.studentQrId ?? "Unavailable"}
+            studentName={session.user.name ?? session.user.email ?? "Student"}
             token={qrPayload}
           />
+        ) : qrRevoked ? (
+          <div className="rounded-[20px] border border-amber-200 bg-amber-50 p-5 shadow-sm">
+            <h3 className="text-[17px] font-bold tracking-tight text-amber-900">Passport QR revoked</h3>
+            <p className="mt-1 text-[14px] font-medium text-amber-800">
+              An administrator needs to regenerate your permanent QR before it can be scanned again.
+            </p>
+          </div>
         ) : tokenUnavailable ? (
           <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 shadow-sm">
-            <h3 className="text-[17px] font-bold tracking-tight text-red-800">Ticket security is temporarily unavailable</h3>
+            <h3 className="text-[17px] font-bold tracking-tight text-red-800">Passport QR is temporarily unavailable</h3>
             <p className="mt-1 text-[14px] font-medium text-red-700">
-              Scan token generation is disabled until a secure ticket payload secret is configured.
+              Passport QR generation is disabled until a secure student QR secret is configured.
             </p>
           </div>
         ) : (
@@ -129,14 +174,69 @@ export default async function PassportPage() {
                 <Ticket className="w-5 h-5 text-[#615d59]" />
               </div>
               <div>
-                <h3 className="text-[17px] font-bold tracking-tight text-black/95">No secured tickets yet</h3>
+                <h3 className="text-[17px] font-bold tracking-tight text-black/95">Passport QR not ready yet</h3>
                 <p className="text-[14px] text-[#615d59] font-medium">
-                  RSVP to an event to generate your secure QR entry token.
+                  Your profile exists, but an active student passport QR has not been issued yet.
                 </p>
               </div>
             </div>
           </div>
         )}
+      </section>
+
+      <section className="px-1 md:px-0">
+        <div className="rounded-[24px] border border-black/10 bg-white p-5 shadow-sm">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">My Registrations</p>
+              <h3 className="mt-2 text-[22px] font-bold tracking-tight text-black/95">Active event access</h3>
+              <p className="mt-1 text-[14px] font-medium text-[#615d59]">
+                These registrations use your permanent passport QR at the venue.
+              </p>
+            </div>
+            <div className="rounded-[14px] bg-[#f6f5f4] px-4 py-3 text-right">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Count</p>
+              <p className="mt-1 text-[22px] font-bold tracking-tight text-black/95">{activeRegistrations.length}</p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {activeRegistrations.length === 0 ? (
+              <div className="rounded-[18px] border border-black/10 bg-[#fcfbfa] px-4 py-5 text-sm font-medium text-[#615d59]">
+                Your passport is ready. RSVP to an event to see active registrations here.
+              </div>
+            ) : (
+              activeRegistrations.map((registration) => (
+                <article
+                  key={registration.id}
+                  className="flex flex-col gap-4 rounded-[20px] border border-black/10 bg-[#fcfbfa] px-4 py-4 md:flex-row md:items-center md:justify-between"
+                >
+                  <div>
+                    <p className="text-[17px] font-semibold text-black/95">{registration.event.title}</p>
+                    <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                      {registration.event.club.name} • {registration.event.location}
+                    </p>
+                    <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                      {new Intl.DateTimeFormat("en-US", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      }).format(registration.event.date)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#f2f9ff] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#097fe8]">
+                      <CalendarClock className="h-3.5 w-3.5" />
+                      {registration.status}
+                    </span>
+                    <span className="inline-flex rounded-full border border-black/10 bg-white px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-black/70">
+                      {registration.event.status}
+                    </span>
+                  </div>
+                </article>
+              ))
+            )}
+          </div>
+        </div>
       </section>
     </div>
   );

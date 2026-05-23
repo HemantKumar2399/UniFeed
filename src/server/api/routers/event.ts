@@ -3,8 +3,8 @@ import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganiz
 import { z } from "zod";
 import { CreateEventSchema, type CreateEventInput } from "@/features/events/components/CreateEventSchema";
 import { matchesAttendeeQuery, resolveAttendeePrn } from "@/features/attendance/checkin-search.utils";
-import { decodeTicketPayloadToken, getTicketPayloadSecret, verifyTicketPayloadToken } from "@/lib/ticket-payload";
 import { resolveDiscussionDisplayName } from "@/lib/discussion";
+import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
 import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
 import { FEED_RESULT_LIMIT, buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
 import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-week-query";
@@ -28,9 +28,32 @@ type OrganizerCtx = {
 
 const manageableClubRoles: ClubRole[] = ["OWNER", "EDITOR"];
 const editableEventStatuses: EventStatus[] = ["DRAFT", "REJECTED"];
+const scannableEventStatuses: EventStatus[] = ["PUBLISHED"];
+
+type StudentQrVerificationOutcome =
+  | "CHECKED_IN"
+  | "ALREADY_CHECKED_IN"
+  | "NOT_REGISTERED"
+  | "WRONG_COLLEGE"
+  | "INVALID_QR"
+  | "REVOKED_QR"
+  | "EVENT_NOT_SCANNABLE"
+  | "SCANNER_UNAVAILABLE";
+
+type StudentQrVerificationResult = {
+  outcome: StudentQrVerificationOutcome;
+  message: string;
+  attendeeName?: string;
+  rsvpId?: number;
+  userId?: string;
+};
 
 function isEditableEventStatus(status: EventStatus): boolean {
   return editableEventStatuses.includes(status);
+}
+
+function isScannableEventStatus(status: EventStatus): boolean {
+  return scannableEventStatuses.includes(status);
 }
 
 async function assertCanCheckInToEvent(ctx: OrganizerCtx, eventId: number) {
@@ -119,6 +142,18 @@ function buildEventCreateData(
     isPaid: input.isPaid,
     targetBranches: input.targetBranches,
     authorId: params.authorId,
+  };
+}
+
+function buildStudentQrVerificationResult(
+  outcome: StudentQrVerificationOutcome,
+  message: string,
+  extra: Omit<StudentQrVerificationResult, "outcome" | "message"> = {},
+): StudentQrVerificationResult {
+  return {
+    outcome,
+    message,
+    ...extra,
   };
 }
 
@@ -640,7 +675,7 @@ export const eventRouter = createTRPCRouter({
       return event.rsvps;
     }),
 
-  redeemTicket: protectedOrganizerProcedure
+  verifyStudentQrForEvent: protectedOrganizerProcedure
     .input(
       z.object({
         eventId: z.number().int().positive(),
@@ -648,48 +683,140 @@ export const eventRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await assertCanCheckInToEvent(ctx, input.eventId);
+      const { event } = await assertCanManageEvent(ctx, input.eventId, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
+
+      if (!isScannableEventStatus(event.status)) {
+        return buildStudentQrVerificationResult(
+          "EVENT_NOT_SCANNABLE",
+          "This event is not currently scannable.",
+        );
+      }
 
       let payloadSecret: string;
       try {
-        payloadSecret = getTicketPayloadSecret();
+        payloadSecret = getStudentQrSecret();
       } catch {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Ticket security is not configured",
-        });
+        return buildStudentQrVerificationResult(
+          "SCANNER_UNAVAILABLE",
+          "Student QR security is not configured.",
+        );
       }
 
-      const isValidToken = verifyTicketPayloadToken(input.token, payloadSecret);
-
-      if (!isValidToken) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid QR payload" });
+      if (!verifyStudentQrToken(input.token, payloadSecret)) {
+        return buildStudentQrVerificationResult("INVALID_QR", "Invalid student passport QR.");
       }
 
-      let payload: ReturnType<typeof decodeTicketPayloadToken>;
+      let payload: ReturnType<typeof decodeStudentQrToken>;
       try {
-        payload = decodeTicketPayloadToken(input.token, payloadSecret);
+        payload = decodeStudentQrToken(input.token, payloadSecret);
       } catch {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Malformed QR payload" });
+        return buildStudentQrVerificationResult("INVALID_QR", "Invalid student passport QR.");
       }
 
-      const ticketId = Number.parseInt(payload.eventTicketId, 10);
-      if (!Number.isInteger(ticketId) || ticketId <= 0) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid ticket identifier" });
-      }
-
-      const updated = await markAttendedRsvp(ctx, {
-        eventId: input.eventId,
-        rsvpId: ticketId,
-        expectedUserId: payload.studentId,
+      const studentProfile = await ctx.db.studentProfile.findUnique({
+        where: {
+          studentQrId: payload.studentQrId,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
       });
 
-      return {
-        rsvpId: updated.id,
-        userId: updated.userId,
-        attendeeName: updated.user.name ?? updated.user.email ?? "Student",
-        status: updated.status,
-      };
+      if (!studentProfile?.studentQrId) {
+        return buildStudentQrVerificationResult("INVALID_QR", "Invalid student passport QR.");
+      }
+
+      if (
+        studentProfile.qrRevokedAt ||
+        studentProfile.studentQrSecretVersion !== payload.studentQrSecretVersion
+      ) {
+        return buildStudentQrVerificationResult("REVOKED_QR", "This student passport QR has been revoked.");
+      }
+
+      if (studentProfile.collegeId !== event.collegeId) {
+        return buildStudentQrVerificationResult(
+          "WRONG_COLLEGE",
+          "This student passport belongs to a different college.",
+        );
+      }
+
+      const rsvp = await ctx.db.rSVP.findUnique({
+        where: {
+          userId_eventId: {
+            userId: studentProfile.userId,
+            eventId: input.eventId,
+          },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      if (!rsvp || rsvp.status === "WAITLISTED" || rsvp.status === "CANCELLED") {
+        return buildStudentQrVerificationResult(
+          "NOT_REGISTERED",
+          "This student is not registered for this event.",
+        );
+      }
+
+      const attendeeName = rsvp.user.name ?? rsvp.user.email ?? "Student";
+
+      if (rsvp.status === "ATTENDED") {
+        return buildStudentQrVerificationResult(
+          "ALREADY_CHECKED_IN",
+          `${attendeeName} has already been checked in.`,
+          {
+            attendeeName,
+            rsvpId: rsvp.id,
+            userId: rsvp.userId,
+          },
+        );
+      }
+
+      if (rsvp.status !== "GOING") {
+        return buildStudentQrVerificationResult(
+          "NOT_REGISTERED",
+          "This student is not registered for this event.",
+        );
+      }
+
+      const updated = await ctx.db.rSVP.update({
+        where: { id: rsvp.id },
+        data: { status: "ATTENDED" },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return buildStudentQrVerificationResult(
+        "CHECKED_IN",
+        `Checked in: ${updated.user.name ?? updated.user.email ?? "Student"}`,
+        {
+          attendeeName: updated.user.name ?? updated.user.email ?? "Student",
+          rsvpId: updated.id,
+          userId: updated.userId,
+        },
+      );
     }),
 
   searchAttendees: protectedOrganizerProcedure

@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, adminProcedure, collegeAdminProcedure } from "@/server/api/trpc";
+import { createStudentQrId } from "@/lib/student-qr";
 import type { db as prismaDb } from "@/server/db";
 
 type AdminReviewCtx = {
@@ -196,6 +197,116 @@ export const adminRouter = createTRPCRouter({
           role: input.role,
         },
       });
+    }),
+
+  revokeStudentQr: collegeAdminProcedure
+    .input(
+      z.object({
+        userId: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const profile = await ctx.db.studentProfile.findUnique({
+        where: { userId: input.userId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Student profile not found.",
+        });
+      }
+
+      if (profile.collegeId !== ctx.collegeId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot manage student QR outside your college.",
+        });
+      }
+
+      const updated = await ctx.db.studentProfile.update({
+        where: { id: profile.id },
+        data: {
+          qrRevokedAt: new Date(),
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return updated;
+    }),
+
+  regenerateStudentQr: collegeAdminProcedure
+    .input(
+      z.object({
+        userId: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const profile = await ctx.db.studentProfile.findUnique({
+        where: { userId: input.userId },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      if (!profile) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Student profile not found.",
+        });
+      }
+
+      if (profile.collegeId !== ctx.collegeId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot manage student QR outside your college.",
+        });
+      }
+
+      const updated = await ctx.db.studentProfile.update({
+        where: { id: profile.id },
+        data: {
+          studentQrId: createStudentQrId(),
+          studentQrSecretVersion: {
+            increment: 1,
+          },
+          qrRevokedAt: null,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return updated;
     }),
 
   getCollegeCommunities: collegeAdminProcedure.query(async ({ ctx }) => {

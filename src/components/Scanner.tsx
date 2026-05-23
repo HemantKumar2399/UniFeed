@@ -151,14 +151,14 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
 
       <div className="mt-4 flex flex-col gap-2">
         <label htmlFor="manual-token" className="text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
-          Manual Token Fallback
+          Manual Passport Fallback
         </label>
         <div className="flex gap-2">
           <input
             id="manual-token"
             value={manualToken}
             onChange={(event) => setManualToken(event.target.value)}
-            placeholder="Paste ticket token"
+            placeholder="Paste student passport token"
             className="h-10 w-full rounded-[12px] border border-[var(--border-input)] px-3 text-sm outline-none focus-visible:border-[var(--color-focus-blue)]"
           />
           <button
@@ -174,7 +174,7 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
             disabled={isBusy}
             className="h-10 rounded-[12px] bg-notion-black px-4 text-sm font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:opacity-60"
           >
-            Redeem
+            Verify
           </button>
         </div>
       </div>

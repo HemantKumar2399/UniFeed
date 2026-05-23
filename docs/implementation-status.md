@@ -12,7 +12,7 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Discover | `/discover` | `partial` | UI exists, but filtering and discovery behavior are still mostly static. |
 | Search | `/search` | `placeholder` | Explicit placeholder screen. Backend event search exists separately. |
 | Global | `/global` | `placeholder` | Explicit placeholder screen; no MVP-global behavior yet. |
-| Passport | `/passport` | `partial` | Uses real RSVP-backed ticket data, but still relies on the old event-ticket QR model. |
+| Passport | `/passport` | `real` | Shows real student identity data, permanent student QR, and active registrations using the Epic 8 passport flow. |
 | Profile | `/profile` | `partial` | Shows real session identity, but actions and saved/preference flows are not wired. |
 | Organizer overview | `/dashboard` | `placeholder` | Demo KPI cards were removed in Epic 0; real organizer analytics are deferred. |
 | Organizer events list | `/dashboard/events` | `real` | URL-driven tabs, filters, and real lifecycle actions now use managed-club event data. |
@@ -20,7 +20,7 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Event creation | `/dashboard/events/new` | `real` | Shared event editor supports full metadata, draft saving, submission, and upload/manual image flows. |
 | Event edit | `/dashboard/events/[id]/edit` | `real` | Shared event editor now loads existing events with status-aware locking and actions. |
 | Event attendees | `/dashboard/events/[id]` | `partial` | Real attendee list and CSV export exist, but student profile fields are not in the schema yet. |
-| Event scanner | `/dashboard/events/[id]/scan` | `partial` | Scanner and manual fallback exist, but they still use the legacy event-ticket QR model. |
+| Event scanner | `/dashboard/events/[id]/scan` | `real` | Scanner verifies the permanent student passport QR against the selected event and keeps the manual fallback path. |
 | Hub public pages | `/hubs/[clubId]` | `partial` | Club pages and follow logic exist, but later epics add college scoping and moderation controls. |
 | Organizer hubs | `/dashboard/hubs` | `partial` | Hub editor exists, but admin/community governance is still missing. |
 
@@ -43,5 +43,5 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | `_bmad-output/implementation-artifacts/4-6-organizer-event-list-panel.md` | Organizer event list route existed, but it was still showing sample cards. Epic 0 replaces those with an explicit placeholder state. | `mismatch documented` |
 | `_bmad-output/implementation-artifacts/4-5-secure-image-upload-pipeline.md` | Presigned upload code exists, but the UI had a local Unsplash fallback that hid real upload failures. Epic 0 removes that fallback. | `mismatch documented` |
 | `_bmad-output/implementation-artifacts/4-7-live-attendee-data-table.md` | Attendee list and export exist, but PRN/branch were fake and check-in toggles were local-only. Epic 0 removes those misleading behaviors. | `mismatch documented` |
-| `_bmad-output/implementation-artifacts/5-5-organizer-camera-scanner-utility.md` | Scanner flow exists, but it is still tied to event-ticket QR payloads rather than the future permanent student QR model. | `expected future rewrite` |
+| `_bmad-output/implementation-artifacts/5-5-organizer-camera-scanner-utility.md` | Scanner flow now uses the permanent student QR model and no longer redeems event-ticket payloads. | `updated in Epic 8` |
 | `_bmad-output/implementation-artifacts/7-4-organizer-dashboard-distraction-free-refactor.md` | Organizer dashboard layout exists, but it was still filled with fabricated KPIs. Epic 0 removes the fake metrics rather than pretending the story is complete. | `mismatch documented` |

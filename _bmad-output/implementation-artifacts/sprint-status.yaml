@@ -111,13 +111,13 @@ development_status:
   7-4-decide-and-implement-waitlist: done
   epic-7-retrospective: optional
 
-  epic-8: backlog
-  8-1-design-secure-student-qr-payload: backlog
-  8-2-generate-permanent-student-qr: backlog
-  8-3-rebuild-passport-page-with-real-identity-data: backlog
-  8-4-build-qr-verification-backend: backlog
-  8-5-update-scanner-ui-for-student-qr: backlog
-  8-6-decommission-or-repurpose-event-specific-qr-tickets: backlog
+  epic-8: done
+  8-1-design-secure-student-qr-payload: done
+  8-2-generate-permanent-student-qr: done
+  8-3-rebuild-passport-page-with-real-identity-data: done
+  8-4-build-qr-verification-backend: done
+  8-5-update-scanner-ui-for-student-qr: done
+  8-6-decommission-or-repurpose-event-specific-qr-tickets: done
   epic-8-retrospective: optional
 
   epic-9: backlog

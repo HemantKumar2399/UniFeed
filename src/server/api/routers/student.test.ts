@@ -5,6 +5,7 @@ import test from "node:test";
 import { appRouter } from "@/server/api/root";
 import { createCallerFactory } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { createStudentQrId } from "@/lib/student-qr";
 
 const createCaller = createCallerFactory(appRouter);
 
@@ -20,7 +21,7 @@ void test("studentRouter.getProfile returns the profile if it exists", async () 
     section: "A",
     phone: "1234567890",
     isVerified: true,
-    studentQrId: "qr_stud_test-user-id",
+    studentQrId: createStudentQrId(),
   };
 
   const mockedCtx = {
@@ -102,6 +103,8 @@ void test("studentRouter.createProfile creates a new profile successfully", asyn
   assert.ok(createCalled);
   assert.equal(result.id, "new-profile-id");
   assert.equal(result.isVerified, true);
+  assert.ok(result.studentQrId);
+  assert.match(result.studentQrId, /^sqr_[A-Za-z0-9_-]+$/);
 });
 
 void test("studentRouter.createProfile fails if PRN is already registered in the same college", async () => {

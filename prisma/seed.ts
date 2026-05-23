@@ -1,7 +1,12 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, type Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 
 const prisma = new PrismaClient();
+
+function createSeedStudentQrId() {
+  return `sqr_${randomBytes(18).toString("base64url")}`;
+}
 
 const SEED_TEST_PASSWORD = "Test@1234";
 const SALT_ROUNDS = 12;
@@ -384,7 +389,7 @@ async function main() {
           section: "A",
           phone: `987654321${index}`,
           isVerified: true,
-          studentQrId: `qr_stud_${student.id}`,
+          studentQrId: createSeedStudentQrId(),
         },
       })
     )

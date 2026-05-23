@@ -12,6 +12,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    STUDENT_QR_SECRET: z.string().min(16).optional(),
     UPLOAD_BUCKET_NAME: z.string().min(1).optional(),
     UPLOAD_REGION: z.string().min(1).optional(),
     UPLOAD_ACCESS_KEY_ID: z.string().min(1).optional(),
@@ -26,6 +27,7 @@ export const env = createEnv({
     ALLOWED_DOMAINS: process.env.ALLOWED_DOMAINS,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
+    STUDENT_QR_SECRET: process.env.STUDENT_QR_SECRET,
     UPLOAD_BUCKET_NAME: process.env.UPLOAD_BUCKET_NAME,
     UPLOAD_REGION: process.env.UPLOAD_REGION,
     UPLOAD_ACCESS_KEY_ID: process.env.UPLOAD_ACCESS_KEY_ID,

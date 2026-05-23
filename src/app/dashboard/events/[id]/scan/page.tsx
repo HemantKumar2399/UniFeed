@@ -2,7 +2,7 @@
 
 import { use, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ScanLine } from "lucide-react";
+import { AlertCircle, ArrowLeft, ScanLine } from "lucide-react";
 
 import { ManualCheckInFallback } from "@/components/ManualCheckInFallback";
 import { Scanner } from "@/components/Scanner";
@@ -18,20 +18,30 @@ export default function EventScanModePage({
   const isValidEventId = Number.isInteger(eventId) && eventId > 0;
 
   const utils = api.useUtils();
-  const [flash, setFlash] = useState<"idle" | "success" | "error">("idle");
+  const [flash, setFlash] = useState<"idle" | "success" | "warning" | "error">("idle");
   const [feedbackMessage, setFeedbackMessage] = useState("Scanner ready");
 
-  const { data: attendees } = api.event.getAttendees.useQuery(
+  const { data: attendees, error: attendeesError } = api.event.getAttendees.useQuery(
     { eventId },
-    { enabled: isValidEventId },
+    {
+      enabled: isValidEventId,
+      retry: false,
+    },
   );
 
-  const redeemTicket = api.event.redeemTicket.useMutation({
+  const verifyStudentQr = api.event.verifyStudentQrForEvent.useMutation({
     onSuccess: async (result) => {
-      setFlash("success");
-      setFeedbackMessage(`Checked in: ${result.attendeeName}`);
-      await utils.event.getAttendees.invalidate({ eventId });
-      window.setTimeout(() => setFlash("idle"), 250);
+      if (result.outcome === "CHECKED_IN") {
+        setFlash("success");
+        setFeedbackMessage(result.message);
+        await utils.event.getAttendees.invalidate({ eventId });
+        window.setTimeout(() => setFlash("idle"), 250);
+        return;
+      }
+
+      setFlash(result.outcome === "ALREADY_CHECKED_IN" ? "warning" : "error");
+      setFeedbackMessage(result.message);
+      window.setTimeout(() => setFlash("idle"), 320);
     },
     onError: (error) => {
       setFlash("error");
@@ -42,12 +52,12 @@ export default function EventScanModePage({
 
   const handleDetected = useCallback(
     (token: string) => {
-      if (!isValidEventId || redeemTicket.isPending) {
+      if (!isValidEventId || verifyStudentQr.isPending) {
         return;
       }
-      redeemTicket.mutate({ eventId, token });
+      verifyStudentQr.mutate({ eventId, token });
     },
-    [eventId, isValidEventId, redeemTicket],
+    [eventId, isValidEventId, verifyStudentQr],
   );
 
   const checkedInCount = useMemo(
@@ -68,7 +78,11 @@ export default function EventScanModePage({
       {flash !== "idle" ? (
         <div
           className={`pointer-events-none fixed inset-0 z-50 ${
-            flash === "success" ? "bg-green-500/50" : "bg-red-500/45"
+            flash === "success"
+              ? "bg-green-500/50"
+              : flash === "warning"
+                ? "bg-amber-400/40"
+                : "bg-red-500/45"
           }`}
         />
       ) : null}
@@ -88,7 +102,12 @@ export default function EventScanModePage({
               <ScanLine className="h-7 w-7" />
               Scan Mode
             </h1>
-            <p className="mt-1 text-sm text-warm-gray-500">{feedbackMessage}</p>
+            <p className="mt-1 text-sm text-warm-gray-500">
+              {feedbackMessage}
+            </p>
+            <p className="mt-1 text-xs font-medium uppercase tracking-badge text-warm-gray-500">
+              Scan the student&apos;s permanent passport QR for this event.
+            </p>
           </div>
           <div className="rounded-[14px] border border-[var(--border-whisper)] bg-pure-white px-4 py-2 text-right shadow-sm">
             <p className="text-xs uppercase tracking-badge text-warm-gray-500">Checked-In</p>
@@ -97,7 +116,20 @@ export default function EventScanModePage({
         </div>
       </header>
 
-      <Scanner onDetected={handleDetected} isBusy={redeemTicket.isPending} />
+      {attendeesError ? (
+        <div
+          aria-live="polite"
+          className="flex items-start gap-3 rounded-[20px] border border-red-200 bg-red-50 p-4 text-red-800 shadow-sm"
+        >
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold">Unable to load attendees for this event.</p>
+            <p className="mt-1 text-sm">{attendeesError.message}</p>
+          </div>
+        </div>
+      ) : null}
+
+      <Scanner onDetected={handleDetected} isBusy={verifyStudentQr.isPending} />
 
       <ManualCheckInFallback
         eventId={eventId}

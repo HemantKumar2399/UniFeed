@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 process.env.SKIP_ENV_VALIDATION = "1";
+process.env.STUDENT_QR_SECRET = "student-qr-unit-test-secret";
 
 import assert from "node:assert/strict";
 import test from "node:test";
@@ -8,6 +9,7 @@ import { TRPCError } from "@trpc/server";
 
 import { appRouter } from "@/server/api/root";
 import { createCallerFactory } from "@/server/api/trpc";
+import { createStudentQrToken } from "@/lib/student-qr";
 
 const createCaller = createCallerFactory(appRouter);
 
@@ -802,6 +804,562 @@ void test("eventRouter.forceCheckIn rejects cancelled events", async () => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
       assert.equal(err.message, "Cancelled events do not allow check-in.");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.verifyStudentQrForEvent checks in a registered student", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_active_student",
+      studentQrSecretVersion: 2,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  let updated = false;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 88,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      studentProfile: {
+        findUnique: async (args: any) => {
+          assert.equal(args.where.studentQrId, "sqr_active_student");
+          return {
+            id: "profile-1",
+            userId: "student-1",
+            collegeId: "college-1",
+            studentQrId: "sqr_active_student",
+            studentQrSecretVersion: 2,
+            qrRevokedAt: null,
+            user: {
+              id: "student-1",
+              name: "Student One",
+              email: "student1@example.com",
+            },
+          };
+        },
+      },
+      rSVP: {
+        findUnique: async () => ({
+          id: 301,
+          userId: "student-1",
+          eventId: 88,
+          status: "GOING",
+          user: {
+            id: "student-1",
+            name: "Student One",
+            email: "student1@example.com",
+          },
+        }),
+        update: async (args: any) => {
+          updated = true;
+          assert.equal(args.where.id, 301);
+          assert.equal(args.data.status, "ATTENDED");
+          return {
+            id: 301,
+            userId: "student-1",
+            status: "ATTENDED",
+            user: {
+              id: "student-1",
+              name: "Student One",
+              email: "student1@example.com",
+            },
+          };
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 88,
+    token,
+  });
+
+  assert.ok(updated);
+  assert.equal(result.outcome, "CHECKED_IN");
+  assert.equal(result.userId, "student-1");
+});
+
+void test("eventRouter.verifyStudentQrForEvent returns already checked in for attended rsvps", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_attended_student",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 44,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-2",
+          userId: "student-2",
+          collegeId: "college-1",
+          studentQrId: "sqr_attended_student",
+          studentQrSecretVersion: 1,
+          qrRevokedAt: null,
+          user: {
+            id: "student-2",
+            name: "Student Two",
+            email: "student2@example.com",
+          },
+        }),
+      },
+      rSVP: {
+        findUnique: async () => ({
+          id: 302,
+          userId: "student-2",
+          eventId: 44,
+          status: "ATTENDED",
+          user: {
+            id: "student-2",
+            name: "Student Two",
+            email: "student2@example.com",
+          },
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 44,
+    token,
+  });
+
+  assert.equal(result.outcome, "ALREADY_CHECKED_IN");
+});
+
+void test("eventRouter.verifyStudentQrForEvent rejects invalid qr payloads", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 45,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 45,
+    token: "definitely-not-a-valid-passport-token",
+  });
+
+  assert.equal(result.outcome, "INVALID_QR");
+});
+
+void test("eventRouter.verifyStudentQrForEvent returns revoked qr when the stored version changed", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_rotated_student",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 46,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-3",
+          userId: "student-3",
+          collegeId: "college-1",
+          studentQrId: "sqr_rotated_student",
+          studentQrSecretVersion: 2,
+          qrRevokedAt: null,
+          user: {
+            id: "student-3",
+            name: "Student Three",
+            email: "student3@example.com",
+          },
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 46,
+    token,
+  });
+
+  assert.equal(result.outcome, "REVOKED_QR");
+});
+
+void test("eventRouter.verifyStudentQrForEvent returns wrong college when passport college does not match", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_other_college",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 47,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-4",
+          userId: "student-4",
+          collegeId: "college-2",
+          studentQrId: "sqr_other_college",
+          studentQrSecretVersion: 1,
+          qrRevokedAt: null,
+          user: {
+            id: "student-4",
+            name: "Student Four",
+            email: "student4@example.com",
+          },
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 47,
+    token,
+  });
+
+  assert.equal(result.outcome, "WRONG_COLLEGE");
+});
+
+void test("eventRouter.verifyStudentQrForEvent returns not registered when no valid rsvp exists", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_no_rsvp",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 48,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-5",
+          userId: "student-5",
+          collegeId: "college-1",
+          studentQrId: "sqr_no_rsvp",
+          studentQrSecretVersion: 1,
+          qrRevokedAt: null,
+          user: {
+            id: "student-5",
+            name: "Student Five",
+            email: "student5@example.com",
+          },
+        }),
+      },
+      rSVP: {
+        findUnique: async () => null,
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 48,
+    token,
+  });
+
+  assert.equal(result.outcome, "NOT_REGISTERED");
+});
+
+void test("eventRouter.verifyStudentQrForEvent returns not scannable when the event is not published", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_not_scannable",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 49,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Approved Event",
+          status: "APPROVED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 49,
+    token,
+  });
+
+  assert.equal(result.outcome, "EVENT_NOT_SCANNABLE");
+});
+
+void test("eventRouter.verifyStudentQrForEvent rejects unauthorized organizers", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_unauthorized",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 50,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => null,
+      },
+    } as any,
+    session: {
+      user: {
+        id: "different-organizer-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.verifyStudentQrForEvent({
+        eventId: 50,
+        token,
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
       return true;
     },
   );

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { createStudentQrId } from "@/lib/student-qr";
 
 export const studentRouter = createTRPCRouter({
   getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -62,7 +63,7 @@ export const studentRouter = createTRPCRouter({
       }
 
       // Generate a permanent QR identifier for the student
-      const studentQrId = `qr_stud_${userId}`;
+      const studentQrId = createStudentQrId();
 
       // Create the profile
       const newProfile = await ctx.db.studentProfile.create({

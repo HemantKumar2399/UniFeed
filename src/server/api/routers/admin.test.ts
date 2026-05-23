@@ -305,3 +305,121 @@ void test("adminRouter.rejectEvent blocks cross-college review attempts", async 
     },
   );
 });
+
+void test("adminRouter.revokeStudentQr marks a same-college student qr as revoked", async () => {
+  let updateCalled = false;
+
+  const mockedCtx = {
+    db: {
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-1",
+          userId: "student-user-id",
+          collegeId: "college-1",
+          isVerified: true,
+          studentQrId: "sqr_existing",
+          studentQrSecretVersion: 2,
+          qrRevokedAt: null,
+          user: {
+            id: "student-user-id",
+            name: "Student One",
+            email: "student1@example.com",
+          },
+        }),
+        update: async (args: any) => {
+          updateCalled = true;
+          assert.equal(args.where.id, "profile-1");
+          assert.ok(args.data.qrRevokedAt instanceof Date);
+          return {
+            userId: "student-user-id",
+            isVerified: true,
+            studentQrId: "sqr_existing",
+            studentQrSecretVersion: 2,
+            qrRevokedAt: args.data.qrRevokedAt,
+            user: {
+              name: "Student One",
+              email: "student1@example.com",
+            },
+          };
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.admin.revokeStudentQr({ userId: "student-user-id" });
+
+  assert.ok(updateCalled);
+  assert.equal(result.userId, "student-user-id");
+  assert.ok(result.qrRevokedAt instanceof Date);
+});
+
+void test("adminRouter.regenerateStudentQr rotates qr id and clears revoked state", async () => {
+  let updateCalled = false;
+
+  const mockedCtx = {
+    db: {
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-2",
+          userId: "student-user-id",
+          collegeId: "college-1",
+          isVerified: true,
+          studentQrId: "sqr_old",
+          studentQrSecretVersion: 4,
+          qrRevokedAt: new Date("2030-05-11T10:00:00.000Z"),
+          user: {
+            id: "student-user-id",
+            name: "Student Two",
+            email: "student2@example.com",
+          },
+        }),
+        update: async (args: any) => {
+          updateCalled = true;
+          assert.equal(args.where.id, "profile-2");
+          assert.match(args.data.studentQrId, /^sqr_[A-Za-z0-9_-]+$/);
+          assert.deepEqual(args.data.studentQrSecretVersion, { increment: 1 });
+          assert.equal(args.data.qrRevokedAt, null);
+          return {
+            userId: "student-user-id",
+            isVerified: true,
+            studentQrId: args.data.studentQrId,
+            studentQrSecretVersion: 5,
+            qrRevokedAt: null,
+            user: {
+              name: "Student Two",
+              email: "student2@example.com",
+            },
+          };
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.admin.regenerateStudentQr({ userId: "student-user-id" });
+
+  assert.ok(updateCalled);
+  assert.ok(result.studentQrId);
+  assert.match(result.studentQrId, /^sqr_[A-Za-z0-9_-]+$/);
+  assert.equal(result.studentQrSecretVersion, 5);
+  assert.equal(result.qrRevokedAt, null);
+});

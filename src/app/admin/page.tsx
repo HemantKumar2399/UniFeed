@@ -6,6 +6,7 @@ import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 
 import { AdminControls } from "./AdminControls";
+import { AdminStudentQrControls } from "./AdminStudentQrControls";
 
 const routeCards = [
   {
@@ -56,7 +57,7 @@ export default async function AdminDashboardPage() {
     redirect("/unauthorized");
   }
 
-  const [users, clubs, clubMemberships, totalEvents, submittedEvents, approvedEvents, publishedEvents] =
+  const [users, clubs, clubMemberships, totalEvents, submittedEvents, approvedEvents, publishedEvents, studentQrProfiles] =
     await Promise.all([
       db.user.findMany({
         where: { collegeId },
@@ -108,6 +109,23 @@ export default async function AdminDashboardPage() {
       }),
       db.event.count({
         where: { collegeId, status: "PUBLISHED" },
+      }),
+      db.studentProfile.findMany({
+        where: { collegeId },
+        orderBy: { createdAt: "asc" },
+        select: {
+          userId: true,
+          isVerified: true,
+          studentQrId: true,
+          studentQrSecretVersion: true,
+          qrRevokedAt: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
       }),
     ]);
 
@@ -277,6 +295,18 @@ export default async function AdminDashboardPage() {
           </div>
         </aside>
       </section>
+
+      <AdminStudentQrControls
+        initialRecords={studentQrProfiles.map((profile) => ({
+          userId: profile.userId,
+          name: profile.user.name,
+          email: profile.user.email,
+          isVerified: profile.isVerified,
+          studentQrId: profile.studentQrId,
+          studentQrSecretVersion: profile.studentQrSecretVersion,
+          qrRevokedAt: profile.qrRevokedAt ? profile.qrRevokedAt.toISOString() : null,
+        }))}
+      />
     </div>
   );
 }
