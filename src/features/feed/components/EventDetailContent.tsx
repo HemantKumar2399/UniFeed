@@ -16,7 +16,7 @@ import {
 } from "./discussion-board.utils";
 
 type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
-type RegisterState = "IDLE" | "LOCKING" | "SECURED" | "ERROR";
+type RegisterState = "IDLE" | "LOCKING" | "SECURED" | "WAITLISTED" | "ERROR";
 type DiscussionThread = RouterOutputs["event"]["getDiscussionThreads"][number];
 type DiscussionReply = DiscussionThread["replies"][number];
 
@@ -27,15 +27,13 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
   const [questionDraft, setQuestionDraft] = useState("");
   const [replyDraftByThread, setReplyDraftByThread] = useState<Record<number, string>>({});
 
-  const hasActiveRsvp =
-    event.rsvps &&
-    event.rsvps.length > 0 &&
-    (event.rsvps[0]?.status === "GOING" ||
-      event.rsvps[0]?.status === "ATTENDED" ||
-      event.rsvps[0]?.status === "WAITLISTED");
-
+  const initialRsvpStatus = event.rsvps?.[0]?.status;
   const [registerState, setRegisterState] = useState<RegisterState>(
-    hasActiveRsvp ? "SECURED" : "IDLE"
+    initialRsvpStatus === "GOING" || initialRsvpStatus === "ATTENDED"
+      ? "SECURED"
+      : initialRsvpStatus === "WAITLISTED"
+      ? "WAITLISTED"
+      : "IDLE"
   );
 
   const {
@@ -121,9 +119,16 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
     onMutate: () => {
       setRegisterState("LOCKING");
     },
-    onSuccess: () => {
-      setRegisterState("SECURED");
-      toast.success("Successfully registered!");
+    onSuccess: async (data) => {
+      if (data.status === "WAITLISTED") {
+        setRegisterState("WAITLISTED");
+        toast.success("Added to waitlist!");
+      } else {
+        setRegisterState("SECURED");
+        toast.success("Successfully registered!");
+      }
+      await utils.event.getFeed.invalidate();
+      await utils.event.getHappeningThisWeek.invalidate();
     },
     onError: (err) => {
       setRegisterState("ERROR");
@@ -136,6 +141,18 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
       }
 
       setTimeout(() => setRegisterState("IDLE"), 3000);
+    },
+  });
+
+  const { mutate: cancelRsvp, isPending: isCancelPending } = api.rsvp.cancel.useMutation({
+    onSuccess: async () => {
+      setRegisterState("IDLE");
+      toast.success("RSVP cancelled successfully.");
+      await utils.event.getFeed.invalidate();
+      await utils.event.getHappeningThisWeek.invalidate();
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to cancel RSVP.");
     },
   });
 
@@ -209,14 +226,34 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
               {event.description || "No description provided."}
             </p>
 
-            <footer className="mt-3 flex items-center justify-end">
+            <footer className="mt-3 flex flex-col gap-2 sm:flex-row items-center justify-end">
+              {(registerState === "SECURED" || registerState === "WAITLISTED") && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => cancelRsvp({ eventId: event.id })}
+                  disabled={isCancelPending}
+                  className="h-12 w-full sm:w-auto px-6 rounded-xl text-[14px] font-semibold border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 active:scale-95 transition-all"
+                >
+                  {isCancelPending ? "Cancelling..." : "Cancel RSVP"}
+                </Button>
+              )}
+
               <LongPressButton
                 onComplete={() => handleRegister()}
-                disabled={registerState === "LOCKING" || registerState === "SECURED"}
+                disabled={
+                  registerState === "LOCKING" ||
+                  registerState === "SECURED" ||
+                  registerState === "WAITLISTED"
+                }
                 className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-8 text-[15px] font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
               >
                 {registerState === "IDLE" || registerState === "ERROR" ? (
-                  "Reserve Spot"
+                  event._count.rsvps >= event.capacity ? (
+                    "Join Waitlist"
+                  ) : (
+                    "Reserve Spot"
+                  )
                 ) : registerState === "LOCKING" ? (
                   <span className="flex items-center gap-2">
                     <svg
@@ -241,6 +278,8 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                     </svg>
                     Locking...
                   </span>
+                ) : registerState === "WAITLISTED" ? (
+                  "Waitlisted"
                 ) : (
                   "Secured"
                 )}

@@ -104,11 +104,11 @@ development_status:
   6-4-show-registration-state-everywhere: done
   epic-6-retrospective: optional
 
-  epic-7: backlog
-  7-1-restrict-rsvp-to-approved-published-events: backlog
-  7-2-preserve-capacity-safe-rsvp-logic: backlog
-  7-3-add-rsvp-cancellation: backlog
-  7-4-decide-and-implement-waitlist: backlog
+  epic-7: done
+  7-1-restrict-rsvp-to-approved-published-events: done
+  7-2-preserve-capacity-safe-rsvp-logic: done
+  7-3-add-rsvp-cancellation: done
+  7-4-decide-and-implement-waitlist: done
   epic-7-retrospective: optional
 
   epic-8: backlog
