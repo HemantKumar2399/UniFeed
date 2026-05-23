@@ -15,6 +15,41 @@ void test("buildPublishedFeedQuery keeps full candidate set before ranking", () 
   assert.deepEqual(query.orderBy, [{ date: "asc" }, { id: "asc" }]);
 });
 
+interface FeedQuery {
+  where: {
+    status: string;
+    collegeId?: string;
+    date: {
+      gte: Date;
+    };
+  };
+  include: {
+    rsvps: {
+      where: {
+        userId: string;
+      };
+      select: {
+        status: boolean;
+      };
+    };
+  };
+}
+
+void test("buildPublishedFeedQuery filters by collegeId and upcoming date when provided", () => {
+  const query = buildPublishedFeedQuery("college-123") as unknown as FeedQuery;
+
+  assert.equal(query.where.collegeId, "college-123");
+  assert.equal(query.where.status, "PUBLISHED");
+  assert.ok(query.where.date.gte instanceof Date);
+});
+
+void test("buildPublishedFeedQuery includes user RSVP relation when userId is provided", () => {
+  const query = buildPublishedFeedQuery(undefined, "user-456") as unknown as FeedQuery;
+
+  assert.equal(query.include.rsvps.where.userId, "user-456");
+  assert.equal(query.include.rsvps.select.status, true);
+});
+
 void test("selectTopPersonalizedFeedEvents can surface relevant events beyond the first 30 chronological slots", () => {
   const base = new Date("2026-04-17T08:00:00.000Z");
   const events = Array.from({ length: 35 }, (_, index) => ({

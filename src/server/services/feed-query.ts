@@ -3,10 +3,14 @@ import { rankEventsByRelevance, rankEventsWithFollowBoost } from "./feed-ranking
 
 export const FEED_RESULT_LIMIT = 10;
 
-export function buildPublishedFeedQuery() {
+export function buildPublishedFeedQuery(collegeId?: string, userId?: string) {
   return {
     where: {
       status: "PUBLISHED" as const,
+      ...(collegeId ? { collegeId } : {}),
+      date: {
+        gte: new Date(),
+      },
     },
     orderBy: [{ date: "asc" as const }, { id: "asc" as const }],
     include: {
@@ -20,6 +24,14 @@ export function buildPublishedFeedQuery() {
       _count: {
         select: {
           rsvps: true,
+        },
+      },
+      rsvps: {
+        where: {
+          userId: userId ?? "",
+        },
+        select: {
+          status: true,
         },
       },
     },

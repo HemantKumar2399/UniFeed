@@ -1,7 +1,7 @@
 import {
   resolveDiscussionDisplayName,
   sortDiscussionThreads as sortDiscussionThreadsShared,
-} from "../../../lib/discussion.js";
+} from "@/lib/discussion";
 
 export const sortDiscussionThreads = sortDiscussionThreadsShared;
 

@@ -97,11 +97,11 @@ development_status:
   5-7-complete-image-upload-pipeline: done
   epic-5-retrospective: optional
 
-  epic-6: backlog
-  6-1-replace-hardcoded-home-feed: backlog
-  6-2-update-feed-query-for-approval-and-college-scope: backlog
-  6-3-add-consistent-event-detail-page: backlog
-  6-4-show-registration-state-everywhere: backlog
+  epic-6: done
+  6-1-replace-hardcoded-home-feed: done
+  6-2-update-feed-query-for-approval-and-college-scope: done
+  6-3-add-consistent-event-detail-page: done
+  6-4-show-registration-state-everywhere: done
   epic-6-retrospective: optional
 
   epic-7: backlog

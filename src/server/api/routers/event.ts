@@ -413,14 +413,16 @@ export const eventRouter = createTRPCRouter({
   }),
 
   getFeed: publicProcedure.query(async ({ ctx }) => {
-    const events = await ctx.db.event.findMany(buildPublishedFeedQuery());
+    const collegeId = ctx.session?.user?.collegeId;
+    const userId = ctx.session?.user?.id;
+    const events = await ctx.db.event.findMany(buildPublishedFeedQuery(collegeId, userId));
 
-    if (!ctx.session?.user?.id) {
+    if (!userId) {
       return events.slice(0, FEED_RESULT_LIMIT);
     }
 
     const followedRows = await ctx.db.hubFollow.findMany({
-      where: { userId: ctx.session.user.id },
+      where: { userId: userId },
       select: {
         clubId: true,
       },
