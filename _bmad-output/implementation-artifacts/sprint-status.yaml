@@ -134,10 +134,10 @@ development_status:
   10-4-decide-campus-map-scope: done
   epic-10-retrospective: optional
 
-  epic-11: backlog
-  11-1-build-admin-overview-metrics: backlog
-  11-2-build-organizer-overview-metrics: backlog
-  11-3-add-status-aware-dashboard-cards: backlog
+  epic-11: done
+  11-1-build-admin-overview-metrics: done
+  11-2-build-organizer-overview-metrics: done
+  11-3-add-status-aware-dashboard-cards: done
   epic-11-retrospective: optional
 
   epic-12: backlog

@@ -4,6 +4,7 @@ import { Building2, CalendarClock, CheckCircle2, FileStack, Library, Plus, Setti
 
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
+import { getAdminDashboardMetrics } from "@/server/services/dashboard-metrics";
 
 import { AdminControls } from "./AdminControls";
 import { AdminStudentQrControls } from "./AdminStudentQrControls";
@@ -41,6 +42,34 @@ const routeCards = [
   },
 ] as const;
 
+function AdminMetricCard(props: {
+  label: string;
+  value: number;
+  description: string;
+  tone?: "blue" | "amber" | "emerald" | "rose" | "slate";
+}) {
+  const toneClasses =
+    props.tone === "amber"
+      ? "bg-[#fff8ec] text-[#9a6500]"
+      : props.tone === "emerald"
+        ? "bg-emerald-50 text-emerald-700"
+        : props.tone === "rose"
+          ? "bg-rose-50 text-rose-700"
+          : props.tone === "slate"
+            ? "bg-[#f6f5f4] text-[#615d59]"
+            : "bg-[#f2f9ff] text-[#097fe8]";
+
+  return (
+    <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
+      <span className={`inline-flex rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${toneClasses}`}>
+        {props.label}
+      </span>
+      <p className="mt-4 text-[32px] font-bold tracking-tight text-black/95">{props.value}</p>
+      <p className="mt-2 text-[13px] font-medium leading-relaxed text-[#615d59]">{props.description}</p>
+    </div>
+  );
+}
+
 export default async function AdminDashboardPage() {
   const session = await auth();
 
@@ -57,7 +86,7 @@ export default async function AdminDashboardPage() {
     redirect("/unauthorized");
   }
 
-  const [users, clubs, clubMemberships, totalEvents, submittedEvents, approvedEvents, publishedEvents, studentQrProfiles] =
+  const [users, clubs, clubMemberships, totalEvents, submittedEvents, approvedEvents, publishedEvents, studentQrProfiles, adminMetrics] =
     await Promise.all([
       db.user.findMany({
         where: { collegeId },
@@ -127,6 +156,7 @@ export default async function AdminDashboardPage() {
           },
         },
       }),
+      getAdminDashboardMetrics(db, collegeId),
     ]);
 
   const roleCounts = users.reduce<Record<"STUDENT" | "ORGANIZER" | "ADMIN", number>>(
@@ -174,6 +204,38 @@ export default async function AdminDashboardPage() {
             <p className="mt-2 text-[13px] font-medium leading-relaxed text-[#615d59]">{route.description}</p>
           </Link>
         ))}
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <AdminMetricCard
+          label="Pending Approvals"
+          value={adminMetrics.pendingApprovals}
+          description="Submitted events waiting for a college-admin decision right now."
+          tone="amber"
+        />
+        <AdminMetricCard
+          label={`Approved (${adminMetrics.decisionWindowDays}d)`}
+          value={adminMetrics.approvedInPeriod}
+          description="Approval decisions recorded during the current rolling review window."
+          tone="emerald"
+        />
+        <AdminMetricCard
+          label={`Rejected (${adminMetrics.decisionWindowDays}d)`}
+          value={adminMetrics.rejectedInPeriod}
+          description="Rejections recorded during the same review window, so follow-up pressure is visible."
+          tone="rose"
+        />
+        <AdminMetricCard
+          label="Active Communities"
+          value={adminMetrics.activeCommunities}
+          description="Communities with members, events, or followers already active inside this college."
+        />
+        <AdminMetricCard
+          label="Upcoming Live Events"
+          value={adminMetrics.upcomingEvents}
+          description="Published future events currently discoverable to students in this college."
+          tone="slate"
+        />
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -236,6 +298,38 @@ export default async function AdminDashboardPage() {
             {submittedEvents} submitted, {approvedEvents} approved, {publishedEvents} published across {routedClubs} active communities.
           </p>
         </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <AdminMetricCard
+          label="Total RSVPs"
+          value={adminMetrics.rsvpTotals.total}
+          description="All RSVP records for events in this college, regardless of current attendance state."
+          tone="emerald"
+        />
+        <AdminMetricCard
+          label="Going"
+          value={adminMetrics.rsvpTotals.going}
+          description="Confirmed attendees still expected to arrive."
+        />
+        <AdminMetricCard
+          label="Attended"
+          value={adminMetrics.rsvpTotals.attended}
+          description="Students already checked in through the current attendance flow."
+          tone="slate"
+        />
+        <AdminMetricCard
+          label="Waitlisted"
+          value={adminMetrics.rsvpTotals.waitlisted}
+          description="Demand that still needs more capacity or promotion from the waitlist."
+          tone="amber"
+        />
+        <AdminMetricCard
+          label="Cancelled RSVPs"
+          value={adminMetrics.rsvpTotals.cancelled}
+          description="Students who opted out after registering, useful for understanding drop-off."
+          tone="rose"
+        />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
