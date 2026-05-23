@@ -60,3 +60,6 @@ yarn-error.log*
 # Keep generated implementation/planning outputs publishable
 !/_bmad-output/
 !/_bmad-output/**
+
+# Local scratch scripts (ad-hoc debug/query scripts, never commit)
+/scratch/

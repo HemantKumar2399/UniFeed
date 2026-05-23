@@ -141,7 +141,7 @@ export const protectedOrganizerProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     const role = ctx.session?.user?.role;
-    if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+    if (role !== "ORGANIZER" && role !== "ADMIN") {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "Only organizers or administrators can access this procedure.",
@@ -157,13 +157,13 @@ export const protectedOrganizerProcedure = t.procedure
 /**
  * Admin procedure
  *
- * Restricts access to users with 'ADMIN' or 'SUPER_ADMIN' roles.
+ * Restricts access to users with 'ADMIN' role.
  */
 export const adminProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     const role = ctx.session?.user?.role;
-    if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+    if (role !== "ADMIN") {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "Only administrators can access this procedure.",
@@ -179,7 +179,7 @@ export const adminProcedure = t.procedure
 /**
  * College Admin procedure
  *
- * Restricts access to 'ADMIN' or 'SUPER_ADMIN' and attaches their collegeId to the context
+ * Restricts access to 'ADMIN' and attaches their collegeId to the context
  * to enforce college-scoped data boundaries.
  */
 export const collegeAdminProcedure = t.procedure
@@ -188,7 +188,7 @@ export const collegeAdminProcedure = t.procedure
     const role = ctx.session?.user?.role;
     const collegeId = ctx.session?.user?.collegeId;
 
-    if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+    if (role !== "ADMIN") {
       throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "Only administrators can access this procedure.",

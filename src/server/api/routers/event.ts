@@ -20,7 +20,7 @@ type OrganizerCtx = {
   session: {
     user: {
       id: string;
-      role?: "ORGANIZER" | "ADMIN" | "SUPER_ADMIN" | "STUDENT";
+      role?: "ORGANIZER" | "ADMIN" | "STUDENT";
       collegeId?: string | null;
     };
   };

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -288,7 +288,7 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
 async function upsertUser(input: {
   email: string;
   name: string;
-  role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+  role: "STUDENT" | "ORGANIZER" | "ADMIN";
   collegeId: string;
   passwordHash: string;
 }) {
@@ -392,22 +392,14 @@ async function main() {
 
   // Seed Admin and Super Admin users
   await upsertUser({
-    email: "admin.jecrc@students.college.edu",
+    email: buildSeedEmail("admin.jecrc"),
     name: "Admin User JECRC",
     role: "ADMIN",
     collegeId: jecrcCollege.id,
     passwordHash,
   });
 
-  await upsertUser({
-    email: "superadmin@students.college.edu",
-    name: "Super Admin User",
-    role: "SUPER_ADMIN",
-    collegeId: jecrcCollege.id,
-    passwordHash,
-  });
-
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const createdClubs = await Promise.all(
       clubs.map((club) => tx.club.create({
         data: {

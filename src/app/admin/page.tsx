@@ -47,7 +47,7 @@ export default async function AdminDashboardPage() {
     redirect("/login");
   }
 
-  if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
+  if (session.user.role !== "ADMIN") {
     redirect("/unauthorized");
   }
 
@@ -111,16 +111,17 @@ export default async function AdminDashboardPage() {
       }),
     ]);
 
-  const roleCounts = users.reduce<Record<"STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN", number>>(
+  const roleCounts = users.reduce<Record<"STUDENT" | "ORGANIZER" | "ADMIN", number>>(
     (acc, user) => {
-      acc[user.role] += 1;
+      // Users with any valid role get counted; map unknown roles to ADMIN for safety
+      const key = (user.role as string) in acc ? (user.role as "STUDENT" | "ORGANIZER" | "ADMIN") : "ADMIN";
+      acc[key] += 1;
       return acc;
     },
     {
       STUDENT: 0,
       ORGANIZER: 0,
       ADMIN: 0,
-      SUPER_ADMIN: 0,
     },
   );
 
@@ -169,7 +170,7 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
           <p className="mt-4 text-[13px] font-medium leading-relaxed text-[#615d59]">
-            {roleCounts.STUDENT} students, {roleCounts.ORGANIZER} organizers, and {roleCounts.ADMIN + roleCounts.SUPER_ADMIN} admins inside this college scope.
+            {roleCounts.STUDENT} students, {roleCounts.ORGANIZER} organizers, and {roleCounts.ADMIN} admins inside this college scope.
           </p>
         </div>
 

@@ -286,7 +286,6 @@ enum Role {
   STUDENT
   ORGANIZER
   ADMIN
-  SUPER_ADMIN
 }
 
 enum EventStatus {

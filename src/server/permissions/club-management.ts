@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import type { db as prismaDb } from "@/server/db";
 
-type SupportedUserRole = "ORGANIZER" | "ADMIN" | "SUPER_ADMIN" | "STUDENT";
+type SupportedUserRole = "ORGANIZER" | "ADMIN" | "STUDENT";
 type SessionUser = {
   id: string;
   role?: SupportedUserRole;
@@ -17,10 +17,10 @@ type ClubManagementCtx = {
   };
 };
 
-export type ClubManagementRole = ClubRole | "ADMIN" | "SUPER_ADMIN";
+export type ClubManagementRole = ClubRole | "ADMIN";
 
-export function isAdminUserRole(role: string | undefined): role is "ADMIN" | "SUPER_ADMIN" {
-  return role === "ADMIN" || role === "SUPER_ADMIN";
+export function isAdminUserRole(role: string | undefined): role is "ADMIN" {
+  return role === "ADMIN";
 }
 
 function isClubMembershipRole(role: ClubRole | null | undefined): role is ClubRole {

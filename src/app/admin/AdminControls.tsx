@@ -8,7 +8,7 @@ interface UserItem {
   id: string;
   name: string | null;
   email: string | null;
-  role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+  role: "STUDENT" | "ORGANIZER" | "ADMIN";
 }
 
 interface ClubItem {
@@ -139,7 +139,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
 
   // Filter users to only show Organizers or Admins for club assignments
   const organizerEligibleUsers = users.filter(
-    (u) => u.role === "ORGANIZER" || u.role === "ADMIN" || u.role === "SUPER_ADMIN",
+    (u) => u.role === "ORGANIZER" || u.role === "ADMIN",
   );
 
   return (
@@ -411,13 +411,11 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
             <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[360px]">
               {users.map((u) => {
                 const badgeColors =
-                  u.role === "SUPER_ADMIN"
-                    ? "bg-purple-50 text-purple-700 border-purple-100"
-                    : u.role === "ADMIN"
-                    ? "bg-red-50 text-red-700 border-red-100"
-                    : u.role === "ORGANIZER"
-                    ? "bg-blue-50 text-blue-700 border-blue-100"
-                    : "bg-zinc-50 text-zinc-600 border-zinc-100";
+                  u.role === "ADMIN"
+                  ? "bg-red-50 text-red-700 border-red-100"
+                  : u.role === "ORGANIZER"
+                  ? "bg-blue-50 text-blue-700 border-blue-100"
+                  : "bg-zinc-50 text-zinc-600 border-zinc-100";
 
                 return (
                   <div

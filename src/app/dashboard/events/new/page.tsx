@@ -7,7 +7,7 @@ export default async function NewEventPage() {
   const session = await auth();
 
   const role = session?.user?.role;
-  if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+  if (role !== "ORGANIZER" && role !== "ADMIN") {
     redirect("/unauthorized");
   }
 

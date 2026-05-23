@@ -32,7 +32,7 @@ export function PremiumOrganizerShell({
   userRole?: string;
 }) {
   const pathname = usePathname();
-  const isAdmin = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
+  const isAdmin = userRole === "ADMIN";
   const navItems = isAdmin
     ? [...baseNavItems, { name: "Admin", href: "/admin", icon: ShieldCheck }]
     : baseNavItems;

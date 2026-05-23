@@ -15,13 +15,13 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+      role: "STUDENT" | "ORGANIZER" | "ADMIN";
       collegeId: string;
     } & DefaultSession["user"];
   }
 
   interface User {
-    role?: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+    role?: "STUDENT" | "ORGANIZER" | "ADMIN";
     collegeId?: string;
   }
 }
@@ -58,8 +58,31 @@ export const authConfig = {
           throw new Error("AccessDenied");
         }
 
-        // Look up the user by email.
-        const user = await db.user.findUnique({ where: { email } });
+        // Look up the user by exact email first.
+        let user = await db.user.findUnique({ where: { email } });
+
+        if (!user) {
+          // Smart fallback: if the exact email is not found, search for a user in
+          // the same college with the same local-part (prefix before the @).
+          // This allows users seeded under one domain to log in from another
+          // domain on the same college (e.g. @students.college.edu vs @students.edu.in).
+          const localPart = email.split("@")[0]?.toLowerCase();
+          if (localPart) {
+            const matchingUsers = await db.user.findMany({
+              where: {
+                collegeId: college.id,
+                email: {
+                  startsWith: `${localPart}@`,
+                  mode: "insensitive",
+                },
+              },
+            });
+            if (matchingUsers.length === 1) {
+              user = matchingUsers[0]!;
+            }
+          }
+        }
+
         if (!user?.password) {
           return null;
         }
@@ -96,7 +119,7 @@ export const authConfig = {
         session.user.id = token.id;
       }
       if (typeof token.role === "string") {
-        session.user.role = token.role as "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+        session.user.role = token.role as "STUDENT" | "ORGANIZER" | "ADMIN";
       }
       if (typeof token.collegeId === "string") {
         session.user.collegeId = token.collegeId;

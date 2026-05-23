@@ -7,7 +7,7 @@ import { auth } from "@/server/auth";
 export default async function DashboardPage() {
   const session = await auth();
   const organizerName = session?.user?.name ?? "Organizer";
-  const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12">

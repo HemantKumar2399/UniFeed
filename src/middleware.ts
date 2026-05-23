@@ -17,7 +17,7 @@ const { auth } = NextAuth({
         session.user.id = token.id;
       }
       if (typeof token.role === "string") {
-        session.user.role = token.role as "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+        session.user.role = token.role as "STUDENT" | "ORGANIZER" | "ADMIN";
       }
       if (typeof token.collegeId === "string") {
         session.user.collegeId = token.collegeId;
@@ -51,7 +51,7 @@ export default auth((req) => {
     }
 
     if (isStudentArea) {
-      if (role === "ADMIN" || role === "SUPER_ADMIN") {
+      if (role === "ADMIN") {
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
 
@@ -61,13 +61,13 @@ export default auth((req) => {
     }
 
     if (isDashboard) {
-      if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      if (role !== "ORGANIZER" && role !== "ADMIN") {
         return NextResponse.redirect(new URL("/unauthorized", req.url));
       }
     }
 
     if (isAdmin) {
-      if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      if (role !== "ADMIN") {
         return NextResponse.redirect(new URL("/unauthorized", req.url));
       }
     }

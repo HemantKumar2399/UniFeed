@@ -1,5 +1,5 @@
 import { db } from "@/server/db";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export class CapacityError extends Error {
   constructor(message: string) {
@@ -10,19 +10,14 @@ export class CapacityError extends Error {
 
 export async function createRsvpPessimistic(userId: string, eventId: number) {
   // Use $transaction to ensure atomicity
-  return await db.$transaction(async (tx) => {
-    // Pessimistic lock on the event row: SELECT ... FOR UPDATE
-    const eventParams = Prisma.sql`
+  return await db.$transaction(async (tx: Prisma.TransactionClient) => {
+    // Execute raw query for the lock using template tag directly
+    const events = await tx.$queryRaw<{ id: number; capacity: number }[]>`
       SELECT id, capacity, "createdAt", "updatedAt"
       FROM "Event"
       WHERE id = ${eventId}
       FOR UPDATE
     `;
-
-    // Execute raw query for the lock
-    const events = await tx.$queryRaw<
-      { id: number; capacity: number }[]
-    >(eventParams);
 
     if (!events || events.length === 0) {
       throw new Error("Event not found");

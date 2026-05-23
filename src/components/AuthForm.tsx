@@ -15,7 +15,7 @@ const AUTH_ERRORS: Record<string, string> = {
 };
 
 function resolveDefaultRouteForRole(role: string | undefined): string {
-  if (role === "ADMIN" || role === "SUPER_ADMIN") {
+  if (role === "ADMIN") {
     return "/dashboard";
   }
 
@@ -98,7 +98,7 @@ function FormContent() {
         };
         const roleDefaultRoute = resolveDefaultRouteForRole(sessionData?.user?.role);
 
-        if (sessionData?.user?.role === "ADMIN" || sessionData?.user?.role === "SUPER_ADMIN") {
+        if (sessionData?.user?.role === "ADMIN") {
           window.location.href = roleDefaultRoute;
           return;
         }

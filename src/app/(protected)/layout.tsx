@@ -14,7 +14,7 @@ export default async function ProtectedLayout({
     redirect("/");
   }
 
-  if (session.user.role === "ADMIN" || session.user.role === "SUPER_ADMIN") {
+  if (session.user.role === "ADMIN") {
     redirect("/dashboard");
   }
 

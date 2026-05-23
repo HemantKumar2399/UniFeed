@@ -8,6 +8,7 @@ import { createRsvpPessimistic, CapacityError } from "@/server/services/rsvp";
 import { TRPCError } from "@trpc/server";
 import { ee } from "@/server/events";
 import { observable } from "@trpc/server/observable";
+import type { Prisma } from "@prisma/client";
 
 export const rsvpRouter = createTRPCRouter({
   onCapacityChange: publicProcedure
@@ -123,7 +124,7 @@ export const rsvpRouter = createTRPCRouter({
       const userId = ctx.session.user.id;
       const eventId = input.eventId;
 
-      return await ctx.db.$transaction(async (tx) => {
+      return await ctx.db.$transaction(async (tx: Prisma.TransactionClient) => {
         const event = await tx.event.findUnique({
           where: { id: eventId },
           select: {

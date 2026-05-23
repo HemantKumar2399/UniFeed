@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
+import { type RouterOutputs } from "@/trpc/react";
 
 function formatDateTime(date: Date | null | undefined) {
   if (!date) {
@@ -28,6 +29,9 @@ type AdminEventsPageProps = {
   }>;
 };
 
+type CommunityItem = RouterOutputs["admin"]["getCollegeCommunities"][number];
+type PendingEventItem = RouterOutputs["admin"]["getPendingEvents"][number];
+
 export default async function AdminEventsPage({ searchParams }: AdminEventsPageProps) {
   const session = await auth();
 
@@ -35,7 +39,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
     redirect("/login");
   }
 
-  if (session.user.role !== "ADMIN" && session.user.role !== "SUPER_ADMIN") {
+  if (session.user.role !== "ADMIN") {
     redirect("/unauthorized");
   }
 
@@ -90,7 +94,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
               className="w-full bg-transparent text-[14px] font-medium text-black/90 outline-none"
             >
               <option value="">All communities</option>
-              {clubs.map((club) => (
+              {clubs.map((club: CommunityItem) => (
                 <option key={club.id} value={club.id}>
                   {club.name}
                 </option>
@@ -118,7 +122,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
           />
         ) : (
           <div className="space-y-4">
-            {pendingEvents.map((event) => (
+            {pendingEvents.map((event: PendingEventItem) => (
               <article
                 key={event.id}
                 className="rounded-[24px] border border-black/10 bg-white p-5 shadow-[0_12px_30px_rgba(0,0,0,0.04)]"

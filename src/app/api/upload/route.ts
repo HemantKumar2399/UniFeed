@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   }
 
   const role = session.user.role;
-  if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+  if (role !== "ORGANIZER" && role !== "ADMIN") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

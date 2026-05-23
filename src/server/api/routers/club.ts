@@ -88,7 +88,7 @@ export const clubRouter = createTRPCRouter({
         where: {
           collegeId: club.collegeId,
           role: {
-            in: ["ORGANIZER", "ADMIN", "SUPER_ADMIN"],
+            in: ["ORGANIZER", "ADMIN"],
           },
           id: {
             notIn: [...assignedUserIds],

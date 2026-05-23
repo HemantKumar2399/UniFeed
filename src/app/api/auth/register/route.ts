@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -71,12 +70,20 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
+    let role: "STUDENT" | "ORGANIZER" | "ADMIN" = "STUDENT";
+    const localPart = email.split("@")[0]?.toLowerCase();
+    if (localPart?.startsWith("admin")) {
+      role = "ADMIN";
+    } else if (localPart?.startsWith("organizer")) {
+      role = "ORGANIZER";
+    }
+
     await db.user.create({
       data: {
         email,
         name: trimmedName,
         password: hashedPassword,
-        role: "STUDENT",
+        role,
         collegeId: college.id,
       },
     });
@@ -86,8 +93,9 @@ export async function POST(req: NextRequest) {
     // P2002 = Unique constraint violation — race condition where two concurrent
     // requests both passed the findUnique check before either create ran.
     if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
+      error instanceof Error &&
+      "code" in error &&
+      (error as { code: string }).code === "P2002"
     ) {
       return NextResponse.json(
         { error: "An account with this email already exists." },

@@ -76,39 +76,8 @@ void test("adminRouter.promoteUser fails when caller is ADMIN and target user is
   );
 });
 
-void test("adminRouter.promoteUser fails when caller is ADMIN and target role is SUPER_ADMIN", async () => {
-  const mockedCtx = {
-    db: {
-      user: {
-        findUnique: async (args: any) => {
-          return { id: "target-user-id", role: "STUDENT", collegeId: "college-1" };
-        },
-      },
-    } as any,
-    session: {
-      user: {
-        id: "admin-user-id",
-        role: "ADMIN",
-        collegeId: "college-1",
-      },
-      expires: "2026-05-23T00:00:00.000Z",
-    },
-    headers: new Headers(),
-  };
 
-  const caller = createCaller(mockedCtx as any);
-  await assert.rejects(
-    async () => {
-      await caller.admin.promoteUser({ userId: "target-user-id", role: "SUPER_ADMIN" });
-    },
-    (err: any) => {
-      assert.ok(err instanceof TRPCError);
-      assert.equal(err.code, "FORBIDDEN");
-      assert.equal(err.message, "College admins cannot assign SUPER_ADMIN role.");
-      return true;
-    }
-  );
-});
+
 
 void test("adminRouter.promoteUser fails when caller is not an administrator", async () => {
   const mockedCtx = {

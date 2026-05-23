@@ -14,7 +14,7 @@ export default async function DashboardLayout({
   }
 
   const role = session.user.role;
-  if (role !== "ORGANIZER" && role !== "ADMIN" && role !== "SUPER_ADMIN") {
+  if (role !== "ORGANIZER" && role !== "ADMIN") {
     redirect("/unauthorized");
   }
 

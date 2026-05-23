@@ -7,7 +7,7 @@ export default async function DashboardSettingsPage() {
   const session = await auth();
   const userName = session?.user?.name ?? "Organizer";
   const userInitial = userName.charAt(0) || "O";
-  const isAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUPER_ADMIN";
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12 max-w-4xl">

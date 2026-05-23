@@ -9,21 +9,17 @@ type AdminReviewCtx = {
   session: {
     user: {
       id: string;
-      role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN";
+      role: "STUDENT" | "ORGANIZER" | "ADMIN";
       collegeId?: string | null;
     };
   };
 };
 
 function assertCollegeScope(
-  sessionUser: { role: "STUDENT" | "ORGANIZER" | "ADMIN" | "SUPER_ADMIN"; collegeId?: string | null },
+  sessionUser: { role: "STUDENT" | "ORGANIZER" | "ADMIN"; collegeId?: string | null },
   targetCollegeId: string,
   message: string,
 ) {
-  if (sessionUser.role === "SUPER_ADMIN") {
-    return;
-  }
-
   if (!sessionUser.collegeId || sessionUser.collegeId !== targetCollegeId) {
     throw new TRPCError({
       code: "FORBIDDEN",
@@ -87,7 +83,7 @@ export const adminRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        role: z.enum(["STUDENT", "ORGANIZER", "ADMIN", "SUPER_ADMIN"]),
+        role: z.enum(["STUDENT", "ORGANIZER", "ADMIN"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -118,12 +114,6 @@ export const adminRouter = createTRPCRouter({
           throw new TRPCError({
             code: "FORBIDDEN",
             message: "Cannot manage users outside your college.",
-          });
-        }
-        if (input.role === "SUPER_ADMIN") {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "College admins cannot assign SUPER_ADMIN role.",
           });
         }
       }
