@@ -60,6 +60,110 @@ export function getRegistrationAvailability(
   return "OPEN";
 }
 
+export type OrganizerDeadlineStateInput = {
+  status: EventStatus;
+  date: Date;
+  registrationClosesAt: Date | null;
+  isReopened?: boolean;
+  now?: Date;
+};
+
+export function getOrganizerDeadlineState(input: OrganizerDeadlineStateInput): string {
+  const now = input.now ?? new Date();
+
+  if (!input.registrationClosesAt) {
+    return "Deadline missing";
+  }
+
+  if (input.registrationClosesAt >= input.date) {
+    return "Deadline invalid";
+  }
+
+  if (input.registrationClosesAt <= now) {
+    if (input.status === "SUBMITTED" || input.status === "APPROVED" || input.status === "DRAFT") {
+      return "Deadline expired before approval";
+    }
+    return "Registration closed";
+  }
+
+  if (input.status === "PUBLISHED") {
+    if (input.isReopened) {
+      return "Reopened";
+    }
+    if (input.registrationClosesAt.getTime() - now.getTime() <= CLOSING_SOON_WINDOW_MS) {
+      return "Closing soon";
+    }
+    return "Registration open";
+  }
+
+  if (input.status === "APPROVED") {
+    return "Ready to publish";
+  }
+
+  return "Registration scheduled";
+}
+
+export type AdminDeadlineStateInput = {
+  registrationClosesAt: Date | null;
+  eventDate: Date;
+  now?: Date;
+};
+
+export function getApprovalBlockedReason(input: AdminDeadlineStateInput): string | null {
+  const now = input.now ?? new Date();
+
+  if (!input.registrationClosesAt) {
+    return "This event is missing a registration deadline.";
+  }
+
+  if (input.registrationClosesAt >= input.eventDate) {
+    return "The registration deadline must be earlier than the event start time.";
+  }
+
+  if (input.registrationClosesAt <= now) {
+    return "The registration deadline has already expired.";
+  }
+
+  return null;
+}
+
+export function getAdminDeadlineState(input: AdminDeadlineStateInput) {
+  const now = input.now ?? new Date();
+
+  if (!input.registrationClosesAt) {
+    return {
+      label: "Missing deadline (Blocks approval)",
+      className: "border-red-200 bg-red-50 text-red-700",
+    };
+  }
+
+  if (input.registrationClosesAt >= input.eventDate) {
+    return {
+      label: "Invalid deadline (Blocks approval)",
+      className: "border-red-200 bg-red-50 text-red-700",
+    };
+  }
+
+  if (input.registrationClosesAt <= now) {
+    return {
+      label: "Expired deadline (Blocks approval)",
+      className: "border-red-200 bg-red-50 text-red-700",
+    };
+  }
+
+  if (input.registrationClosesAt.getTime() - now.getTime() <= CLOSING_SOON_WINDOW_MS) {
+    return {
+      label: "Closing soon",
+      className: "border-amber-200 bg-amber-50 text-amber-700",
+    };
+  }
+
+  return {
+    label: "Valid deadline",
+    className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  };
+}
+
 export function isRegistrationReopenable(
   input: RegistrationReopenableInput,
 ): boolean {

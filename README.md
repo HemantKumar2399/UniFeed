@@ -148,6 +148,17 @@ Seeded data includes:
 - Email: `student.1@<your allowed domain>`
 - Password: `Test@1234`
 
+## Security and Scoping Rules
+
+UniFeed enforces strict isolation and role-based access controls to maintain campus trust:
+
+- **Public Registration:** All open registrations automatically create base `STUDENT` accounts.
+- **Role Promotion:** The `ORGANIZER` and `ADMIN` roles cannot be self-assigned. Role promotion is strictly admin-controlled and college-scoped (an admin can only promote users within their own college).
+- **College Isolation:** Content is siloed by the user's `collegeId`. "Happening This Week", discovery feeds, and search results only return entities matching the viewer's college.
+- **Realtime Protections:** Capacity subscriptions and realtime RSVP fan-out are protected—students cannot subscribe to or receive updates for events outside their college.
+- **Image Security:** Uploaded media must use explicit image hosts defined in `UPLOAD_PUBLIC_BASE_URL` to prevent arbitrary asset embedding.
+- **Event Deadlines (Epic 19):** Registration deadlines are strictly enforced. Organizers can reopen cancelled events or extend deadlines if managed, and same-college admins have override privileges.
+
 ## Contributing
 
 Read [CONTRIBUTING.md](./CONTRIBUTING.md) before changing code.

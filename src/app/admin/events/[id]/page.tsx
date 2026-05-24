@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Users } from "lucide-react";
 import { TRPCError } from "@trpc/server";
 
-import { formatRegistrationDeadline } from "@/lib/event-registration";
+import { formatRegistrationDeadline, getApprovalBlockedReason } from "@/lib/event-registration";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -25,24 +25,7 @@ function formatDateTime(date: Date | null | undefined) {
   }).format(date);
 }
 
-function getApprovalBlockedReason(event: {
-  date: Date;
-  registrationClosesAt: Date | null;
-}) {
-  if (!event.registrationClosesAt) {
-    return "This event is missing a registration deadline.";
-  }
 
-  if (event.registrationClosesAt >= event.date) {
-    return "The registration deadline must be earlier than the event start time.";
-  }
-
-  if (event.registrationClosesAt <= new Date()) {
-    return "The registration deadline has already expired.";
-  }
-
-  return null;
-}
 
 type AdminEventDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -88,7 +71,10 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
   }
 
   const latestRejection = event.approvalLogs.find((log) => log.action === "REJECTED" && log.reason);
-  const approvalBlockedReason = getApprovalBlockedReason(event);
+  const approvalBlockedReason = getApprovalBlockedReason({
+    registrationClosesAt: event.registrationClosesAt,
+    eventDate: event.date,
+  });
 
   return (
     <div className="flex flex-col gap-8">

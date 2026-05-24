@@ -48,3 +48,5 @@ Epic 16 is the release-hardening pass for UniFeed. Use this checklist to verify 
 - `test:e2e` remains the broader Playwright suite, while `test:e2e:smoke` is the deterministic release check used by Epic 16.
 - `prisma/migrations/20260524143000_epic16_schema_alignment/migration.sql` was added during Epic 16 to align the migration chain with the current Prisma schema before clean-reset verification.
 - Epic 17 realtime attendance fan-out is intentionally single-instance only; multi-instance brokered pub/sub is deferred.
+- Epic 18 hardened the baseline security rules, ensuring public registration always creates base students and admin promotions remain college-scoped.
+- Epic 19 introduced strict deadline enforcement, preventing approvals or RSVPs on expired events and handling waitlist resolution rules.

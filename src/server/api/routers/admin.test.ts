@@ -584,3 +584,48 @@ void test("adminRouter.regenerateStudentQr rotates qr id and clears revoked stat
   assert.equal(result.studentQrSecretVersion, 5);
   assert.equal(result.qrRevokedAt, null);
 });
+
+void test("adminRouter.approveEvent rejects events with expired deadlines", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 91,
+          title: "Submitted Event with Expired Deadline",
+          status: "SUBMITTED",
+          authorId: "organizer-user-id",
+          submittedAt: new Date("2030-05-10T12:00:00.000Z"),
+          date: new Date("2030-05-15T18:00:00.000Z"),
+          registrationClosesAt: new Date("2020-01-01T00:00:00.000Z"), // Expired
+          capacity: 120,
+          location: "Auditorium",
+          clubId: 10,
+          collegeId: "college-1",
+          createdAt: new Date("2030-05-09T12:00:00.000Z"),
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.approveEvent({ eventId: 91 });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "BAD_REQUEST");
+      assert.match(err.message, /cannot be approved with an expired/i);
+      return true;
+    },
+  );
+});

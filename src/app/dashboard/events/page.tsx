@@ -7,6 +7,7 @@ import {
   formatRegistrationDeadline,
   getRegistrationAvailability,
   getRegistrationAvailabilityLabel,
+  getOrganizerDeadlineState,
 } from "@/lib/event-registration";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -39,45 +40,7 @@ function formatEventDate(date: Date) {
   }).format(date);
 }
 
-function getDashboardRegistrationLabel(event: {
-  status: "DRAFT" | "SUBMITTED" | "APPROVED" | "PUBLISHED" | "REJECTED" | "CANCELLED";
-  date: Date;
-  registrationClosesAt: Date | null;
-  capacity: number;
-  activeCount: number;
-}, now: Date) {
-  if (!event.registrationClosesAt) {
-    return "Deadline missing";
-  }
 
-  if (event.registrationClosesAt >= event.date) {
-    return "Deadline invalid";
-  }
-
-  if (event.status === "PUBLISHED") {
-    return getRegistrationAvailabilityLabel(
-      getRegistrationAvailability({
-        status: event.status,
-        date: event.date,
-        registrationClosesAt: event.registrationClosesAt,
-        capacity: event.capacity,
-        activeCount: event.activeCount,
-        waitlistEnabled: true,
-        now,
-      }),
-    );
-  }
-
-  if (event.registrationClosesAt <= now) {
-    return "Registration closed";
-  }
-
-  if (event.status === "APPROVED") {
-    return "Ready to publish";
-  }
-
-  return "Registration scheduled";
-}
 
 function parseActiveTab(rawTab: string | undefined): EventTabKey {
   return eventTabs.some((tab) => tab.key === rawTab) ? (rawTab as EventTabKey) : "draft";
@@ -323,16 +286,12 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
           <div className="space-y-4">
             {events.map((event) => {
               const isPast = event.date < now && event.status !== "CANCELLED";
-              const registrationLabel = getDashboardRegistrationLabel(
-                {
-                  status: event.status,
-                  date: event.date,
-                  registrationClosesAt: event.registrationClosesAt,
-                  capacity: event.capacity,
-                  activeCount: event._count.rsvps,
-                },
+              const registrationLabel = getOrganizerDeadlineState({
+                status: event.status,
+                date: event.date,
+                registrationClosesAt: event.registrationClosesAt,
                 now,
-              );
+              });
 
               return (
                 <article

@@ -1,27 +1,22 @@
-# Epic 0 Placeholder Backlog
+# Epic 0 Placeholder Backlog (Resolved)
 
-This backlog tracks temporary or intentionally deferred behavior discovered during Epic 0. Each item is explicit so the codebase does not silently pretend unfinished work is production-ready.
+This backlog tracked temporary or intentionally deferred behavior discovered during Epic 0. **All items have been successfully resolved through Epics 1 to 19.**
 
 ## High Priority Follow-Ups
 
-1. Organizer club selector for event creation
-Current state: `event.create` now requires an existing organizer club membership, but the UI still does not let organizers choose among multiple managed clubs.
-Target epic: Epic 3 / Story 3.1 through 3.3.
+1. ~~Organizer club selector for event creation~~
+Status: Resolved in Epic 3. Organizers can now choose among multiple managed clubs during event creation.
 
-2. Global discovery
-Current state: `/global` is a placeholder route and should stay clearly labeled until it is either built or removed from MVP navigation.
-Target epic: Epic 10 and Epic 15.
+2. ~~Global discovery~~
+Status: Resolved in Epics 10 and 15. The MVP navigation and global discovery behavior is fully implemented.
 
 ## Medium Priority Follow-Ups
 
-1. Real upload/storage configuration
-Current state: local uploads work in development and presigned uploads work when storage is configured. Deployed environments still need real bucket credentials and `UPLOAD_PUBLIC_BASE_URL` pointing at the public image host.
-Target epic: Epic 5 / Story 5.7.
+1. ~~Real upload/storage configuration~~
+Status: Resolved in Epic 5. Production upload configurations are documented and supported via `UPLOAD_PUBLIC_BASE_URL` and S3-compatible endpoints.
 
-2. Legacy event-ticket QR dependency
-Current state: Resolved in Epic 8. Passport and scan mode now use the permanent student QR contract.
-Target epic: Completed in Epic 8.
+2. ~~Legacy event-ticket QR dependency~~
+Status: Resolved in Epic 8. Passport and scan mode now strictly use the permanent student QR contract.
 
-3. Playwright coverage expansion
-Current state: only the example smoke suite exists.
-Target epic: Epic 16.
+3. ~~Playwright coverage expansion~~
+Status: Resolved in Epic 16. Comprehensive Playwright suites have been introduced for production readiness.

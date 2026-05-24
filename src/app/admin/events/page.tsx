@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { CalendarClock, Filter, Search, Users } from "lucide-react";
 
 import { EmptyState } from "@/components/EmptyState";
-import { formatRegistrationDeadline } from "@/lib/event-registration";
+import { formatRegistrationDeadline, getAdminDeadlineState } from "@/lib/event-registration";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -23,37 +23,7 @@ function formatDateTime(date: Date | null | undefined) {
   }).format(date);
 }
 
-function getDeadlineReviewBadge(
-  registrationClosesAt: Date | null,
-  eventDate: Date,
-  now: Date,
-) {
-  if (!registrationClosesAt) {
-    return {
-      label: "Deadline missing",
-      className: "border-red-200 bg-red-50 text-red-700",
-    };
-  }
 
-  if (registrationClosesAt >= eventDate || registrationClosesAt <= now) {
-    return {
-      label: "Deadline invalid",
-      className: "border-red-200 bg-red-50 text-red-700",
-    };
-  }
-
-  if (registrationClosesAt.getTime() - now.getTime() <= 24 * 60 * 60 * 1000) {
-    return {
-      label: "Closing soon",
-      className: "border-amber-200 bg-amber-50 text-amber-700",
-    };
-  }
-
-  return {
-    label: "Deadline valid",
-    className: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  };
-}
 
 type AdminEventsPageProps = {
   searchParams: Promise<{
@@ -157,11 +127,11 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
         ) : (
           <div className="space-y-4">
             {pendingEvents.map((event: PendingEventItem) => {
-              const deadlineBadge = getDeadlineReviewBadge(
-                event.registrationClosesAt,
-                event.date,
+              const deadlineBadge = getAdminDeadlineState({
+                registrationClosesAt: event.registrationClosesAt,
+                eventDate: event.date,
                 now,
-              );
+              });
 
               return (
                 <article

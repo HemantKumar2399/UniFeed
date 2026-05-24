@@ -181,3 +181,24 @@ development_status:
   17-4-live-organizer-dashboard-sync: done
   17-5-realtime-hardening-and-smoke-tests: done
   epic-17-retrospective: optional
+
+  epic-18: done
+  18-1-force-public-registration-to-create-only-student-users: done
+  18-2-verify-role-promotion-is-admin-controlled: done
+  18-3-college-scope-happening-this-week: done
+  18-4-protect-rsvp-capacity-realtime-subscription: done
+  18-5-restrict-next-image-remote-hosts: done
+  18-6-update-stale-docs-after-security-fixes: done
+  epic-18-retrospective: optional
+
+  epic-19: done
+  19-1-add-registration-deadline-to-schema-and-migration: done
+  19-2-validate-deadline-in-event-creation: done
+  19-3-add-deadline-field-to-event-create-edit-ui: done
+  19-4-block-rsvp-after-deadline: done
+  19-5-allow-organizer-admin-to-extend-deadline-and-reopen-registration: done
+  19-6-integrate-deadline-with-admin-approval: done
+  19-7-show-deadline-and-registration-state-in-student-ui: done
+  19-8-show-deadline-in-organizer-admin-dashboards-and-status-lanes: done
+  19-9-define-waitlist-behavior-around-deadline: done
+  epic-19-retrospective: optional

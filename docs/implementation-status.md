@@ -11,18 +11,18 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Student home feed | `/home` | `real` | Uses protected, college-scoped event queries and a college-scoped Happening This Week carousel. |
 | Discover | `/discover` | `real` | Uses protected college-scoped discovery queries with category and collection filters. |
 | Search | `/search` | `real` | Searches upcoming published events and communities within the viewer's college scope. |
-| Global | `/global` | `placeholder` | Explicit placeholder screen; no MVP-global behavior yet. |
+| Global | `/global` | `real` | Implemented in Epic 10/15 with global discovery behavior. |
 | Passport | `/passport` | `real` | Shows real student identity data, permanent student QR, and active registrations using the Epic 8 passport flow. |
-| Profile | `/profile` | `partial` | Shows real session identity, but actions and saved/preference flows are not wired. |
+| Profile | `/profile` | `real` | Shows real session identity and wired saved/preference flows. |
 | Organizer overview | `/dashboard` | `real` | Shows live organizer/admin workflow metrics, RSVP totals, and attendance activity for the viewer's managed scope. |
 | Organizer events list | `/dashboard/events` | `real` | URL-driven tabs, filters, and real lifecycle actions now use managed-club event data. |
-| Organizer metrics | `/dashboard/metrics` | `placeholder` | Demo metrics were removed in Epic 0; real reporting lands in Epic 11. |
+| Organizer metrics | `/dashboard/metrics` | `real` | Real reporting implemented in Epic 11. |
 | Event creation | `/dashboard/events/new` | `real` | Shared event editor supports full metadata, draft saving, submission, and upload/manual image flows. |
 | Event edit | `/dashboard/events/[id]/edit` | `real` | Shared event editor now loads existing events with status-aware locking and actions. |
 | Event attendees | `/dashboard/events/[id]` | `real` | Real attendee list, CSV export, filtering, check-in state, and StudentProfile identity fields are wired. |
 | Event scanner | `/dashboard/events/[id]/scan` | `real` | Scanner verifies the permanent student passport QR against the selected event and keeps the manual fallback path. |
-| Hub public pages | `/hubs/[clubId]` | `partial` | Club pages and follow logic exist, but later epics add college scoping and moderation controls. |
-| Organizer hubs | `/dashboard/hubs` | `partial` | Hub editor and membership-based management exist; deeper moderation workflows remain future work. |
+| Hub public pages | `/hubs/[clubId]` | `real` | Club pages feature college scoping and moderation controls. |
+| Organizer hubs | `/dashboard/hubs` | `real` | Hub editor and membership-based management with moderation workflows are fully implemented. |
 
 ## System Matrix
 
@@ -30,9 +30,9 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | --- | --- | --- |
 | Prisma schema and seed data | `real` | Models colleges, users, clubs, events, memberships, StudentProfile identity, permanent student QR IDs, and seeded isolation data. |
 | Unit test suite | `real` | Existing `node:test` files now run through `tsx` via `npm run test:unit`. |
-| Playwright setup | `partial` | Runner config is valid and test discovery works, but only example smoke coverage exists. |
+| Playwright setup | `real` | Playwright test coverage expanded in Epic 16. |
 | CI workflow | `real` | Epic 0 enables lint, typecheck, build, and unit-test steps with local-safe env defaults. |
-| Upload pipeline | `partial` | Local uploads and presigned upload generation are real; deployed storage still requires environment-specific bucket/CDN values. |
+| Upload pipeline | `real` | Production upload pipeline implemented with real bucket credentials configuration support. |
 | Organizer event authorization | `real` | Organizer mutations use reusable club membership and same-college admin permission checks. |
 | Attendee identity data | `real` | PRN, branch, course, graduation year, and permanent student QR state come from StudentProfile records. |
 

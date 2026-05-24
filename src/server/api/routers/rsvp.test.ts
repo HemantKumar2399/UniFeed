@@ -467,3 +467,177 @@ void test("rsvpRouter.cancel blocks past events", async () => {
     },
   );
 });
+
+void test("rsvpRouter.register fails if event has no registration deadline", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 10,
+          status: "PUBLISHED",
+          collegeId: "college-1",
+          date: new Date(Date.now() + 86400000), // tomorrow
+          registrationClosesAt: null, // missing deadline
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.rsvp.register({ eventId: 10 });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "PRECONDITION_FAILED");
+      assert.equal(err.message, "Event has no registration deadline");
+      return true;
+    },
+  );
+});
+
+void test("rsvpRouter.register fails if registration deadline has passed", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 10,
+          status: "PUBLISHED",
+          collegeId: "college-1",
+          date: new Date(Date.now() + 86400000), // tomorrow
+          registrationClosesAt: new Date(Date.now() - 43200000), // passed
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.rsvp.register({ eventId: 10 });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "PRECONDITION_FAILED");
+      assert.equal(err.message, "Registration is closed for this event");
+      return true;
+    },
+  );
+});
+
+void test("rsvpRouter.cancel successfully cancels but does not promote waitlist if registration deadline has passed", async () => {
+  let rsvpUpdatedCount = 0;
+  const eventDate = new Date(Date.now() + 86400000);
+
+  const mockTx = {
+    event: {
+      findUnique: async () => ({
+        id: 15,
+        title: "Campus Mixer",
+        capacity: 2,
+        date: eventDate,
+        registrationClosesAt: new Date(Date.now() - 43200000), // passed deadline
+      }),
+    },
+    rSVP: {
+      findUnique: async () => ({
+        id: 101,
+        userId: "student-1",
+        eventId: 15,
+        status: "GOING",
+      }),
+      update: async (args: any) => {
+        rsvpUpdatedCount++;
+        if (args.where.id === 101) {
+          assert.equal(args.data.status, "CANCELLED");
+          return { id: 101, status: "CANCELLED" };
+        }
+        throw new Error("Invalid update");
+      },
+      findFirst: async () => {
+        throw new Error("Should not attempt to find waitlist if deadline passed");
+      },
+    },
+  };
+
+  const mockedCtx = {
+    db: {
+      $transaction: async (fn: any) => fn(mockTx),
+      event: {
+        findUnique: async () => ({
+          id: 15,
+          capacity: 2,
+          clubId: 8,
+          collegeId: "college-1",
+          rsvps: [
+            {
+              id: 101,
+              userId: "student-1",
+              status: "CANCELLED",
+              createdAt: eventDate,
+              user: {
+                id: "student-1",
+                name: "Student One",
+                email: "student1@example.com",
+                studentProfile: null,
+              },
+            },
+          ],
+        }),
+      },
+      rSVP: {
+        findUnique: async (args: any) => {
+          if (args.where.id === 101) {
+            return {
+              id: 101,
+              userId: "student-1",
+              status: "CANCELLED",
+              user: { name: "Student One", email: "student1@example.com" },
+              event: {
+                id: 15,
+                title: "Campus Mixer",
+                date: eventDate,
+              },
+            };
+          }
+          return null;
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.rsvp.cancel({ eventId: 15 });
+
+  assert.equal(result.id, 101);
+  assert.equal(result.status, "CANCELLED");
+  assert.equal(rsvpUpdatedCount, 1); // Only the cancel update, no waitlist promotion
+});
