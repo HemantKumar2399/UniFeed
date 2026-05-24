@@ -9,6 +9,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { uploadRouter } from "@/server/api/routers/upload";
 import { studentRouter } from "@/server/api/routers/student";
 import { adminRouter } from "@/server/api/routers/admin";
+import { dashboardRouter } from "@/server/api/routers/dashboard";
 import { profileRouter } from "@/server/api/routers/profile";
 import { notificationRouter } from "@/server/api/routers/notification";
 
@@ -27,6 +28,7 @@ export const appRouter = createTRPCRouter({
   upload: uploadRouter,
   student: studentRouter,
   admin: adminRouter,
+  dashboard: dashboardRouter,
   profile: profileRouter,
   notification: notificationRouter,
 });

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Calendar, MapPin } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Drawer,
@@ -11,17 +13,24 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { CapacityBar } from "./CapacityBar";
+import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import type { RouterOutputs } from "@/trpc/react";
-import { Calendar, MapPin } from "lucide-react";
-import { formatEventDateMeta } from "./event-card.utils";
+
+import { CapacityBar } from "./CapacityBar";
 import { EventDetailContent } from "./EventDetailContent";
+import { formatEventDateMeta } from "./event-card.utils";
 
 export type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
 
 export function EventCard({ event }: { event: EventFeedItem }) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const eventHashId = `event-${event.id}`;
+  const { activeCount, totalCapacity, viewerRsvpStatus } = useLiveEventAttendance({
+    eventId: event.id,
+    totalCapacity: event.capacity,
+    initialActiveCount: event._count.rsvps,
+    initialViewerRsvpStatus: event.rsvps?.[0]?.status ?? null,
+  });
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -54,51 +63,46 @@ export function EventCard({ event }: { event: EventFeedItem }) {
     }
   };
 
-  const userRsvp = event.rsvps?.[0];
-
   return (
     <Drawer open={isDetailsOpen} onOpenChange={handleDrawerOpenChange}>
-      <article id={eventHashId} className="w-full overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-sm transition-all duration-300 group hover:shadow-md">
+      <article className="group w-full overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-sm transition-all duration-300 hover:shadow-md" id={eventHashId}>
         <DrawerTrigger asChild>
           <button
-            type="button"
             aria-expanded={isDetailsOpen}
             className="relative block w-full bg-white text-left"
+            type="button"
           >
             <div className="relative aspect-[21/9] w-full overflow-hidden bg-black/5">
               <Image
-                src={event.imageUrl}
                 alt={event.title}
-                fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 600px"
+                fill
                 priority={false}
+                sizes="(max-width: 768px) 100vw, 600px"
+                src={event.imageUrl}
               />
 
-              {/* RSVP Status Overlay Badge */}
-              {userRsvp && (
-                <div className="absolute top-3 left-3 z-10">
+              {viewerRsvpStatus ? (
+                <div className="absolute left-3 top-3 z-10">
                   <Badge
                     variant={
-                      userRsvp.status === "GOING" || userRsvp.status === "ATTENDED"
+                      viewerRsvpStatus === "GOING" || viewerRsvpStatus === "ATTENDED"
                         ? "success"
-                        : userRsvp.status === "WAITLISTED"
-                        ? "warning"
-                        : "neutral"
+                        : viewerRsvpStatus === "WAITLISTED"
+                          ? "warning"
+                          : "neutral"
                     }
                   >
-                    {userRsvp.status === "GOING"
-                      ? "✓ Secured"
-                      : userRsvp.status === "ATTENDED"
-                      ? "✓ Attended"
-                      : userRsvp.status === "WAITLISTED"
-                      ? "Waitlisted"
-                      : userRsvp.status === "CANCELLED"
-                      ? "Cancelled"
-                      : userRsvp.status}
+                    {viewerRsvpStatus === "GOING"
+                      ? "Secured"
+                      : viewerRsvpStatus === "ATTENDED"
+                        ? "Attended"
+                        : viewerRsvpStatus === "WAITLISTED"
+                          ? "Waitlisted"
+                          : viewerRsvpStatus}
                   </Badge>
                 </div>
-              )}
+              ) : null}
             </div>
 
             <div className="relative bg-white p-5">
@@ -118,10 +122,7 @@ export function EventCard({ event }: { event: EventFeedItem }) {
               </div>
 
               <div className="mt-2 w-full">
-                <CapacityBar
-                  count={event._count.rsvps}
-                  totalCapacity={event.capacity}
-                />
+                <CapacityBar count={activeCount} totalCapacity={totalCapacity} />
               </div>
             </div>
           </button>

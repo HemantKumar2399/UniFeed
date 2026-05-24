@@ -150,13 +150,15 @@ void test("rsvpRouter.register fails if college mismatch", async () => {
 void test("rsvpRouter.cancel successfully cancels and promotes waitlist in transaction", async () => {
   let rsvpUpdatedCount = 0;
   let promotedRsvpId = 0;
+  const eventDate = new Date(Date.now() + 86400000);
 
   const mockTx = {
     event: {
       findUnique: async () => ({
         id: 15,
+        title: "Campus Mixer",
         capacity: 2,
-        date: new Date(Date.now() + 86400000),
+        date: eventDate,
       }),
     },
     rSVP: {
@@ -185,11 +187,85 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
         return { id: 202, userId: "student-waitlisted", eventId: 15, status: "WAITLISTED" };
       },
     },
+    notification: {
+      create: async (args: any) => {
+        assert.equal(args.data.userId, "student-waitlisted");
+        assert.equal(args.data.type, "RSVP_CONFIRMED");
+        return { id: 99, ...args.data };
+      },
+    },
   };
 
   const mockedCtx = {
     db: {
       $transaction: async (fn: any) => fn(mockTx),
+      event: {
+        findUnique: async () => ({
+          id: 15,
+          capacity: 2,
+          clubId: 8,
+          collegeId: "college-1",
+          rsvps: [
+            {
+              id: 202,
+              userId: "student-waitlisted",
+              status: "GOING",
+              createdAt: eventDate,
+              user: {
+                id: "student-waitlisted",
+                name: "Waitlisted Student",
+                email: "waitlist@example.com",
+                studentProfile: null,
+              },
+            },
+            {
+              id: 101,
+              userId: "student-1",
+              status: "CANCELLED",
+              createdAt: eventDate,
+              user: {
+                id: "student-1",
+                name: "Student One",
+                email: "student1@example.com",
+                studentProfile: null,
+              },
+            },
+          ],
+        }),
+      },
+      rSVP: {
+        findUnique: async (args: any) => {
+          if (args.where.id === 101) {
+            return {
+              id: 101,
+              userId: "student-1",
+              status: "CANCELLED",
+              user: { name: "Student One", email: "student1@example.com" },
+              event: {
+                id: 15,
+                title: "Campus Mixer",
+                date: eventDate,
+              },
+            };
+          }
+
+          if (args.where.id === 202) {
+            return {
+              id: 202,
+              userId: "student-waitlisted",
+              status: "GOING",
+              user: { name: "Waitlisted Student", email: "waitlist@example.com" },
+              event: {
+                id: 15,
+                title: "Campus Mixer",
+                date: eventDate,
+              },
+            };
+          }
+
+          return null;
+        },
+      },
     } as any,
     session: {
       user: {

@@ -49,7 +49,6 @@ export function ManualCheckInFallback({
     onSuccess: async (payload) => {
       setConfirmingRsvpId(null);
       onCheckInSuccess(`Manual check-in complete: ${payload.attendeeName}`);
-      await utils.event.getAttendees.invalidate({ eventId });
       await utils.event.searchAttendees.invalidate();
     },
     onError: (error) => {

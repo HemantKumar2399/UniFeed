@@ -175,7 +175,13 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
           },
           _count: {
             select: {
-              rsvps: true,
+              rsvps: {
+                where: {
+                  status: {
+                    in: ["GOING", "ATTENDED"] as ("GOING" | "ATTENDED")[],
+                  },
+                },
+              },
             },
           },
         },

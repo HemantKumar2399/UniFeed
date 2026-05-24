@@ -5,6 +5,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { createRsvpPessimistic, CapacityError } from "@/server/services/rsvp";
+import { emitAttendanceChange, getAttendanceLatestActivity } from "@/server/services/attendance-realtime";
 import { TRPCError } from "@trpc/server";
 import { ee } from "@/server/events";
 import { observable } from "@trpc/server/observable";
@@ -82,8 +83,9 @@ export const rsvpRouter = createTRPCRouter({
       }
 
       try {
-        const { rsvp, remainingCapacity } = await createRsvpPessimistic(userId, input.eventId);
-        ee.emit("capacityChange", { eventId: input.eventId, newCapacity: remainingCapacity });
+        const { rsvp } = await createRsvpPessimistic(userId, input.eventId);
+        const latestActivity = await getAttendanceLatestActivity(ctx.db, rsvp.id);
+        await emitAttendanceChange(ctx.db, input.eventId, latestActivity);
 
         // Notify student about RSVP
         await ctx.db.notification.create({
@@ -128,7 +130,7 @@ export const rsvpRouter = createTRPCRouter({
       const userId = ctx.session.user.id;
       const eventId = input.eventId;
 
-      return await ctx.db.$transaction(async (tx: Prisma.TransactionClient) => {
+      const result = await ctx.db.$transaction(async (tx: Prisma.TransactionClient) => {
         const event = await tx.event.findUnique({
           where: { id: eventId },
           select: {
@@ -185,7 +187,7 @@ export const rsvpRouter = createTRPCRouter({
           },
         });
 
-        let newCapacity = 0;
+        let promotedRsvpId: number | null = null;
 
         if (originalStatus === "GOING") {
           const nextWaitlist = await tx.rSVP.findFirst({
@@ -205,6 +207,7 @@ export const rsvpRouter = createTRPCRouter({
                 status: "GOING",
               },
             });
+            promotedRsvpId = nextWaitlist.id;
             // Notify waitlist promoted student
             await tx.notification.create({
               data: {
@@ -215,33 +218,23 @@ export const rsvpRouter = createTRPCRouter({
                 linkUrl: `/tickets`,
               },
             });
-            newCapacity = 0;
-          } else {
-            const activeCount = await tx.rSVP.count({
-              where: {
-                eventId,
-                status: {
-                  in: ["GOING", "ATTENDED"],
-                },
-              },
-            });
-            newCapacity = event.capacity - activeCount;
           }
-        } else {
-          const activeCount = await tx.rSVP.count({
-            where: {
-              eventId,
-              status: {
-                in: ["GOING", "ATTENDED"],
-              },
-            },
-          });
-          newCapacity = event.capacity - activeCount;
         }
 
-        ee.emit("capacityChange", { eventId, newCapacity });
-
-        return updatedRsvp;
+        return {
+          promotedRsvpId,
+          updatedRsvp,
+        };
       });
+
+      const cancelledActivity = await getAttendanceLatestActivity(ctx.db, result.updatedRsvp.id);
+      await emitAttendanceChange(ctx.db, eventId, cancelledActivity);
+
+      if (result.promotedRsvpId) {
+        const promotedActivity = await getAttendanceLatestActivity(ctx.db, result.promotedRsvpId);
+        await emitAttendanceChange(ctx.db, eventId, promotedActivity);
+      }
+
+      return result.updatedRsvp;
     }),
 });

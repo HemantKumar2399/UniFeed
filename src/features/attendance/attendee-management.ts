@@ -41,6 +41,7 @@ export type AttendeeEventMeta = {
   id: number;
   title: string;
   date: Date;
+  capacity: number;
   clubName: string;
   collegeName: string;
 };

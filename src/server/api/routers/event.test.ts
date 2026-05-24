@@ -829,9 +829,58 @@ void test("eventRouter.update rejects submitted events", async () => {
   );
 });
 
+void test("eventRouter.update rejects organizers without club membership for the target event", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 207,
+          clubId: 10,
+          authorId: "another-organizer-id",
+          collegeId: "college-1",
+          title: "Other Club Draft",
+          status: "DRAFT",
+        }),
+      },
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-1" }),
+      },
+      clubMembership: {
+        findUnique: async () => null,
+      },
+    } as any,
+    session: {
+      user: {
+        id: "random-organizer-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.update({
+        id: 207,
+        data: validCreateInput,
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Unauthorized for this event");
+      return true;
+    },
+  );
+});
+
 void test("eventRouter.cancel marks a published event as cancelled and writes audit history", async () => {
   let cancelled = false;
   let loggedCancellation = false;
+  let notifiedAttendees = false;
 
   const mockedCtx = {
     db: {
@@ -877,6 +926,20 @@ void test("eventRouter.cancel marks a published event as cancelled and writes au
           return { id: 15, ...args.data };
         },
       },
+      rSVP: {
+        findMany: async () => [
+          { userId: "student-1" },
+          { userId: "student-2" },
+        ],
+      },
+      notification: {
+        createMany: async (args: any) => {
+          notifiedAttendees = true;
+          assert.equal(args.data.length, 2);
+          assert.equal(args.data[0]?.type, "EVENT_CANCELLED");
+          return { count: args.data.length };
+        },
+      },
       $transaction: async (ops: any[]) => Promise.all(ops),
     } as any,
     session: {
@@ -898,6 +961,7 @@ void test("eventRouter.cancel marks a published event as cancelled and writes au
 
   assert.ok(cancelled);
   assert.ok(loggedCancellation);
+  assert.ok(notifiedAttendees);
   assert.equal(result.status, "CANCELLED");
 });
 
@@ -1637,6 +1701,82 @@ void test("eventRouter.verifyStudentQrForEvent returns not registered when no va
   const caller = createCaller(mockedCtx as any);
   const result = await caller.event.verifyStudentQrForEvent({
     eventId: 48,
+    token,
+  });
+
+  assert.equal(result.outcome, "NOT_REGISTERED");
+});
+
+void test("eventRouter.verifyStudentQrForEvent returns not registered when the student is registered for a different event", async () => {
+  const token = createStudentQrToken(
+    {
+      studentQrId: "sqr_other_event",
+      studentQrSecretVersion: 1,
+      issuedAt: 1735689600000,
+    },
+    process.env.STUDENT_QR_SECRET!,
+  );
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 51,
+          clubId: 12,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 12,
+          name: "Coding Club",
+          logoUrl: "https://example.com/coding.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+      studentProfile: {
+        findUnique: async () => ({
+          id: "profile-6",
+          userId: "student-6",
+          collegeId: "college-1",
+          studentQrId: "sqr_other_event",
+          studentQrSecretVersion: 1,
+          qrRevokedAt: null,
+          user: {
+            id: "student-6",
+            name: "Student Six",
+            email: "student6@example.com",
+          },
+        }),
+      },
+      rSVP: {
+        findUnique: async (args: any) => {
+          assert.equal(args.where.userId_eventId.userId, "student-6");
+          assert.equal(args.where.userId_eventId.eventId, 51);
+          return null;
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.event.verifyStudentQrForEvent({
+    eventId: 51,
     token,
   });
 

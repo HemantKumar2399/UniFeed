@@ -1,11 +1,14 @@
 "use client";
 
 import { AlertCircle, Download } from "lucide-react";
+import { useMemo } from "react";
 
 import {
   buildAttendeeCsv,
+  filterAndSortAttendees,
   type AttendeeFilters,
 } from "@/features/attendance/attendee-management";
+import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import { api } from "@/trpc/react";
 
 type EventAttendeesClientProps = {
@@ -50,21 +53,28 @@ export function EventAttendeesClient({
   filters,
 }: EventAttendeesClientProps) {
   const { data, isLoading, error } = api.event.getAttendees.useQuery(
-    {
-      eventId,
-      q: filters.q || undefined,
-      status: filters.status,
-      sort: filters.sort,
-    },
+    { eventId },
     {
       enabled: Number.isInteger(eventId) && eventId > 0,
       retry: false,
     },
   );
 
-  const attendees = data?.attendees ?? [];
-  const counts = data?.counts;
+  const liveAttendance = useLiveEventAttendance({
+    eventId,
+    totalCapacity: data?.event.capacity ?? 0,
+    initialActiveCount: (data?.counts.going ?? 0) + (data?.counts.attended ?? 0),
+    initialAttendees: data?.attendees ?? [],
+    initialCounts: data?.counts,
+    enabled: Boolean(data?.event),
+  });
+
+  const attendees = useMemo(() => {
+    return filterAndSortAttendees(liveAttendance.attendees, filters);
+  }, [filters, liveAttendance.attendees]);
+
   const event = data?.event;
+  const counts = liveAttendance.counts;
 
   const handleExportCsv = () => {
     if (!event || attendees.length === 0) {
@@ -109,8 +119,8 @@ export function EventAttendeesClient({
           <div className="h-10 border-b border-border bg-muted/50" />
           {Array.from({ length: 5 }).map((_, index) => (
             <div
-              key={index}
               className="h-16 animate-pulse border-b border-border bg-muted/20 last:border-0"
+              key={index}
             />
           ))}
         </div>
@@ -138,31 +148,22 @@ export function EventAttendeesClient({
             {event?.title ?? "Attendees"}
           </h2>
           <p className="mt-1 text-sm text-warm-gray-500">
-            <span className="font-semibold text-notion-black">
-              {counts?.all ?? attendees.length}
-            </span>{" "}
-            registered,{" "}
-            <span className="font-semibold text-notion-black">
-              {counts?.attended ?? attendees.filter((attendee) => attendee.status === "ATTENDED").length}
-            </span>{" "}
-            checked in.
+            <span className="font-semibold text-notion-black">{counts.all}</span> registered,{" "}
+            <span className="font-semibold text-notion-black">{counts.attended}</span> checked in.
           </p>
           {filters.q || filters.status !== "ALL" ? (
             <p className="mt-1 text-sm text-warm-gray-500">
-              Showing{" "}
-              <span className="font-semibold text-notion-black">
-                {attendees.length}
-              </span>{" "}
+              Showing <span className="font-semibold text-notion-black">{attendees.length}</span>{" "}
               attendee{attendees.length === 1 ? "" : "s"} in the current filter view.
             </p>
           ) : null}
         </div>
 
         <button
-          type="button"
-          onClick={handleExportCsv}
+          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-pure-white shadow-none transition-colors duration-haptic hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50 active:scale-95"
           disabled={attendees.length === 0}
-          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-pure-white transition-colors duration-haptic shadow-none hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50 active:scale-95"
+          onClick={handleExportCsv}
+          type="button"
         >
           <Download className="mr-2 h-4 w-4" />
           Export Filtered CSV
@@ -195,8 +196,8 @@ export function EventAttendeesClient({
               {attendees.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
                     className="bg-pure-white px-6 py-12 text-center text-warm-gray-500"
+                    colSpan={5}
                   >
                     <p className="font-medium">No attendees match this view.</p>
                   </td>
@@ -207,10 +208,10 @@ export function EventAttendeesClient({
 
                   return (
                     <tr
-                      key={attendee.rsvpId}
                       className={`transition-colors duration-200 hover:bg-warm-white/50 ${
                         isCheckedIn ? "bg-teal-50/40" : ""
                       }`}
+                      key={attendee.rsvpId}
                     >
                       <td className="px-6 py-4 align-middle">
                         <div className="font-semibold text-notion-black">

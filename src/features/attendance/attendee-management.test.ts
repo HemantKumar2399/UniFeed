@@ -100,6 +100,7 @@ void test("buildAttendeeCsv sanitizes spreadsheet formulas and exports event met
       id: 88,
       title: "=Campus Fest",
       date: new Date("2030-05-14T18:45:00.000Z"),
+      capacity: 180,
       clubName: "Coding Club",
       collegeName: "North Campus",
     },

@@ -1,30 +1,75 @@
 "use client";
 
+import type { RSVPStatus } from "@prisma/client";
+import { Bookmark, Pin, PinOff } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import { api } from "@/trpc/react";
 import type { RouterOutputs } from "@/trpc/react";
-import { Pin, PinOff, Bookmark } from "lucide-react";
+
+import { CapacityBar } from "./CapacityBar";
 import {
   formatDiscussionAuthorName,
   sortDiscussionThreads,
 } from "./discussion-board.utils";
 
 type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
-type RegisterState = "IDLE" | "LOCKING" | "SECURED" | "WAITLISTED" | "ERROR";
 type DiscussionThread = RouterOutputs["event"]["getDiscussionThreads"][number];
 type DiscussionReply = DiscussionThread["replies"][number];
 
-export function EventDetailContent({ event }: { event: EventFeedItem }) {
-  const utils = api.useUtils();
+function getRegisterButtonLabel(params: {
+  activeCount: number;
+  isRegistering: boolean;
+  totalCapacity: number;
+  viewerRsvpStatus: RSVPStatus | null;
+}) {
+  if (params.isRegistering) {
+    return null;
+  }
 
+  if (params.viewerRsvpStatus === "GOING") {
+    return "Registered";
+  }
+
+  if (params.viewerRsvpStatus === "ATTENDED") {
+    return "Attended";
+  }
+
+  if (params.viewerRsvpStatus === "WAITLISTED") {
+    return "Waitlisted";
+  }
+
+  return params.activeCount >= params.totalCapacity ? "Join Waitlist" : "Reserve Spot";
+}
+
+export function EventDetailContent({
+  event,
+  renderCapacityBar = false,
+}: {
+  event: EventFeedItem;
+  renderCapacityBar?: boolean;
+}) {
+  const utils = api.useUtils();
   const [activeTab, setActiveTab] = useState<"overview" | "discussions">("overview");
   const [questionDraft, setQuestionDraft] = useState("");
   const [replyDraftByThread, setReplyDraftByThread] = useState<Record<number, string>>({});
+  const {
+    activeCount,
+    totalCapacity,
+    viewerRsvpStatus,
+    setViewerRsvpStatus,
+  } = useLiveEventAttendance({
+    eventId: event.id,
+    totalCapacity: event.capacity,
+    initialActiveCount: event._count.rsvps,
+    initialViewerRsvpStatus: event.rsvps?.[0]?.status ?? null,
+  });
 
   const { data: isSaved } = api.profile.checkSavedStatus.useQuery({
     eventId: event.id,
@@ -34,25 +79,12 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
     onSuccess: async (data) => {
       await utils.profile.checkSavedStatus.invalidate({ eventId: event.id });
       await utils.profile.getSavedEvents.invalidate();
-      if (data.saved) {
-        toast.success("Event saved!");
-      } else {
-        toast.success("Event removed from saved list.");
-      }
+      toast.success(data.saved ? "Event saved!" : "Event removed from saved list.");
     },
-    onError: (err) => {
-      toast.error(err.message || "Failed to update save status.");
+    onError: (error) => {
+      toast.error(error.message || "Failed to update save status.");
     },
   });
-
-  const initialRsvpStatus = event.rsvps?.[0]?.status;
-  const [registerState, setRegisterState] = useState<RegisterState>(
-    initialRsvpStatus === "GOING" || initialRsvpStatus === "ATTENDED"
-      ? "SECURED"
-      : initialRsvpStatus === "WAITLISTED"
-      ? "WAITLISTED"
-      : "IDLE"
-  );
 
   const {
     data: discussionThreads,
@@ -95,22 +127,25 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
         eventId: event.id,
       });
 
-      utils.event.getDiscussionThreads.setData({ eventId: event.id }, (current: DiscussionThread[] | undefined) => {
-        if (!current) {
-          return current;
-        }
+      utils.event.getDiscussionThreads.setData(
+        { eventId: event.id },
+        (current: DiscussionThread[] | undefined) => {
+          if (!current) {
+            return current;
+          }
 
-        return sortDiscussionThreads<DiscussionThread>(
-          current.map((thread: DiscussionThread) =>
-            thread.id === variables.threadId
-              ? {
-                  ...thread,
-                  pinned: variables.pinned,
-                }
-              : thread,
-          ),
-        );
-      });
+          return sortDiscussionThreads<DiscussionThread>(
+            current.map((thread: DiscussionThread) =>
+              thread.id === variables.threadId
+                ? {
+                    ...thread,
+                    pinned: variables.pinned,
+                  }
+                : thread,
+            ),
+          );
+        },
+      );
 
       return { previousThreads };
     },
@@ -134,23 +169,13 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
   }, [discussionThreads]);
 
   const { mutate: registerRsvp, isPending: isRegistering } = api.rsvp.register.useMutation({
-    onMutate: () => {
-      setRegisterState("LOCKING");
-    },
     onSuccess: async (data) => {
-      if (data.status === "WAITLISTED") {
-        setRegisterState("WAITLISTED");
-        toast.success("Added to waitlist!");
-      } else {
-        setRegisterState("SECURED");
-        toast.success("Successfully registered!");
-      }
+      setViewerRsvpStatus(data.status);
+      toast.success(data.status === "WAITLISTED" ? "Added to waitlist!" : "Successfully registered!");
       await utils.event.getFeed.invalidate();
       await utils.event.getHappeningThisWeek.invalidate();
     },
-    onError: (err) => {
-      setRegisterState("ERROR");
-
+    onError: (error) => {
       const errorMessageMap: Record<string, string> = {
         EVENT_FULL: "This event is full. You've been added to the waitlist.",
         ALREADY_REGISTERED: "You're already registered for this event.",
@@ -162,27 +187,24 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
         PROFILE_UNVERIFIED: "Please complete your student profile before registering.",
       };
 
-      const friendly = errorMessageMap[err.message];
-      toast.error(friendly ?? err.message ?? "Failed to register. Please try again.");
-
-      setTimeout(() => setRegisterState("IDLE"), 3000);
+      toast.error(errorMessageMap[error.message] ?? error.message ?? "Failed to register. Please try again.");
     },
   });
 
   const { mutate: cancelRsvp, isPending: isCancelPending } = api.rsvp.cancel.useMutation({
     onSuccess: async () => {
-      setRegisterState("IDLE");
+      setViewerRsvpStatus(null);
       toast.success("RSVP cancelled successfully.");
       await utils.event.getFeed.invalidate();
       await utils.event.getHappeningThisWeek.invalidate();
     },
-    onError: (err) => {
-      toast.error(err.message || "Failed to cancel RSVP.");
+    onError: (error) => {
+      toast.error(error.message || "Failed to cancel RSVP.");
     },
   });
 
   const handleRegister = () => {
-    if (registerState === "IDLE" || registerState === "ERROR") {
+    if (!viewerRsvpStatus) {
       registerRsvp({ eventId: event.id });
     }
   };
@@ -215,30 +237,39 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
 
   const discussionErrorMessage =
     discussionError?.message ?? "Could not load discussions right now. Please retry.";
+  const registerButtonLabel = getRegisterButtonLabel({
+    viewerRsvpStatus,
+    activeCount,
+    totalCapacity,
+    isRegistering,
+  });
+  const canCancel =
+    viewerRsvpStatus === "GOING" ||
+    viewerRsvpStatus === "ATTENDED" ||
+    viewerRsvpStatus === "WAITLISTED";
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Tabs */}
       <div className="flex gap-2">
         <button
-          type="button"
-          onClick={() => setActiveTab("overview")}
           className={`rounded-full px-3 py-1.5 text-[12px] font-semibold tracking-[0.125px] transition-colors ${
             activeTab === "overview"
               ? "bg-[#f2f9ff] text-[#097fe8]"
               : "bg-black/5 text-[#615d59]"
           }`}
+          onClick={() => setActiveTab("overview")}
+          type="button"
         >
           Overview
         </button>
         <button
-          type="button"
-          onClick={() => setActiveTab("discussions")}
           className={`rounded-full px-3 py-1.5 text-[12px] font-semibold tracking-[0.125px] transition-colors ${
             activeTab === "discussions"
               ? "bg-[#f2f9ff] text-[#097fe8]"
               : "bg-black/5 text-[#615d59]"
           }`}
+          onClick={() => setActiveTab("discussions")}
+          type="button"
         >
           Discussions
         </button>
@@ -247,51 +278,57 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
       <div className="space-y-4">
         {activeTab === "overview" ? (
           <>
+            {renderCapacityBar ? (
+              <div className="max-w-md">
+                <CapacityBar count={activeCount} totalCapacity={totalCapacity} />
+              </div>
+            ) : null}
+
             <p className="rounded-[14px] border border-black/5 bg-[#f6f5f4] px-4 py-3 text-[14px] leading-relaxed text-[#4f4a45]">
               {event.description || "No description provided."}
             </p>
 
-            <footer className="mt-3 flex flex-col gap-2 sm:flex-row items-center justify-end">
+            <footer className="mt-3 flex flex-col items-center justify-end gap-2 sm:flex-row">
               <Button
+                className="flex h-12 w-full items-center justify-center rounded-xl border-black/10 px-0 transition-all hover:bg-black/5 active:scale-95 sm:mr-auto sm:w-12"
+                disabled={toggleSave.isPending}
+                onClick={() => toggleSave.mutate({ eventId: event.id })}
+                title={isSaved ? "Remove from Saved" : "Save Event"}
                 type="button"
                 variant="outline"
-                onClick={() => toggleSave.mutate({ eventId: event.id })}
-                disabled={toggleSave.isPending}
-                className="h-12 w-full sm:w-12 px-0 rounded-xl flex items-center justify-center border-black/10 hover:bg-black/5 active:scale-95 transition-all sm:mr-auto"
-                title={isSaved ? "Remove from Saved" : "Save Event"}
               >
-                <Bookmark className={`h-5 w-5 ${isSaved ? "fill-blue-600 text-blue-600" : "text-[#615d59]"}`} />
+                <Bookmark
+                  className={`h-5 w-5 ${
+                    isSaved ? "fill-blue-600 text-blue-600" : "text-[#615d59]"
+                  }`}
+                />
               </Button>
 
-              {(registerState === "SECURED" || registerState === "WAITLISTED") && (
+              {canCancel ? (
                 <Button
+                  className="h-12 w-full rounded-xl border-red-200 px-6 text-[14px] font-semibold text-red-600 transition-all hover:bg-red-50 hover:text-red-700 active:scale-95 sm:w-auto"
+                  disabled={isCancelPending}
+                  onClick={() => cancelRsvp({ eventId: event.id })}
                   type="button"
                   variant="outline"
-                  onClick={() => cancelRsvp({ eventId: event.id })}
-                  disabled={isCancelPending}
-                  className="h-12 w-full sm:w-auto px-6 rounded-xl text-[14px] font-semibold border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 active:scale-95 transition-all"
                 >
                   {isCancelPending ? "Cancelling..." : "Cancel RSVP"}
                 </Button>
-              )}
+              ) : null}
 
               <Button
-                type="button"
-                onClick={handleRegister}
-                disabled={
-                  isRegistering ||
-                  registerState === "SECURED" ||
-                  registerState === "WAITLISTED"
-                }
                 className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-8 text-[15px] font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
+                disabled={isRegistering || canCancel}
+                onClick={handleRegister}
+                type="button"
               >
                 {isRegistering ? (
                   <span className="flex items-center gap-2">
                     <svg
                       className="h-4 w-4 animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
                       <circle
                         className="opacity-25"
@@ -300,23 +337,17 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                         r="10"
                         stroke="currentColor"
                         strokeWidth="4"
-                      ></circle>
+                      />
                       <path
                         className="opacity-75"
-                        fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
+                        fill="currentColor"
+                      />
                     </svg>
                     Registering...
                   </span>
-                ) : registerState === "SECURED" ? (
-                  "Registered ✓"
-                ) : registerState === "WAITLISTED" ? (
-                  "Waitlisted"
-                ) : event._count.rsvps >= event.capacity ? (
-                  "Join Waitlist"
                 ) : (
-                  "Reserve Spot"
+                  registerButtonLabel
                 )}
               </Button>
             </footer>
@@ -329,18 +360,18 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                   Ask a question
                 </p>
                 <Textarea
-                  value={questionDraft}
-                  onChange={(event) => setQuestionDraft(event.target.value)}
-                  placeholder="Ask organizers anything about this event"
                   className="min-h-[96px]"
                   maxLength={600}
+                  onChange={(currentEvent) => setQuestionDraft(currentEvent.target.value)}
+                  placeholder="Ask organizers anything about this event"
+                  value={questionDraft}
                 />
                 <div className="flex justify-end">
                   <Button
-                    type="button"
-                    size="sm"
-                    onClick={handlePostQuestion}
                     disabled={createQuestion.isPending || questionDraft.trim().length < 8}
+                    onClick={handlePostQuestion}
+                    size="sm"
+                    type="button"
                   >
                     {createQuestion.isPending ? "Posting..." : "Post question"}
                   </Button>
@@ -356,7 +387,7 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
               <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700">
                 <p>{discussionErrorMessage}</p>
                 <div className="mt-2">
-                  <Button type="button" size="sm" variant="outline" onClick={() => void refetchDiscussions()}>
+                  <Button onClick={() => void refetchDiscussions()} size="sm" type="button" variant="outline">
                     Retry
                   </Button>
                 </div>
@@ -374,7 +405,7 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                   togglePin.isPending && togglePin.variables?.threadId === thread.id;
 
                 return (
-                  <Card key={thread.id} className="border-[rgba(0,0,0,0.1)] shadow-none">
+                  <Card className="border-[rgba(0,0,0,0.1)] shadow-none" key={thread.id}>
                     <CardContent className="space-y-3 p-4">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="space-y-1">
@@ -391,9 +422,6 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
 
                         {thread.canManagePin ? (
                           <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
                             disabled={isPinPending}
                             onClick={() =>
                               togglePin.mutate({
@@ -401,6 +429,9 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                                 pinned: !thread.pinned,
                               })
                             }
+                            size="sm"
+                            type="button"
+                            variant="ghost"
                           >
                             {thread.pinned ? (
                               <span className="inline-flex items-center gap-1">
@@ -423,16 +454,14 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                         ) : (
                           thread.replies.map((reply: DiscussionReply) => (
                             <div
-                              key={reply.id}
                               className="rounded-[10px] border border-black/10 bg-white px-3 py-2"
+                              key={reply.id}
                             >
                               <div className="mb-1 flex items-center gap-2">
                                 <p className="text-[12px] font-semibold text-black/90">
                                   {formatDiscussionAuthorName(reply.author.displayName, null)}
                                 </p>
-                                {reply.author.isOrganizer ? (
-                                  <Badge>Organizer</Badge>
-                                ) : null}
+                                {reply.author.isOrganizer ? <Badge>Organizer</Badge> : null}
                               </div>
                               <p className="text-[13px] leading-relaxed text-[#4f4a45]">
                                 {reply.message}
@@ -445,23 +474,23 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                       {thread.canManagePin ? (
                         <div className="space-y-2">
                           <Textarea
-                            value={draftReply}
-                            onChange={(event) =>
+                            className="min-h-[80px]"
+                            maxLength={800}
+                            onChange={(currentEvent) =>
                               setReplyDraftByThread((current) => ({
                                 ...current,
-                                [thread.id]: event.target.value,
+                                [thread.id]: currentEvent.target.value,
                               }))
                             }
                             placeholder="Post an organizer clarification"
-                            className="min-h-[80px]"
-                            maxLength={800}
+                            value={draftReply}
                           />
                           <div className="flex justify-end">
                             <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => handlePostReply(thread.id)}
                               disabled={isReplyPending || draftReply.trim().length < 3}
+                              onClick={() => handlePostReply(thread.id)}
+                              size="sm"
+                              type="button"
                             >
                               {isReplyPending ? "Posting..." : "Post organizer reply"}
                             </Button>

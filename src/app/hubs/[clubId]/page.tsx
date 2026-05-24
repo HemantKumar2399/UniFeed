@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { CalendarDays, MapPin, Users, Building2 } from "lucide-react";
 
 import { HubBlocksRenderer } from "@/features/hubs/components/HubBlocksRenderer";
@@ -107,9 +108,11 @@ export default async function HubPublicPage({ params }: PageProps) {
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
         <header className="rounded-[20px] border border-[rgba(0,0,0,0.1)] bg-white px-6 py-6 flex flex-col sm:flex-row sm:items-center gap-5">
           {hub.logoUrl ? (
-            <img
+            <Image
               src={hub.logoUrl}
               alt={`${hub.name} Logo`}
+              width={80}
+              height={80}
               className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-black/10 shadow-sm shrink-0"
             />
           ) : (

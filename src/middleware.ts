@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 
+import { resolveRouteAuthorization } from "@/lib/route-authorization";
+
 const { auth } = NextAuth({
   providers: [],
   callbacks: {
@@ -28,49 +30,18 @@ const { auth } = NextAuth({
 });
 
 export default auth((req) => {
-  const user = req.auth?.user;
-  const role = user?.role;
-  const path = req.nextUrl.pathname;
+  const decision = resolveRouteAuthorization({
+    path: req.nextUrl.pathname,
+    user: req.auth?.user,
+  });
 
-  const isDashboard = path.startsWith("/dashboard");
-  const isAdmin = path.startsWith("/admin");
-  const isStudentArea =
-    path.startsWith("/home") ||
-    path.startsWith("/discover") ||
-    path.startsWith("/passport") ||
-    path.startsWith("/profile") ||
-    path.startsWith("/search") ||
-    path.startsWith("/notifications") ||
-    path.startsWith("/tickets");
-
-  if (isDashboard || isAdmin || isStudentArea) {
-    if (!user) {
-      const loginUrl = new URL("/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", path);
-      return NextResponse.redirect(loginUrl);
+  if (decision.action === "redirect") {
+    const destination = new URL(decision.destination, req.url);
+    if (decision.destination === "/login" && decision.callbackUrl) {
+      destination.searchParams.set("callbackUrl", decision.callbackUrl);
     }
 
-    if (isStudentArea) {
-      if (role === "ADMIN") {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-      }
-
-      if (role === "ORGANIZER") {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-      }
-    }
-
-    if (isDashboard) {
-      if (role !== "ORGANIZER" && role !== "ADMIN") {
-        return NextResponse.redirect(new URL("/unauthorized", req.url));
-      }
-    }
-
-    if (isAdmin) {
-      if (role !== "ADMIN") {
-        return NextResponse.redirect(new URL("/unauthorized", req.url));
-      }
-    }
+    return NextResponse.redirect(destination);
   }
 
   return NextResponse.next();

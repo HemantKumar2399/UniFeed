@@ -26,6 +26,7 @@
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit --incremental false",
     "test:e2e": "playwright test",
+    "test:e2e:smoke": "npx tsx --env-file=.env scripts/bootstrap-e2e-smoke.ts && playwright test --project=chromium --workers=1 tests/e2e/epic16-smoke.spec.ts tests/e2e/epic17-realtime.spec.ts",
     "test:unit": "npx tsx --test --env-file=.env \"src/**/*.test.ts\" \"src/**/*.test.tsx\""
   },
   "dependencies": {

@@ -95,9 +95,16 @@ npm run dev
 Set these required values in `.env`:
 
 ```env
+AUTH_SECRET=""
 DATABASE_URL="postgresql://postgres:password@localhost:5432/Platform"
 ALLOWED_DOMAINS="students.college.edu"
+STUDENT_QR_SECRET=""
 ```
+
+- `AUTH_SECRET`: NextAuth signing secret for session security.
+- `DATABASE_URL`: PostgreSQL connection string for the app database.
+- `ALLOWED_DOMAINS`: comma-separated university domains used for registration and seed email generation.
+- `STUDENT_QR_SECRET`: dedicated signing secret for permanent student QR tokens. Keep this different from `AUTH_SECRET`.
 
 Optional Google sign-in values:
 
@@ -117,7 +124,24 @@ UPLOAD_SECRET_ACCESS_KEY=""
 UPLOAD_PUBLIC_BASE_URL=""
 ```
 
+Optional upload values stay blank for local/manual image URL workflows. Configure them in deployed environments when organizers should upload directly to object storage.
+
 When the upload variables are not configured, organizer image uploads will return a clear configuration error and the event editor will fall back to manual hosted-image URLs.
+
+### Seed Setup
+
+The seed script reads the first domain from `ALLOWED_DOMAINS` and uses it to generate the local campus accounts. All seeded users share the password `Test@1234`.
+
+- Student: `student.1@<your allowed domain>`
+- Organizer: `organizer.coding@<your allowed domain>`
+- Admin: `admin.jecrc@<your allowed domain>`
+
+Seeded data includes:
+
+- one JECRC college scope and one secondary college for isolation checks
+- student, organizer, and admin roles
+- published student-visible events plus hub content
+- verified student profiles with permanent QR IDs
 
 ### Seed Credentials
 

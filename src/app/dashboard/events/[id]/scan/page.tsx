@@ -6,6 +6,7 @@ import { AlertCircle, ArrowLeft, ScanLine } from "lucide-react";
 
 import { ManualCheckInFallback } from "@/components/ManualCheckInFallback";
 import { Scanner } from "@/components/Scanner";
+import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import { api } from "@/trpc/react";
 
 export default function EventScanModePage({
@@ -17,7 +18,6 @@ export default function EventScanModePage({
   const eventId = Number.parseInt(resolvedParams.id, 10);
   const isValidEventId = Number.isInteger(eventId) && eventId > 0;
 
-  const utils = api.useUtils();
   const [flash, setFlash] = useState<"idle" | "success" | "warning" | "error">("idle");
   const [feedbackMessage, setFeedbackMessage] = useState("Scanner ready");
 
@@ -30,11 +30,10 @@ export default function EventScanModePage({
   );
 
   const verifyStudentQr = api.event.verifyStudentQrForEvent.useMutation({
-    onSuccess: async (result) => {
+    onSuccess: (result) => {
       if (result.outcome === "CHECKED_IN") {
         setFlash("success");
         setFeedbackMessage(result.message);
-        await utils.event.getAttendees.invalidate({ eventId });
         window.setTimeout(() => setFlash("idle"), 250);
         return;
       }
@@ -50,6 +49,15 @@ export default function EventScanModePage({
     },
   });
 
+  const liveAttendance = useLiveEventAttendance({
+    eventId,
+    totalCapacity: attendees?.event.capacity ?? 0,
+    initialActiveCount: (attendees?.counts.going ?? 0) + (attendees?.counts.attended ?? 0),
+    initialAttendees: attendees?.attendees ?? [],
+    initialCounts: attendees?.counts,
+    enabled: Boolean(attendees?.event),
+  });
+
   const handleDetected = useCallback(
     (token: string) => {
       if (!isValidEventId || verifyStudentQr.isPending) {
@@ -61,8 +69,8 @@ export default function EventScanModePage({
   );
 
   const checkedInCount = useMemo(
-    () => attendees?.counts.attended ?? 0,
-    [attendees],
+    () => liveAttendance.counts.attended,
+    [liveAttendance.counts.attended],
   );
 
   if (!isValidEventId) {

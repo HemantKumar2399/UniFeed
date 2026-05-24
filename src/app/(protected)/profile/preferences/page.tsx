@@ -102,7 +102,7 @@ export default function PreferencesPage() {
                 </div>
                 <div>
                   <p className="text-[16px] font-semibold text-black/90 group-hover:text-black transition-colors">Event Reminders</p>
-                  <p className="text-[14px] font-medium text-[#615d59] mt-0.5">Receive alerts when events you RSVP'd to are starting soon.</p>
+                  <p className="text-[14px] font-medium text-[#615d59] mt-0.5">Receive alerts when events you RSVP&apos;d to are starting soon.</p>
                 </div>
               </label>
 
@@ -138,7 +138,7 @@ export default function PreferencesPage() {
                 Event Categories of Interest
               </h2>
               <p className="text-[14px] font-medium text-[#615d59] mt-1">
-                Select topics you'd love to see on your personalized feed.
+                Select topics you&apos;d love to see on your personalized feed.
               </p>
             </div>
 

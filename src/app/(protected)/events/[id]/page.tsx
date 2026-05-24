@@ -7,7 +7,7 @@ import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { EventDetailContent } from "@/features/feed/components/EventDetailContent";
 import { formatEventDateMeta } from "@/features/feed/components/event-card.utils";
-import { CapacityBar } from "@/features/feed/components/CapacityBar";
+import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
 
 type PageProps = {
   params: Promise<{
@@ -43,7 +43,13 @@ export default async function EventDetailPage({ params }: PageProps) {
       },
       _count: {
         select: {
-          rsvps: true,
+          rsvps: {
+            where: {
+              status: {
+                in: ["GOING", "ATTENDED"] as ("GOING" | "ATTENDED")[],
+              },
+            },
+          },
         },
       },
       rsvps: {
@@ -57,13 +63,19 @@ export default async function EventDetailPage({ params }: PageProps) {
     },
   });
 
+  const accessDecision = resolveStudentEventAccess({
+    eventStatus: event?.status,
+    eventCollegeId: event?.collegeId,
+    userCollegeId: user.collegeId,
+  });
+
   // Verify event existence and visibility constraints
-  if (event?.status !== "PUBLISHED") {
+  if (!event || accessDecision === "hidden") {
     return notFound();
   }
 
   // Enforce college scope security: students can only access same-college events
-  if (event.collegeId !== user.collegeId) {
+  if (accessDecision === "wrong_college") {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <h1 className="text-[26px] font-bold text-black/95 tracking-tight mb-2">
@@ -130,15 +142,7 @@ export default async function EventDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="mb-8 max-w-md">
-            <CapacityBar
-              count={event._count.rsvps}
-              totalCapacity={event.capacity}
-            />
-          </div>
-
-          {/* Interactive Details & Discussions tab component */}
-          <EventDetailContent event={event} />
+          <EventDetailContent event={event} renderCapacityBar />
         </div>
       </article>
     </div>

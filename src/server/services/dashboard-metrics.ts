@@ -60,7 +60,7 @@ function getDecisionWindowStart(now: Date): Date {
   return start;
 }
 
-async function getManagedClubIds(db: DashboardDb, user: DashboardUser) {
+export async function getManagedClubIdsForDashboardUser(db: DashboardDb, user: DashboardUser) {
   if (isAdminUserRole(user.role)) {
     return null;
   }
@@ -167,7 +167,7 @@ export async function getOrganizerDashboardMetrics(
   user: DashboardUser,
   now = new Date(),
 ): Promise<OrganizerDashboardMetrics> {
-  const managedClubIds = await getManagedClubIds(db, user);
+  const managedClubIds = await getManagedClubIdsForDashboardUser(db, user);
 
   const eventScope = isAdminUserRole(user.role)
     ? user.collegeId

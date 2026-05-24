@@ -27,7 +27,7 @@ export default function PersonalInfoPage() {
 
       {isLoading ? (
         <div className="space-y-4">
-          {[...Array(6)].map((_, i) => (
+          {Array.from({ length: 6 }, (_, i) => (
             <div key={i} className="h-16 w-full animate-pulse rounded-[16px] bg-[#f6f5f4]" />
           ))}
         </div>

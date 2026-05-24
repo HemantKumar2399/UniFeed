@@ -1,4 +1,5 @@
 import type { ClubRole, EventApprovalAction, EventStatus } from "@prisma/client";
+import { observable } from "@trpc/server/observable";
 import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { CreateEventSchema, type CreateEventInput } from "@/features/events/components/CreateEventSchema";
@@ -9,7 +10,9 @@ import {
   getAttendeeCounts,
   mapAttendeeRow,
 } from "@/features/attendance/attendee-management";
+import { type EventAttendanceRealtimePayload } from "@/features/attendance/realtime-attendance";
 import { resolveDiscussionDisplayName } from "@/lib/discussion";
+import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
 import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
 import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
 import { FEED_RESULT_LIMIT, buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
@@ -17,7 +20,9 @@ import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-we
 import {
   buildStudentRelevanceProfile,
 } from "@/server/services/feed-ranking";
+import { emitAttendanceChange, getAttendanceLatestActivity } from "@/server/services/attendance-realtime";
 import type { db as prismaDb } from "@/server/db";
+import { ee } from "@/server/events";
 import { assertCanManageEvent, getClubManagementRole, isAdminUserRole } from "@/server/permissions/club-management";
 import { TRPCError } from "@trpc/server";
 
@@ -69,6 +74,7 @@ async function getEventAttendanceSnapshot(ctx: OrganizerCtx, eventId: number) {
       id: true,
       title: true,
       date: true,
+      capacity: true,
       club: {
         select: {
           name: true,
@@ -120,6 +126,7 @@ async function getEventAttendanceSnapshot(ctx: OrganizerCtx, eventId: number) {
       id: event.id,
       title: event.title,
       date: event.date,
+      capacity: event.capacity,
       clubName: event.club.name,
       collegeName: event.college.name,
     },
@@ -168,7 +175,10 @@ async function markAttendedRsvp(
   }
 
   if (rsvp.status === "ATTENDED") {
-    return rsvp;
+    return {
+      changed: false,
+      rsvp,
+    };
   }
 
   if (rsvp.status !== "GOING") {
@@ -178,7 +188,7 @@ async function markAttendedRsvp(
     });
   }
 
-  return ctx.db.rSVP.update({
+  const updatedRsvp = await ctx.db.rSVP.update({
     where: { id: rsvp.id },
     data: { status: "ATTENDED" },
     include: {
@@ -187,6 +197,11 @@ async function markAttendedRsvp(
       },
     },
   });
+
+  return {
+    changed: true,
+    rsvp: updatedRsvp,
+  };
 }
 
 function createApprovalLog(
@@ -263,6 +278,74 @@ function buildEventUpdateData(
 }
 
 export const eventRouter = createTRPCRouter({
+  onAttendanceChange: protectedProcedure
+    .input(z.object({ eventId: z.number().int().positive() }))
+    .subscription(async ({ ctx, input }) => {
+      const event = await ctx.db.event.findUnique({
+        where: { id: input.eventId },
+        select: {
+          id: true,
+          clubId: true,
+          collegeId: true,
+          status: true,
+        },
+      });
+
+      if (!event) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found",
+        });
+      }
+
+      if (ctx.session.user.role === "STUDENT") {
+        const accessDecision = resolveStudentEventAccess({
+          eventStatus: event.status,
+          eventCollegeId: event.collegeId,
+          userCollegeId: ctx.session.user.collegeId,
+        });
+
+        if (accessDecision !== "visible") {
+          throw new TRPCError({
+            code: accessDecision === "wrong_college" ? "FORBIDDEN" : "NOT_FOUND",
+            message:
+              accessDecision === "wrong_college"
+                ? "You cannot subscribe to another college's event."
+                : "Event not found",
+          });
+        }
+      } else {
+        await assertCanManageEvent(
+          {
+            db: ctx.db,
+            session: {
+              user: {
+                id: ctx.session.user.id,
+                role: ctx.session.user.role,
+                collegeId: ctx.session.user.collegeId,
+              },
+            },
+          },
+          input.eventId,
+          { forbiddenMessage: "Unauthorized for this event" },
+        );
+      }
+
+      return observable<EventAttendanceRealtimePayload>((emit) => {
+        const onAttendanceChange = (payload: EventAttendanceRealtimePayload) => {
+          if (payload.eventId === input.eventId) {
+            emit.next(payload);
+          }
+        };
+
+        ee.on("attendanceChange", onAttendanceChange);
+
+        return () => {
+          ee.off("attendanceChange", onAttendanceChange);
+        };
+      });
+    }),
+
   delete: protectedOrganizerProcedure
     .input(z.object({ id: z.number().int() }))
     .mutation(async ({ ctx, input }) => {
@@ -908,6 +991,9 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
+      const latestActivity = await getAttendanceLatestActivity(ctx.db, updated.id);
+      await emitAttendanceChange(ctx.db, input.eventId, latestActivity);
+
       return buildStudentQrVerificationResult(
         "CHECKED_IN",
         `Checked in: ${updated.user.name ?? updated.user.email ?? "Student"}`,
@@ -961,11 +1047,16 @@ export const eventRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Attendee ticket not found" });
       }
 
-      const updated = await markAttendedRsvp(ctx, {
+      const { changed, rsvp: updated } = await markAttendedRsvp(ctx, {
         eventId: input.eventId,
         rsvpId: rsvp.id,
         expectedUserId: input.userId,
       });
+
+      if (changed) {
+        const latestActivity = await getAttendanceLatestActivity(ctx.db, updated.id);
+        await emitAttendanceChange(ctx.db, input.eventId, latestActivity);
+      }
 
       return {
         rsvpId: updated.id,

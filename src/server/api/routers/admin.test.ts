@@ -197,9 +197,38 @@ void test("adminRouter.getPendingEvents stays college-scoped and only requests s
   });
 });
 
+void test("adminRouter.getPendingEvents rejects organizer callers", async () => {
+  const mockedCtx = {
+    db: {} as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.getPendingEvents();
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "UNAUTHORIZED");
+      assert.equal(err.message, "Only administrators can access this procedure.");
+      return true;
+    },
+  );
+});
+
 void test("adminRouter.approveEvent approves submitted events in the same college and records audit history", async () => {
   let updated = false;
   let approvalLogged = false;
+  let organizerNotified = false;
 
   const mockedCtx = {
     db: {
@@ -209,6 +238,7 @@ void test("adminRouter.approveEvent approves submitted events in the same colleg
           title: "Submitted Event",
           description: "Pending review.",
           status: "SUBMITTED",
+          authorId: "organizer-user-id",
           submittedAt: new Date("2030-05-10T12:00:00.000Z"),
           date: new Date("2030-05-15T18:00:00.000Z"),
           capacity: 120,
@@ -237,6 +267,14 @@ void test("adminRouter.approveEvent approves submitted events in the same colleg
           return { id: 1, ...args.data };
         },
       },
+      notification: {
+        create: async (args: any) => {
+          organizerNotified = true;
+          assert.equal(args.data.userId, "organizer-user-id");
+          assert.equal(args.data.type, "EVENT_APPROVED");
+          return { id: 2, ...args.data };
+        },
+      },
       $transaction: async (ops: any[]) => Promise.all(ops),
     } as any,
     session: {
@@ -255,6 +293,7 @@ void test("adminRouter.approveEvent approves submitted events in the same colleg
 
   assert.ok(updated);
   assert.ok(approvalLogged);
+  assert.ok(organizerNotified);
   assert.equal(result.status, "APPROVED");
 });
 
@@ -296,6 +335,54 @@ void test("adminRouter.rejectEvent blocks cross-college review attempts", async 
   await assert.rejects(
     async () => {
       await caller.admin.rejectEvent({ eventId: 89, reason: "This event is not in the correct college scope." });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Cannot review events outside your college.");
+      return true;
+    },
+  );
+});
+
+void test("adminRouter.approveEvent blocks cross-college review attempts", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 90,
+          title: "Other College Event",
+          description: "Pending review.",
+          status: "SUBMITTED",
+          submittedAt: new Date("2030-05-10T12:00:00.000Z"),
+          date: new Date("2030-05-15T18:00:00.000Z"),
+          capacity: 120,
+          location: "Auditorium",
+          imageUrl: "https://example.com/poster.png",
+          clubId: 21,
+          collegeId: "college-2",
+          createdAt: new Date("2030-05-09T12:00:00.000Z"),
+          club: { id: 21, name: "Other Club", logoUrl: "https://example.com/logo.png", collegeId: "college-2" },
+          author: { id: "organizer-user-id", name: "Organizer", email: "organizer@example.com" },
+          approvalLogs: [],
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.approveEvent({ eventId: 90 });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);

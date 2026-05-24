@@ -165,11 +165,19 @@ development_status:
   15-2-implement-global-mode-only-if-approved: done
   epic-15-retrospective: optional
 
-  epic-16: backlog
-  16-1-add-authorization-tests: backlog
-  16-2-add-qr-security-tests: backlog
-  16-3-add-approval-lifecycle-tests: backlog
-  16-4-complete-environment-documentation: backlog
-  16-5-remove-generated-prisma-client-from-source-if-appropriate: backlog
-  16-6-production-readiness-checklist: backlog
+  epic-16: done
+  16-1-add-authorization-tests: done
+  16-2-add-qr-security-tests: done
+  16-3-add-approval-lifecycle-tests: done
+  16-4-complete-environment-documentation: done
+  16-5-remove-generated-prisma-client-from-source-if-appropriate: done
+  16-6-production-readiness-checklist: done
   epic-16-retrospective: optional
+
+  epic-17: done
+  17-1-realtime-attendance-foundation: done
+  17-2-live-student-capacity-sync: done
+  17-3-live-scan-and-attendee-sync: done
+  17-4-live-organizer-dashboard-sync: done
+  17-5-realtime-hardening-and-smoke-tests: done
+  epic-17-retrospective: optional
