@@ -65,14 +65,14 @@ export function HubsDirectorySection() {
     followByClubId,
     hapticByClubId,
     seedFromServer,
-    markFollowedOptimistic,
+    toggleFollowOptimistic,
     rollbackFollow,
     clearHaptic,
   } = useHubFollowStore();
 
   const followHub = api.hub.follow.useMutation({
     onMutate: ({ clubId }) => {
-      markFollowedOptimistic(clubId);
+      toggleFollowOptimistic(clubId);
       window.setTimeout(() => clearHaptic(clubId), 200);
     },
     onError: (_error, variables) => {
@@ -208,11 +208,11 @@ export function HubsDirectorySection() {
                     type="button"
                     size="sm"
                     variant={isFollowed ? "secondary" : "default"}
-                    disabled={isFollowed || followHub.isPending}
+                    disabled={followHub.isPending}
                     onClick={() => followHub.mutate({ clubId: club.id })}
                     className={cn(
                       "min-w-[110px] border border-transparent transition-transform duration-haptic",
-                      isFollowed && "border-[rgba(0,0,0,0.08)] bg-white text-black/80",
+                      isFollowed && "border-[rgba(0,0,0,0.08)] bg-white text-[#615d59] hover:bg-black/5 hover:text-black",
                       isHaptic && "scale-95",
                     )}
                   >

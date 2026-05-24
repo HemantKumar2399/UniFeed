@@ -1,6 +1,7 @@
 import { Heart, LogOut, Settings, User } from "lucide-react";
 import { auth } from "@/server/auth";
 import { SignOutForm } from "@/components/SignOutForm";
+import Link from "next/link";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -31,26 +32,26 @@ export default async function ProfilePage() {
         <h3 className="text-[14px] font-bold uppercase tracking-wider text-[#a39e98] px-2 mb-2">Account</h3>
         
         <div className="flex flex-col bg-white rounded-[16px] border border-[#dddddd] shadow-sm overflow-hidden">
-          <div className="flex items-center gap-4 p-4 border-b border-[#dddddd] cursor-pointer hover:bg-[#f6f5f4] active:bg-[#eaeaea] transition-colors">
+          <Link href="/profile/personal-info" className="flex items-center gap-4 p-4 border-b border-[#dddddd] cursor-pointer hover:bg-[#f6f5f4] active:bg-[#eaeaea] transition-colors">
             <div className="w-8 h-8 rounded-full bg-[#f2f9ff] flex items-center justify-center">
               <User className="w-4 h-4 text-[#097fe8]" />
             </div>
             <span className="text-[16px] font-medium text-black/90">Personal Information</span>
-          </div>
+          </Link>
           
-          <div className="flex items-center gap-4 p-4 border-b border-[#dddddd] cursor-pointer hover:bg-[#f6f5f4] active:bg-[#eaeaea] transition-colors">
+          <Link href="/profile/saved-events" className="flex items-center gap-4 p-4 border-b border-[#dddddd] cursor-pointer hover:bg-[#f6f5f4] active:bg-[#eaeaea] transition-colors">
             <div className="w-8 h-8 rounded-full bg-[#f2f9ff] flex items-center justify-center">
               <Heart className="w-4 h-4 text-[#097fe8]" />
             </div>
             <span className="text-[16px] font-medium text-black/90">Saved Events</span>
-          </div>
+          </Link>
 
-          <div className="flex items-center gap-4 p-4 border-b border-[#dddddd] cursor-pointer hover:bg-[#f6f5f4] active:bg-[#eaeaea] transition-colors">
+          <Link href="/profile/preferences" className="flex items-center gap-4 p-4 border-b border-[#dddddd] cursor-pointer hover:bg-[#f6f5f4] active:bg-[#eaeaea] transition-colors">
             <div className="w-8 h-8 rounded-full bg-[#f2f9ff] flex items-center justify-center">
               <Settings className="w-4 h-4 text-[#097fe8]" />
             </div>
             <span className="text-[16px] font-medium text-black/90">Preferences</span>
-          </div>
+          </Link>
         </div>
       </section>
       

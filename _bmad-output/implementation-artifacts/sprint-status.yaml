@@ -140,29 +140,29 @@ development_status:
   11-3-add-status-aware-dashboard-cards: done
   epic-11-retrospective: optional
 
-  epic-12: backlog
-  12-1-college-scope-hub-directory: backlog
-  12-2-improve-public-hub-pages: backlog
-  12-3-improve-hub-editor: backlog
-  12-4-add-community-moderation-admin-controls: backlog
+  epic-12: done
+  12-1-college-scope-hub-directory: done
+  12-2-improve-public-hub-pages: done
+  12-3-improve-hub-editor: done
+  12-4-add-community-moderation-admin-controls: done
   epic-12-retrospective: optional
 
-  epic-13: backlog
-  13-1-complete-profile-page-actions: backlog
-  13-2-add-preferences-model-and-ui: backlog
-  13-3-add-saved-bookmarked-events: backlog
+  epic-13: done
+  13-1-complete-profile-page-actions: done
+  13-2-add-preferences-model-and-ui: done
+  13-3-add-saved-bookmarked-events: done
   epic-13-retrospective: optional
 
-  epic-14: backlog
-  14-1-add-notification-model: backlog
-  14-2-notify-organizers-about-admin-decisions: backlog
-  14-3-notify-students-about-rsvp-lifecycle: backlog
-  14-4-optional-email-notifications: backlog
+  epic-14: done
+  14-1-add-notification-model: done
+  14-2-notify-organizers-about-admin-decisions: done
+  14-3-notify-students-about-rsvp-lifecycle: done
+  14-4-optional-email-notifications: done
   epic-14-retrospective: optional
 
-  epic-15: backlog
-  15-1-decide-global-page-mvp-status: backlog
-  15-2-implement-global-mode-only-if-approved: backlog
+  epic-15: done
+  15-1-decide-global-page-mvp-status: done
+  15-2-implement-global-mode-only-if-approved: done
   epic-15-retrospective: optional
 
   epic-16: backlog

@@ -1,6 +1,6 @@
 import { normalizeHubBlocksForSave } from "@/features/hubs/hub-blocks.utils";
 import { createTRPCRouter, protectedOrganizerProcedure, protectedProcedure, publicProcedure } from "@/server/api/trpc";
-import { assertCanManageClub, getManageableClubsForUser } from "@/server/permissions/club-management";
+import { assertCanManageClub, getManageableClubsForUser, getClubManagementRole } from "@/server/permissions/club-management";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -28,6 +28,7 @@ export const hubRouter = createTRPCRouter({
     const clubs = await ctx.db.club.findMany({
       where: {
         collegeId: ctx.session.user.collegeId,
+        isActive: true,
       },
       orderBy: { name: "asc" },
       take: 24,
@@ -78,24 +79,40 @@ export const hubRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Hub not found" });
       }
 
-      await ctx.db.hubFollow.upsert({
+      const existing = await ctx.db.hubFollow.findUnique({
         where: {
           userId_clubId: {
             userId: ctx.session.user.id,
             clubId: input.clubId,
           },
         },
-        create: {
-          userId: ctx.session.user.id,
-          clubId: input.clubId,
-        },
-        update: {},
       });
 
-      return {
-        clubId: input.clubId,
-        isFollowed: true,
-      };
+      if (existing) {
+        await ctx.db.hubFollow.delete({
+          where: {
+            userId_clubId: {
+              userId: ctx.session.user.id,
+              clubId: input.clubId,
+            },
+          },
+        });
+        return {
+          clubId: input.clubId,
+          isFollowed: false,
+        };
+      } else {
+        await ctx.db.hubFollow.create({
+          data: {
+            userId: ctx.session.user.id,
+            clubId: input.clubId,
+          },
+        });
+        return {
+          clubId: input.clubId,
+          isFollowed: true,
+        };
+      }
     }),
 
   getHubContent: publicProcedure
@@ -107,6 +124,8 @@ export const hubRouter = createTRPCRouter({
           id: true,
           name: true,
           logoUrl: true,
+          isActive: true,
+          collegeId: true,
           blocks: {
             orderBy: { position: "asc" },
             select: {
@@ -135,6 +154,22 @@ export const hubRouter = createTRPCRouter({
 
       if (!club) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Hub not found" });
+      }
+
+      if (!club.isActive) {
+        const canManage = ctx.session?.user
+          ? await getClubManagementRole(
+              {
+                db: ctx.db,
+                session: { user: ctx.session.user },
+              },
+              club,
+            ).then((role) => !!role)
+          : false;
+
+        if (!canManage) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Hub not found" });
+        }
       }
 
       return club;

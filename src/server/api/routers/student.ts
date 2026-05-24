@@ -9,6 +9,12 @@ export const studentRouter = createTRPCRouter({
       where: { userId: ctx.session.user.id },
       include: {
         college: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
       },
     });
   }),

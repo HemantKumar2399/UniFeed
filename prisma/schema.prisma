@@ -36,6 +36,7 @@ model Club {
   followers HubFollow[]
   blocks    HubBlock[]
   members   ClubMembership[]
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -61,6 +62,7 @@ model Event {
   rsvps       RSVP[]
   discussionThreads EventDiscussionThread[]
   approvalLogs EventApprovalLog[]
+  savedBy     SavedEvent[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -127,6 +129,32 @@ model User {
   followedHubs   HubFollow[]
   clubMemberships ClubMembership[]
   eventApprovalLogs EventApprovalLog[]
+  savedEvents    SavedEvent[]
+  preferences    UserPreference?
+  notifications  Notification[]
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  linkUrl   String?
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+  @@index([userId, isRead])
+}
+
+enum NotificationType {
+  EVENT_APPROVED
+  EVENT_REJECTED
+  EVENT_CANCELLED
+  RSVP_CONFIRMED
+  SYSTEM
 }
 
 model EventApprovalLog {
@@ -321,3 +349,28 @@ enum EventApprovalAction {
   REJECTED
   CANCELLED
 }
+
+model SavedEvent {
+  userId    String
+  eventId   Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@id([userId, eventId])
+  @@index([eventId])
+  @@index([userId])
+}
+
+model UserPreference {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  marketingEmails     Boolean  @default(true)
+  eventReminders      Boolean  @default(true)
+  preferredCategories String[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+

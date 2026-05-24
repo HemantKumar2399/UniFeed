@@ -431,6 +431,15 @@ export const adminRouter = createTRPCRouter({
             action: "APPROVED",
           },
         }),
+        ctx.db.notification.create({
+          data: {
+            userId: event.authorId,
+            type: "EVENT_APPROVED",
+            title: `Event Approved: ${event.title}`,
+            message: `Your event "${event.title}" has been approved by the college admin.`,
+            linkUrl: `/events/${event.id}`,
+          },
+        }),
       ]);
 
       return updatedEvent;
@@ -471,6 +480,15 @@ export const adminRouter = createTRPCRouter({
             actorId: ctx.session.user.id,
             action: "REJECTED",
             reason: input.reason,
+          },
+        }),
+        ctx.db.notification.create({
+          data: {
+            userId: event.authorId,
+            type: "EVENT_REJECTED",
+            title: `Event Rejected: ${event.title}`,
+            message: `Your event "${event.title}" has been rejected. Reason: ${input.reason}`,
+            linkUrl: `/dashboard/events`,
           },
         }),
       ]);

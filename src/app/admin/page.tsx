@@ -104,6 +104,7 @@ export default async function AdminDashboardPage() {
         select: {
           id: true,
           name: true,
+          isActive: true,
           members: {
             select: {
               role: true,
@@ -339,6 +340,7 @@ export default async function AdminDashboardPage() {
             clubs={clubs.map((club) => ({
               id: club.id,
               name: club.name,
+              isActive: club.isActive,
               memberCount: club._count.members,
               eventCount: club._count.events,
             }))}

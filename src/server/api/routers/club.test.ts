@@ -199,3 +199,82 @@ void test("clubRouter.assignEditor rejects non-owner organizers", async () => {
     },
   );
 });
+
+void test("clubRouter.updateLogo updates logoUrl for a club organizer", async () => {
+  let updateCalled = false;
+
+  const mockedCtx = {
+    db: {
+      club: {
+        findUnique: async (args: any) => {
+          assert.equal(args.where.id, 22);
+          return { id: 22, name: "Coding Club", logoUrl: "https://example.com/coding.png", collegeId: "college-1" };
+        },
+        update: async (args: any) => {
+          updateCalled = true;
+          assert.equal(args.where.id, 22);
+          assert.equal(args.data.logoUrl, "https://example.com/new-coding.png");
+          return { id: 22, logoUrl: "https://example.com/new-coding.png" };
+        },
+      },
+      clubMembership: {
+        findUnique: async (args: any) => {
+          assert.equal(args.where.userId_clubId.userId, "editor-user-id");
+          assert.equal(args.where.userId_clubId.clubId, 22);
+          return { role: "EDITOR" };
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "editor-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.club.updateLogo({ clubId: 22, logoUrl: "https://example.com/new-coding.png" });
+
+  assert.ok(updateCalled);
+  assert.equal(result.logoUrl, "https://example.com/new-coding.png");
+});
+
+void test("clubRouter.toggleClubStatus toggles isActive for admins", async () => {
+  let updateCalled = false;
+
+  const mockedCtx = {
+    db: {
+      club: {
+        findUnique: async (args: any) => {
+          assert.equal(args.where.id, 22);
+          return { id: 22, collegeId: "college-1" };
+        },
+        update: async (args: any) => {
+          updateCalled = true;
+          assert.equal(args.where.id, 22);
+          assert.equal(args.data.isActive, false);
+          return { id: 22, isActive: false };
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const result = await caller.club.toggleClubStatus({ clubId: 22, isActive: false });
+
+  assert.ok(updateCalled);
+  assert.equal(result.isActive, false);
+});

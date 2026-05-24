@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "@/trpc/react";
+import { ImageUploader } from "@/components/ui/ImageUploader";
 
 import type { CreateEventInput } from "./CreateEventSchema";
 import { CreateEventSchema } from "./CreateEventSchema";
@@ -85,7 +86,6 @@ export function EventEditor({
   const utils = api.useUtils();
   const [draft, setDraft] = useState<EventEditorDraft>(initialDraft ?? createEmptyEventEditorDraft());
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [cancelReason, setCancelReason] = useState(cancellationReason ?? "");
 
@@ -96,7 +96,6 @@ export function EventEditor({
   const submitForReview = api.event.submitForReview.useMutation();
   const publishApproved = api.event.publishApproved.useMutation();
   const cancelEvent = api.event.cancel.useMutation();
-  const getPresignedUrl = api.upload.getPresignedUrl.useMutation();
 
   const activeStatus = mode === "create" ? "DRAFT" : eventStatus;
   const isEditable = mode === "create" || activeStatus === "DRAFT" || activeStatus === "REJECTED";
@@ -129,9 +128,6 @@ export function EventEditor({
     <K extends keyof EventEditorDraft>(key: K) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       clearFieldError(key as keyof CreateEventInput);
-      if (key === "imageUrl") {
-        setUploadError(null);
-      }
       setDraftValue(key, event.target.value as EventEditorDraft[K]);
     };
 
@@ -161,67 +157,7 @@ export function EventEditor({
     return parsed.data;
   };
 
-  const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      return;
-    }
 
-    try {
-      setIsUploading(true);
-      setUploadError(null);
-
-      const presignResult = await getPresignedUrl.mutateAsync({
-        filename: file.name,
-        contentType: file.type,
-        size: file.size,
-      });
-
-      let publicUrl: string;
-
-      if (presignResult.useLocalUpload) {
-        // --- Local dev fallback: POST multipart/form-data to /api/upload ---
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const localResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!localResponse.ok) {
-          const errBody = await localResponse.json().catch(() => ({})) as { error?: string };
-          throw new Error(errBody.error ?? "Local upload failed.");
-        }
-
-        const { url } = await localResponse.json() as { url: string };
-        publicUrl = url;
-      } else {
-        // --- Real S3/R2 presigned PUT ---
-        const uploadResponse = await fetch(presignResult.url, {
-          method: "PUT",
-          body: file,
-          headers: { "Content-Type": file.type },
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error("Failed to upload image to storage.");
-        }
-
-        publicUrl = presignResult.finalUrl;
-      }
-
-      setDraftValue("imageUrl", publicUrl);
-      clearFieldError("imageUrl");
-      toast.success("Image uploaded successfully.");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Image upload failed.";
-      setUploadError(message);
-      toast.error(message);
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   const saveDraft = async (shouldSubmitAfterSave: boolean) => {
     if (!hasManagedClubs) {
@@ -564,36 +500,18 @@ export function EventEditor({
             <ImageIcon className="h-4 w-4" />
             Event Cover
           </div>
-          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-            <div className="flex flex-col gap-2">
-              <label htmlFor="imageFile" className="text-sm font-semibold text-notion-black">Upload image</label>
-              <input
-                id="imageFile"
-                type="file"
-                accept="image/*"
-                onChange={handleFileUpload}
-                disabled={!isEditable || isUploading}
-                className="rounded-[14px] border border-input bg-white px-4 py-3 text-sm text-notion-black file:mr-3 file:rounded-[10px] file:border-0 file:bg-warm-white file:px-3 file:py-2 file:font-medium disabled:cursor-not-allowed disabled:bg-muted"
-              />
-              <p className="text-xs text-warm-gray">Upload a JPG, PNG, or WebP file up to 5 MB.</p>
-              {uploadError ? <p className="text-sm font-medium text-red-600">{uploadError}</p> : null}
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="imageUrl" className="text-sm font-semibold text-notion-black">Hosted image URL</label>
-              <input
-                id="imageUrl"
-                value={draft.imageUrl}
-                onChange={handleTextChange("imageUrl")}
-                disabled={!isEditable}
-                type="url"
-                placeholder="https://cdn.example.com/events/poster.jpg"
-                className="h-12 rounded-[14px] border border-input bg-white px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-warm-gray-muted transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
-              />
-              <p className="text-xs text-warm-gray">
-                If upload storage is not configured, paste a hosted URL manually.
-              </p>
-              {fieldErrors.imageUrl ? <p className="text-sm font-medium text-red-600">{fieldErrors.imageUrl}</p> : null}
-            </div>
+          <div className="mt-4">
+            <ImageUploader
+              value={draft.imageUrl}
+              onChange={(url) => {
+                setDraftValue("imageUrl", url);
+                clearFieldError("imageUrl");
+              }}
+              onUploadStateChange={setIsUploading}
+              disabled={!isEditable}
+              label="Upload image"
+            />
+            {fieldErrors.imageUrl ? <p className="text-sm font-medium text-red-600 mt-2">{fieldErrors.imageUrl}</p> : null}
           </div>
           {draft.imageUrl ? (
             <div className="mt-4 overflow-hidden rounded-[16px] border border-[var(--border-whisper)] bg-warm-white">

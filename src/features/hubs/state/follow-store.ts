@@ -9,7 +9,7 @@ type HubFollowState = {
   followByClubId: Record<number, boolean>;
   hapticByClubId: Record<number, boolean>;
   seedFromServer: (entries: FollowSeed[]) => void;
-  markFollowedOptimistic: (clubId: number) => void;
+  toggleFollowOptimistic: (clubId: number) => void;
   rollbackFollow: (clubId: number) => void;
   clearHaptic: (clubId: number) => void;
 };
@@ -30,30 +30,36 @@ export const useHubFollowStore = create<HubFollowState>((set) => ({
     });
   },
 
-  markFollowedOptimistic: (clubId) => {
-    set((state) => ({
-      followByClubId: {
-        ...state.followByClubId,
-        [clubId]: true,
-      },
-      hapticByClubId: {
-        ...state.hapticByClubId,
-        [clubId]: true,
-      },
-    }));
+  toggleFollowOptimistic: (clubId) => {
+    set((state) => {
+      const current = state.followByClubId[clubId] ?? false;
+      return {
+        followByClubId: {
+          ...state.followByClubId,
+          [clubId]: !current,
+        },
+        hapticByClubId: {
+          ...state.hapticByClubId,
+          [clubId]: true,
+        },
+      };
+    });
   },
 
   rollbackFollow: (clubId) => {
-    set((state) => ({
-      followByClubId: {
-        ...state.followByClubId,
-        [clubId]: false,
-      },
-      hapticByClubId: {
-        ...state.hapticByClubId,
-        [clubId]: false,
-      },
-    }));
+    set((state) => {
+      const current = state.followByClubId[clubId] ?? false;
+      return {
+        followByClubId: {
+          ...state.followByClubId,
+          [clubId]: !current,
+        },
+        hapticByClubId: {
+          ...state.hapticByClubId,
+          [clubId]: false,
+        },
+      };
+    });
   },
 
   clearHaptic: (clubId) => {

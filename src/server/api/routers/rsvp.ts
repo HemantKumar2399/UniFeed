@@ -46,6 +46,7 @@ export const rsvpRouter = createTRPCRouter({
         where: { id: input.eventId },
         select: {
           id: true,
+          title: true,
           status: true,
           collegeId: true,
           date: true,
@@ -83,6 +84,20 @@ export const rsvpRouter = createTRPCRouter({
       try {
         const { rsvp, remainingCapacity } = await createRsvpPessimistic(userId, input.eventId);
         ee.emit("capacityChange", { eventId: input.eventId, newCapacity: remainingCapacity });
+
+        // Notify student about RSVP
+        await ctx.db.notification.create({
+          data: {
+            userId,
+            type: "RSVP_CONFIRMED",
+            title: rsvp.status === "GOING" ? "RSVP Confirmed" : "RSVP Waitlisted",
+            message: rsvp.status === "GOING"
+              ? `You have successfully registered for the event "${event.title}".`
+              : `The event "${event.title}" is full. You have been added to the waitlist.`,
+            linkUrl: `/tickets`,
+          },
+        });
+
         return rsvp;
       } catch (error: unknown) {
         if (error instanceof CapacityError) {
@@ -118,6 +133,7 @@ export const rsvpRouter = createTRPCRouter({
           where: { id: eventId },
           select: {
             id: true,
+            title: true,
             capacity: true,
             date: true,
           },
@@ -187,6 +203,16 @@ export const rsvpRouter = createTRPCRouter({
               where: { id: nextWaitlist.id },
               data: {
                 status: "GOING",
+              },
+            });
+            // Notify waitlist promoted student
+            await tx.notification.create({
+              data: {
+                userId: nextWaitlist.userId,
+                type: "RSVP_CONFIRMED",
+                title: "Waitlist Promotion",
+                message: `Good news! You have been promoted from the waitlist for the event "${event.title}".`,
+                linkUrl: `/tickets`,
               },
             });
             newCapacity = 0;

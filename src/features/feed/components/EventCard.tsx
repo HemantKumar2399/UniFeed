@@ -17,7 +17,7 @@ import { Calendar, MapPin } from "lucide-react";
 import { formatEventDateMeta } from "./event-card.utils";
 import { EventDetailContent } from "./EventDetailContent";
 
-type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
+export type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
 
 export function EventCard({ event }: { event: EventFeedItem }) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);

@@ -11,14 +11,17 @@ import {
   Library,
   ShieldCheck,
   ArrowUpRight,
+  Bell,
 } from "lucide-react";
 import React from "react";
+import { api } from "@/trpc/react";
 
 const baseNavItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Events", href: "/dashboard/events", icon: CalendarDays },
   { name: "Hubs", href: "/dashboard/hubs", icon: Library },
   { name: "Metrics", href: "/dashboard/metrics", icon: BarChart3 },
+  { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -33,6 +36,10 @@ export function PremiumOrganizerShell({
 }) {
   const pathname = usePathname();
   const isAdmin = userRole === "ADMIN";
+  const { data: unreadCount } = api.notification.getUnreadCount.useQuery(undefined, {
+    refetchInterval: 10000,
+  });
+
   const navItems = isAdmin
     ? [...baseNavItems, { name: "Admin", href: "/admin", icon: ShieldCheck }]
     : baseNavItems;
@@ -53,6 +60,8 @@ export function PremiumOrganizerShell({
               ? pathname === '/dashboard' 
               : pathname.startsWith(item.href);
               
+            const isNotifications = item.name === "Notifications";
+
             return (
               <Link
                 key={item.name}
@@ -70,6 +79,11 @@ export function PremiumOrganizerShell({
                 )}
                 <item.icon className="w-[18px] h-[18px] relative z-10" />
                 <span className="text-[15px] relative z-10">{item.name}</span>
+                {isNotifications && unreadCount !== undefined && unreadCount > 0 && (
+                  <span className="ml-auto min-w-[20px] h-5 px-1.5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold z-10 shadow-sm animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -134,6 +148,8 @@ export function PremiumOrganizerShell({
               ? pathname === '/dashboard' 
               : pathname.startsWith(item.href);
               
+            const isNotifications = item.name === "Notifications";
+
             return (
               <Link
                 key={item.name}
@@ -147,10 +163,17 @@ export function PremiumOrganizerShell({
                     transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                   />
                 )}
-                <item.icon
-                  className={`w-6 h-6 mb-1 relative z-10 transition-colors ${isActive ? "text-[#0075de]" : "text-[#a39e98]"}`}
-                  strokeWidth={isActive ? 2.5 : 2}
-                />
+                <div className="relative">
+                  <item.icon
+                    className={`w-6 h-6 mb-1 relative z-10 transition-colors ${isActive ? "text-[#0075de]" : "text-[#a39e98]"}`}
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                  {isNotifications && unreadCount !== undefined && unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 bg-red-500 text-white rounded-full flex items-center justify-center text-[8px] font-bold z-20 shadow-sm">
+                      {unreadCount}
+                    </span>
+                  )}
+                </div>
                 <span
                   className={`text-[10px] font-semibold tracking-wide relative z-10 transition-colors ${
                     isActive ? "text-[#0075de]" : "text-transparent"

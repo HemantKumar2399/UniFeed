@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/trpc/react";
 import type { RouterOutputs } from "@/trpc/react";
-import { Pin, PinOff } from "lucide-react";
+import { Pin, PinOff, Bookmark } from "lucide-react";
 import {
   formatDiscussionAuthorName,
   sortDiscussionThreads,
@@ -25,6 +25,25 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
   const [activeTab, setActiveTab] = useState<"overview" | "discussions">("overview");
   const [questionDraft, setQuestionDraft] = useState("");
   const [replyDraftByThread, setReplyDraftByThread] = useState<Record<number, string>>({});
+
+  const { data: isSaved } = api.profile.checkSavedStatus.useQuery({
+    eventId: event.id,
+  });
+
+  const toggleSave = api.profile.toggleSavedEvent.useMutation({
+    onSuccess: async (data) => {
+      await utils.profile.checkSavedStatus.invalidate({ eventId: event.id });
+      await utils.profile.getSavedEvents.invalidate();
+      if (data.saved) {
+        toast.success("Event saved!");
+      } else {
+        toast.success("Event removed from saved list.");
+      }
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to update save status.");
+    },
+  });
 
   const initialRsvpStatus = event.rsvps?.[0]?.status;
   const [registerState, setRegisterState] = useState<RegisterState>(
@@ -233,6 +252,17 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
             </p>
 
             <footer className="mt-3 flex flex-col gap-2 sm:flex-row items-center justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => toggleSave.mutate({ eventId: event.id })}
+                disabled={toggleSave.isPending}
+                className="h-12 w-full sm:w-12 px-0 rounded-xl flex items-center justify-center border-black/10 hover:bg-black/5 active:scale-95 transition-all sm:mr-auto"
+                title={isSaved ? "Remove from Saved" : "Save Event"}
+              >
+                <Bookmark className={`h-5 w-5 ${isSaved ? "fill-blue-600 text-blue-600" : "text-[#615d59]"}`} />
+              </Button>
+
               {(registerState === "SECURED" || registerState === "WAITLISTED") && (
                 <Button
                   type="button"

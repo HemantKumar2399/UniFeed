@@ -9,6 +9,7 @@ import { HubBlocksRenderer, type HubBlockViewModel } from "@/features/hubs/compo
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { ImageUploader } from "@/components/ui/ImageUploader";
 
 type EditableBlockType = "TEXT" | "RESOURCE" | "FAQ";
 
@@ -39,6 +40,7 @@ export default function DashboardHubsPage() {
   const [activeHubId, setActiveHubId] = useState<number | null>(null);
   const [newEditorUserId, setNewEditorUserId] = useState("");
   const [draftBlocks, setDraftBlocks] = useState<EditableBlock[]>([]);
+  const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
     if (!activeHubId && editableHubs?.length) {
@@ -71,6 +73,7 @@ export default function DashboardHubsPage() {
         linkUrl: block.linkUrl ?? "",
       })),
     );
+    setLogoUrl(activeHub.logoUrl);
   }, [activeHub]);
 
   const activeHubMembershipRole = useMemo(() => {
@@ -84,6 +87,19 @@ export default function DashboardHubsPage() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to save hub content");
+    },
+  });
+
+  const updateLogo = api.club.updateLogo.useMutation({
+    onSuccess: async () => {
+      toast.success("Club logo updated successfully");
+      if (activeHubId) {
+        await utils.hub.getHubContent.invalidate({ clubId: activeHubId });
+        await utils.hub.getDirectory.invalidate();
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update club logo");
     },
   });
 
@@ -143,6 +159,22 @@ export default function DashboardHubsPage() {
     if (hasEmptyContent) {
       toast.error("Each block needs content before saving");
       return;
+    }
+
+    for (const block of draftBlocks) {
+      if (block.type === "RESOURCE") {
+        const link = block.linkUrl.trim();
+        if (!link) {
+          toast.error("Resource blocks must have a link URL");
+          return;
+        }
+        try {
+          new URL(link);
+        } catch {
+          toast.error(`Invalid URL for block: "${block.title || block.content.substring(0, 15)}..."`);
+          return;
+        }
+      }
     }
 
     saveBlocks.mutate({
@@ -209,6 +241,32 @@ export default function DashboardHubsPage() {
             <div className="mb-4 rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4 text-[14px] text-[#615d59]">
               No editable hubs found for this organizer. Ask an owner to add you as a hub editor.
             </div>
+          ) : null}
+
+          {activeHubId ? (
+            <section className="mb-6 rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white p-4">
+              <div className="mb-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Club Identity</p>
+                <h3 className="text-[16px] font-bold text-black/95">Club Logo</h3>
+              </div>
+              <ImageUploader
+                value={logoUrl}
+                onChange={(url) => setLogoUrl(url)}
+                label="Club Logo"
+              />
+              <div className="mt-4 flex justify-end">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!activeHubId || !logoUrl) return;
+                    updateLogo.mutate({ clubId: activeHubId, logoUrl });
+                  }}
+                  disabled={updateLogo.isPending || logoUrl === activeHub?.logoUrl}
+                >
+                  {updateLogo.isPending ? "Saving..." : "Save Logo"}
+                </Button>
+              </div>
+            </section>
           ) : null}
 
           <div className="mb-4 flex flex-wrap gap-2">

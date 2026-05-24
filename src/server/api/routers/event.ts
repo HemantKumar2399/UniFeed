@@ -348,6 +348,18 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
+      const rsvps = await ctx.db.rSVP.findMany({
+        where: {
+          eventId: input.id,
+          status: {
+            in: ["GOING", "WAITLISTED"],
+          },
+        },
+        select: {
+          userId: true,
+        },
+      });
+
       const cancelledAt = new Date();
       const [updatedEvent] = await ctx.db.$transaction([
         ctx.db.event.update({
@@ -371,6 +383,18 @@ export const eventRouter = createTRPCRouter({
           reason: input.reason,
         }),
       ]);
+
+      if (rsvps.length > 0) {
+        await ctx.db.notification.createMany({
+          data: rsvps.map((r) => ({
+            userId: r.userId,
+            type: "EVENT_CANCELLED",
+            title: `Event Cancelled: ${updatedEvent.title}`,
+            message: `The event "${updatedEvent.title}" has been cancelled by the organizer. Reason: ${input.reason}`,
+            linkUrl: `/events/${updatedEvent.id}`,
+          })),
+        });
+      }
 
       return updatedEvent;
     }),
@@ -531,7 +555,29 @@ export const eventRouter = createTRPCRouter({
     });
 
     const followedClubIds = followedRows.map((row) => row.clubId);
-    const { courseKeywords, selectedDomains } = deriveFeedPreferenceSignals(ctx.headers);
+    
+    const { courseKeywords: headerCourses, selectedDomains: headerDomains } = deriveFeedPreferenceSignals(ctx.headers);
+
+    // Fetch database profile and preferences
+    const [studentProfile, userPrefs] = await Promise.all([
+      ctx.db.studentProfile.findUnique({
+        where: { userId },
+        select: { course: true, branch: true },
+      }),
+      ctx.db.userPreference.findUnique({
+        where: { userId },
+        select: { preferredCategories: true },
+      }),
+    ]);
+
+    const dbCourses = studentProfile
+      ? [studentProfile.course, studentProfile.branch]
+      : [];
+    const dbDomains = userPrefs?.preferredCategories ?? [];
+
+    // Merge database-persisted preferences with any headers
+    const courseKeywords = Array.from(new Set([...headerCourses, ...dbCourses]));
+    const selectedDomains = Array.from(new Set([...headerDomains, ...dbDomains]));
 
     const profile = buildStudentRelevanceProfile({
       courseKeywords,

@@ -244,4 +244,74 @@ export const clubRouter = createTRPCRouter({
         },
       });
     }),
+
+  updateLogo: protectedOrganizerProcedure
+    .input(
+      z.object({
+        clubId: z.number().int().positive(),
+        logoUrl: z.string().trim().url("Enter a valid logo URL."),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await assertCanManageClub(ctx, input.clubId, {
+        forbiddenMessage: "You can only update logo for clubs you manage.",
+      });
+
+      return ctx.db.club.update({
+        where: { id: input.clubId },
+        data: {
+          logoUrl: input.logoUrl,
+        },
+        select: {
+          id: true,
+          logoUrl: true,
+        },
+      });
+    }),
+
+  toggleClubStatus: adminProcedure
+    .input(
+      z.object({
+        clubId: z.number().int().positive(),
+        isActive: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.session.user.collegeId) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Admin session is missing a college association.",
+        });
+      }
+
+      const club = await ctx.db.club.findUnique({
+        where: { id: input.clubId },
+        select: { collegeId: true },
+      });
+
+      if (!club) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Club not found.",
+        });
+      }
+
+      if (club.collegeId !== ctx.session.user.collegeId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only manage clubs in your college.",
+        });
+      }
+
+      return ctx.db.club.update({
+        where: { id: input.clubId },
+        data: {
+          isActive: input.isActive,
+        },
+        select: {
+          id: true,
+          isActive: true,
+        },
+      });
+    }),
 });

@@ -40,7 +40,7 @@ export default auth((req) => {
     path.startsWith("/passport") ||
     path.startsWith("/profile") ||
     path.startsWith("/search") ||
-    path.startsWith("/global") ||
+    path.startsWith("/notifications") ||
     path.startsWith("/tickets");
 
   if (isDashboard || isAdmin || isStudentArea) {
@@ -92,8 +92,8 @@ export const config = {
     "/profile/:path*",
     "/search",
     "/search/:path*",
-    "/global",
-    "/global/:path*",
+    "/notifications",
+    "/notifications/:path*",
     "/tickets",
     "/tickets/:path*",
   ],
