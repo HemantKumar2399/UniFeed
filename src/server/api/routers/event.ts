@@ -12,6 +12,7 @@ import {
 } from "@/features/attendance/attendee-management";
 import { type EventAttendanceRealtimePayload } from "@/features/attendance/realtime-attendance";
 import { resolveDiscussionDisplayName } from "@/lib/discussion";
+import { isRegistrationReopenable } from "@/lib/event-registration";
 import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
 import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
 import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
@@ -40,6 +41,8 @@ type OrganizerCtx = {
 const manageableClubRoles: ClubRole[] = ["OWNER", "EDITOR"];
 const editableEventStatuses: EventStatus[] = ["DRAFT", "REJECTED"];
 const scannableEventStatuses: EventStatus[] = ["PUBLISHED"];
+const REGISTRATION_DEADLINE_INVALID_MESSAGE =
+  "Registration deadline must be set to a future time before the event starts.";
 
 type StudentQrVerificationOutcome =
   | "CHECKED_IN"
@@ -226,6 +229,7 @@ function buildEventCreateData(
     title: input.title,
     description: input.description,
     date: input.date,
+    registrationClosesAt: input.registrationClosesAt,
     location: input.location,
     imageUrl: input.imageUrl,
     capacity: input.capacity,
@@ -262,6 +266,7 @@ function buildEventUpdateData(
     title: input.title,
     description: input.description,
     date: input.date,
+    registrationClosesAt: input.registrationClosesAt,
     location: input.location,
     imageUrl: input.imageUrl,
     capacity: input.capacity,
@@ -275,6 +280,39 @@ function buildEventUpdateData(
     isPaid: input.isPaid,
     targetBranches: input.targetBranches,
   };
+}
+
+function getRegistrationDeadlineValidationMessage(input: {
+  date: Date;
+  registrationClosesAt: Date | null;
+}, now: Date = new Date()): string | null {
+  if (!input.registrationClosesAt) {
+    return REGISTRATION_DEADLINE_INVALID_MESSAGE;
+  }
+
+  if (input.registrationClosesAt <= now) {
+    return REGISTRATION_DEADLINE_INVALID_MESSAGE;
+  }
+
+  if (input.registrationClosesAt >= input.date) {
+    return REGISTRATION_DEADLINE_INVALID_MESSAGE;
+  }
+
+  return null;
+}
+
+function assertValidRegistrationDeadline(input: {
+  date: Date;
+  registrationClosesAt: Date | null;
+}, now: Date = new Date()) {
+  const message = getRegistrationDeadlineValidationMessage(input, now);
+
+  if (message) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message,
+    });
+  }
 }
 
 export const eventRouter = createTRPCRouter({
@@ -389,6 +427,8 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
+      assertValidRegistrationDeadline(input.data);
+
       const { club } = await assertCanManageClubForCreation(ctx, input.data.clubId);
 
       if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
@@ -492,6 +532,8 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
+      assertValidRegistrationDeadline(input);
+
       const { club } = await assertCanManageClubForCreation(ctx, input.clubId);
 
       if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
@@ -528,6 +570,24 @@ export const eventRouter = createTRPCRouter({
           message: "Only draft or rejected events can be submitted for review.",
         });
       }
+
+      const currentEvent = await ctx.db.event.findUnique({
+        where: { id: event.id },
+        select: {
+          id: true,
+          date: true,
+          registrationClosesAt: true,
+        },
+      });
+
+      if (!currentEvent) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found",
+        });
+      }
+
+      assertValidRegistrationDeadline(currentEvent);
 
       const submittedAt = new Date();
       const [updatedEvent] = await ctx.db.$transaction([
@@ -567,6 +627,24 @@ export const eventRouter = createTRPCRouter({
         });
       }
 
+      const currentEvent = await ctx.db.event.findUnique({
+        where: { id: event.id },
+        select: {
+          id: true,
+          date: true,
+          registrationClosesAt: true,
+        },
+      });
+
+      if (!currentEvent) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found",
+        });
+      }
+
+      assertValidRegistrationDeadline(currentEvent);
+
       return ctx.db.event.update({
         where: { id: event.id },
         data: {
@@ -578,6 +656,79 @@ export const eventRouter = createTRPCRouter({
           status: true,
         },
       });
+    }),
+
+  extendRegistrationDeadline: protectedOrganizerProcedure
+    .input(
+      z.object({
+        id: z.number().int().positive(),
+        registrationClosesAt: z.coerce.date({
+          required_error: "Please enter a registration deadline",
+          invalid_type_error: "Please enter a valid registration deadline",
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { event } = await assertCanManageEvent(ctx, input.id, {
+        forbiddenMessage: "Unauthorized for this event",
+      });
+
+      const currentEvent = await ctx.db.event.findUnique({
+        where: { id: event.id },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          date: true,
+          registrationClosesAt: true,
+        },
+      });
+
+      if (!currentEvent) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found",
+        });
+      }
+
+      if (!isRegistrationReopenable(currentEvent)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Only approved or published upcoming events can extend registration.",
+        });
+      }
+
+      assertValidRegistrationDeadline({
+        date: currentEvent.date,
+        registrationClosesAt: input.registrationClosesAt,
+      });
+
+      const reason = currentEvent.registrationClosesAt
+        ? `Registration deadline updated from ${currentEvent.registrationClosesAt.toISOString()} to ${input.registrationClosesAt.toISOString()}.`
+        : `Registration deadline set to ${input.registrationClosesAt.toISOString()}.`;
+
+      const [updatedEvent] = await ctx.db.$transaction([
+        ctx.db.event.update({
+          where: { id: currentEvent.id },
+          data: {
+            registrationClosesAt: input.registrationClosesAt,
+          },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            date: true,
+            registrationClosesAt: true,
+          },
+        }),
+        createApprovalLog(ctx, {
+          eventId: currentEvent.id,
+          action: "REGISTRATION_DEADLINE_EXTENDED",
+          reason,
+        }),
+      ]);
+
+      return updatedEvent;
     }),
 
   getOrganizerDrafts: protectedOrganizerProcedure.query(async ({ ctx }) => {    

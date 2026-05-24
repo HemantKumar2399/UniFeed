@@ -3,6 +3,8 @@ import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { PremiumStudentShell } from "@/components/layout/premium/PremiumStudentShell";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProtectedLayout({
   children,
 }: {
@@ -10,8 +12,8 @@ export default async function ProtectedLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
-    redirect("/");
+  if (!session?.user?.id) {
+    redirect("/login");
   }
 
   if (session.user.role === "ADMIN") {
@@ -22,13 +24,15 @@ export default async function ProtectedLayout({
     redirect("/dashboard");
   }
 
-  if (session.user.role === "STUDENT") {
-    const profile = await db.studentProfile.findUnique({
-      where: { userId: session.user.id },
-    });
-    if (!profile) {
-      redirect("/onboarding");
-    }
+  if (session.user.role !== "STUDENT") {
+    redirect("/login");
+  }
+
+  const profile = await db.studentProfile.findUnique({
+    where: { userId: session.user.id },
+  });
+  if (!profile) {
+    redirect("/onboarding");
   }
 
   return (

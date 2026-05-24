@@ -2,6 +2,7 @@ import "../styles/globals.css";
 
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -31,11 +32,7 @@ export default function RootLayout({
   modal,
 }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={inter.variable}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       {/* Body: warm neutral bg, near-black text — set via globals.css base layer */}
       <body>
         <ThemeProvider>
@@ -43,6 +40,7 @@ export default function RootLayout({
             <TRPCReactProvider>
               {children}
               {modal}
+              <Toaster richColors position="top-right" />
             </TRPCReactProvider>
           </AuthProvider>
         </ThemeProvider>

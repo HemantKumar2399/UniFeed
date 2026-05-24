@@ -87,6 +87,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     title: event.title,
     description: event.description,
     date: event.date,
+    registrationClosesAt: event.registrationClosesAt,
     location: event.location,
     imageUrl: event.imageUrl,
     capacity: event.capacity,

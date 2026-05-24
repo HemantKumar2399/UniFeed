@@ -5,6 +5,9 @@ import { createTRPCRouter, adminProcedure, collegeAdminProcedure } from "@/serve
 import { createStudentQrId } from "@/lib/student-qr";
 import type { db as prismaDb } from "@/server/db";
 
+const REGISTRATION_DEADLINE_INVALID_MESSAGE =
+  "Registration deadline must be set to a future time before the event starts.";
+
 type AdminReviewCtx = {
   db: typeof prismaDb;
   session: {
@@ -360,6 +363,7 @@ export const adminRouter = createTRPCRouter({
           title: true,
           status: true,
           date: true,
+          registrationClosesAt: true,
           capacity: true,
           location: true,
           submittedAt: true,
@@ -409,6 +413,17 @@ export const adminRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Only submitted events can be approved.",
+        });
+      }
+
+      if (
+        !event.registrationClosesAt ||
+        event.registrationClosesAt <= new Date() ||
+        event.registrationClosesAt >= event.date
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: REGISTRATION_DEADLINE_INVALID_MESSAGE,
         });
       }
 

@@ -57,6 +57,8 @@ export const config = {
     "/home/:path*",
     "/discover",
     "/discover/:path*",
+    "/hubs",
+    "/hubs/:path*",
     "/passport",
     "/passport/:path*",
     "/profile",

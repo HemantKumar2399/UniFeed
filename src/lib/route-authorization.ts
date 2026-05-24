@@ -3,6 +3,7 @@ export type ProtectedUserRole = "STUDENT" | "ORGANIZER" | "ADMIN";
 type RouteAuthorizationInput = {
   path: string;
   user?: {
+    id?: string;
     role?: ProtectedUserRole;
   } | null;
 };
@@ -21,6 +22,7 @@ function isStudentProtectedArea(path: string) {
   return (
     path.startsWith("/home") ||
     path.startsWith("/discover") ||
+    path.startsWith("/hubs") ||
     path.startsWith("/passport") ||
     path.startsWith("/profile") ||
     path.startsWith("/search") ||
@@ -29,18 +31,23 @@ function isStudentProtectedArea(path: string) {
   );
 }
 
+function hasProtectedRole(role?: ProtectedUserRole): role is ProtectedUserRole {
+  return role === "STUDENT" || role === "ORGANIZER" || role === "ADMIN";
+}
+
 export function resolveRouteAuthorization(input: RouteAuthorizationInput): RouteAuthorizationDecision {
   const path = input.path;
   const role = input.user?.role;
   const isDashboard = path.startsWith("/dashboard");
   const isAdmin = path.startsWith("/admin");
   const isStudentArea = isStudentProtectedArea(path);
+  const hasAuthenticatedUser = Boolean(input.user?.id) && hasProtectedRole(role);
 
   if (!isDashboard && !isAdmin && !isStudentArea) {
     return { action: "allow" };
   }
 
-  if (!input.user) {
+  if (!hasAuthenticatedUser) {
     return {
       action: "redirect",
       destination: "/login",

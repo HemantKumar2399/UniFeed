@@ -5,8 +5,15 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { startTransition, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Building2, Search, Sparkles } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { buildSearchHref, normalizeDiscoveryQuery } from "@/features/discovery/discovery";
 import { formatEventDateMeta } from "@/features/feed/components/event-card.utils";
+import {
+  formatRegistrationDeadline,
+  getRegistrationAvailability,
+  getRegistrationAvailabilityBadgeVariant,
+  getRegistrationAvailabilityLabel,
+} from "@/lib/event-registration";
 import { api } from "@/trpc/react";
 
 type SearchPageClientProps = {
@@ -121,26 +128,45 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
               </div>
             ) : (
               <div className="grid gap-3">
-                {groupedResults.events.map((result) => (
-                  <Link
-                    key={`event-${result.id}`}
-                    href={result.href}
-                    className="rounded-[18px] border border-[var(--border-whisper)] bg-pure-white p-4 shadow-sm transition-colors hover:bg-warm-white active:scale-[0.99]"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-lg font-bold text-notion-black">{result.title}</p>
-                        <p className="mt-1 text-sm text-warm-gray-500">
-                          {result.clubName} • {formatEventDateMeta(result.date)}
-                        </p>
-                        <p className="mt-2 text-sm text-warm-gray-500">{result.location}</p>
+                {groupedResults.events.map((result) => {
+                  const availability = getRegistrationAvailability({
+                    status: "PUBLISHED",
+                    date: result.date,
+                    registrationClosesAt: result.registrationClosesAt,
+                    capacity: result.capacity,
+                    activeCount: result.activeCount,
+                    waitlistEnabled: true,
+                  });
+
+                  return (
+                    <Link
+                      key={`event-${result.id}`}
+                      href={result.href}
+                      className="rounded-[18px] border border-[var(--border-whisper)] bg-pure-white p-4 shadow-sm transition-colors hover:bg-warm-white active:scale-[0.99]"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-lg font-bold text-notion-black">{result.title}</p>
+                          <p className="mt-1 text-sm text-warm-gray-500">
+                            {result.clubName} • {formatEventDateMeta(result.date)}
+                          </p>
+                          <p className="mt-2 text-sm text-warm-gray-500">{result.location}</p>
+                          <p className="mt-2 text-sm text-warm-gray-500">
+                            Register by: {formatRegistrationDeadline(result.registrationClosesAt)}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="rounded-full bg-warm-white px-3 py-1 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                            {result.category ?? "General"}
+                          </div>
+                          <Badge variant={getRegistrationAvailabilityBadgeVariant(availability)}>
+                            {getRegistrationAvailabilityLabel(availability)}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="rounded-full bg-warm-white px-3 py-1 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
-                        {result.category ?? "General"}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </section>

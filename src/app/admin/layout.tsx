@@ -5,6 +5,8 @@ import { db } from "@/server/db";
 
 import { AdminShell } from "./AdminShell";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminLayout({
   children,
 }: {
@@ -12,7 +14,7 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 

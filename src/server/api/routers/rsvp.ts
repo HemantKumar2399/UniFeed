@@ -13,6 +13,8 @@ import type { Prisma } from "@prisma/client";
 import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
 import { assertCanManageEvent } from "@/server/permissions/club-management";
 
+const REGISTRATION_CLOSED_MESSAGE = "Registration for this event is closed.";
+
 export const rsvpRouter = createTRPCRouter({
   onCapacityChange: protectedProcedure
     .input(z.object({ eventId: z.number().int().positive() }))
@@ -98,6 +100,7 @@ export const rsvpRouter = createTRPCRouter({
           status: true,
           collegeId: true,
           date: true,
+          registrationClosesAt: true,
         },
       });
 
@@ -108,10 +111,24 @@ export const rsvpRouter = createTRPCRouter({
         });
       }
 
+      if (event.collegeId !== collegeId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "COLLEGE_MISMATCH",
+        });
+      }
+
+      if (event.status === "CANCELLED") {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "EVENT_CANCELLED",
+        });
+      }
+
       if (event.status !== "PUBLISHED") {
         throw new TRPCError({
           code: "PRECONDITION_FAILED",
-          message: event.status === "CANCELLED" ? "EVENT_CANCELLED" : "EVENT_NOT_PUBLISHED",
+          message: "EVENT_NOT_PUBLISHED",
         });
       }
 
@@ -122,10 +139,10 @@ export const rsvpRouter = createTRPCRouter({
         });
       }
 
-      if (event.collegeId !== collegeId) {
+      if (!event.registrationClosesAt || event.registrationClosesAt <= new Date()) {
         throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "COLLEGE_MISMATCH",
+          code: "BAD_REQUEST",
+          message: REGISTRATION_CLOSED_MESSAGE,
         });
       }
 
@@ -185,6 +202,7 @@ export const rsvpRouter = createTRPCRouter({
             title: true,
             capacity: true,
             date: true,
+            registrationClosesAt: true,
           },
         });
 
@@ -236,7 +254,10 @@ export const rsvpRouter = createTRPCRouter({
 
         let promotedRsvpId: number | null = null;
 
-        if (originalStatus === "GOING") {
+        const canPromoteWaitlist =
+          event.registrationClosesAt && event.registrationClosesAt > new Date();
+
+        if (originalStatus === "GOING" && canPromoteWaitlist) {
           const nextWaitlist = await tx.rSVP.findFirst({
             where: {
               eventId,

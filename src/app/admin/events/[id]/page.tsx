@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Users } from "lucide-react";
 import { TRPCError } from "@trpc/server";
 
+import { formatRegistrationDeadline } from "@/lib/event-registration";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -22,6 +23,25 @@ function formatDateTime(date: Date | null | undefined) {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
+}
+
+function getApprovalBlockedReason(event: {
+  date: Date;
+  registrationClosesAt: Date | null;
+}) {
+  if (!event.registrationClosesAt) {
+    return "This event is missing a registration deadline.";
+  }
+
+  if (event.registrationClosesAt >= event.date) {
+    return "The registration deadline must be earlier than the event start time.";
+  }
+
+  if (event.registrationClosesAt <= new Date()) {
+    return "The registration deadline has already expired.";
+  }
+
+  return null;
 }
 
 type AdminEventDetailPageProps = {
@@ -68,6 +88,7 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
   }
 
   const latestRejection = event.approvalLogs.find((log) => log.action === "REJECTED" && log.reason);
+  const approvalBlockedReason = getApprovalBlockedReason(event);
 
   return (
     <div className="flex flex-col gap-8">
@@ -142,12 +163,25 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
                     {formatDateTime(event.submittedAt ?? event.createdAt)}
                   </p>
                 </div>
+                <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4 md:col-span-2">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Registration closes</p>
+                  <p className="mt-2 text-[14px] font-semibold text-black/90">
+                    {formatRegistrationDeadline(event.registrationClosesAt)}
+                  </p>
+                </div>
               </div>
 
               <div className="mt-6">
                 <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Description</p>
                 <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-[#615d59]">{event.description}</p>
               </div>
+
+              {approvalBlockedReason ? (
+                <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-red-700">Approval blocked</p>
+                  <p className="mt-2 text-[14px] font-medium leading-relaxed text-red-800">{approvalBlockedReason}</p>
+                </div>
+              ) : null}
 
               {latestRejection?.reason ? (
                 <div className="mt-6 rounded-2xl border border-[#e8503a]/15 bg-[#fff4f2] p-4">
@@ -205,7 +239,11 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
             </div>
           </div>
 
-          <AdminReviewActions eventId={event.id} status={event.status} />
+          <AdminReviewActions
+            eventId={event.id}
+            status={event.status}
+            approvalBlockedReason={approvalBlockedReason}
+          />
         </aside>
       </section>
     </div>

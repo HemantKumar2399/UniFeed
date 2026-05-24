@@ -29,10 +29,36 @@ void test("route authorization redirects unauthenticated admin access to login w
   });
 });
 
+void test("route authorization treats incomplete sessions as unauthenticated", () => {
+  assert.deepEqual(
+    resolveRouteAuthorization({
+      path: "/home",
+      user: { role: "STUDENT" },
+    }),
+    {
+      action: "redirect",
+      destination: "/login",
+      callbackUrl: "/home",
+    },
+  );
+
+  assert.deepEqual(
+    resolveRouteAuthorization({
+      path: "/discover",
+      user: { id: "user-1" },
+    }),
+    {
+      action: "redirect",
+      destination: "/login",
+      callbackUrl: "/discover",
+    },
+  );
+});
+
 void test("route authorization sends students away from dashboard routes", () => {
   const result = resolveRouteAuthorization({
     path: "/dashboard",
-    user: { role: "STUDENT" },
+    user: { id: "student-1", role: "STUDENT" },
   });
 
   assert.deepEqual(result, {
@@ -44,7 +70,7 @@ void test("route authorization sends students away from dashboard routes", () =>
 void test("route authorization sends non-admin organizers away from admin routes", () => {
   const result = resolveRouteAuthorization({
     path: "/admin",
-    user: { role: "ORGANIZER" },
+    user: { id: "organizer-1", role: "ORGANIZER" },
   });
 
   assert.deepEqual(result, {
@@ -57,7 +83,7 @@ void test("route authorization allows organizers and admins into dashboard route
   assert.deepEqual(
     resolveRouteAuthorization({
       path: "/dashboard/metrics",
-      user: { role: "ORGANIZER" },
+      user: { id: "organizer-1", role: "ORGANIZER" },
     }),
     { action: "allow" },
   );
@@ -65,7 +91,7 @@ void test("route authorization allows organizers and admins into dashboard route
   assert.deepEqual(
     resolveRouteAuthorization({
       path: "/dashboard/metrics",
-      user: { role: "ADMIN" },
+      user: { id: "admin-1", role: "ADMIN" },
     }),
     { action: "allow" },
   );
@@ -75,7 +101,18 @@ void test("route authorization redirects organizers and admins away from student
   assert.deepEqual(
     resolveRouteAuthorization({
       path: "/home",
-      user: { role: "ORGANIZER" },
+      user: { id: "organizer-1", role: "ORGANIZER" },
+    }),
+    {
+      action: "redirect",
+      destination: "/dashboard",
+    },
+  );
+
+  assert.deepEqual(
+    resolveRouteAuthorization({
+      path: "/hubs",
+      user: { id: "organizer-1", role: "ORGANIZER" },
     }),
     {
       action: "redirect",
@@ -86,7 +123,7 @@ void test("route authorization redirects organizers and admins away from student
   assert.deepEqual(
     resolveRouteAuthorization({
       path: "/passport",
-      user: { role: "ADMIN" },
+      user: { id: "admin-1", role: "ADMIN" },
     }),
     {
       action: "redirect",

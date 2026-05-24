@@ -3,6 +3,11 @@ import { CalendarClock, Filter, Plus, Search, Tag } from "lucide-react";
 import Link from "next/link";
 
 import { EmptyState } from "@/components/EmptyState";
+import {
+  formatRegistrationDeadline,
+  getRegistrationAvailability,
+  getRegistrationAvailabilityLabel,
+} from "@/lib/event-registration";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import {
@@ -32,6 +37,46 @@ function formatEventDate(date: Date) {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
+}
+
+function getDashboardRegistrationLabel(event: {
+  status: "DRAFT" | "SUBMITTED" | "APPROVED" | "PUBLISHED" | "REJECTED" | "CANCELLED";
+  date: Date;
+  registrationClosesAt: Date | null;
+  capacity: number;
+  activeCount: number;
+}, now: Date) {
+  if (!event.registrationClosesAt) {
+    return "Deadline missing";
+  }
+
+  if (event.registrationClosesAt >= event.date) {
+    return "Deadline invalid";
+  }
+
+  if (event.status === "PUBLISHED") {
+    return getRegistrationAvailabilityLabel(
+      getRegistrationAvailability({
+        status: event.status,
+        date: event.date,
+        registrationClosesAt: event.registrationClosesAt,
+        capacity: event.capacity,
+        activeCount: event.activeCount,
+        waitlistEnabled: true,
+        now,
+      }),
+    );
+  }
+
+  if (event.registrationClosesAt <= now) {
+    return "Registration closed";
+  }
+
+  if (event.status === "APPROVED") {
+    return "Ready to publish";
+  }
+
+  return "Registration scheduled";
 }
 
 function parseActiveTab(rawTab: string | undefined): EventTabKey {
@@ -278,6 +323,16 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
           <div className="space-y-4">
             {events.map((event) => {
               const isPast = event.date < now && event.status !== "CANCELLED";
+              const registrationLabel = getDashboardRegistrationLabel(
+                {
+                  status: event.status,
+                  date: event.date,
+                  registrationClosesAt: event.registrationClosesAt,
+                  capacity: event.capacity,
+                  activeCount: event._count.rsvps,
+                },
+                now,
+              );
 
               return (
                 <article
@@ -319,6 +374,8 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                         <span>{event._count.rsvps} RSVPs</span>
                         <span>{event.category ?? "Uncategorized"}</span>
                         <span>{event.domain ?? "General"}</span>
+                        <span>Register by {formatRegistrationDeadline(event.registrationClosesAt)}</span>
+                        <span>{registrationLabel}</span>
                         {event.submittedAt ? <span>Submitted {formatEventDate(event.submittedAt)}</span> : null}
                         {event.cancelledAt ? <span>Cancelled {formatEventDate(event.cancelledAt)}</span> : null}
                       </div>
@@ -353,6 +410,8 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                       <EventActions
                         eventId={event.id}
                         status={event.status}
+                        eventDate={event.date}
+                        registrationClosesAt={event.registrationClosesAt}
                         rejectionReason={event.approvalLogs[0]?.reason ?? null}
                         cancellationReason={event.cancellationReason}
                         isPast={isPast}

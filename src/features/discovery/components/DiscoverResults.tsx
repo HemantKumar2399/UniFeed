@@ -3,11 +3,18 @@
 import Link from "next/link";
 import { Building2, Calendar, Gift, MapPin } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import {
   type DiscoveryCategoryFilter,
   type DiscoveryCollection,
 } from "@/features/discovery/discovery";
 import { formatEventDateMeta } from "@/features/feed/components/event-card.utils";
+import {
+  formatRegistrationDeadline,
+  getRegistrationAvailability,
+  getRegistrationAvailabilityBadgeVariant,
+  getRegistrationAvailabilityLabel,
+} from "@/lib/event-registration";
 import { api } from "@/trpc/react";
 
 type DiscoverResultsProps = {
@@ -92,6 +99,31 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
                     {event.title}
                   </h3>
                   <p className="mt-2 text-sm font-medium text-warm-gray-500">{event.clubName}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Badge
+                      variant={getRegistrationAvailabilityBadgeVariant(
+                        getRegistrationAvailability({
+                          status: "PUBLISHED",
+                          date: event.date,
+                          registrationClosesAt: event.registrationClosesAt,
+                          capacity: event.capacity,
+                          activeCount: event.activeCount,
+                          waitlistEnabled: true,
+                        }),
+                      )}
+                    >
+                      {getRegistrationAvailabilityLabel(
+                        getRegistrationAvailability({
+                          status: "PUBLISHED",
+                          date: event.date,
+                          registrationClosesAt: event.registrationClosesAt,
+                          capacity: event.capacity,
+                          activeCount: event.activeCount,
+                          waitlistEnabled: true,
+                        }),
+                      )}
+                    </Badge>
+                  </div>
                   <div className="mt-4 space-y-2 text-sm text-warm-gray-500">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
@@ -100,6 +132,10 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4" />
                       <span className="truncate">{event.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-notion-black">Register by:</span>
+                      <span>{formatRegistrationDeadline(event.registrationClosesAt)}</span>
                     </div>
                   </div>
                   {event.tags.length > 0 ? (

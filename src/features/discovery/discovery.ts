@@ -26,6 +26,9 @@ export type DiscoverySearchResult =
       title: string;
       href: string;
       date: Date;
+      registrationClosesAt: Date | null;
+      capacity: number;
+      activeCount: number;
       location: string;
       clubName: string;
       category: string | null;

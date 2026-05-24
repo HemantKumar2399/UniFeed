@@ -49,6 +49,7 @@ model Event {
   submittedAt DateTime?
   cancelledAt DateTime?
   date        DateTime
+  registrationClosesAt DateTime?
   capacity    Int
   location    String
   imageUrl    String
@@ -348,6 +349,7 @@ enum EventApprovalAction {
   APPROVED
   REJECTED
   CANCELLED
+  REGISTRATION_DEADLINE_EXTENDED
 }
 
 model SavedEvent {
@@ -373,4 +375,3 @@ model UserPreference {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
-

@@ -10,6 +10,7 @@ const validPayload = {
   capacity: 10,
   imageUrl: "https://example.com/image.png",
   date: new Date(Date.now() + 100000000000),
+  registrationClosesAt: new Date(Date.now() + 99900000000),
   category: "Technical" as const,
   tags: ["coding", "workshop"],
   domain: "Engineering" as const,
@@ -40,4 +41,15 @@ void test("Zod schema accepts full metadata payload", () => {
   const result = CreateEventSchema.safeParse(validPayload);
 
   assert.equal(result.success, true);
+});
+
+void test("Zod schema rejects a registration deadline after the event starts", () => {
+  const eventDate = new Date(Date.now() + 100000000000);
+  const result = CreateEventSchema.safeParse({
+    ...validPayload,
+    date: eventDate,
+    registrationClosesAt: new Date(eventDate.getTime() + 60 * 60 * 1000),
+  });
+
+  assert.equal(result.success, false);
 });

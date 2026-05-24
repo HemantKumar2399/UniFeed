@@ -9,9 +9,14 @@ import { api } from "@/trpc/react";
 type AdminReviewActionsProps = {
   eventId: number;
   status: "DRAFT" | "SUBMITTED" | "APPROVED" | "PUBLISHED" | "REJECTED" | "CANCELLED";
+  approvalBlockedReason?: string | null;
 };
 
-export function AdminReviewActions({ eventId, status }: AdminReviewActionsProps) {
+export function AdminReviewActions({
+  eventId,
+  status,
+  approvalBlockedReason,
+}: AdminReviewActionsProps) {
   const router = useRouter();
   const utils = api.useUtils();
   const [reason, setReason] = useState("");
@@ -44,6 +49,7 @@ export function AdminReviewActions({ eventId, status }: AdminReviewActionsProps)
   });
 
   const isReviewable = status === "SUBMITTED";
+  const canApprove = isReviewable && !approvalBlockedReason;
 
   return (
     <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_12px_30px_rgba(0,0,0,0.04)]">
@@ -53,11 +59,17 @@ export function AdminReviewActions({ eventId, status }: AdminReviewActionsProps)
           <button
             type="button"
             onClick={() => approveEvent.mutate({ eventId })}
-            disabled={approveEvent.isPending || rejectEvent.isPending}
+            disabled={approveEvent.isPending || rejectEvent.isPending || !canApprove}
             className="inline-flex w-full items-center justify-center rounded-2xl bg-[#097fe8] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#086dc6] disabled:opacity-60"
           >
             {approveEvent.isPending ? "Approving..." : "Approve Event"}
           </button>
+
+          {approvalBlockedReason ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-medium leading-relaxed text-red-800">
+              {approvalBlockedReason}
+            </div>
+          ) : null}
 
           <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
             <label className="block text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">

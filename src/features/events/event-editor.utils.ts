@@ -1,11 +1,17 @@
 import type { CreateEventInput } from "./components/CreateEventSchema";
 
+type EventEditorDraftSource = Omit<CreateEventInput, "registrationClosesAt"> & {
+  registrationClosesAt: Date | null;
+};
+
 export type EventEditorDraft = {
   clubId: string;
   title: string;
   description: string;
   date: string;
   time: string;
+  registrationCloseDate: string;
+  registrationCloseTime: string;
   location: string;
   imageUrl: string;
   capacity: string;
@@ -25,6 +31,8 @@ export function createEmptyEventEditorDraft(): EventEditorDraft {
     description: "",
     date: "",
     time: "",
+    registrationCloseDate: "",
+    registrationCloseTime: "",
     location: "",
     imageUrl: "",
     capacity: "100",
@@ -78,6 +86,10 @@ export function buildEventPayload(draft: EventEditorDraft): CreateEventInput {
     title: draft.title.trim(),
     description: draft.description.trim(),
     date: toLocalDateTime(draft.date, draft.time),
+    registrationClosesAt: toLocalDateTime(
+      draft.registrationCloseDate,
+      draft.registrationCloseTime,
+    ),
     location: draft.location.trim(),
     imageUrl: draft.imageUrl.trim(),
     capacity: Number.parseInt(draft.capacity, 10),
@@ -91,13 +103,19 @@ export function buildEventPayload(draft: EventEditorDraft): CreateEventInput {
   };
 }
 
-export function buildEventEditorDraft(input: CreateEventInput): EventEditorDraft {
+export function buildEventEditorDraft(input: EventEditorDraftSource): EventEditorDraft {
   return {
     clubId: String(input.clubId),
     title: input.title,
     description: input.description,
     date: toDateInputValue(input.date),
     time: toTimeInputValue(input.date),
+    registrationCloseDate: input.registrationClosesAt
+      ? toDateInputValue(input.registrationClosesAt)
+      : "",
+    registrationCloseTime: input.registrationClosesAt
+      ? toTimeInputValue(input.registrationClosesAt)
+      : "",
     location: input.location,
     imageUrl: input.imageUrl,
     capacity: String(input.capacity),

@@ -92,9 +92,22 @@ export const discoveryRouter = createTRPCRouter({
           title: true,
           description: true,
           date: true,
+          registrationClosesAt: true,
+          capacity: true,
           location: true,
           category: true,
           tags: true,
+          _count: {
+            select: {
+              rsvps: {
+                where: {
+                  status: {
+                    in: ["GOING", "ATTENDED"] as ("GOING" | "ATTENDED")[],
+                  },
+                },
+              },
+            },
+          },
           club: {
             select: {
               name: true,
@@ -147,6 +160,9 @@ export const discoveryRouter = createTRPCRouter({
         title: event.title,
         href: `/events/${event.id}`,
         date: event.date,
+        registrationClosesAt: event.registrationClosesAt,
+        capacity: event.capacity,
+        activeCount: event._count.rsvps,
         location: event.location,
         clubName: event.club.name,
         category: event.category,
@@ -222,11 +238,24 @@ export const discoveryRouter = createTRPCRouter({
           id: true,
           title: true,
           date: true,
+          registrationClosesAt: true,
+          capacity: true,
           location: true,
           imageUrl: true,
           category: true,
           tags: true,
           isFreeFood: true,
+          _count: {
+            select: {
+              rsvps: {
+                where: {
+                  status: {
+                    in: ["GOING", "ATTENDED"] as ("GOING" | "ATTENDED")[],
+                  },
+                },
+              },
+            },
+          },
           club: {
             select: {
               id: true,
@@ -287,6 +316,9 @@ export const discoveryRouter = createTRPCRouter({
           title: event.title,
           href: `/events/${event.id}`,
           date: event.date,
+          registrationClosesAt: event.registrationClosesAt,
+          capacity: event.capacity,
+          activeCount: event._count.rsvps,
           location: event.location,
           imageUrl: event.imageUrl,
           category: event.category,

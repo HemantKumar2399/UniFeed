@@ -3,10 +3,12 @@ import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { OnboardingForm } from "./OnboardingForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function OnboardingPage() {
   const session = await auth();
 
-  if (!session?.user) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
   if (session.user.role !== "STUDENT") redirect("/home");
 
   const user = await db.user.findUnique({

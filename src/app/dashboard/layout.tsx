@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/server/auth";
 import { PremiumOrganizerShell } from "@/components/layout/premium/PremiumOrganizerShell";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -9,7 +11,7 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 

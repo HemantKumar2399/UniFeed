@@ -37,6 +37,7 @@ type SeedEventDraft = {
   title: string;
   description: string;
   dateOffsetDays: number;
+  registrationCloseOffsetHours: number;
   capacity: number;
   location: string;
   imageUrl: string;
@@ -109,6 +110,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Rapid prototyping challenge with mentor checkpoints and final demos.",
     dateOffsetDays: 2,
+    registrationCloseOffsetHours: 18,
     capacity: 180,
     location: "Innovation Lab, Block A",
     imageUrl:
@@ -120,6 +122,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Hands-on workshop to make your first open source contribution.",
     dateOffsetDays: 5,
+    registrationCloseOffsetHours: 28,
     capacity: 120,
     location: "Seminar Hall 2",
     imageUrl:
@@ -131,6 +134,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Campus-wide blood donation camp in collaboration with local hospitals.",
     dateOffsetDays: 6,
+    registrationCloseOffsetHours: 36,
     capacity: 250,
     location: "Main Atrium",
     imageUrl:
@@ -142,6 +146,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Design and race autonomous bots on a timed obstacle track.",
     dateOffsetDays: 8,
+    registrationCloseOffsetHours: 30,
     capacity: 90,
     location: "Mechanical Workshop",
     imageUrl:
@@ -153,6 +158,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Three-minute founder pitches with jury feedback and networking.",
     dateOffsetDays: 10,
+    registrationCloseOffsetHours: 42,
     capacity: 140,
     location: "Auditorium",
     imageUrl:
@@ -164,6 +170,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Traditional dance night with DJ fusion and student performances.",
     dateOffsetDays: 12,
+    registrationCloseOffsetHours: 24,
     capacity: 300,
     location: "Sports Ground",
     imageUrl:
@@ -175,6 +182,7 @@ const eventDrafts: SeedEventDraft[] = [
     description:
       "Live Q&A with alumni founders on product, hiring, and growth.",
     dateOffsetDays: 15,
+    registrationCloseOffsetHours: 48,
     capacity: 160,
     location: "Conference Room 1",
     imageUrl:
@@ -451,6 +459,9 @@ async function main() {
         const date = new Date();
         date.setDate(date.getDate() + eventDraft.dateOffsetDays);
         date.setHours(17 + (index % 3), 30, 0, 0);
+        const registrationClosesAt = new Date(
+          date.getTime() - eventDraft.registrationCloseOffsetHours * 60 * 60 * 1000,
+        );
 
         const isEven = index % 2 === 0;
 
@@ -459,6 +470,7 @@ async function main() {
             title: eventDraft.title,
             description: eventDraft.description,
             date,
+            registrationClosesAt,
             capacity: eventDraft.capacity,
             location: eventDraft.location,
             imageUrl: eventDraft.imageUrl,

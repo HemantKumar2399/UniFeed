@@ -18,6 +18,7 @@ const validCreateInput = {
   title: "Campus Hack Night",
   description: "Build projects with your club mentors and classmates.",
   date: new Date("2030-05-14T18:45:00.000Z"),
+  registrationClosesAt: new Date("2030-05-13T16:45:00.000Z"),
   location: "Innovation Lab",
   imageUrl: "https://example.com/poster.png",
   capacity: 180,
@@ -602,6 +603,8 @@ void test("eventRouter.submitForReview moves a draft into submitted status and r
           collegeId: "college-1",
           title: "Hack Night",
           status: "DRAFT",
+          date: new Date("2030-05-14T18:45:00.000Z"),
+          registrationClosesAt: new Date("2030-05-13T16:45:00.000Z"),
         }),
         update: async (args: any) => {
           updatedToSubmitted = true;
@@ -714,6 +717,8 @@ void test("eventRouter.submitForReview allows rejected events to be resubmitted"
           collegeId: "college-1",
           title: "Rejected Event",
           status: "REJECTED",
+          date: new Date("2030-06-14T18:45:00.000Z"),
+          registrationClosesAt: new Date("2030-06-13T16:45:00.000Z"),
         }),
         update: async (args: any) => {
           updatedToSubmitted = true;
@@ -772,6 +777,8 @@ void test("eventRouter.publishApproved publishes an approved event", async () =>
           collegeId: "college-1",
           title: "Approved Event",
           status: "APPROVED",
+          date: new Date("2030-07-14T18:45:00.000Z"),
+          registrationClosesAt: new Date("2030-07-13T16:45:00.000Z"),
         }),
         update: async (args: any) => {
           published = true;

@@ -44,9 +44,9 @@ function getStatusMessage(status: EventStatus | undefined) {
     case "SUBMITTED":
       return "This event is locked while college admin review is in progress.";
     case "APPROVED":
-      return "This event is approved. Publishing is the only remaining action in Epic 5.";
+      return "This event is approved. You can publish it or extend registration timing from the dashboard if needed.";
     case "PUBLISHED":
-      return "Published events are read-only in Epic 5. You can cancel them if plans change.";
+      return "Published events are read-only here. Use the dashboard to extend registration timing or cancel the event if plans change.";
     case "CANCELLED":
       return "Cancelled events remain visible as read-only history for organizers.";
     case "DRAFT":
@@ -363,6 +363,34 @@ export function EventEditor({
             />
           </label>
           {fieldErrors.date ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.date}</p> : null}
+
+          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
+            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Registration Closes On</span>
+            <input
+              value={draft.registrationCloseDate}
+              onChange={handleTextChange("registrationCloseDate")}
+              disabled={!isEditable}
+              type="date"
+              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
+            />
+          </label>
+
+          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
+            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Registration Close Time</span>
+            <input
+              value={draft.registrationCloseTime}
+              onChange={handleTextChange("registrationCloseTime")}
+              disabled={!isEditable}
+              type="time"
+              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
+            />
+          </label>
+          <div className="md:col-span-2 rounded-[16px] border border-dashed border-input bg-warm-white px-4 py-3 text-[13px] leading-relaxed text-warm-gray">
+            Students will only be able to register before this deadline, and it must be earlier than the event start time.
+          </div>
+          {fieldErrors.registrationClosesAt ? (
+            <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.registrationClosesAt}</p>
+          ) : null}
 
           <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
             <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Location</span>

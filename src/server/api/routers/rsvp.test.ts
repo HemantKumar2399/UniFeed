@@ -181,6 +181,7 @@ void test("rsvpRouter.register fails if event is not published", async () => {
           status: "DRAFT",
           collegeId: "college-1",
           date: new Date(Date.now() + 86400000), // tomorrow
+          registrationClosesAt: new Date(Date.now() + 43200000),
         }),
       },
     } as any,
@@ -218,6 +219,7 @@ void test("rsvpRouter.register fails if event is in the past", async () => {
           status: "PUBLISHED",
           collegeId: "college-1",
           date: new Date(Date.now() - 86400000), // yesterday
+          registrationClosesAt: new Date(Date.now() + 43200000),
         }),
       },
     } as any,
@@ -255,6 +257,7 @@ void test("rsvpRouter.register fails if college mismatch", async () => {
           status: "PUBLISHED",
           collegeId: "college-2",
           date: new Date(Date.now() + 86400000),
+          registrationClosesAt: new Date(Date.now() + 43200000),
         }),
       },
     } as any,
@@ -289,14 +292,15 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
   const eventDate = new Date(Date.now() + 86400000);
 
   const mockTx = {
-    event: {
-      findUnique: async () => ({
-        id: 15,
-        title: "Campus Mixer",
-        capacity: 2,
-        date: eventDate,
-      }),
-    },
+      event: {
+        findUnique: async () => ({
+          id: 15,
+          title: "Campus Mixer",
+          capacity: 2,
+          date: eventDate,
+          registrationClosesAt: new Date(Date.now() + 43200000),
+        }),
+      },
     rSVP: {
       findUnique: async () => ({
         id: 101,
@@ -430,6 +434,7 @@ void test("rsvpRouter.cancel blocks past events", async () => {
         id: 15,
         capacity: 2,
         date: new Date(Date.now() - 86400000), // past event
+        registrationClosesAt: new Date(Date.now() + 43200000),
       }),
     },
   };

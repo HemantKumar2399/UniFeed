@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { CalendarClock, Filter, Search, Users } from "lucide-react";
 
 import { EmptyState } from "@/components/EmptyState";
+import { formatRegistrationDeadline } from "@/lib/event-registration";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -20,6 +21,38 @@ function formatDateTime(date: Date | null | undefined) {
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
+}
+
+function getDeadlineReviewBadge(
+  registrationClosesAt: Date | null,
+  eventDate: Date,
+  now: Date,
+) {
+  if (!registrationClosesAt) {
+    return {
+      label: "Deadline missing",
+      className: "border-red-200 bg-red-50 text-red-700",
+    };
+  }
+
+  if (registrationClosesAt >= eventDate || registrationClosesAt <= now) {
+    return {
+      label: "Deadline invalid",
+      className: "border-red-200 bg-red-50 text-red-700",
+    };
+  }
+
+  if (registrationClosesAt.getTime() - now.getTime() <= 24 * 60 * 60 * 1000) {
+    return {
+      label: "Closing soon",
+      className: "border-amber-200 bg-amber-50 text-amber-700",
+    };
+  }
+
+  return {
+    label: "Deadline valid",
+    className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  };
 }
 
 type AdminEventsPageProps = {
@@ -45,6 +78,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
 
   const { q, clubId } = await searchParams;
   const parsedClubId = clubId ? Number.parseInt(clubId, 10) : undefined;
+  const now = new Date();
   const caller = createCaller({
     db,
     session,
@@ -122,50 +156,64 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
           />
         ) : (
           <div className="space-y-4">
-            {pendingEvents.map((event: PendingEventItem) => (
-              <article
-                key={event.id}
-                className="rounded-[24px] border border-black/10 bg-white p-5 shadow-[0_12px_30px_rgba(0,0,0,0.04)]"
-              >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-full border border-[#ddcaa7] bg-[#fff8ec] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9a6500]">
-                        {event.status}
-                      </span>
-                      <span className="rounded-full border border-black/10 bg-[#f6f5f4] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#615d59]">
-                        {event.club.name}
-                      </span>
+            {pendingEvents.map((event: PendingEventItem) => {
+              const deadlineBadge = getDeadlineReviewBadge(
+                event.registrationClosesAt,
+                event.date,
+                now,
+              );
+
+              return (
+                <article
+                  key={event.id}
+                  className="rounded-[24px] border border-black/10 bg-white p-5 shadow-[0_12px_30px_rgba(0,0,0,0.04)]"
+                >
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full border border-[#ddcaa7] bg-[#fff8ec] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9a6500]">
+                          {event.status}
+                        </span>
+                        <span className="rounded-full border border-black/10 bg-[#f6f5f4] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#615d59]">
+                          {event.club.name}
+                        </span>
+                        <span
+                          className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${deadlineBadge.className}`}
+                        >
+                          {deadlineBadge.label}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h3 className="text-[24px] font-bold tracking-tight text-black/95">{event.title}</h3>
+                        <p className="mt-1 text-[14px] font-medium text-[#615d59]">
+                          {event.location} • {formatDateTime(event.date)}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4 text-[13px] font-medium text-[#615d59]">
+                        <span>{event.capacity} seats</span>
+                        <span>Register by {formatRegistrationDeadline(event.registrationClosesAt)}</span>
+                        <span>Submitted {formatDateTime(event.submittedAt ?? event.createdAt)}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          {event.author.name ?? event.author.email ?? "Organizer"}
+                        </span>
+                      </div>
                     </div>
 
-                    <div>
-                      <h3 className="text-[24px] font-bold tracking-tight text-black/95">{event.title}</h3>
-                      <p className="mt-1 text-[14px] font-medium text-[#615d59]">
-                        {event.location} • {formatDateTime(event.date)}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-4 text-[13px] font-medium text-[#615d59]">
-                      <span>{event.capacity} seats</span>
-                      <span>Submitted {formatDateTime(event.submittedAt ?? event.createdAt)}</span>
-                      <span className="inline-flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        {event.author.name ?? event.author.email ?? "Organizer"}
-                      </span>
+                    <div className="flex items-center justify-start lg:justify-end">
+                      <Link
+                        href={`/admin/events/${event.id}`}
+                        className="inline-flex items-center justify-center rounded-2xl bg-[#097fe8] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#086dc6]"
+                      >
+                        Review Event
+                      </Link>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-start lg:justify-end">
-                    <Link
-                      href={`/admin/events/${event.id}`}
-                      className="inline-flex items-center justify-center rounded-2xl bg-[#097fe8] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#086dc6]"
-                    >
-                      Review Event
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

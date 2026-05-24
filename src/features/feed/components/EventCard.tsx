@@ -6,6 +6,12 @@ import { Calendar, MapPin } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import {
+  formatRegistrationDeadline,
+  getRegistrationAvailability,
+  getRegistrationAvailabilityBadgeVariant,
+  getRegistrationAvailabilityLabel,
+} from "@/lib/event-registration";
+import {
   Drawer,
   DrawerContent,
   DrawerDescription,
@@ -25,11 +31,21 @@ export type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
 export function EventCard({ event }: { event: EventFeedItem }) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const eventHashId = `event-${event.id}`;
-  const { activeCount, totalCapacity, viewerRsvpStatus } = useLiveEventAttendance({
-    eventId: event.id,
-    totalCapacity: event.capacity,
-    initialActiveCount: event._count.rsvps,
-    initialViewerRsvpStatus: event.rsvps?.[0]?.status ?? null,
+  const { activeCount, totalCapacity, viewerRsvpStatus } =
+    useLiveEventAttendance({
+      eventId: event.id,
+      totalCapacity: event.capacity,
+      initialActiveCount: event._count.rsvps,
+      initialViewerRsvpStatus: event.rsvps?.[0]?.status ?? null,
+      enabled: isDetailsOpen,
+    });
+  const registrationAvailability = getRegistrationAvailability({
+    status: event.status,
+    date: event.date,
+    registrationClosesAt: event.registrationClosesAt,
+    capacity: totalCapacity,
+    activeCount,
+    waitlistEnabled: true,
   });
 
   useEffect(() => {
@@ -65,7 +81,10 @@ export function EventCard({ event }: { event: EventFeedItem }) {
 
   return (
     <Drawer open={isDetailsOpen} onOpenChange={handleDrawerOpenChange}>
-      <article className="group w-full overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-sm transition-all duration-300 hover:shadow-md" id={eventHashId}>
+      <article
+        className="group w-full overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-sm transition-all duration-300 hover:shadow-md"
+        id={eventHashId}
+      >
         <DrawerTrigger asChild>
           <button
             aria-expanded={isDetailsOpen}
@@ -83,10 +102,11 @@ export function EventCard({ event }: { event: EventFeedItem }) {
               />
 
               {viewerRsvpStatus ? (
-                <div className="absolute left-3 top-3 z-10">
+                <div className="absolute top-3 left-3 z-10">
                   <Badge
                     variant={
-                      viewerRsvpStatus === "GOING" || viewerRsvpStatus === "ATTENDED"
+                      viewerRsvpStatus === "GOING" ||
+                      viewerRsvpStatus === "ATTENDED"
                         ? "success"
                         : viewerRsvpStatus === "WAITLISTED"
                           ? "warning"
@@ -106,11 +126,20 @@ export function EventCard({ event }: { event: EventFeedItem }) {
             </div>
 
             <div className="relative bg-white p-5">
-              <h2 className="mb-1 line-clamp-2 text-[22px] font-bold leading-[1.2] tracking-tight text-gray-900">
+              <h2 className="mb-1 line-clamp-2 text-[22px] leading-[1.2] font-bold tracking-tight text-gray-900">
                 {event.title}
               </h2>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Badge
+                  variant={getRegistrationAvailabilityBadgeVariant(
+                    registrationAvailability,
+                  )}
+                >
+                  {getRegistrationAvailabilityLabel(registrationAvailability)}
+                </Badge>
+              </div>
 
-              <div className="mb-5 mt-4 flex flex-col gap-2">
+              <div className="mt-4 mb-5 flex flex-col gap-2">
                 <div className="flex items-center gap-2.5 text-[14px] font-medium text-gray-600">
                   <Calendar className="h-4 w-4 shrink-0 text-blue-600" />
                   <span>{formatEventDateMeta(event.date)}</span>
@@ -119,30 +148,43 @@ export function EventCard({ event }: { event: EventFeedItem }) {
                   <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
                   <span className="truncate">{event.location}</span>
                 </div>
+                <div className="flex items-center gap-2.5 text-[14px] text-gray-500">
+                  <span className="font-medium text-gray-600">
+                    Register by:
+                  </span>
+                  <span>
+                    {formatRegistrationDeadline(event.registrationClosesAt)}
+                  </span>
+                </div>
               </div>
 
               <div className="mt-2 w-full">
-                <CapacityBar count={activeCount} totalCapacity={totalCapacity} />
+                <CapacityBar
+                  count={activeCount}
+                  totalCapacity={totalCapacity}
+                />
               </div>
             </div>
           </button>
         </DrawerTrigger>
       </article>
 
-      <DrawerContent className="max-h-[88vh] rounded-t-[24px] border-[rgba(0,0,0,0.1)] bg-white">
-        <DrawerHeader className="text-left">
-          <DrawerTitle className="text-[22px] font-bold tracking-tight text-black/95">
-            {event.title}
-          </DrawerTitle>
-          <DrawerDescription className="text-[14px] font-medium text-[#615d59]">
-            {formatEventDateMeta(event.date)} · {event.location}
-          </DrawerDescription>
-        </DrawerHeader>
+      {isDetailsOpen ? (
+        <DrawerContent className="max-h-[88vh] rounded-t-[24px] border-[rgba(0,0,0,0.1)] bg-white">
+          <DrawerHeader className="text-left">
+            <DrawerTitle className="text-[22px] font-bold tracking-tight text-black/95">
+              {event.title}
+            </DrawerTitle>
+            <DrawerDescription className="text-[14px] font-medium text-[#615d59]">
+              {formatEventDateMeta(event.date)} · {event.location}
+            </DrawerDescription>
+          </DrawerHeader>
 
-        <div className="space-y-4 overflow-y-auto px-4 pb-6">
-          <EventDetailContent event={event} />
-        </div>
-      </DrawerContent>
+          <div className="space-y-4 overflow-y-auto px-4 pb-6">
+            <EventDetailContent event={event} />
+          </div>
+        </DrawerContent>
+      ) : null}
     </Drawer>
   );
 }

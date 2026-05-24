@@ -10,6 +10,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
+import {
+  formatRegistrationDeadline,
+  getRegistrationActionLabel,
+  getRegistrationAvailability,
+  getRegistrationAvailabilityBadgeVariant,
+  getRegistrationAvailabilityLabel,
+} from "@/lib/event-registration";
 import { api } from "@/trpc/react";
 import type { RouterOutputs } from "@/trpc/react";
 
@@ -24,9 +31,8 @@ type DiscussionThread = RouterOutputs["event"]["getDiscussionThreads"][number];
 type DiscussionReply = DiscussionThread["replies"][number];
 
 function getRegisterButtonLabel(params: {
-  activeCount: number;
+  registrationAvailability: ReturnType<typeof getRegistrationAvailability>;
   isRegistering: boolean;
-  totalCapacity: number;
   viewerRsvpStatus: RSVPStatus | null;
 }) {
   if (params.isRegistering) {
@@ -45,7 +51,7 @@ function getRegisterButtonLabel(params: {
     return "Waitlisted";
   }
 
-  return params.activeCount >= params.totalCapacity ? "Join Waitlist" : "Reserve Spot";
+  return getRegistrationActionLabel(params.registrationAvailability);
 }
 
 export function EventDetailContent({
@@ -185,6 +191,7 @@ export function EventDetailContent({
         COLLEGE_MISMATCH: "You can only register for events at your college.",
         USER_NO_COLLEGE: "Your account is not linked to a college. Please contact support.",
         PROFILE_UNVERIFIED: "Please complete your student profile before registering.",
+        "Registration for this event is closed.": "Registration for this event is closed.",
       };
 
       toast.error(errorMessageMap[error.message] ?? error.message ?? "Failed to register. Please try again.");
@@ -237,16 +244,27 @@ export function EventDetailContent({
 
   const discussionErrorMessage =
     discussionError?.message ?? "Could not load discussions right now. Please retry.";
+  const registrationAvailability = getRegistrationAvailability({
+    status: event.status,
+    date: event.date,
+    registrationClosesAt: event.registrationClosesAt,
+    capacity: totalCapacity,
+    activeCount,
+    waitlistEnabled: true,
+  });
   const registerButtonLabel = getRegisterButtonLabel({
     viewerRsvpStatus,
-    activeCount,
-    totalCapacity,
+    registrationAvailability,
     isRegistering,
   });
   const canCancel =
     viewerRsvpStatus === "GOING" ||
     viewerRsvpStatus === "ATTENDED" ||
     viewerRsvpStatus === "WAITLISTED";
+  const canRegister =
+    registrationAvailability === "OPEN" ||
+    registrationAvailability === "CLOSING_SOON" ||
+    registrationAvailability === "WAITLIST_OPEN";
 
   return (
     <div className="flex flex-col gap-4">
@@ -284,6 +302,15 @@ export function EventDetailContent({
               </div>
             ) : null}
 
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={getRegistrationAvailabilityBadgeVariant(registrationAvailability)}>
+                {getRegistrationAvailabilityLabel(registrationAvailability)}
+              </Badge>
+              <span className="text-[13px] font-medium text-[#615d59]">
+                Registration closes: {formatRegistrationDeadline(event.registrationClosesAt)}
+              </span>
+            </div>
+
             <p className="rounded-[14px] border border-black/5 bg-[#f6f5f4] px-4 py-3 text-[14px] leading-relaxed text-[#4f4a45]">
               {event.description || "No description provided."}
             </p>
@@ -318,7 +345,7 @@ export function EventDetailContent({
 
               <Button
                 className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-8 text-[15px] font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
-                disabled={isRegistering || canCancel}
+                disabled={isRegistering || canCancel || !canRegister}
                 onClick={handleRegister}
                 type="button"
               >
