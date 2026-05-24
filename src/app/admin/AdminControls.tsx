@@ -109,8 +109,9 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
 
   const toggleClubStatusMutation = api.club.toggleClubStatus.useMutation({
     onSuccess: (updatedClub) => {
+      const statusClub = updatedClub as unknown as { id: number; isActive: boolean };
       setClubOptions((prev) =>
-        prev.map((c) => (c.id === updatedClub.id ? { ...c, isActive: updatedClub.isActive } : c))
+        prev.map((c) => (c.id === statusClub.id ? { ...c, isActive: statusClub.isActive } : c))
       );
       toast.success(`Community status updated successfully.`);
     },
