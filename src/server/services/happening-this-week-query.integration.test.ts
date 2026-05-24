@@ -9,8 +9,10 @@ import {
 
 void test("buildHappeningThisWeekQuery uses a strict less-than seven-day upper bound", () => {
   const reference = new Date("2026-04-17T12:00:00.000Z");
-  const query = buildHappeningThisWeekQuery(reference);
+  const query = buildHappeningThisWeekQuery("college-1", reference);
 
+  assert.equal(query.where.collegeId, "college-1");
+  assert.equal(query.where.status, "PUBLISHED");
   assert.equal(query.where.date.gte.toISOString(), "2026-04-17T12:00:00.000Z");
   assert.equal(query.where.date.lt.toISOString(), "2026-04-24T12:00:00.000Z");
   assert.equal(query.take, HAPPENING_THIS_WEEK_LIMIT);

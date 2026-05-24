@@ -9,6 +9,142 @@ import { createCallerFactory } from "@/server/api/trpc";
 
 const createCaller = createCallerFactory(appRouter);
 
+void test("rsvpRouter.onCapacityChange rejects logged-out callers", async () => {
+  const mockedCtx = {
+    db: {} as any,
+    session: null,
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.rsvp.onCapacityChange({ eventId: 10 });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "UNAUTHORIZED");
+      return true;
+    },
+  );
+});
+
+void test("rsvpRouter.onCapacityChange blocks students from other colleges", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 10,
+          clubId: 5,
+          collegeId: "college-2",
+          status: "PUBLISHED",
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.rsvp.onCapacityChange({ eventId: 10 });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "You cannot subscribe to another college's event.");
+      return true;
+    },
+  );
+});
+
+void test("rsvpRouter.onCapacityChange hides unpublished events from students", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 10,
+          clubId: 5,
+          collegeId: "college-1",
+          status: "DRAFT",
+        }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.rsvp.onCapacityChange({ eventId: 10 });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "NOT_FOUND");
+      assert.equal(err.message, "Event not found");
+      return true;
+    },
+  );
+});
+
+void test("rsvpRouter.onCapacityChange allows managed organizers", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 10,
+          clubId: 5,
+          collegeId: "college-1",
+          status: "PUBLISHED",
+          title: "Capacity Safe Event",
+          authorId: "organizer-1",
+        }),
+      },
+      club: {
+        findUnique: async () => ({
+          id: 5,
+          name: "Coding Club",
+          logoUrl: "https://example.com/logo.png",
+          collegeId: "college-1",
+        }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-1",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  const subscription = await caller.rsvp.onCapacityChange({ eventId: 10 });
+
+  assert.ok(subscription);
+});
+
 void test("rsvpRouter.register fails if user has no collegeId in session", async () => {
   const mockedCtx = {
     db: {} as any,

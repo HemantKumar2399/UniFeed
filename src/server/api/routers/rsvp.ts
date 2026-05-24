@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
 } from "@/server/api/trpc";
 import { createRsvpPessimistic, CapacityError } from "@/server/services/rsvp";
 import { emitAttendanceChange, getAttendanceLatestActivity } from "@/server/services/attendance-realtime";
@@ -11,10 +10,58 @@ import { ee } from "@/server/events";
 import { observable } from "@trpc/server/observable";
 import type { Prisma } from "@prisma/client";
 
+import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
+import { assertCanManageEvent } from "@/server/permissions/club-management";
+
 export const rsvpRouter = createTRPCRouter({
-  onCapacityChange: publicProcedure
+  onCapacityChange: protectedProcedure
     .input(z.object({ eventId: z.number().int().positive() }))
-    .subscription(({ input }) => {
+    .subscription(async ({ ctx, input }) => {
+      const event = await ctx.db.event.findUnique({
+        where: { id: input.eventId },
+        select: { id: true, clubId: true, collegeId: true, status: true },
+      });
+
+      if (!event) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Event not found",
+        });
+      }
+
+      if (ctx.session.user.role === "STUDENT") {
+        const accessDecision = resolveStudentEventAccess({
+          eventStatus: event.status,
+          eventCollegeId: event.collegeId,
+          userCollegeId: ctx.session.user.collegeId,
+        });
+
+        if (accessDecision !== "visible") {
+          throw new TRPCError({
+            code: accessDecision === "wrong_college" ? "FORBIDDEN" : "NOT_FOUND",
+            message:
+              accessDecision === "wrong_college"
+                ? "You cannot subscribe to another college's event."
+                : "Event not found",
+          });
+        }
+      } else {
+        await assertCanManageEvent(
+          {
+            db: ctx.db,
+            session: {
+              user: {
+                id: ctx.session.user.id,
+                role: ctx.session.user.role,
+                collegeId: ctx.session.user.collegeId,
+              },
+            },
+          },
+          input.eventId,
+          { forbiddenMessage: "Unauthorized for this event" },
+        );
+      }
+
       return observable<{ eventId: number; newCapacity: number }>((emit) => {
         const onCapacityChange = (data: { eventId: number; newCapacity: number }) => {
           if (data.eventId === input.eventId) {

@@ -149,6 +149,135 @@ void test("eventRouter.create rejects clubs from another college", async () => {
   );
 });
 
+void test("eventRouter.getFeed rejects logged-out callers", async () => {
+  const mockedCtx = {
+    db: {} as any,
+    session: null,
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.getFeed();
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "UNAUTHORIZED");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.getFeed requests only the viewer college's published events", async () => {
+  let capturedWhere: any = null;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findMany: async (args: any) => {
+          capturedWhere = args.where;
+          return [];
+        },
+      },
+      hubFollow: {
+        findMany: async (args: any) => {
+          assert.deepEqual(args.where, { userId: "student-1" });
+          return [];
+        },
+      },
+      studentProfile: {
+        findUnique: async (args: any) => {
+          assert.deepEqual(args.where, { userId: "student-1" });
+          return null;
+        },
+      },
+      userPreference: {
+        findUnique: async (args: any) => {
+          assert.deepEqual(args.where, { userId: "student-1" });
+          return null;
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await caller.event.getFeed();
+
+  assert.equal(capturedWhere.collegeId, "college-1");
+  assert.equal(capturedWhere.status, "PUBLISHED");
+  assert.ok(capturedWhere.date.gte instanceof Date);
+});
+
+void test("eventRouter.getFeed rejects authenticated users without a college scope", async () => {
+  const mockedCtx = {
+    db: {} as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: null,
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.getFeed();
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "PRECONDITION_FAILED");
+      assert.equal(err.message, "User session is missing a college association.");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.getHappeningThisWeek requests only same-college published week events", async () => {
+  let capturedWhere: any = null;
+
+  const mockedCtx = {
+    db: {
+      event: {
+        findMany: async (args: any) => {
+          capturedWhere = args.where;
+          return [];
+        },
+      },
+    } as any,
+    session: {
+      user: {
+        id: "student-1",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await caller.event.getHappeningThisWeek();
+
+  assert.equal(capturedWhere.collegeId, "college-1");
+  assert.equal(capturedWhere.status, "PUBLISHED");
+  assert.ok(capturedWhere.date.gte instanceof Date);
+  assert.ok(capturedWhere.date.lt instanceof Date);
+});
+
 void test("eventRouter.getAttendees allows club editors to manage event attendance", async () => {
   const mockedCtx = {
     db: {

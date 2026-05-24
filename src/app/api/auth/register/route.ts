@@ -4,6 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/server/db";
 
 import { getCollegeForEmail } from "@/server/auth/domain";
+import { PUBLIC_REGISTRATION_ROLE } from "@/server/auth/registration";
 
 const SALT_ROUNDS = 12;
 /** bcrypt silently truncates beyond 72 bytes — reject early to prevent two passwords matching. */
@@ -70,20 +71,12 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    let role: "STUDENT" | "ORGANIZER" | "ADMIN" = "STUDENT";
-    const localPart = email.split("@")[0]?.toLowerCase();
-    if (localPart?.startsWith("admin")) {
-      role = "ADMIN";
-    } else if (localPart?.startsWith("organizer")) {
-      role = "ORGANIZER";
-    }
-
     await db.user.create({
       data: {
         email,
         name: trimmedName,
         password: hashedPassword,
-        role,
+        role: PUBLIC_REGISTRATION_ROLE,
         collegeId: college.id,
       },
     });

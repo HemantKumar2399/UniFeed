@@ -7,34 +7,34 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Area | Route / System | Status | Notes |
 | --- | --- | --- | --- |
 | Public landing | `/` | `real` | Renders the public marketing shell. |
-| Auth | `/login`, `/api/auth/[...nextauth]`, `/api/auth/register` | `partial` | Credentials and domain checks exist, but college scoping and role hardening are not implemented yet. |
-| Student home feed | `/home` | `partial` | Uses real event queries and carousel services, but still mixes in placeholder hero/trending UI. |
-| Discover | `/discover` | `partial` | UI exists, but filtering and discovery behavior are still mostly static. |
-| Search | `/search` | `placeholder` | Explicit placeholder screen. Backend event search exists separately. |
+| Auth | `/login`, `/api/auth/[...nextauth]`, `/api/auth/register` | `real` | Credentials and domain checks exist, and college scoping and role hardening have been implemented (Epic 18). |
+| Student home feed | `/home` | `real` | Uses protected, college-scoped event queries and a college-scoped Happening This Week carousel. |
+| Discover | `/discover` | `real` | Uses protected college-scoped discovery queries with category and collection filters. |
+| Search | `/search` | `real` | Searches upcoming published events and communities within the viewer's college scope. |
 | Global | `/global` | `placeholder` | Explicit placeholder screen; no MVP-global behavior yet. |
 | Passport | `/passport` | `real` | Shows real student identity data, permanent student QR, and active registrations using the Epic 8 passport flow. |
 | Profile | `/profile` | `partial` | Shows real session identity, but actions and saved/preference flows are not wired. |
-| Organizer overview | `/dashboard` | `placeholder` | Demo KPI cards were removed in Epic 0; real organizer analytics are deferred. |
+| Organizer overview | `/dashboard` | `real` | Shows live organizer/admin workflow metrics, RSVP totals, and attendance activity for the viewer's managed scope. |
 | Organizer events list | `/dashboard/events` | `real` | URL-driven tabs, filters, and real lifecycle actions now use managed-club event data. |
 | Organizer metrics | `/dashboard/metrics` | `placeholder` | Demo metrics were removed in Epic 0; real reporting lands in Epic 11. |
 | Event creation | `/dashboard/events/new` | `real` | Shared event editor supports full metadata, draft saving, submission, and upload/manual image flows. |
 | Event edit | `/dashboard/events/[id]/edit` | `real` | Shared event editor now loads existing events with status-aware locking and actions. |
-| Event attendees | `/dashboard/events/[id]` | `partial` | Real attendee list and CSV export exist, but student profile fields are not in the schema yet. |
+| Event attendees | `/dashboard/events/[id]` | `real` | Real attendee list, CSV export, filtering, check-in state, and StudentProfile identity fields are wired. |
 | Event scanner | `/dashboard/events/[id]/scan` | `real` | Scanner verifies the permanent student passport QR against the selected event and keeps the manual fallback path. |
 | Hub public pages | `/hubs/[clubId]` | `partial` | Club pages and follow logic exist, but later epics add college scoping and moderation controls. |
-| Organizer hubs | `/dashboard/hubs` | `partial` | Hub editor exists, but admin/community governance is still missing. |
+| Organizer hubs | `/dashboard/hubs` | `partial` | Hub editor and membership-based management exist; deeper moderation workflows remain future work. |
 
 ## System Matrix
 
 | System | Status | Notes |
 | --- | --- | --- |
-| Prisma schema and seed data | `partial` | Seeds real clubs, users, events, and hub content, but still models the pre-college, pre-student-profile schema. |
+| Prisma schema and seed data | `real` | Models colleges, users, clubs, events, memberships, StudentProfile identity, permanent student QR IDs, and seeded isolation data. |
 | Unit test suite | `real` | Existing `node:test` files now run through `tsx` via `npm run test:unit`. |
 | Playwright setup | `partial` | Runner config is valid and test discovery works, but only example smoke coverage exists. |
 | CI workflow | `real` | Epic 0 enables lint, typecheck, build, and unit-test steps with local-safe env defaults. |
-| Upload pipeline | `partial` | Presigned upload generation is real and failure states are explicit, but deployment-specific storage env values are still required for direct uploads. |
-| Organizer event authorization | `partial` | Still author-based; club-membership-based ownership is a later epic. |
-| Attendee identity data | `placeholder` | PRN/branch are intentionally not fabricated anymore; real student profile fields arrive in Epic 1. |
+| Upload pipeline | `partial` | Local uploads and presigned upload generation are real; deployed storage still requires environment-specific bucket/CDN values. |
+| Organizer event authorization | `real` | Organizer mutations use reusable club membership and same-college admin permission checks. |
+| Attendee identity data | `real` | PRN, branch, course, graduation year, and permanent student QR state come from StudentProfile records. |
 
 ## `_bmad-output` Cross-Check
 

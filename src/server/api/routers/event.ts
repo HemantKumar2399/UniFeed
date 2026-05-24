@@ -1,6 +1,6 @@
 import type { ClubRole, EventApprovalAction, EventStatus } from "@prisma/client";
 import { observable } from "@trpc/server/observable";
-import { createTRPCRouter, publicProcedure, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 import { CreateEventSchema, type CreateEventInput } from "@/features/events/components/CreateEventSchema";
 import {
@@ -15,7 +15,7 @@ import { resolveDiscussionDisplayName } from "@/lib/discussion";
 import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
 import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
 import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
-import { FEED_RESULT_LIMIT, buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
+import { buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
 import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-week-query";
 import {
   buildStudentRelevanceProfile,
@@ -621,14 +621,18 @@ export const eventRouter = createTRPCRouter({
     });
   }),
 
-  getFeed: publicProcedure.query(async ({ ctx }) => {
-    const collegeId = ctx.session?.user?.collegeId;
-    const userId = ctx.session?.user?.id;
-    const events = await ctx.db.event.findMany(buildPublishedFeedQuery(collegeId, userId));
+  getFeed: protectedProcedure.query(async ({ ctx }) => {
+    const collegeId = ctx.session.user.collegeId;
+    const userId = ctx.session.user.id;
 
-    if (!userId) {
-      return events.slice(0, FEED_RESULT_LIMIT);
+    if (!collegeId) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "User session is missing a college association.",
+      });
     }
+
+    const events = await ctx.db.event.findMany(buildPublishedFeedQuery(collegeId, userId));
 
     const followedRows = await ctx.db.hubFollow.findMany({
       where: { userId: userId },
@@ -671,8 +675,14 @@ export const eventRouter = createTRPCRouter({
     return selectTopPersonalizedFeedEvents(events, profile);
   }),
 
-  getHappeningThisWeek: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.event.findMany(buildHappeningThisWeekQuery());
+  getHappeningThisWeek: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.session.user.collegeId) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "User session is missing a college association.",
+      });
+    }
+    return ctx.db.event.findMany(buildHappeningThisWeekQuery(ctx.session.user.collegeId));
   }),
 
   getDiscussionThreads: protectedProcedure

@@ -145,6 +145,76 @@ void test("adminRouter.assignClubMembership fails when target user is a basic st
   );
 });
 
+void test("adminRouter.assignClubMembership blocks clubs outside the admin college", async () => {
+  const mockedCtx = {
+    db: {
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-2" }),
+      },
+      user: {
+        findUnique: async () => ({ id: "target-user-id", role: "ORGANIZER", collegeId: "college-1" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.assignClubMembership({ userId: "target-user-id", clubId: 10, role: "OWNER" });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Cannot manage clubs outside your college.");
+      return true;
+    },
+  );
+});
+
+void test("adminRouter.assignClubMembership blocks users outside the admin college", async () => {
+  const mockedCtx = {
+    db: {
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-1" }),
+      },
+      user: {
+        findUnique: async () => ({ id: "target-user-id", role: "ORGANIZER", collegeId: "college-2" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "admin-user-id",
+        role: "ADMIN",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.assignClubMembership({ userId: "target-user-id", clubId: 10, role: "OWNER" });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Cannot assign memberships to users outside your college.");
+      return true;
+    },
+  );
+});
+
 void test("adminRouter.getPendingEvents stays college-scoped and only requests submitted events", async () => {
   let whereArg: Record<string, unknown> | null = null;
 

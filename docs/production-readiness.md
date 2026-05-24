@@ -10,6 +10,7 @@ Epic 16 is the release-hardening pass for UniFeed. Use this checklist to verify 
 - [x] `STUDENT_QR_SECRET` documented and kept distinct from `AUTH_SECRET`
 - [x] `NEXT_PUBLIC_APP_URL` documented for explicit deployment origins
 - [x] Upload variables documented for direct organizer uploads
+- [x] `UPLOAD_PUBLIC_BASE_URL` doubles as the explicit `next/image` remote host for uploaded media
 
 ## Seed and Generated Client Decisions
 

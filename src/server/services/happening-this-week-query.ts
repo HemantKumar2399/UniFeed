@@ -2,11 +2,12 @@ import { getHappeningThisWeekWindow, isInHappeningThisWeekWindow } from "./happe
 
 export const HAPPENING_THIS_WEEK_LIMIT = 12;
 
-export function buildHappeningThisWeekQuery(referenceDate: Date = new Date()) {
+export function buildHappeningThisWeekQuery(collegeId: string, referenceDate: Date = new Date()) {
   const { start, endExclusive } = getHappeningThisWeekWindow(referenceDate);
 
   return {
     where: {
+      collegeId,
       status: "PUBLISHED" as const,
       date: {
         gte: start,

@@ -124,9 +124,9 @@ UPLOAD_SECRET_ACCESS_KEY=""
 UPLOAD_PUBLIC_BASE_URL=""
 ```
 
-Optional upload values stay blank for local/manual image URL workflows. Configure them in deployed environments when organizers should upload directly to object storage.
+Optional upload values stay blank for local/manual image URL workflows. Configure them in deployed environments when organizers should upload directly to object storage. `UPLOAD_PUBLIC_BASE_URL` is also used by `next/image` as the explicit production image host for uploaded event media.
 
-When the upload variables are not configured, organizer image uploads will return a clear configuration error and the event editor will fall back to manual hosted-image URLs.
+When the upload variables are not configured, organizer image uploads use the local development upload endpoint and return `/uploads/...` URLs. In deployed environments, set the upload variables and `UPLOAD_PUBLIC_BASE_URL` to the public CDN or object-storage origin that should serve organizer images.
 
 ### Seed Setup
 
