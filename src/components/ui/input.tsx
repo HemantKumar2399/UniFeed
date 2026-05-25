@@ -32,7 +32,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           "text-base font-normal leading-[1.5]",
           "text-[var(--color-notion-black)]",
           // Form-specific border (resolves to var(--border-input))
-          "bg-white border-[var(--border-input)]",
+          "bg-card-bg border-[var(--border-input)]",
           "rounded-[var(--radius-micro)]", // Micro radius — functional element
           // Placeholder: Warm Gray 300 — subdued
           "placeholder:text-[var(--color-warm-gray-300)]",

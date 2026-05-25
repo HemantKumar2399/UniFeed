@@ -241,39 +241,39 @@ export function EventEditor({
       <header className="px-1 md:px-0">
         <Link
           href="/dashboard/events"
-          className="mb-4 inline-flex w-fit items-center gap-2 text-[14px] font-semibold text-warm-gray-muted transition-colors hover:text-foreground"
+          className="mb-4 inline-flex w-fit items-center gap-2 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Events
         </Link>
-        <h1 className="mb-2 text-[32px] font-bold leading-[1.1] tracking-[-1.2px] text-black/95 md:text-[40px]">
+        <h1 className="mb-2 text-[32px] font-bold leading-[1.1] tracking-[-1.2px] text-foreground md:text-[40px]">
           {mode === "create" ? "Create New Event" : "Edit Event"}
         </h1>
-        <p className="text-[16px] font-medium leading-relaxed text-warm-gray">
+        <p className="text-[16px] font-medium leading-relaxed text-muted-foreground">
           {getStatusMessage(activeStatus)}
         </p>
       </header>
 
       {activeStatus ? (
-        <section className="rounded-[20px] border border-[var(--border-whisper)] bg-white px-5 py-4 shadow-sm">
+        <section className="rounded-[20px] border border-whisper bg-card-bg px-5 py-4 shadow-sm transition-colors duration-300">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-pill bg-warm-white px-3 py-1 text-xs font-semibold uppercase tracking-badge text-notion-black">
+            <span className="rounded-pill bg-app-bg px-3 py-1 text-xs font-semibold uppercase tracking-badge text-foreground transition-colors">
               {activeStatus}
             </span>
             {submittedAt ? (
-              <span className="text-sm text-warm-gray">
+              <span className="text-sm text-muted-foreground">
                 Submitted on {new Date(submittedAt).toLocaleString("en-IN")}
               </span>
             ) : null}
           </div>
           {latestRejectionReason ? (
-            <p className="mt-3 rounded-[14px] border border-[var(--border-whisper)] bg-warm-white px-4 py-3 text-sm text-warm-gray">
-              <span className="font-semibold text-notion-black">Admin feedback:</span> {latestRejectionReason}
+            <p className="mt-3 rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-sm text-muted-foreground transition-colors">
+              <span className="font-semibold text-foreground">Admin feedback:</span> {latestRejectionReason}
             </p>
           ) : null}
           {cancellationReason ? (
-            <p className="mt-3 rounded-[14px] border border-[var(--border-whisper)] bg-warm-white px-4 py-3 text-sm text-warm-gray">
-              <span className="font-semibold text-notion-black">Cancellation reason:</span> {cancellationReason}
+            <p className="mt-3 rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-sm text-muted-foreground transition-colors">
+              <span className="font-semibold text-foreground">Cancellation reason:</span> {cancellationReason}
             </p>
           ) : null}
         </section>
@@ -288,8 +288,8 @@ export function EventEditor({
       </div>
 
       <form className="flex flex-col gap-5 px-1 md:px-0" onSubmit={(event) => event.preventDefault()}>
-        <section className="rounded-[20px] border border-input bg-white px-5 py-5 shadow-sm">
-          <label htmlFor="clubId" className="mb-2 block text-[13px] font-semibold uppercase tracking-[0.12em] text-warm-gray-muted">
+        <section className="rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm transition-colors duration-300">
+          <label htmlFor="clubId" className="mb-2 block text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">
             Community
           </label>
           <select
@@ -297,7 +297,7 @@ export function EventEditor({
             value={draft.clubId}
             onChange={handleTextChange("clubId")}
             disabled={!isEditable || isLoadingManagedClubs || !hasManagedClubs}
-            className="h-12 w-full rounded-[14px] border border-input bg-white px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+            className="h-12 w-full rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
           >
             <option value="">
               {isLoadingManagedClubs ? "Loading your communities..." : "Select a community"}
@@ -310,13 +310,13 @@ export function EventEditor({
           </select>
           {fieldErrors.clubId ? <p className="mt-2 text-sm font-medium text-red-600">{fieldErrors.clubId}</p> : null}
           {!isLoadingManagedClubs && !hasManagedClubs ? (
-            <p className="mt-3 rounded-[14px] border border-input bg-muted px-4 py-3 text-[14px] leading-relaxed text-warm-gray">
+            <p className="mt-3 rounded-[14px] border border-input bg-muted px-4 py-3 text-[14px] leading-relaxed text-muted-foreground transition-colors">
               You do not manage any community yet. Ask your college admin to assign you to a club before creating events.
             </p>
           ) : null}
         </section>
 
-        <section className="rounded-[20px] border border-input bg-white px-5 py-5 shadow-sm">
+        <section className="rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm transition-colors duration-300">
           <label htmlFor="title" className="sr-only">Event title</label>
           <input
             id="title"
@@ -325,7 +325,7 @@ export function EventEditor({
             disabled={!isEditable}
             type="text"
             placeholder="Event Title"
-            className="w-full border-none bg-transparent text-[30px] font-bold tracking-[-1px] text-foreground outline-none placeholder:text-warm-gray-muted disabled:cursor-not-allowed md:text-[38px]"
+            className="w-full border-none bg-transparent text-[30px] font-bold tracking-[-1px] text-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed md:text-[38px]"
           />
           {fieldErrors.title ? <p className="mt-2 text-sm font-medium text-red-600">{fieldErrors.title}</p> : null}
           <label htmlFor="description" className="sr-only">Event description</label>
@@ -335,14 +335,14 @@ export function EventEditor({
             onChange={handleTextChange("description")}
             disabled={!isEditable}
             placeholder="Write your event description..."
-            className="mt-4 min-h-[160px] w-full resize-none border-none bg-transparent text-[17px] leading-relaxed text-warm-gray outline-none placeholder:text-warm-gray-muted disabled:cursor-not-allowed"
+            className="mt-4 min-h-[160px] w-full resize-none border-none bg-transparent text-[17px] leading-relaxed text-muted-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed"
           />
           {fieldErrors.description ? <p className="mt-2 text-sm font-medium text-red-600">{fieldErrors.description}</p> : null}
         </section>
 
         <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Date</span>
+          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Date</span>
             <input
               value={draft.date}
               onChange={handleTextChange("date")}
@@ -352,8 +352,8 @@ export function EventEditor({
             />
           </label>
 
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Time</span>
+          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Time</span>
             <input
               value={draft.time}
               onChange={handleTextChange("time")}
@@ -364,8 +364,8 @@ export function EventEditor({
           </label>
           {fieldErrors.date ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.date}</p> : null}
 
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Registration Closes On</span>
+          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Registration Closes On</span>
             <input
               value={draft.registrationCloseDate}
               onChange={handleTextChange("registrationCloseDate")}
@@ -375,8 +375,8 @@ export function EventEditor({
             />
           </label>
 
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Registration Close Time</span>
+          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Registration Close Time</span>
             <input
               value={draft.registrationCloseTime}
               onChange={handleTextChange("registrationCloseTime")}
@@ -385,28 +385,28 @@ export function EventEditor({
               className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
             />
           </label>
-          <div className="md:col-span-2 rounded-[16px] border border-dashed border-input bg-warm-white px-4 py-3 text-[13px] leading-relaxed text-warm-gray">
+          <div className="md:col-span-2 rounded-[16px] border border-dashed border-input bg-app-bg px-4 py-3 text-[13px] leading-relaxed text-muted-foreground transition-colors">
             Students will only be able to register before this deadline, and it must be earlier than the event start time.
           </div>
           {fieldErrors.registrationClosesAt ? (
             <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.registrationClosesAt}</p>
           ) : null}
 
-          <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Location</span>
+          <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Location</span>
             <input
               value={draft.location}
               onChange={handleTextChange("location")}
               disabled={!isEditable}
               type="text"
               placeholder="Building 4, Room 101"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-warm-gray-muted disabled:cursor-not-allowed"
+              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed"
             />
           </label>
           {fieldErrors.location ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.location}</p> : null}
 
-          <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-white px-3 py-3 shadow-sm">
-            <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-muted">Capacity</span>
+          <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
+            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Capacity</span>
             <input
               value={draft.capacity}
               onChange={handleTextChange("capacity")}
@@ -414,21 +414,21 @@ export function EventEditor({
               type="number"
               min={1}
               placeholder="100"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-warm-gray-muted disabled:cursor-not-allowed"
+              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed"
             />
           </label>
           {fieldErrors.capacity ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.capacity}</p> : null}
         </section>
 
-        <section className="grid grid-cols-1 gap-4 rounded-[20px] border border-input bg-white px-5 py-5 shadow-sm md:grid-cols-2">
+        <section className="grid grid-cols-1 gap-4 rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm md:grid-cols-2 transition-colors duration-300">
           <div className="flex flex-col gap-2">
-            <label htmlFor="category" className="text-sm font-semibold text-notion-black">Category</label>
+            <label htmlFor="category" className="text-sm font-semibold text-foreground">Category</label>
             <select
               id="category"
               value={draft.category}
               onChange={handleTextChange("category")}
               disabled={!isEditable}
-              className="h-12 rounded-[14px] border border-input bg-white px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
             >
               <option value="">Select a category</option>
               {EVENT_CATEGORY_OPTIONS.map((option) => (
@@ -441,13 +441,13 @@ export function EventEditor({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="domain" className="text-sm font-semibold text-notion-black">Audience Domain</label>
+            <label htmlFor="domain" className="text-sm font-semibold text-foreground">Audience Domain</label>
             <select
               id="domain"
               value={draft.domain}
               onChange={handleTextChange("domain")}
               disabled={!isEditable}
-              className="h-12 rounded-[14px] border border-input bg-white px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
             >
               <option value="">Select a domain</option>
               {EVENT_DOMAIN_OPTIONS.map((option) => (
@@ -460,7 +460,7 @@ export function EventEditor({
           </div>
 
           <div className="md:col-span-2 flex flex-col gap-2">
-            <label htmlFor="tags" className="text-sm font-semibold text-notion-black">Tags</label>
+            <label htmlFor="tags" className="text-sm font-semibold text-foreground">Tags</label>
             <input
               id="tags"
               value={draft.tags}
@@ -468,14 +468,14 @@ export function EventEditor({
               disabled={!isEditable}
               type="text"
               placeholder="coding, workshop, networking"
-              className="h-12 rounded-[14px] border border-input bg-white px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-warm-gray-muted transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
             />
-            <p className="text-xs text-warm-gray">Suggested tags: {EVENT_TAG_SUGGESTIONS.join(", ")}</p>
+            <p className="text-xs text-muted-foreground">Suggested tags: {EVENT_TAG_SUGGESTIONS.join(", ")}</p>
             {fieldErrors.tags ? <p className="text-sm font-medium text-red-600">{fieldErrors.tags}</p> : null}
           </div>
 
           <div className="md:col-span-2 flex flex-col gap-2">
-            <label htmlFor="targetBranches" className="text-sm font-semibold text-notion-black">Target Branches (Optional)</label>
+            <label htmlFor="targetBranches" className="text-sm font-semibold text-foreground">Target Branches (Optional)</label>
             <input
               id="targetBranches"
               value={draft.targetBranches}
@@ -483,14 +483,14 @@ export function EventEditor({
               disabled={!isEditable}
               type="text"
               placeholder="Computer Science, Information Technology"
-              className="h-12 rounded-[14px] border border-input bg-white px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-warm-gray-muted transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
             />
-            <p className="text-xs text-warm-gray">Suggested branches: {TARGET_BRANCH_SUGGESTIONS.join(", ")}</p>
+            <p className="text-xs text-muted-foreground">Suggested branches: {TARGET_BRANCH_SUGGESTIONS.join(", ")}</p>
             {fieldErrors.targetBranches ? <p className="text-sm font-medium text-red-600">{fieldErrors.targetBranches}</p> : null}
           </div>
 
           <div className="md:col-span-2 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-warm-white px-4 py-3 text-sm font-medium text-notion-black">
+            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-app-bg px-4 py-3 text-sm font-medium text-foreground transition-colors">
               <input
                 checked={draft.isFreeFood}
                 onChange={handleCheckboxChange("isFreeFood")}
@@ -500,7 +500,7 @@ export function EventEditor({
               />
               Free food available
             </label>
-            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-warm-white px-4 py-3 text-sm font-medium text-notion-black">
+            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-app-bg px-4 py-3 text-sm font-medium text-foreground transition-colors">
               <input
                 checked={draft.hasCertificate}
                 onChange={handleCheckboxChange("hasCertificate")}
@@ -510,7 +510,7 @@ export function EventEditor({
               />
               Certificate included
             </label>
-            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-warm-white px-4 py-3 text-sm font-medium text-notion-black">
+            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-app-bg px-4 py-3 text-sm font-medium text-foreground transition-colors">
               <input
                 checked={draft.isPaid}
                 onChange={handleCheckboxChange("isPaid")}
@@ -523,8 +523,8 @@ export function EventEditor({
           </div>
         </section>
 
-        <section className="rounded-[20px] border border-input bg-white px-5 py-5 shadow-sm">
-          <div className="flex items-center gap-2 text-sm font-semibold text-notion-black">
+        <section className="rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm transition-colors duration-300">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <ImageIcon className="h-4 w-4" />
             Event Cover
           </div>
@@ -542,7 +542,7 @@ export function EventEditor({
             {fieldErrors.imageUrl ? <p className="text-sm font-medium text-red-600 mt-2">{fieldErrors.imageUrl}</p> : null}
           </div>
           {draft.imageUrl ? (
-            <div className="mt-4 overflow-hidden rounded-[16px] border border-[var(--border-whisper)] bg-warm-white">
+            <div className="mt-4 overflow-hidden rounded-[16px] border border-whisper bg-app-bg transition-colors">
               <div
                 aria-label="Event cover preview"
                 role="img"
@@ -559,14 +559,14 @@ export function EventEditor({
           </p>
         ) : null}
 
-        <div className="sticky bottom-6 z-10 mt-2 flex flex-wrap items-center justify-end gap-3 rounded-[18px] border border-[rgba(0,0,0,0.08)] bg-white/90 p-3 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
+        <div className="sticky bottom-6 z-10 mt-2 flex flex-wrap items-center justify-end gap-3 rounded-[18px] border border-whisper bg-card-bg/90 p-3 backdrop-blur-xl shadow-card transition-colors duration-300">
           {isEditable ? (
             <>
               <button
                 type="button"
                 onClick={() => void saveDraft(false)}
                 disabled={isBusy || !hasManagedClubs}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-[12px] border border-input bg-white px-5 py-3 text-[15px] font-semibold text-notion-black transition-all hover:bg-warm-white disabled:opacity-60"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-[12px] border border-input bg-card-bg px-5 py-3 text-[15px] font-semibold text-foreground transition-all hover:bg-muted disabled:opacity-60"
               >
                 {createEvent.isPending || updateEvent.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {mode === "create" ? "Save Draft" : "Save Changes"}
@@ -606,7 +606,7 @@ export function EventEditor({
                 onChange={(event) => setCancelReason(event.target.value)}
                 rows={3}
                 placeholder="Explain why this event is being cancelled."
-                className="w-full rounded-[14px] border border-input bg-white px-4 py-3 text-sm text-foreground outline-none placeholder:text-warm-gray-muted focus-visible:border-[var(--color-focus-blue)]"
+                className="w-full rounded-[14px] border border-input bg-card-bg px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus-visible:border-[var(--color-focus-blue)]"
               />
               <button
                 type="button"

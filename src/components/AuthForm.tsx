@@ -138,7 +138,7 @@ function FormContent() {
           <Button
             variant="outline"
             type="button"
-            className="flex h-12 items-center justify-center gap-3 rounded-xl border-border bg-white text-base font-semibold transition-all hover:bg-muted active:scale-95"
+            className="flex h-12 items-center justify-center gap-3 rounded-xl border-border bg-card-bg text-base font-semibold transition-all hover:bg-muted active:scale-95"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
               <path
@@ -168,7 +168,7 @@ function FormContent() {
             <span className="w-full border-t border-border"></span>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[var(--color-warm-white)] px-2 font-semibold tracking-wider text-muted-foreground md:bg-white">
+            <span className="bg-card-bg px-2 font-semibold tracking-wider text-muted-foreground transition-colors duration-300">
               Or continue with email
             </span>
           </div>

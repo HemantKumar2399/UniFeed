@@ -272,8 +272,8 @@ export function EventDetailContent({
         <button
           className={`rounded-full px-3 py-1.5 text-[12px] font-semibold tracking-[0.125px] transition-colors ${
             activeTab === "overview"
-              ? "bg-[#f2f9ff] text-[#097fe8]"
-              : "bg-black/5 text-[#615d59]"
+              ? "bg-primary/10 text-primary"
+              : "bg-muted text-muted-foreground"
           }`}
           onClick={() => setActiveTab("overview")}
           type="button"
@@ -283,8 +283,8 @@ export function EventDetailContent({
         <button
           className={`rounded-full px-3 py-1.5 text-[12px] font-semibold tracking-[0.125px] transition-colors ${
             activeTab === "discussions"
-              ? "bg-[#f2f9ff] text-[#097fe8]"
-              : "bg-black/5 text-[#615d59]"
+              ? "bg-primary/10 text-primary"
+              : "bg-muted text-muted-foreground"
           }`}
           onClick={() => setActiveTab("discussions")}
           type="button"
@@ -306,18 +306,18 @@ export function EventDetailContent({
               <Badge variant={getRegistrationAvailabilityBadgeVariant(registrationAvailability)}>
                 {getRegistrationAvailabilityLabel(registrationAvailability)}
               </Badge>
-              <span className="text-[13px] font-medium text-[#615d59]">
+              <span className="text-[13px] font-medium text-muted-foreground">
                 Registration closes: {formatRegistrationDeadline(event.registrationClosesAt)}
               </span>
             </div>
 
-            <p className="rounded-[14px] border border-black/5 bg-[#f6f5f4] px-4 py-3 text-[14px] leading-relaxed text-[#4f4a45]">
+            <p className="rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-[14px] leading-relaxed text-foreground/80">
               {event.description || "No description provided."}
             </p>
 
             <footer className="mt-3 flex flex-col items-center justify-end gap-2 sm:flex-row">
               <Button
-                className="flex h-12 w-full items-center justify-center rounded-xl border-black/10 px-0 transition-all hover:bg-black/5 active:scale-95 sm:mr-auto sm:w-12"
+                className="flex h-12 w-full items-center justify-center rounded-xl border-whisper px-0 transition-all hover:bg-muted active:scale-95 sm:mr-auto sm:w-12"
                 disabled={toggleSave.isPending}
                 onClick={() => toggleSave.mutate({ eventId: event.id })}
                 title={isSaved ? "Remove from Saved" : "Save Event"}
@@ -326,7 +326,7 @@ export function EventDetailContent({
               >
                 <Bookmark
                   className={`h-5 w-5 ${
-                    isSaved ? "fill-blue-600 text-blue-600" : "text-[#615d59]"
+                    isSaved ? "fill-blue-600 text-blue-600" : "text-muted-foreground"
                   }`}
                 />
               </Button>
@@ -381,9 +381,9 @@ export function EventDetailContent({
           </>
         ) : (
           <>
-            <Card className="border-[rgba(0,0,0,0.08)] shadow-none">
+            <Card className="border-whisper bg-card-bg shadow-none">
               <CardContent className="space-y-3 p-4">
-                <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                   Ask a question
                 </p>
                 <Textarea
@@ -407,7 +407,7 @@ export function EventDetailContent({
             </Card>
 
             {isDiscussionLoading ? (
-              <div className="rounded-[14px] border border-black/10 bg-[#f6f5f4] px-4 py-3 text-[14px] text-[#615d59]">
+              <div className="rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-[14px] text-muted-foreground">
                 Loading discussions...
               </div>
             ) : isDiscussionError ? (
@@ -420,7 +420,7 @@ export function EventDetailContent({
                 </div>
               </div>
             ) : orderedThreads.length === 0 ? (
-              <div className="rounded-[14px] border border-black/10 bg-[#f6f5f4] px-4 py-3 text-[14px] text-[#615d59]">
+              <div className="rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-[14px] text-muted-foreground">
                 No questions yet. Ask the first one.
               </div>
             ) : (
@@ -432,17 +432,17 @@ export function EventDetailContent({
                   togglePin.isPending && togglePin.variables?.threadId === thread.id;
 
                 return (
-                  <Card className="border-[rgba(0,0,0,0.1)] shadow-none" key={thread.id}>
+                  <Card className="border-whisper bg-card-bg shadow-none" key={thread.id}>
                     <CardContent className="space-y-3 p-4">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div className="space-y-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-[14px] font-semibold text-black/90">
+                            <p className="text-[14px] font-semibold text-foreground/90">
                               {thread.question}
                             </p>
                             {thread.pinned ? <Badge>Pinned</Badge> : null}
                           </div>
-                          <p className="text-[12px] text-[#7a746d]">
+                          <p className="text-[12px] text-muted-foreground">
                             Asked by {formatDiscussionAuthorName(thread.author.displayName, null)}
                           </p>
                         </div>
@@ -475,22 +475,22 @@ export function EventDetailContent({
                         ) : null}
                       </div>
 
-                      <div className="space-y-2 rounded-[12px] bg-[#f6f5f4] p-3">
+                      <div className="space-y-2 rounded-[12px] bg-app-bg p-3">
                         {thread.replies.length === 0 ? (
-                          <p className="text-[12px] text-[#8a847d]">No organizer reply yet.</p>
+                          <p className="text-[12px] text-muted-foreground">No organizer reply yet.</p>
                         ) : (
                           thread.replies.map((reply: DiscussionReply) => (
                             <div
-                              className="rounded-[10px] border border-black/10 bg-white px-3 py-2"
+                              className="rounded-[10px] border border-whisper bg-card-bg px-3 py-2"
                               key={reply.id}
                             >
                               <div className="mb-1 flex items-center gap-2">
-                                <p className="text-[12px] font-semibold text-black/90">
+                                <p className="text-[12px] font-semibold text-foreground/90">
                                   {formatDiscussionAuthorName(reply.author.displayName, null)}
                                 </p>
                                 {reply.author.isOrganizer ? <Badge>Organizer</Badge> : null}
                               </div>
-                              <p className="text-[13px] leading-relaxed text-[#4f4a45]">
+                              <p className="text-[13px] leading-relaxed text-foreground/80">
                                 {reply.message}
                               </p>
                             </div>

@@ -11,11 +11,11 @@ const buttonVariants = cva(
       variant: {
         default: "bg-[var(--color-notion-blue)] text-white hover:bg-[var(--color-notion-blue-hover)]",
         outline:
-          "border-[var(--border-whisper)] bg-[var(--color-pure-white)] hover:bg-black/5 text-[var(--color-notion-black)]",
+          "border-whisper bg-card-bg hover:bg-muted text-foreground",
         secondary:
-          "bg-black/5 text-[var(--color-notion-black)] hover:bg-black/10 active:scale-[0.9]",
+          "bg-muted text-foreground hover:bg-muted/80 active:scale-[0.9]",
         ghost:
-          "hover:bg-black/5 hover:text-black/80",
+          "hover:bg-muted hover:text-foreground text-foreground/80",
         destructive:
           "bg-red-500/10 text-red-600 hover:bg-red-500/20",
         link: "text-[var(--color-notion-blue)] underline-offset-4 hover:underline",

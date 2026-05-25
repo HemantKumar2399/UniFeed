@@ -30,8 +30,8 @@ export function DiscoveryPills() {
             className={cn(
               "shrink-0 snap-center rounded-full px-5 py-2 text-[15px] font-semibold text-nowrap transition-all duration-300 active:scale-95",
               activeCategory === category.id 
-                ? "bg-black text-white shadow-md shadow-black/20" 
-                : "bg-white text-gray-600 border border-black/[0.08] hover:bg-gray-50 hover:text-black hover:border-black/20"
+                ? "bg-foreground text-background shadow-md" 
+                : "bg-card-bg text-muted-foreground border border-whisper hover:bg-muted hover:text-foreground hover:border-input"
             )}
             style={{ WebkitTapHighlightColor: "transparent" }}
           >

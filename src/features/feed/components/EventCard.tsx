@@ -82,16 +82,16 @@ export function EventCard({ event }: { event: EventFeedItem }) {
   return (
     <Drawer open={isDetailsOpen} onOpenChange={handleDrawerOpenChange}>
       <article
-        className="group w-full overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-sm transition-all duration-300 hover:shadow-md"
+        className="group w-full overflow-hidden rounded-2xl border border-whisper bg-card-bg shadow-sm transition-all duration-300 hover:shadow-md"
         id={eventHashId}
       >
         <DrawerTrigger asChild>
           <button
             aria-expanded={isDetailsOpen}
-            className="relative block w-full bg-white text-left"
+            className="relative block w-full bg-card-bg text-left cursor-pointer"
             type="button"
           >
-            <div className="relative aspect-[21/9] w-full overflow-hidden bg-black/5">
+            <div className="relative aspect-[21/9] w-full overflow-hidden bg-muted">
               <Image
                 alt={event.title}
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -125,8 +125,8 @@ export function EventCard({ event }: { event: EventFeedItem }) {
               ) : null}
             </div>
 
-            <div className="relative bg-white p-5">
-              <h2 className="mb-1 line-clamp-2 text-[22px] leading-[1.2] font-bold tracking-tight text-gray-900">
+            <div className="relative bg-card-bg p-5 transition-colors duration-300">
+              <h2 className="mb-1 line-clamp-2 text-[22px] leading-[1.2] font-bold tracking-tight text-foreground">
                 {event.title}
               </h2>
               <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -140,16 +140,16 @@ export function EventCard({ event }: { event: EventFeedItem }) {
               </div>
 
               <div className="mt-4 mb-5 flex flex-col gap-2">
-                <div className="flex items-center gap-2.5 text-[14px] font-medium text-gray-600">
+                <div className="flex items-center gap-2.5 text-[14px] font-medium text-muted-foreground">
                   <Calendar className="h-4 w-4 shrink-0 text-blue-600" />
                   <span>{formatEventDateMeta(event.date)}</span>
                 </div>
-                <div className="flex items-center gap-2.5 text-[14px] text-gray-500">
-                  <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
+                <div className="flex items-center gap-2.5 text-[14px] text-muted-foreground">
+                  <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
                   <span className="truncate">{event.location}</span>
                 </div>
-                <div className="flex items-center gap-2.5 text-[14px] text-gray-500">
-                  <span className="font-medium text-gray-600">
+                <div className="flex items-center gap-2.5 text-[14px] text-muted-foreground">
+                  <span className="font-medium text-muted-foreground">
                     Register by:
                   </span>
                   <span>
@@ -170,12 +170,12 @@ export function EventCard({ event }: { event: EventFeedItem }) {
       </article>
 
       {isDetailsOpen ? (
-        <DrawerContent className="max-h-[88vh] rounded-t-[24px] border-[rgba(0,0,0,0.1)] bg-white">
+        <DrawerContent className="max-h-[88vh] rounded-t-[24px] border-whisper bg-card-bg transition-colors duration-300">
           <DrawerHeader className="text-left">
-            <DrawerTitle className="text-[22px] font-bold tracking-tight text-black/95">
+            <DrawerTitle className="text-[22px] font-bold tracking-tight text-foreground">
               {event.title}
             </DrawerTitle>
-            <DrawerDescription className="text-[14px] font-medium text-[#615d59]">
+            <DrawerDescription className="text-[14px] font-medium text-muted-foreground">
               {formatEventDateMeta(event.date)} · {event.location}
             </DrawerDescription>
           </DrawerHeader>

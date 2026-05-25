@@ -21,13 +21,13 @@ export function HappeningThisWeekCarousel() {
       <section className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           <CalendarClock className="h-5 w-5 text-[#dd5b00]" />
-          <h2 className="text-[22px] font-bold tracking-[-0.25px] text-black/95">Happening This Week</h2>
+          <h2 className="text-[22px] font-bold tracking-[-0.25px] text-foreground">Happening This Week</h2>
         </div>
         <div className="flex gap-3 overflow-hidden">
           {Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="h-[132px] min-w-[260px] animate-pulse rounded-2xl border border-black/10 bg-[#f6f5f4]"
+              className="h-[132px] min-w-[260px] animate-pulse rounded-2xl border border-whisper bg-app-bg"
             />
           ))}
         </div>
@@ -43,7 +43,7 @@ export function HappeningThisWeekCarousel() {
     <section className="flex flex-col gap-4">
       <div className="flex items-center gap-2 px-1 md:px-0">
         <CalendarClock className="h-5 w-5 text-[#dd5b00]" />
-        <h2 className="text-[22px] font-bold tracking-[-0.25px] text-black/95">Happening This Week</h2>
+        <h2 className="text-[22px] font-bold tracking-[-0.25px] text-foreground">Happening This Week</h2>
       </div>
 
       <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 hide-scrollbar">
@@ -60,17 +60,17 @@ export function HappeningThisWeekCarousel() {
           return (
             <article
               key={event.id}
-              className="min-w-[260px] snap-start rounded-2xl border border-[#f0c9ac] bg-gradient-to-br from-[#fff8f3] to-[#ffeede] p-4 shadow-[0_10px_24px_rgba(0,0,0,0.04)]"
+              className="min-w-[260px] snap-start rounded-2xl border border-[#f0c9ac] dark:border-[#7c2d12]/50 bg-gradient-to-br from-[#fff8f3] to-[#ffeede] dark:from-[#2e1c14] dark:to-[#1e130d] p-4 shadow-[0_10px_24px_rgba(0,0,0,0.04)] transition-all duration-300"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a14a13]">{formatHappeningDay(event.date)}</p>
-              <p className="mt-1 text-[24px] font-bold leading-none tracking-tight text-[#7c2d12]">{formatHappeningTime(event.date)}</p>
-              <h3 className="mt-4 line-clamp-2 text-[16px] font-bold leading-tight text-black/90">{event.title}</h3>
-              <p className="mt-1 text-[13px] font-medium text-[#615d59]">{event.club.name} • {event.location}</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a14a13] dark:text-[#ffb07a]">{formatHappeningDay(event.date)}</p>
+              <p className="mt-1 text-[24px] font-bold leading-none tracking-tight text-[#7c2d12] dark:text-[#ffa87d]">{formatHappeningTime(event.date)}</p>
+              <h3 className="mt-4 line-clamp-2 text-[16px] font-bold leading-tight text-foreground/90">{event.title}</h3>
+              <p className="mt-1 text-[13px] font-medium text-muted-foreground">{event.club.name} • {event.location}</p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Badge variant={getRegistrationAvailabilityBadgeVariant(availability)}>
                   {getRegistrationAvailabilityLabel(availability)}
                 </Badge>
-                <span className="text-[12px] font-medium text-[#7a5a49]">
+                <span className="text-[12px] font-medium text-[#7a5a49] dark:text-[#c4a18f]">
                   Register by: {formatRegistrationDeadline(event.registrationClosesAt)}
                 </span>
               </div>

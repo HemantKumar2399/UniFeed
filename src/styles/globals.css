@@ -1,16 +1,45 @@
-/* =======================================================================
-   CAMPUS PLATFORM — TACTILE UTILITY DESIGN SYSTEM
-   Story 6.1: Typography & Color Token Definition
-   Reference: DESIGN.md — Notion-inspired warm neutrals + whisper borders
-   ======================================================================= */
-
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* -----------------------------------------------------------------------
-   FONT: Inter from Google Fonts (NotionInter-equivalent characteristics)
-   Loaded via layout.tsx — variable available as --font-inter
+   DYNAMIC CSS THEME VARIABLES
+   Declares variables that change values depending on the presence of .dark
    ----------------------------------------------------------------------- */
+:root {
+  --background: #ffffff;
+  --foreground: rgba(0, 0, 0, 0.95);
+  
+  --card-bg: #ffffff;
+  --card-foreground: rgba(0, 0, 0, 0.95);
+  
+  --muted: rgba(0, 0, 0, 0.05);
+  --muted-foreground: #615d59; /* Warm Gray 500 */
+  
+  --border-whisper-color: rgba(0, 0, 0, 0.1);
+  --border-input-color: #dddddd;
+  
+  --app-bg: #f6f5f4;
+  --warm-white-dynamic: #f6f5f4;
+}
+
+.dark {
+  --background: #191919;
+  --foreground: rgba(255, 255, 255, 0.95);
+  
+  --card-bg: #202020;
+  --card-foreground: rgba(255, 255, 255, 0.95);
+  
+  --muted: rgba(255, 255, 255, 0.08);
+  --muted-foreground: #a39e98; /* Warm Gray 300 */
+  
+  --border-whisper-color: rgba(255, 255, 255, 0.1);
+  --border-input-color: #333333;
+  
+  --app-bg: #121212;
+  --warm-white-dynamic: #1a1a19;
+}
 
 /* -----------------------------------------------------------------------
    TAILWIND v4 THEME TOKENS
@@ -25,17 +54,17 @@
   /* --- WARM NEUTRAL PALETTE (Notion-inspired, yellow-brown undertones) --- */
 
   /* Primary surfaces */
-  --color-pure-white: #ffffff;
-  --color-warm-white: #f6f5f4;
+  --color-pure-white: var(--card-bg);
+  --color-warm-white: var(--warm-white-dynamic);
 
   /* Primary text — near-black, not pure black (micro-warmth) */
-  --color-notion-black: rgba(0, 0, 0, 0.95);
+  --color-notion-black: var(--foreground);
 
   /* Warm dark surface (dark sections, footer) */
   --color-warm-dark: #31302e;
 
   /* Warm gray scale */
-  --color-warm-gray-500: #615d59; /* Secondary text, descriptions */
+  --color-warm-gray-500: var(--muted-foreground); /* Secondary text, descriptions */
   --color-warm-gray-300: #a39e98; /* Placeholder, disabled, captions */
 
   /* --- BRAND: NOTION BLUE (singular saturated accent) --- */
@@ -51,11 +80,11 @@
   --color-badge-text: #097fe8; /* Pill badge text */
 
   /* --- ALIASES FOR SHADCN UI --- */
-  --color-background: var(--color-pure-white);
-  --color-foreground: var(--color-notion-black);
-  --color-muted: rgba(0, 0, 0, 0.05);
-  --color-muted-foreground: var(--color-warm-gray-500);
-  --color-border: rgba(0, 0, 0, 0.1);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border-whisper-color);
   --color-ring: var(--color-focus-blue);
 
   /* --- SEMANTIC ACCENT COLORS --- */
@@ -66,10 +95,14 @@
   --color-purple: #391c57; /* Premium features */
   --color-brown: #523410; /* Earthy accent */
 
+  /* --- NEW DYNAMIC THEME ALIASES --- */
+  --color-app-bg: var(--app-bg);
+  --color-card-bg: var(--card-bg);
+
   /* --- BORDER TOKENS --- */
   /* "Whisper Border" — the defining Notion aesthetic element */
-  --border-whisper: 1px solid rgba(0, 0, 0, 0.1);
-  --border-input: 1px solid #dddddd;
+  --border-whisper: 1px solid var(--border-whisper-color);
+  --border-input: 1px solid var(--border-input-color);
   --border-focus: 2px solid var(--color-focus-blue);
 
   /* --- BORDER RADIUS SCALE --- */

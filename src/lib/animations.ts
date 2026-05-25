@@ -64,7 +64,7 @@ export const SMOOTH_TRANSITION_CLASSES =
  * Skeleton pulse animation — matches globals.css @keyframes skeleton-pulse
  */
 export const SKELETON_PULSE_CLASSES =
-  "animate-pulse bg-[rgba(0,0,0,0.06)] rounded" as const;
+  "animate-pulse bg-muted rounded" as const;
 
 /**
  * Fade-in — used for bottom sheets, dialogs, overlays
@@ -108,9 +108,9 @@ export function hapticClass(...classes: Parameters<typeof cn>): string {
 export function interactiveCardClass(...classes: Parameters<typeof cn>): string {
   return cn(
     // Surface
-    "bg-white border border-[rgba(0,0,0,0.1)] rounded-[12px]",
+    "bg-card-bg border border-whisper rounded-[12px] transition-colors duration-300",
     // Base shadow
-    "shadow-[rgba(0,0,0,0.04)_0px_4px_18px,rgba(0,0,0,0.027)_0px_2.025px_7.85px,rgba(0,0,0,0.02)_0px_0.8px_2.93px,rgba(0,0,0,0.01)_0px_0.175px_1.04px]",
+    "shadow-card",
     // Hover: slightly deeper shadow (shadow intensification)
     "motion-safe:hover:shadow-[rgba(0,0,0,0.07)_0px_8px_24px,rgba(0,0,0,0.04)_0px_4px_8px]",
     // Haptic transform

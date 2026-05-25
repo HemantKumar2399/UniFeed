@@ -70,10 +70,10 @@ export default async function PassportPage() {
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="px-1 md:px-0">
-        <h1 className="text-[40px] md:text-[48px] font-bold text-black/95 leading-[1.1] tracking-[-1.5px] mb-2">
+        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px] mb-2">
           Student Passport
         </h1>
-        <p className="text-[16px] text-[#615d59] font-medium leading-relaxed">
+        <p className="text-[16px] text-muted-foreground font-medium leading-relaxed">
           Your persistent campus identity and secured event access.
         </p>
       </header>
@@ -168,14 +168,14 @@ export default async function PassportPage() {
             </p>
           </div>
         ) : (
-          <div className="rounded-[20px] border border-[#dddddd] bg-white p-5 shadow-sm">
+          <div className="rounded-[20px] border border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[10px] bg-[#f6f5f4] border border-black/5 flex items-center justify-center">
-                <Ticket className="w-5 h-5 text-[#615d59]" />
+              <div className="w-10 h-10 rounded-[10px] bg-app-bg border border-whisper flex items-center justify-center transition-colors duration-300">
+                <Ticket className="w-5 h-5 text-muted-foreground" />
               </div>
               <div>
-                <h3 className="text-[17px] font-bold tracking-tight text-black/95">Passport QR not ready yet</h3>
-                <p className="text-[14px] text-[#615d59] font-medium">
+                <h3 className="text-[17px] font-bold tracking-tight text-foreground">Passport QR not ready yet</h3>
+                <p className="text-[14px] text-muted-foreground font-medium">
                   Your profile exists, but an active student passport QR has not been issued yet.
                 </p>
               </div>
@@ -185,38 +185,38 @@ export default async function PassportPage() {
       </section>
 
       <section className="px-1 md:px-0">
-        <div className="rounded-[24px] border border-black/10 bg-white p-5 shadow-sm">
+        <div className="rounded-[24px] border border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">My Registrations</p>
-              <h3 className="mt-2 text-[22px] font-bold tracking-tight text-black/95">Active event access</h3>
-              <p className="mt-1 text-[14px] font-medium text-[#615d59]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">My Registrations</p>
+              <h3 className="mt-2 text-[22px] font-bold tracking-tight text-foreground">Active event access</h3>
+              <p className="mt-1 text-[14px] font-medium text-muted-foreground">
                 These registrations use your permanent passport QR at the venue.
               </p>
             </div>
-            <div className="rounded-[14px] bg-[#f6f5f4] px-4 py-3 text-right">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Count</p>
-              <p className="mt-1 text-[22px] font-bold tracking-tight text-black/95">{activeRegistrations.length}</p>
+            <div className="rounded-[14px] bg-app-bg px-4 py-3 text-right transition-colors duration-300">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">Count</p>
+              <p className="mt-1 text-[22px] font-bold tracking-tight text-foreground">{activeRegistrations.length}</p>
             </div>
           </div>
 
           <div className="mt-5 space-y-3">
             {activeRegistrations.length === 0 ? (
-              <div className="rounded-[18px] border border-black/10 bg-[#fcfbfa] px-4 py-5 text-sm font-medium text-[#615d59]">
+              <div className="rounded-[18px] border border-whisper bg-app-bg px-4 py-5 text-sm font-medium text-muted-foreground transition-colors duration-300">
                 Your passport is ready. RSVP to an event to see active registrations here.
               </div>
             ) : (
               activeRegistrations.map((registration) => (
                 <article
                   key={registration.id}
-                  className="flex flex-col gap-4 rounded-[20px] border border-black/10 bg-[#fcfbfa] px-4 py-4 md:flex-row md:items-center md:justify-between"
+                  className="flex flex-col gap-4 rounded-[20px] border border-whisper bg-app-bg px-4 py-4 md:flex-row md:items-center md:justify-between transition-colors duration-300"
                 >
                   <div>
-                    <p className="text-[17px] font-semibold text-black/95">{registration.event.title}</p>
-                    <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                    <p className="text-[17px] font-semibold text-foreground">{registration.event.title}</p>
+                    <p className="mt-1 text-[13px] font-medium text-muted-foreground">
                       {registration.event.club.name} • {registration.event.location}
                     </p>
-                    <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                    <p className="mt-1 text-[13px] font-medium text-muted-foreground">
                       {new Intl.DateTimeFormat("en-US", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -224,11 +224,11 @@ export default async function PassportPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#f2f9ff] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-[#097fe8]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-primary">
                       <CalendarClock className="h-3.5 w-3.5" />
                       {registration.status}
                     </span>
-                    <span className="inline-flex rounded-full border border-black/10 bg-white px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-black/70">
+                    <span className="inline-flex rounded-full border border-whisper bg-card-bg px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                       {registration.event.status}
                     </span>
                   </div>

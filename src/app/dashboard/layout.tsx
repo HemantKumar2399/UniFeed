@@ -21,7 +21,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-warm-white text-notion-black overflow-x-hidden antialiased">
+    <div className="min-h-screen bg-app-bg text-foreground overflow-x-hidden antialiased transition-colors duration-300">
       <PremiumOrganizerShell userName={session.user.name} userRole={session.user.role}>
         {children}
       </PremiumOrganizerShell>

@@ -120,8 +120,8 @@ export function HubsDirectorySection() {
   return (
     <section className="px-1 md:px-0">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-[22px] font-bold text-black/95 tracking-[-0.25px]">Hubs Directory</h2>
-        <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#a39e98]">Campus Hubs</span>
+        <h2 className="text-[22px] font-bold text-foreground tracking-[-0.25px]">Hubs Directory</h2>
+        <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Campus Hubs</span>
       </div>
 
       {isLoading ? (
@@ -129,15 +129,15 @@ export function HubsDirectorySection() {
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={`hub-skeleton-${index}`}
-              className="h-[164px] animate-pulse rounded-[16px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4]"
+              className="h-[164px] animate-pulse rounded-[16px] border border-whisper bg-app-bg"
             />
           ))}
         </div>
       ) : null}
 
       {!isLoading && isError ? (
-        <div className="rounded-[16px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-6 text-center">
-          <p className="text-[14px] font-medium text-[#615d59]">We could not load hubs right now. Please refresh.</p>
+        <div className="rounded-[16px] border border-whisper bg-app-bg p-6 text-center">
+          <p className="text-[14px] font-medium text-muted-foreground">We could not load hubs right now. Please refresh.</p>
         </div>
       ) : null}
 
@@ -146,23 +146,23 @@ export function HubsDirectorySection() {
           {featuredClubs.map((club) => (
             <article
               key={`featured-${club.id}`}
-              className="rounded-[16px] border border-[rgba(0,0,0,0.1)] bg-white p-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)]"
+              className="rounded-[16px] border border-whisper bg-card-bg p-4 shadow-[0_8px_20px_rgba(0,0,0,0.04)] transition-colors duration-300"
             >
-              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-[#fff4e5] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a85a00]">
+              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-[#fff4e5] dark:bg-orange-950/20 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a85a00] dark:text-orange-400">
                 <Flame className="h-3.5 w-3.5" />
                 Featured Hub
               </div>
-              <h3 className="text-[18px] font-bold tracking-tight text-black/95">{club.name}</h3>
-              <p className="mt-1 text-[13px] font-medium text-[#615d59]">{club.followerCount} followers · {club.eventCount} events</p>
-              <p className="mt-2 text-[13px] text-[#4f4a45]">{getFollowHook(club as HubItem)}</p>
+              <h3 className="text-[18px] font-bold tracking-tight text-foreground">{club.name}</h3>
+              <p className="mt-1 text-[13px] font-medium text-muted-foreground">{club.followerCount} followers · {club.eventCount} events</p>
+              <p className="mt-2 text-[13px] text-foreground/80">{getFollowHook(club as HubItem)}</p>
             </article>
           ))}
         </div>
       ) : null}
 
       {!isLoading && !isError && recentlyUpdatedClubs.length ? (
-        <div className="mb-4 rounded-[16px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4">
-          <div className="mb-3 inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">
+        <div className="mb-4 rounded-[16px] border border-whisper bg-app-bg p-4 transition-colors duration-300">
+          <div className="mb-3 inline-flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5" />
             Recently Updated
           </div>
@@ -170,7 +170,7 @@ export function HubsDirectorySection() {
             {recentlyUpdatedClubs.map((club) => (
               <span
                 key={`updated-${club.id}`}
-                className="rounded-full border border-[rgba(0,0,0,0.1)] bg-white px-3 py-1.5 text-[12px] font-medium text-[#4f4a45]"
+                className="rounded-full border border-whisper bg-card-bg px-3 py-1.5 text-[12px] font-medium text-foreground/80 transition-colors"
               >
                 {club.name} · {formatUpdatedAt(club.updatedAt)}
               </span>
@@ -188,17 +188,17 @@ export function HubsDirectorySection() {
             return (
               <article
                 key={club.id}
-                className="rounded-[16px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4 shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
+                className="rounded-[16px] border border-whisper bg-card-bg p-4 shadow-[0_2px_8px_rgba(0,0,0,0.03)] transition-colors duration-300"
               >
                 <div className="mb-4 flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-white text-[#1f1f1f]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-app-bg text-foreground border border-whisper transition-colors">
                       <Building2 className="h-5 w-5" />
                     </div>
 
                     <div>
-                      <h3 className="text-[17px] font-bold tracking-tight text-black/95">{club.name}</h3>
-                      <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                      <h3 className="text-[17px] font-bold tracking-tight text-foreground">{club.name}</h3>
+                      <p className="mt-1 text-[13px] font-medium text-muted-foreground">
                         {club.eventCount} events · {club.followerCount} followers · {club.blockCount} resources
                       </p>
                     </div>
@@ -211,8 +211,8 @@ export function HubsDirectorySection() {
                     disabled={followHub.isPending}
                     onClick={() => followHub.mutate({ clubId: club.id })}
                     className={cn(
-                      "min-w-[110px] border border-transparent transition-transform duration-haptic",
-                      isFollowed && "border-[rgba(0,0,0,0.08)] bg-white text-[#615d59] hover:bg-black/5 hover:text-black",
+                      "min-w-[110px] border border-transparent transition-transform duration-haptic cursor-pointer",
+                      isFollowed && "border-whisper bg-card-bg text-muted-foreground hover:bg-muted hover:text-foreground",
                       isHaptic && "scale-95",
                     )}
                   >
@@ -220,15 +220,15 @@ export function HubsDirectorySection() {
                   </Button>
                 </div>
 
-                <div className="mb-4 rounded-[12px] border border-[rgba(0,0,0,0.08)] bg-white/90 px-3 py-2">
+                <div className="mb-4 rounded-[12px] border border-whisper bg-app-bg px-3 py-2 transition-colors">
                   {club.nextEvent ? (
-                    <p className="text-[13px] font-medium text-[#4f4a45]">
-                      Next: <span className="font-semibold text-black/90">{club.nextEvent.title}</span> · {formatHubEventDate(club.nextEvent.date)}
+                    <p className="text-[13px] font-medium text-foreground/80">
+                      Next: <span className="font-semibold text-foreground">{club.nextEvent.title}</span> · {formatHubEventDate(club.nextEvent.date)}
                     </p>
                   ) : (
-                    <p className="text-[13px] font-medium text-[#7a746d]">No upcoming event yet.</p>
+                    <p className="text-[13px] font-medium text-muted-foreground">No upcoming event yet.</p>
                   )}
-                  <p className="mt-2 text-[12px] text-[#8a847d]">Updated {formatUpdatedAt(club.updatedAt)} · {getFollowHook(club as HubItem)}</p>
+                  <p className="mt-2 text-[12px] text-muted-foreground">Updated {formatUpdatedAt(club.updatedAt)} · {getFollowHook(club as HubItem)}</p>
                 </div>
 
                 <Link
@@ -245,9 +245,9 @@ export function HubsDirectorySection() {
       ) : null}
 
       {!isLoading && !isError && !clubs?.length ? (
-        <div className="rounded-[16px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-6 text-center">
-          <Users className="mx-auto mb-3 h-5 w-5 text-[#8a847d]" />
-          <p className="text-[14px] font-medium text-[#615d59]">No hubs available yet.</p>
+        <div className="rounded-[16px] border border-whisper bg-app-bg p-6 text-center">
+          <Users className="mx-auto mb-3 h-5 w-5 text-muted-foreground" />
+          <p className="text-[14px] font-medium text-muted-foreground">No hubs available yet.</p>
         </div>
       ) : null}
     </section>

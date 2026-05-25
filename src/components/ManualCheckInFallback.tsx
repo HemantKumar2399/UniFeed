@@ -58,26 +58,26 @@ export function ManualCheckInFallback({
   });
 
   return (
-    <section className="rounded-[20px] border border-[var(--border-whisper)] bg-pure-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold text-notion-black">Manual Fallback</h2>
-      <p className="mt-1 text-sm text-warm-gray-500">
+    <div className="rounded-[20px] border border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300">
+      <h2 className="text-lg font-semibold text-foreground">Manual Fallback</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
         Search by student name, email, or PRN and confirm a manual check-in when QR scanning fails.
       </p>
 
       <div className="mt-4 flex items-center gap-2">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search name, email, or PRN"
-            className="h-10 w-full rounded-[12px] border border-[var(--border-input)] pl-9 pr-3 text-sm outline-none focus-visible:border-[var(--color-focus-blue)]"
+            className="h-10 w-full rounded-[12px] border border-input bg-card-bg pl-9 pr-3 text-sm text-foreground outline-none focus-visible:border-[var(--color-focus-blue)] transition-colors"
           />
         </div>
       </div>
 
       {normalizedQuery.length < 2 ? (
-        <p className="mt-3 text-xs text-warm-gray-500">
+        <p className="mt-3 text-xs text-muted-foreground">
           Type at least 2 characters to search attendees.
         </p>
       ) : null}
@@ -85,7 +85,7 @@ export function ManualCheckInFallback({
       {isFetching ? (
         <div
           aria-live="polite"
-          className="mt-3 inline-flex items-center gap-2 text-sm text-warm-gray-500"
+          className="mt-3 inline-flex items-center gap-2 text-sm text-muted-foreground"
         >
           <Loader2 className="h-4 w-4 animate-spin" />
           Searching attendees...
@@ -95,7 +95,7 @@ export function ManualCheckInFallback({
       {normalizedQuery.length >= 2 && !isFetching ? (
         <div className="mt-3 space-y-2">
           {(results ?? []).length === 0 ? (
-            <p className="text-sm text-warm-gray-500">No attendees match your query.</p>
+            <p className="text-sm text-muted-foreground">No attendees match your query.</p>
           ) : (
             (results ?? []).map((attendee) => {
               const alreadyCheckedIn = attendee.status === "ATTENDED";
@@ -105,17 +105,17 @@ export function ManualCheckInFallback({
               return (
                 <div
                   key={attendee.rsvpId}
-                  className="flex items-center justify-between gap-3 rounded-[12px] border border-[var(--border-whisper)] px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-[12px] border border-whisper px-3 py-2 transition-colors"
                 >
                   <div>
-                    <p className="text-sm font-semibold text-notion-black">
+                    <p className="text-sm font-semibold text-foreground">
                       {attendee.name ?? attendee.email ?? "Unknown"}
                     </p>
-                    <p className="text-xs text-warm-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {attendee.email ?? "No email"}
                       {attendee.prn ? ` • ${attendee.prn}` : " • Profile missing"}
                     </p>
-                    <p className="mt-1 text-xs text-warm-gray-500">
+                    <p className="mt-1 text-xs text-muted-foreground/80">
                       {formatAcademicSummary(attendee)}
                     </p>
                   </div>
@@ -129,7 +129,7 @@ export function ManualCheckInFallback({
                           onClick={() => {
                             forceCheckIn.mutate({ eventId, userId: attendee.userId });
                           }}
-                          className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-notion-black px-3 text-xs font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-foreground px-3 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <UserCheck className="h-3.5 w-3.5" />
                           {forceCheckIn.isPending ? "Saving..." : "Confirm"}
@@ -138,7 +138,7 @@ export function ManualCheckInFallback({
                           type="button"
                           disabled={forceCheckIn.isPending}
                           onClick={() => setConfirmingRsvpId(null)}
-                          className="inline-flex h-9 items-center gap-1 rounded-[10px] border border-[var(--border-input)] px-3 text-xs font-semibold text-notion-black transition-colors hover:bg-warm-white disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex h-9 items-center gap-1 rounded-[10px] border border-input px-3 text-xs font-semibold text-foreground transition-all hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
                         >
                           <X className="h-3.5 w-3.5" />
                           Cancel
@@ -149,7 +149,7 @@ export function ManualCheckInFallback({
                         type="button"
                         disabled={!canCheckIn || forceCheckIn.isPending}
                         onClick={() => setConfirmingRsvpId(attendee.rsvpId)}
-                        className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-notion-black px-3 text-xs font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-foreground px-3 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <UserCheck className="h-3.5 w-3.5" />
                         {alreadyCheckedIn
@@ -166,6 +166,6 @@ export function ManualCheckInFallback({
           )}
         </div>
       ) : null}
-    </section>
+    </div>
   );
 }

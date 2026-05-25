@@ -38,20 +38,20 @@ function StatusCard(props: {
   description: string;
 }) {
   return (
-    <article className="rounded-[24px] border border-black/10 bg-white p-5 shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
+    <article className="rounded-[24px] border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">{props.title}</p>
-          <p className="mt-3 text-[30px] font-bold tracking-tight text-black/95">{props.count}</p>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{props.title}</p>
+          <p className="mt-3 text-[30px] font-bold tracking-tight text-foreground">{props.count}</p>
         </div>
         <Link
           href={props.href}
-          className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-[12px] font-semibold text-black/75 transition-colors hover:bg-black/5"
+          className="rounded-full border-whisper bg-app-bg px-3 py-1.5 text-[12px] font-semibold text-foreground/80 transition-colors hover:bg-muted"
         >
           {props.ctaLabel}
         </Link>
       </div>
-      <p className="mt-4 text-[13px] font-medium leading-relaxed text-[#615d59]">{props.description}</p>
+      <p className="mt-4 text-[13px] font-medium leading-relaxed text-muted-foreground">{props.description}</p>
     </article>
   );
 }
@@ -76,11 +76,11 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="flex flex-col justify-between gap-4 px-1 md:flex-row md:items-end md:px-0">
         <div>
-          <p className="mb-1 text-[14px] font-semibold uppercase tracking-wider text-[#a39e98]">Command Center</p>
-          <h1 className="text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-black/95 md:text-[48px]">
+          <p className="mb-1 text-[14px] font-semibold uppercase tracking-wider text-muted-foreground">Command Center</p>
+          <h1 className="text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-foreground md:text-[48px]">
             Overview
           </h1>
-          <p className="mt-2 max-w-3xl text-[16px] font-medium leading-relaxed text-[#615d59]">
+          <p className="mt-2 max-w-3xl text-[16px] font-medium leading-relaxed text-muted-foreground">
             {organizerName}, this view now reflects your live event pipeline, RSVP volume, and the attendee activity that needs attention next.
           </p>
         </div>
@@ -99,13 +99,13 @@ export default async function DashboardPage() {
             <Link
               key={card.href}
               href={card.href}
-              className="rounded-[24px] border border-black/10 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.06)]"
+              className="rounded-[24px] border-whisper bg-card-bg p-5 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-deep"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f2f9ff] text-[#097fe8]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-notion-blue dark:text-blue-400">
                 <card.icon className="h-5 w-5" />
               </div>
-              <h2 className="mt-5 text-[20px] font-bold tracking-tight text-black/95">{card.title}</h2>
-              <p className="mt-2 text-[14px] font-medium leading-relaxed text-[#615d59]">{card.description}</p>
+              <h2 className="mt-5 text-[20px] font-bold tracking-tight text-foreground">{card.title}</h2>
+              <p className="mt-2 text-[14px] font-medium leading-relaxed text-muted-foreground">{card.description}</p>
             </Link>
           ))}
         </section>
@@ -130,8 +130,8 @@ export default async function DashboardPage() {
 
       <section className="space-y-4">
         <div className="px-1 md:px-0">
-          <h2 className="text-[26px] font-bold tracking-tight text-black/95">Status Lanes</h2>
-          <p className="mt-1 text-[14px] font-medium leading-relaxed text-[#615d59]">
+          <h2 className="text-[26px] font-bold tracking-tight text-foreground">Status Lanes</h2>
+          <p className="mt-1 text-[14px] font-medium leading-relaxed text-muted-foreground">
             Each lane points to the exact event tab you should open next.
           </p>
         </div>

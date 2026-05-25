@@ -40,7 +40,7 @@ export function HubFollowButton({ clubId, initialIsFollowed, className }: HubFol
       onClick={() => toggleFollow.mutate({ clubId })}
       className={cn(
         "min-w-[100px] border border-transparent transition-all",
-        isFollowed && "border-[rgba(0,0,0,0.08)] bg-white text-[#615d59] hover:bg-black/5 hover:text-black",
+        isFollowed && "border-whisper bg-card-bg text-muted-foreground hover:bg-muted hover:text-foreground",
         className
       )}
     >

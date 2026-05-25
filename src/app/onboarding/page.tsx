@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { OnboardingForm } from "./OnboardingForm";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -270,27 +271,27 @@ export default async function OnboardingPage() {
       </aside>
 
       {/* ═══════════════════════════════════════════════════════
-          RIGHT PANEL  ·  Pure white — form, no scroll leak
+          RIGHT PANEL  ·  Dynamic card background — form, no scroll leak
       ═══════════════════════════════════════════════════════ */}
       <section
-        className="flex-1 flex flex-col bg-white h-full overflow-hidden"
+        className="flex-1 flex flex-col bg-card-bg h-full overflow-hidden transition-colors duration-300"
         style={{ minWidth: 0 }}
       >
-        {/* Mobile top bar (desktop left panel replaces this) */}
+        {/* Right panel header holding ThemeToggle */}
         <div
-          className="lg:hidden flex-shrink-0 flex items-center justify-between px-6 py-4 bg-white"
-          style={{ borderBottom: "1px solid rgba(0,0,0,0.07)" }}
+          className="flex-shrink-0 flex items-center justify-between lg:justify-end px-6 py-4 bg-card-bg border-b border-whisper lg:border-none transition-colors duration-300"
         >
-          <span className="text-[17px] font-bold tracking-tight flex items-center gap-2"
-                style={{ color: "rgba(0,0,0,0.9)" }}>
+          <span className="lg:hidden text-[17px] font-bold tracking-tight flex items-center gap-2 text-foreground">
             ⚡ UniFeed
           </span>
-          <span
-            className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
-            style={{ backgroundColor: "#f0f9ff", color: "#0075de", border: "1px solid rgba(0,117,222,0.15)" }}
-          >
-            Onboarding
-          </span>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <span
+              className="lg:hidden text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-app-bg text-[#0075de] border border-input transition-colors duration-300"
+            >
+              Onboarding
+            </span>
+          </div>
         </div>
 
         {/* Form — min-h-0 + overflow-y-auto = only this scrolls on tiny screens */}

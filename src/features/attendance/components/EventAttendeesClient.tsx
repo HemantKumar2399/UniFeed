@@ -27,15 +27,15 @@ function sanitizeFilenamePart(value: string): string {
 function getStatusBadgeClass(status: string): string {
   switch (status) {
     case "ATTENDED":
-      return "bg-notion-blue text-pure-white";
+      return "bg-notion-blue text-white";
     case "GOING":
-      return "bg-green-50 text-green-700";
+      return "bg-green-500/10 text-green-600 dark:text-green-400";
     case "WAITLISTED":
-      return "bg-amber-100 text-amber-800";
+      return "bg-amber-500/10 text-amber-600 dark:text-amber-400";
     case "CANCELLED":
-      return "bg-rose-100 text-rose-700";
+      return "bg-rose-500/10 text-rose-600 dark:text-rose-400";
     default:
-      return "bg-warm-white text-warm-gray-500";
+      return "bg-muted text-muted-foreground";
   }
 }
 
@@ -144,23 +144,23 @@ export function EventAttendeesClient({
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-notion-black">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground animate-in fade-in duration-300">
             {event?.title ?? "Attendees"}
           </h2>
-          <p className="mt-1 text-sm text-warm-gray-500">
-            <span className="font-semibold text-notion-black">{counts.all}</span> registered,{" "}
-            <span className="font-semibold text-notion-black">{counts.attended}</span> checked in.
+          <p className="mt-1 text-sm text-muted-foreground">
+            <span className="font-semibold text-foreground">{counts.all}</span> registered,{" "}
+            <span className="font-semibold text-foreground">{counts.attended}</span> checked in.
           </p>
           {filters.q || filters.status !== "ALL" ? (
-            <p className="mt-1 text-sm text-warm-gray-500">
-              Showing <span className="font-semibold text-notion-black">{attendees.length}</span>{" "}
+            <p className="mt-1 text-sm text-muted-foreground">
+              Showing <span className="font-semibold text-foreground">{attendees.length}</span>{" "}
               attendee{attendees.length === 1 ? "" : "s"} in the current filter view.
             </p>
           ) : null}
         </div>
 
         <button
-          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-pure-white shadow-none transition-colors duration-haptic hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50 active:scale-95"
+          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-white shadow-none transition-all hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50 active:scale-95"
           disabled={attendees.length === 0}
           onClick={handleExportCsv}
           type="button"
@@ -170,33 +170,33 @@ export function EventAttendeesClient({
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-[var(--radius-comfortable)] border border-[var(--border-whisper)] shadow-none">
+      <div className="overflow-hidden rounded-[var(--radius-comfortable)] border border-whisper shadow-none transition-colors duration-300">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="border-b border-[var(--border-whisper)] bg-warm-white text-left">
+            <thead className="border-b border-whisper bg-app-bg text-left transition-colors duration-300">
               <tr>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-muted-foreground">
                   Name
                 </th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-muted-foreground">
                   PRN
                 </th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-muted-foreground">
                   Academic Profile
                 </th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-badge text-muted-foreground">
                   Status
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-badge text-muted-foreground">
                   Check In
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border-whisper)] bg-pure-white">
+            <tbody className="divide-y divide-whisper bg-card-bg transition-colors duration-300">
               {attendees.length === 0 ? (
                 <tr>
                   <td
-                    className="bg-pure-white px-6 py-12 text-center text-warm-gray-500"
+                    className="bg-card-bg px-6 py-12 text-center text-muted-foreground"
                     colSpan={5}
                   >
                     <p className="font-medium">No attendees match this view.</p>
@@ -208,23 +208,23 @@ export function EventAttendeesClient({
 
                   return (
                     <tr
-                      className={`transition-colors duration-200 hover:bg-warm-white/50 ${
-                        isCheckedIn ? "bg-teal-50/40" : ""
+                      className={`transition-colors duration-200 hover:bg-muted/40 ${
+                        isCheckedIn ? "bg-emerald-500/5 dark:bg-emerald-500/10" : ""
                       }`}
                       key={attendee.rsvpId}
                     >
                       <td className="px-6 py-4 align-middle">
-                        <div className="font-semibold text-notion-black">
+                        <div className="font-semibold text-foreground">
                           {attendee.name ?? attendee.email?.split("@")[0] ?? "Unknown User"}
                         </div>
-                        <div className="mt-0.5 text-xs text-warm-gray-500">
+                        <div className="mt-0.5 text-xs text-muted-foreground/80">
                           {attendee.email ?? "No email on file"}
                         </div>
                       </td>
-                      <td className="px-6 py-4 align-middle font-mono text-xs text-warm-gray-500">
+                      <td className="px-6 py-4 align-middle font-mono text-xs text-muted-foreground">
                         {attendee.prn ?? "Profile missing"}
                       </td>
-                      <td className="px-6 py-4 align-middle text-warm-gray-500">
+                      <td className="px-6 py-4 align-middle text-muted-foreground">
                         {formatAcademicProfile(attendee)}
                       </td>
                       <td className="px-6 py-4 align-middle">
@@ -240,8 +240,8 @@ export function EventAttendeesClient({
                         <span
                           className={`inline-flex min-w-[110px] items-center justify-center rounded-pill px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge ${
                             isCheckedIn
-                              ? "bg-notion-blue text-pure-white"
-                              : "bg-warm-white text-warm-gray-500"
+                              ? "bg-notion-blue text-white"
+                              : "bg-muted text-muted-foreground"
                           }`}
                         >
                           {isCheckedIn ? "Checked In" : "Not Checked In"}

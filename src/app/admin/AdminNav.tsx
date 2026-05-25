@@ -37,14 +37,14 @@ export function AdminNav({ pendingReviewCount }: { pendingReviewCount: number })
             href={item.href}
             className={`group flex items-center justify-between rounded-2xl border px-4 py-3 text-[14px] font-semibold transition-all ${
               isActive
-                ? "border-[#dd5b00]/20 bg-[#fff3ea] text-[#9d4200] shadow-[0_12px_24px_rgba(221,91,0,0.08)]"
-                : "border-transparent text-[#6c655f] hover:border-black/8 hover:bg-white"
+                ? "border-[#dd5b00]/20 bg-[#fff3ea] dark:bg-orange-950/20 text-[#9d4200] dark:text-[#ff8a3d] shadow-[0_12px_24px_rgba(221,91,0,0.08)]"
+                : "border-transparent text-muted-foreground hover:border-whisper hover:bg-card-bg"
             }`}
           >
             <span className="flex items-center gap-3">
               <span
                 className={`rounded-xl p-2 transition-colors ${
-                  isActive ? "bg-[#dd5b00] text-white" : "bg-[#f3eee8] text-[#8a847d] group-hover:bg-[#f2f9ff] group-hover:text-[#097fe8]"
+                  isActive ? "bg-[#dd5b00] text-white" : "bg-muted text-muted-foreground group-hover:bg-[#f2f9ff] dark:group-hover:bg-blue-950/30 group-hover:text-[#097fe8]"
                 }`}
               >
                 <item.icon className="h-4 w-4" />
@@ -54,7 +54,7 @@ export function AdminNav({ pendingReviewCount }: { pendingReviewCount: number })
             {typeof badge === "number" ? (
               <span
                 className={`rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.12em] ${
-                  isActive ? "bg-white text-[#9d4200]" : "border border-black/10 bg-white text-black/70"
+                  isActive ? "bg-white dark:bg-orange-900 text-[#9d4200] dark:text-white" : "border border-whisper bg-card-bg text-foreground/70"
                 }`}
               >
                 {badge}

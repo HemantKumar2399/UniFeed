@@ -1,12 +1,13 @@
 "use client";
-
+ 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Home, Search, Ticket, User, Building2, Bell } from "lucide-react";
 import React from "react";
 import { api } from "@/trpc/react";
-
+import { ThemeToggle } from "@/components/ThemeToggle";
+ 
 const mainNavItems = [
   { name: "Home", href: "/home", icon: Home },
   { name: "Discover", href: "/discover", icon: Search },
@@ -15,7 +16,7 @@ const mainNavItems = [
   { name: "Notifications", href: "/notifications", icon: Bell },
   { name: "Profile", href: "/profile", icon: User },
 ];
-
+ 
 export function PremiumStudentShell({ 
   children,
   userName = "Student",
@@ -29,16 +30,16 @@ export function PremiumStudentShell({
   const { data: unreadCount } = api.notification.getUnreadCount.useQuery(undefined, {
     refetchInterval: 10000,
   });
-
+ 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] selection:bg-[#0075de]/20 flex">
+    <div className="min-h-screen bg-app-bg selection:bg-[#0075de]/20 flex transition-colors duration-300">
       {/* Desktop Sidebar (Notion-inspired ultra-thin minimal) */}
-      <aside className="hidden md:flex w-64 flex-col gap-8 h-screen pt-8 px-4 sticky top-0 shrink-0">
-        <div className="flex items-center gap-3 px-2 text-black/95">
-          <div className="w-8 h-8 rounded-lg bg-black text-white font-bold flex items-center justify-center text-base shadow-[0px_2px_4px_rgba(0,0,0,0.1)]">C</div>
-          <span className="font-bold tracking-tight text-[22px]">Campus</span>
+      <aside className="hidden md:flex w-64 flex-col gap-8 h-screen pt-8 px-4 sticky top-0 shrink-0 border-r border-whisper transition-colors duration-300">
+        <div className="flex items-center gap-3 px-2 text-foreground">
+          <div className="w-8 h-8 rounded-lg bg-black text-white font-bold flex items-center justify-center text-base shadow-[0px_2px_4px_rgba(0,0,0,0.1)] dark:bg-white dark:text-black">C</div>
+          <span className="font-bold tracking-tight text-[22px] text-foreground">Campus</span>
         </div>
-
+ 
         <nav className="flex flex-col gap-1 flex-1">
           {mainNavItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
@@ -48,13 +49,13 @@ export function PremiumStudentShell({
                 key={item.name}
                 href={item.href}
                 className={`relative flex items-center gap-3 px-3 py-2 rounded-lg active:scale-[0.98] transition-all outline-none focus-visible:ring-2 focus-visible:ring-[#097fe8] ${
-                  isActive ? "text-black/95 font-semibold" : "text-[#615d59] hover:bg-black/5 font-medium"
+                  isActive ? "text-foreground font-semibold" : "text-muted-foreground hover:bg-muted font-medium"
                 }`}
               >
                 {isActive && (
                   <motion.div
                     layoutId="desktop-active"
-                    className="absolute inset-0 bg-white border border-black/10 shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg pointer-events-none"
+                    className="absolute inset-0 bg-card-bg border border-whisper shadow-[0_1px_3px_rgba(0,0,0,0.02)] rounded-lg pointer-events-none"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                   />
                 )}
@@ -70,16 +71,19 @@ export function PremiumStudentShell({
           })}
         </nav>
         
-        {/* User Card */}
-        <div className="mt-auto mb-8 p-3 rounded-xl border border-transparent hover:bg-white hover:border-black/5 hover:shadow-[rgba(0,0,0,0.04)_0px_4px_18px] transition-all cursor-pointer active:scale-95">
-          <p className="text-[14px] font-semibold text-black/95 tracking-tight">{userName}</p>
-          <p className="text-[12px] text-[#a39e98] capitalize">{userRole.toLowerCase()}</p>
+        {/* User Card & Theme Toggle */}
+        <div className="mt-auto mb-8 flex items-center gap-2">
+          <div className="flex-grow p-3 rounded-xl border border-transparent hover:bg-card-bg hover:border-whisper hover:shadow-[rgba(0,0,0,0.04)_0px_4px_18px] transition-all cursor-pointer active:scale-95 truncate">
+            <p className="text-[14px] font-semibold text-foreground tracking-tight">{userName}</p>
+            <p className="text-[12px] text-muted-foreground capitalize">{userRole.toLowerCase()}</p>
+          </div>
+          <ThemeToggle />
         </div>
       </aside>
-
+ 
       {/* Main Content Area (Bento Floating Container) */}
       <main className="flex-1 w-full relative z-0 md:p-4">
-        <div className="w-full h-full bg-white md:rounded-2xl md:border md:border-black/10 md:shadow-[rgba(0,0,0,0.01)_0px_1px_3px,_rgba(0,0,0,0.02)_0px_7px_15px] overflow-hidden flex flex-col relative pb-24 md:pb-0">
+        <div className="w-full h-full bg-card-bg md:rounded-2xl md:border md:border-whisper md:shadow-[rgba(0,0,0,0.01)_0px_1px_3px,_rgba(0,0,0,0.02)_0px_7px_15px] overflow-hidden flex flex-col relative pb-24 md:pb-0 transition-colors duration-300">
           <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 md:px-12 lg:px-24">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
@@ -96,10 +100,10 @@ export function PremiumStudentShell({
           </div>
         </div>
       </main>
-
+ 
       {/* Mobile Floating Glass Nav */}
       <div className="md:hidden fixed bottom-6 inset-x-4 z-[100] pointer-events-none">
-        <nav className="flex items-center justify-around px-2 py-1.5 bg-white/80 backdrop-blur-xl border border-black/10 shadow-[0_23px_52px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(0,0,0,0.05)] rounded-2xl pointer-events-auto">
+        <nav className="flex items-center justify-around px-2 py-1.5 bg-card-bg/85 backdrop-blur-xl border border-whisper shadow-[0_23px_52px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(0,0,0,0.05)] rounded-2xl pointer-events-auto transition-colors duration-300">
           {mainNavItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             const isNotifications = item.name === "Notifications";
@@ -112,13 +116,13 @@ export function PremiumStudentShell({
                 {isActive && (
                   <motion.div
                     layoutId="mobile-glass-active"
-                    className="absolute inset-0 bg-[#f6f5f4] rounded-xl pointer-events-none"
+                    className="absolute inset-0 bg-app-bg rounded-xl pointer-events-none"
                     transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
                   />
                 )}
                 <div className="relative">
                   <item.icon
-                    className={`w-6 h-6 mb-1 relative z-10 transition-colors ${isActive ? "text-[#0075de]" : "text-[#a39e98]"}`}
+                    className={`w-6 h-6 mb-1 relative z-10 transition-colors ${isActive ? "text-[#0075de]" : "text-muted-foreground"}`}
                     strokeWidth={isActive ? 2.5 : 2}
                   />
                   {isNotifications && unreadCount !== undefined && unreadCount > 0 && (

@@ -42,14 +42,14 @@ const badgeVariants = cva(
         critical: "bg-[rgba(255,100,200,0.12)] text-[#cc44a0]",
 
         // NEUTRAL: Muted label, inactive state
-        neutral: "bg-[rgba(0,0,0,0.06)] text-[#615d59]",
+        neutral: "bg-muted text-muted-foreground",
 
         // DARK: Inverted — for use on dark surfaces
         dark: "bg-white/10 text-white",
 
         // OUTLINE: Whisper border variant
         outline:
-          "bg-transparent border border-[rgba(0,0,0,0.1)] text-[rgba(0,0,0,0.95)]",
+          "bg-transparent border border-whisper text-foreground",
       },
     },
     defaultVariants: {

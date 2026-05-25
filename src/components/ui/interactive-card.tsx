@@ -50,13 +50,13 @@ const InteractiveCard = React.forwardRef<HTMLDivElement, InteractiveCardProps>(
         onKeyDown={handleKeyDown}
         className={cn(
           // Surface
-          "bg-white",
+          "bg-card-bg",
           // Whisper border
-          "border border-[rgba(0,0,0,0.1)]",
+          "border-whisper",
           // Comfortable radius for standard cards
           "rounded-[12px]",
           // Base shadow: 4-layer soft card
-          "shadow-[rgba(0,0,0,0.04)_0px_4px_18px,rgba(0,0,0,0.027)_0px_2.025px_7.84688px,rgba(0,0,0,0.02)_0px_0.8px_2.925px,rgba(0,0,0,0.01)_0px_0.175px_1.04062px]",
+          "shadow-card",
           // Hover: shadow intensification — felt not seen
           isClickable &&
             "motion-safe:hover:shadow-[rgba(0,0,0,0.07)_0px_8px_24px,rgba(0,0,0,0.04)_0px_4px_8px,rgba(0,0,0,0.02)_0px_1px_3px]",

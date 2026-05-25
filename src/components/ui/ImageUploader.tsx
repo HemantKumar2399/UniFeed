@@ -98,7 +98,7 @@ export function ImageUploader({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <div className="flex flex-col gap-2">
-        <label htmlFor="imageFile" className="text-sm font-semibold text-black/95">
+        <label htmlFor="imageFile" className="text-sm font-semibold text-foreground">
           {label}
         </label>
         <div className="relative">
@@ -108,19 +108,19 @@ export function ImageUploader({
             accept="image/*"
             onChange={handleFileUpload}
             disabled={disabled || isUploading}
-            className="w-full rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-3 text-sm text-black/90 file:mr-3 file:rounded-[10px] file:border-0 file:bg-[#f6f5f4] file:px-3 file:py-2 file:font-semibold disabled:cursor-not-allowed disabled:bg-black/5"
+            className="w-full rounded-[14px] border border-whisper bg-card-bg px-4 py-3 text-sm text-foreground file:mr-3 file:rounded-[10px] file:border-0 file:bg-app-bg file:px-3 file:py-2 file:font-semibold file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
           />
           {isUploading && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <Loader2 className="h-4 w-4 animate-spin text-black/40" />
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             </div>
           )}
         </div>
-        <p className="text-xs text-[#8a847d]">Upload a JPG, PNG, or WebP file up to {maxSizeMB} MB.</p>
+        <p className="text-xs text-muted-foreground">Upload a JPG, PNG, or WebP file up to {maxSizeMB} MB.</p>
         {uploadError ? <p className="text-sm font-medium text-red-600">{uploadError}</p> : null}
       </div>
       <div className="flex flex-col gap-2">
-        <label htmlFor="imageUrl" className="text-sm font-semibold text-black/95">
+        <label htmlFor="imageUrl" className="text-sm font-semibold text-foreground">
           Hosted image URL
         </label>
         <input
@@ -130,9 +130,9 @@ export function ImageUploader({
           disabled={disabled || isUploading}
           type="url"
           placeholder="https://cdn.example.com/logo.jpg"
-          className="h-12 rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 text-[15px] font-medium text-black/90 outline-none placeholder:text-[#a39e98] transition-colors focus-visible:border-[#097fe8] disabled:cursor-not-allowed disabled:bg-black/5"
+          className="h-12 rounded-[14px] border border-whisper bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-muted-foreground/60 transition-colors focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 duration-200"
         />
-        <p className="text-xs text-[#8a847d]">
+        <p className="text-xs text-muted-foreground">
           If upload storage is not configured, paste a hosted URL manually.
         </p>
       </div>

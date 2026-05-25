@@ -36,7 +36,7 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f5f4] text-[rgba(0,0,0,0.95)] w-full overflow-x-hidden antialiased">
+    <div className="min-h-screen bg-app-bg text-foreground w-full overflow-x-hidden antialiased transition-colors duration-300">
       <PremiumStudentShell userName={session.user.name} userRole={session.user.role}>
         {children}
       </PremiumStudentShell>

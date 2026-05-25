@@ -220,10 +220,10 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="flex flex-col justify-between gap-4 px-1 md:flex-row md:items-end md:px-0">
         <div>
-          <h1 className="mb-2 text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-black/95 md:text-[48px]">
+          <h1 className="mb-2 text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-foreground md:text-[48px]">
             Events
           </h1>
-          <p className="text-[16px] font-medium leading-relaxed text-warm-gray">
+          <p className="text-[16px] font-medium leading-relaxed text-muted-foreground">
             Track every event through draft, review, approval, publication, and cancellation without leaving your dashboard.
           </p>
         </div>
@@ -236,7 +236,7 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
         </Link>
       </header>
 
-      <section className="rounded-[20px] border border-[var(--border-whisper)] bg-white px-4 py-4 shadow-sm">
+      <section className="rounded-[20px] border-whisper bg-card-bg px-4 py-4 shadow-card transition-colors duration-300">
         <div className="flex flex-wrap gap-2">
           {eventTabs.map((tab) => {
             const isActive = tab.key === activeTab;
@@ -248,12 +248,12 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                 className={`rounded-pill px-4 py-2 text-sm font-semibold transition-colors active:scale-95 flex items-center gap-2 ${
                   isActive
                     ? "bg-notion-blue text-white"
-                    : "bg-warm-white text-warm-gray hover:bg-white hover:text-notion-black border border-black/5"
+                    : "bg-app-bg text-muted-foreground hover:bg-card-bg hover:text-foreground border border-whisper"
                 }`}
               >
                 <span>{tab.label}</span>
                 <span className={`text-[11px] font-bold rounded-full px-2 py-0.5 ${
-                  isActive ? "bg-white/20 text-white" : "bg-black/5 text-warm-gray"
+                  isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
                 }`}>
                   {count}
                 </span>
@@ -262,7 +262,7 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
           })}
         </div>
 
-        <div className="mt-3 text-xs text-warm-gray font-medium px-1 flex items-center gap-1.5">
+        <div className="mt-3 text-xs text-muted-foreground font-medium px-1 flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-notion-blue"></span>
           <span>
             {activeTab === "draft" && "Draft: Prepare event details. These are not visible to admins or students."}
@@ -277,22 +277,22 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
 
         <form className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]" method="get">
           <input type="hidden" name="tab" value={activeTab} />
-          <label className="relative flex items-center rounded-[16px] border border-input bg-warm-white px-3 py-2 shadow-sm">
-            <Search className="h-4 w-4 text-warm-gray" />
+          <label className="relative flex items-center rounded-[16px] border border-input bg-app-bg px-3 py-2 shadow-sm transition-colors">
+            <Search className="h-4 w-4 text-muted-foreground" />
             <input
               name="q"
               defaultValue={query}
               placeholder="Search title, location, description, or club"
-              className="w-full bg-transparent px-3 py-1 text-sm text-notion-black outline-none placeholder:text-warm-gray-muted"
+              className="w-full bg-transparent px-3 py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground/50"
             />
           </label>
 
-          <label className="flex items-center rounded-[16px] border border-input bg-warm-white px-3 py-2 shadow-sm">
-            <Filter className="h-4 w-4 text-warm-gray" />
+          <label className="flex items-center rounded-[16px] border border-input bg-app-bg px-3 py-2 shadow-sm transition-colors">
+            <Filter className="h-4 w-4 text-muted-foreground" />
             <select
               name="clubId"
               defaultValue={selectedClubId}
-              className="w-full bg-transparent px-3 py-1 text-sm text-notion-black outline-none"
+              className="w-full bg-transparent px-3 py-1 text-sm text-foreground outline-none"
             >
               <option value="">All managed communities</option>
               {manageableClubs.map((club) => (
@@ -305,7 +305,7 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
 
           <button
             type="submit"
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[16px] border border-input bg-white px-4 py-2 text-sm font-semibold text-notion-black transition-colors hover:bg-warm-white"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[16px] border border-input bg-card-bg px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
           >
             Apply Filters
           </button>
@@ -342,7 +342,7 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
               return (
                 <article
                   key={event.id}
-                  className="rounded-[18px] border border-[rgba(0,0,0,0.08)] bg-white p-5 shadow-sm"
+                  className="rounded-[18px] border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300"
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0 space-y-3">
@@ -350,18 +350,18 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                         <EventStatusBadge status={event.status} />
                         <RegistrationStatusBadge status={regStatus} />
                         {isPast ? (
-                          <span className="rounded-pill border border-[var(--border-whisper)] bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-warm-gray">
+                          <span className="rounded-pill border-whisper bg-app-bg px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-colors">
                             Past
                           </span>
                         ) : null}
-                        <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-warm-gray">
+                        <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                           <Tag className="h-3.5 w-3.5" />
                           {event.club.name}
                         </span>
                       </div>
 
                       <div>
-                        <h2 className="text-[24px] font-bold leading-tight tracking-[-0.02em] text-black/95">
+                        <h2 className="text-[24px] font-bold leading-tight tracking-[-0.02em] text-foreground">
                           {event.title}
                         </h2>
                         <p className="mt-1 text-[14px] text-warm-gray">
@@ -385,12 +385,12 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                         <span>•</span>
                         <span>{event.domain ?? "General"}</span>
                         {event.submittedAt ? (
-                          <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100">
+                          <span className="text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
                             Submitted {formatEventDate(event.submittedAt)}
                           </span>
                         ) : null}
                         {event.cancelledAt ? (
-                          <span className="text-red-700 bg-red-50 px-2 py-0.5 rounded-md border border-red-100">
+                          <span className="text-red-600 bg-red-500/10 px-2 py-0.5 rounded-md border border-red-500/20">
                             Cancelled {formatEventDate(event.cancelledAt)}
                           </span>
                         ) : null}
@@ -400,10 +400,10 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                       {event.registrationClosesAt && (
                         <div className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-[13px] font-medium leading-normal ${
                           regStatus === "CLOSED_BY_DEADLINE"
-                            ? "border-rose-100 bg-rose-50/50 text-rose-700"
+                            ? "border-rose-500/20 bg-rose-500/10 text-rose-500"
                             : regStatus === "CLOSING_SOON"
-                            ? "border-amber-100 bg-amber-50/50 text-amber-700 animate-pulse"
-                            : "border-gray-100 bg-gray-50/50 text-gray-700"
+                            ? "border-amber-500/20 bg-amber-500/10 text-amber-500 animate-pulse"
+                            : "border-whisper bg-muted text-muted-foreground"
                         }`}>
                           <CalendarClock className="h-4 w-4 shrink-0" />
                           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
@@ -422,7 +422,7 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                           {event.tags.slice(0, 4).map((tag) => (
                             <span
                               key={`${event.id}-${tag}`}
-                              className="rounded-pill border border-[var(--border-whisper)] bg-warm-white px-3 py-1 text-xs font-medium text-warm-gray"
+                              className="rounded-pill border-whisper bg-app-bg px-3 py-1 text-xs font-medium text-muted-foreground transition-colors"
                             >
                               #{tag}
                             </span>

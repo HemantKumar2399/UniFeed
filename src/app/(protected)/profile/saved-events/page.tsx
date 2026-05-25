@@ -15,12 +15,12 @@ export default function SavedEventsPage() {
       <header className="px-4 md:px-8">
         <Link
           href="/profile"
-          className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-[#8a847d] hover:text-black transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-muted-foreground hover:text-foreground transition-colors mb-4"
         >
           <ChevronLeft className="w-4 h-4" />
           Back to Profile
         </Link>
-        <h1 className="text-[40px] md:text-[48px] font-bold text-black/95 leading-[1.1] tracking-[-1.5px]">
+        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px]">
           Saved Events
         </h1>
       </header>

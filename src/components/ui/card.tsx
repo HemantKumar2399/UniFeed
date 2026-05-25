@@ -26,8 +26,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      // Surface: pure white background
-      "bg-white",
+      // Surface: dynamic card background
+      "bg-card-bg",
       // Whisper border: the Notion aesthetic class
       "border-whisper",
       // Radius: 12px standard, 16px featured
@@ -66,7 +66,7 @@ const CardTitle = React.forwardRef<
     ref={ref}
     className={cn(
       "text-[1.375rem] font-bold leading-[1.27] tracking-[-0.25px]",
-      "text-[rgba(0,0,0,0.95)]",
+      "text-foreground",
       className
     )}
     {...props}
@@ -84,7 +84,7 @@ const CardDescription = React.forwardRef<
     ref={ref}
     className={cn(
       "text-[0.875rem] font-normal leading-[1.43]",
-      "text-[#615d59]", // Warm Gray 500 — secondary text
+      "text-muted-foreground", // Dynamic Warm Gray — secondary text
       className
     )}
     {...props}

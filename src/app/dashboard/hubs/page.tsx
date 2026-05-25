@@ -191,18 +191,18 @@ export default function DashboardHubsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 pb-24 md:pb-12">
-      <header className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-5">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Campus Hub Editor</p>
-        <h1 className="mt-2 text-[32px] font-bold tracking-[-0.02em] text-black/95">Static Resources & FAQ Blocks</h1>
-        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-[#615d59]">
+      <header className="rounded-[18px] border border-whisper bg-card-bg p-5 transition-colors duration-300">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">Campus Hub Editor</p>
+        <h1 className="mt-2 text-[32px] font-bold tracking-[-0.02em] text-foreground">Static Resources &amp; FAQ Blocks</h1>
+        <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted-foreground">
           Edit Notion-style persistent hub content with whisper borders and warm neutral styling.
         </p>
       </header>
 
-      <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4">
+      <section className="rounded-[18px] border-whisper bg-app-bg p-4 transition-colors">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-1">
-            <label htmlFor="hub-select" className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">
+            <label htmlFor="hub-select" className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">
               Active Hub
             </label>
             <select
@@ -210,7 +210,7 @@ export default function DashboardHubsPage() {
               value={activeHubId ?? ""}
               onChange={(event) => setActiveHubId(Number(event.target.value))}
               disabled={!editableHubs?.length || isLoadingHubs}
-              className="h-10 min-w-[240px] rounded-[10px] border border-[rgba(0,0,0,0.1)] bg-white px-3 text-[14px] font-medium text-black/90 outline-none focus:ring-2 focus:ring-[#097fe8]"
+              className="h-10 min-w-[240px] rounded-[10px] border border-input bg-card-bg px-3 text-[14px] font-medium text-foreground outline-none focus:ring-2 focus:ring-[#097fe8] transition-colors"
             >
               {editableHubs?.map((hub) => (
                 <option key={hub.id} value={hub.id}>
@@ -225,7 +225,7 @@ export default function DashboardHubsPage() {
               href={`/hubs/${activeHubId}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#0075de] hover:text-[#005cab]"
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-notion-blue hover:text-notion-blue-hover"
             >
               Open public hub
               <ExternalLink className="h-3.5 w-3.5" />
@@ -236,18 +236,18 @@ export default function DashboardHubsPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-        <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4">
+        <section className="rounded-[18px] border-whisper bg-app-bg p-4 transition-colors">
           {!isLoadingHubs && !editableHubs?.length ? (
-            <div className="mb-4 rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4 text-[14px] text-[#615d59]">
+            <div className="mb-4 rounded-[14px] border-whisper bg-card-bg px-4 py-4 text-[14px] text-muted-foreground transition-colors">
               No editable hubs found for this organizer. Ask an owner to add you as a hub editor.
             </div>
           ) : null}
 
           {activeHubId ? (
-            <section className="mb-6 rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white p-4">
+            <section className="mb-6 rounded-[14px] border-whisper bg-card-bg p-4 transition-colors">
               <div className="mb-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Club Identity</p>
-                <h3 className="text-[16px] font-bold text-black/95">Club Logo</h3>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">Club Identity</p>
+                <h3 className="text-[16px] font-bold text-foreground">Club Logo</h3>
               </div>
               <ImageUploader
                 value={logoUrl}
@@ -277,7 +277,7 @@ export default function DashboardHubsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setDraftBlocks((prev) => [...prev, createEditableBlock(type)])}
-                className="border-[rgba(0,0,0,0.1)] bg-white text-[#4f4a45]"
+                className="border-whisper bg-card-bg text-foreground/80"
               >
                 <Plus className="mr-1 h-3.5 w-3.5" />
                 Add {type.toLowerCase()} block
@@ -286,7 +286,7 @@ export default function DashboardHubsPage() {
           </div>
 
           {isLoadingHubContent ? (
-            <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-5 text-[14px] text-[#615d59]">
+            <div className="rounded-[14px] border-whisper bg-card-bg px-4 py-5 text-[14px] text-muted-foreground transition-colors">
               Loading hub content...
             </div>
           ) : null}
@@ -294,15 +294,15 @@ export default function DashboardHubsPage() {
           {!isLoadingHubContent ? (
             <div className="flex flex-col gap-3">
               {draftBlocks.map((block, index) => (
-                <article key={block.tempId} className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
+                <article key={block.tempId} className="rounded-[14px] border-whisper bg-card-bg px-4 py-4 transition-colors">
                   <div className="mb-3 flex items-center justify-between gap-3">
-                    <span className="rounded-full border border-[rgba(0,0,0,0.08)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">
+                    <span className="rounded-full border border-input px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80 transition-colors">
                       {block.type}
                     </span>
                     <button
                       type="button"
                       onClick={() => setDraftBlocks((prev) => prev.filter((_, itemIndex) => itemIndex !== index))}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[#7f3f3f] hover:text-[#6b2d2d]"
+                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-red-500 hover:text-red-600"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       Remove
@@ -320,7 +320,7 @@ export default function DashboardHubsPage() {
                       )
                     }
                     placeholder={block.type === "FAQ" ? "Question" : "Title (optional)"}
-                    className="mb-2 w-full border-none bg-transparent p-0 text-[17px] font-semibold text-black/90 placeholder:text-[#a39e98] outline-none"
+                    className="mb-2 w-full border-none bg-transparent p-0 text-[17px] font-semibold text-foreground placeholder:text-muted-foreground/50 outline-none"
                   />
 
                   <textarea
@@ -334,7 +334,7 @@ export default function DashboardHubsPage() {
                     }
                     rows={block.type === "TEXT" ? 5 : 4}
                     placeholder={block.type === "FAQ" ? "Answer" : "Write your content..."}
-                    className="w-full resize-y rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[#f6f5f4] px-3 py-2 text-[14px] leading-relaxed text-[#443f3a] placeholder:text-[#a39e98] outline-none focus:ring-2 focus:ring-[#097fe8]"
+                    className="w-full resize-y rounded-[10px] border border-input bg-app-bg px-3 py-2 text-[14px] leading-relaxed text-foreground placeholder:text-muted-foreground/50 outline-none focus:ring-2 focus:ring-[#097fe8] transition-colors"
                   />
 
                   {block.type === "RESOURCE" ? (
@@ -349,7 +349,7 @@ export default function DashboardHubsPage() {
                         )
                       }
                       placeholder="https://..."
-                      className="mt-2 w-full rounded-[10px] border border-[rgba(0,0,0,0.08)] bg-[#f6f5f4] px-3 py-2 text-[14px] text-[#443f3a] placeholder:text-[#a39e98] outline-none focus:ring-2 focus:ring-[#097fe8]"
+                      className="mt-2 w-full rounded-[10px] border border-input bg-app-bg px-3 py-2 text-[14px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:ring-2 focus:ring-[#097fe8] transition-colors"
                     />
                   ) : null}
                 </article>
@@ -371,31 +371,31 @@ export default function DashboardHubsPage() {
         </section>
 
         {activeHubMembershipRole === "OWNER" ? (
-          <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-[#f6f5f4] p-4">
+          <section className="rounded-[18px] border-whisper bg-app-bg p-4 transition-colors">
             <div className="mb-4">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Editor Management</p>
-              <h2 className="mt-2 text-[20px] font-bold tracking-[-0.02em] text-black/95">Manage Club Editors</h2>
-              <p className="mt-1 text-[14px] leading-relaxed text-[#615d59]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">Editor Management</p>
+              <h2 className="mt-2 text-[20px] font-bold tracking-[-0.02em] text-foreground">Manage Club Editors</h2>
+              <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
                 Owners can add or remove editors for the active community. Owner assignments stay in the admin panel.
               </p>
             </div>
 
             {isLoadingEditorManagement ? (
-              <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4 text-[14px] text-[#615d59]">
+              <div className="rounded-[14px] border-whisper bg-card-bg px-4 py-4 text-[14px] text-muted-foreground transition-colors">
                 Loading editor management details...
               </div>
             ) : editorManagement ? (
               <div className="space-y-4">
-                <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Owners</p>
+                <div className="rounded-[14px] border-whisper bg-card-bg px-4 py-4 transition-colors">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">Owners</p>
                   <div className="mt-3 space-y-2">
                     {editorManagement.owners.map((owner) => (
-                      <div key={owner.id} className="flex items-center justify-between rounded-[12px] border border-[rgba(0,0,0,0.08)] px-3 py-2">
+                      <div key={owner.id} className="flex items-center justify-between rounded-[12px] border-whisper px-3 py-2 transition-colors">
                         <div>
-                          <p className="text-[14px] font-semibold text-black/90">{owner.name ?? owner.email ?? "Unnamed owner"}</p>
-                          <p className="text-[12px] text-[#8a847d]">{owner.email ?? "No email"}</p>
+                          <p className="text-[14px] font-semibold text-foreground">{owner.name ?? owner.email ?? "Unnamed owner"}</p>
+                          <p className="text-[12px] text-muted-foreground/80">{owner.email ?? "No email"}</p>
                         </div>
-                        <span className="rounded-full border border-[rgba(0,0,0,0.08)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">
+                        <span className="rounded-full border-whisper px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80 transition-colors">
                           Owner
                         </span>
                       </div>
@@ -403,20 +403,20 @@ export default function DashboardHubsPage() {
                   </div>
                 </div>
 
-                <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
+                <div className="rounded-[14px] border-whisper bg-card-bg px-4 py-4 transition-colors">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Editors</p>
-                    <span className="text-[12px] text-[#8a847d]">{editorManagement.editors.length} assigned</span>
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">Editors</p>
+                    <span className="text-[12px] text-muted-foreground/80">{editorManagement.editors.length} assigned</span>
                   </div>
                   <div className="mt-3 space-y-2">
                     {editorManagement.editors.length === 0 ? (
-                      <p className="text-[14px] text-[#615d59]">No editors are assigned yet.</p>
+                      <p className="text-[14px] text-muted-foreground">No editors are assigned yet.</p>
                     ) : (
                       editorManagement.editors.map((editor) => (
-                        <div key={editor.id} className="flex items-center justify-between rounded-[12px] border border-[rgba(0,0,0,0.08)] px-3 py-2">
+                        <div key={editor.id} className="flex items-center justify-between rounded-[12px] border-whisper px-3 py-2 transition-colors">
                           <div>
-                            <p className="text-[14px] font-semibold text-black/90">{editor.name ?? editor.email ?? "Unnamed editor"}</p>
-                            <p className="text-[12px] text-[#8a847d]">{editor.email ?? "No email"}</p>
+                            <p className="text-[14px] font-semibold text-foreground">{editor.name ?? editor.email ?? "Unnamed editor"}</p>
+                            <p className="text-[12px] text-muted-foreground/80">{editor.email ?? "No email"}</p>
                           </div>
                           <Button
                             type="button"
@@ -424,7 +424,7 @@ export default function DashboardHubsPage() {
                             size="sm"
                             onClick={() => {
                               if (!activeHubId) {
-                                return;
+                                  return;
                               }
                               removeEditor.mutate({ clubId: activeHubId, userId: editor.id });
                             }}
@@ -438,13 +438,13 @@ export default function DashboardHubsPage() {
                   </div>
                 </div>
 
-                <div className="rounded-[14px] border border-[rgba(0,0,0,0.1)] bg-white px-4 py-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#8a847d]">Add Editor</p>
+                <div className="rounded-[14px] border-whisper bg-card-bg px-4 py-4 transition-colors">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">Add Editor</p>
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                     <select
                       value={newEditorUserId}
                       onChange={(event) => setNewEditorUserId(event.target.value)}
-                      className="h-10 flex-1 rounded-[10px] border border-[rgba(0,0,0,0.1)] bg-white px-3 text-[14px] font-medium text-black/90 outline-none focus:ring-2 focus:ring-[#097fe8]"
+                      className="h-10 flex-1 rounded-[10px] border border-input bg-card-bg px-3 text-[14px] font-medium text-foreground outline-none focus:ring-2 focus:ring-[#097fe8] transition-colors"
                     >
                       <option value="">Select an organizer or admin</option>
                       {editorManagement.eligibleUsers.map((user) => (
@@ -467,7 +467,7 @@ export default function DashboardHubsPage() {
                     </Button>
                   </div>
                   {editorManagement.eligibleUsers.length === 0 ? (
-                    <p className="mt-3 text-[13px] text-[#615d59]">
+                    <p className="mt-3 text-[13px] text-muted-foreground">
                       Everyone eligible is already assigned to this club. Use the admin panel to promote more organizers if needed.
                     </p>
                   ) : null}
@@ -478,8 +478,8 @@ export default function DashboardHubsPage() {
         ) : null}
         </div>
 
-        <section className="rounded-[18px] border border-[rgba(0,0,0,0.1)] bg-white p-4">
-          <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Public Hub Preview</p>
+        <section className="rounded-[18px] border-whisper bg-card-bg p-4 transition-colors">
+          <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">Public Hub Preview</p>
           <HubBlocksRenderer blocks={previewBlocks} />
         </section>
       </div>

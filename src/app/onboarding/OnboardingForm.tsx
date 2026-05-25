@@ -60,18 +60,18 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
    */
   const inputCls = [
     "w-full rounded-xl px-4 py-3 text-[14px] font-medium",
-    "bg-[#f6f5f4] text-[rgba(0,0,0,0.85)]",
-    "border border-black/8",
-    "placeholder:text-[rgba(0,0,0,0.25)]",
-    "focus:outline-none focus:bg-white focus:border-black/20",
-    "focus:ring-2 focus:ring-[rgba(0,117,222,0.12)]",
+    "bg-muted text-foreground",
+    "border border-input",
+    "placeholder:text-muted-foreground/50",
+    "focus:outline-none focus:bg-card-bg focus:border-focus-blue/50",
+    "focus:ring-2 focus:ring-focus-blue/20",
     "transition-all duration-150",
     "disabled:opacity-50 disabled:cursor-not-allowed",
   ].join(" ");
 
   /* Label — same small-caps pattern as landing page card sub-labels */
   const labelCls =
-    "block text-[11px] font-semibold uppercase tracking-[0.08em] mb-1.5 select-none text-[rgba(0,0,0,0.38)]";
+    "block text-[11px] font-semibold uppercase tracking-[0.08em] mb-1.5 select-none text-muted-foreground";
 
   return (
     <div className="w-full">
@@ -83,25 +83,24 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
       <div className="mb-7">
         {/* Icon — identical pattern to landing page feature cards */}
         <div
-          className="w-12 h-12 bg-black/5 rounded-2xl flex items-center justify-center text-2xl mb-5"
+          className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center text-2xl mb-5"
         >
           🎓
         </div>
 
         <h1
-          className="font-bold leading-tight mb-2"
+          className="font-bold leading-tight mb-2 text-foreground"
           style={{
             fontSize: "clamp(22px, 3vw, 28px)",
             letterSpacing: "-0.5px",
-            color: "rgba(0,0,0,0.9)",
           }}
         >
           Complete your profile
         </h1>
-        <p style={{ fontSize: "15px", color: "rgba(0,0,0,0.45)", lineHeight: "1.55" }}>
+        <p className="text-muted-foreground" style={{ fontSize: "15px", lineHeight: "1.55" }}>
           Welcome{userName ? `, ${userName}` : ""}! Set up your student
           passport at{" "}
-          <span style={{ color: "rgba(0,0,0,0.75)", fontWeight: 600 }}>
+          <span className="text-foreground font-semibold">
             {collegeName}
           </span>
           .
@@ -176,8 +175,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
                   <option key={y} value={y}>{y}</option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3"
-                   style={{ color: "rgba(0,0,0,0.3)" }}>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground/60">
                 <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                 </svg>
@@ -208,7 +206,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <div>
             <label htmlFor="section" className={labelCls}>
               Section{" "}
-              <span className="font-normal normal-case" style={{ color: "rgba(0,0,0,0.25)" }}>
+              <span className="font-normal normal-case text-muted-foreground/45">
                 (optional)
               </span>
             </label>
@@ -225,7 +223,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <div>
             <label htmlFor="phone" className={labelCls}>
               Phone{" "}
-              <span className="font-normal normal-case" style={{ color: "rgba(0,0,0,0.25)" }}>
+              <span className="font-normal normal-case text-muted-foreground/45">
                 (optional)
               </span>
             </label>
@@ -293,8 +291,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
 
       {/* ── Security note — thin separator, subtle body text ── */}
       <div
-        className="mt-5 flex items-center gap-2"
-        style={{ borderTop: "1px solid rgba(0,0,0,0.07)", paddingTop: "16px" }}
+        className="mt-5 flex items-center gap-2 border-t border-whisper pt-4"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -306,12 +303,12 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ color: "rgba(0,0,0,0.2)", flexShrink: 0 }}
+          className="text-muted-foreground/40 shrink-0"
         >
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
-        <p style={{ fontSize: "12px", color: "rgba(0,0,0,0.28)", fontWeight: 500 }}>
+        <p className="text-[12px] font-medium text-muted-foreground/50">
           Onboarding is required to access events securely.
         </p>
       </div>
