@@ -391,7 +391,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[480px]">
+              <div className="space-y-3">
                 {users.map((u) => {
                   const badgeColors =
                     u.role === "ADMIN"
@@ -449,7 +449,7 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredClubs.map((club) => {
                   const isActive = club.isActive !== false;
                   return (
@@ -482,11 +482,10 @@ export function AdminControls({ initialUsers, clubs }: AdminControlsProps) {
                             });
                           }}
                           disabled={toggleClubStatusMutation.isPending}
-                          className={`text-[12px] font-bold px-4 py-1.5 rounded-lg border transition-all active:scale-95 hover:shadow-sm disabled:opacity-50 ${
-                            isActive
+                          className={`text-[12px] font-bold px-4 py-1.5 rounded-lg border transition-all active:scale-95 hover:shadow-sm disabled:opacity-50 ${isActive
                               ? "bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100"
                               : "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
-                          }`}
+                            }`}
                         >
                           {isActive ? "Disable Hub" : "Enable Hub"}
                         </button>

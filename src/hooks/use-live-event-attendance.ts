@@ -77,6 +77,9 @@ export function useLiveEventAttendance(options: LiveEventAttendanceOptions) {
     initialAttendees,
     initialCounts,
   } = options;
+  const attendeesSerialized = useMemo(() => JSON.stringify(initialAttendees), [initialAttendees]);
+  const countsSerialized = useMemo(() => JSON.stringify(initialCounts), [initialCounts]);
+
   const initialState = useMemo(
     () =>
       buildInitialState({
@@ -87,13 +90,14 @@ export function useLiveEventAttendance(options: LiveEventAttendanceOptions) {
         initialAttendees,
         initialCounts,
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       eventId,
       totalCapacity,
       initialActiveCount,
       initialViewerRsvpStatus,
-      initialAttendees,
-      initialCounts,
+      attendeesSerialized,
+      countsSerialized,
     ],
   );
   const [state, setState] = useState<LiveEventAttendanceState>(initialState);

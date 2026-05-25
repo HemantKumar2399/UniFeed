@@ -22,7 +22,7 @@ export function AdminShell({
 }: AdminShellProps) {
   return (
     <div className="min-h-screen bg-[#f6f1eb] text-[rgba(0,0,0,0.95)] selection:bg-[#dd5b00]/20 font-sans">
-      <header className="sticky top-0 z-50 border-b border-black/5 bg-white/88 backdrop-blur-xl">
+      <header className="border-b border-black/5 bg-white/88 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-6 py-5 lg:px-12">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex items-start gap-4">

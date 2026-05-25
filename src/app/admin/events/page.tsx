@@ -8,6 +8,8 @@ import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { type RouterOutputs } from "@/trpc/react";
+import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
+import { getRegistrationStatus } from "@/lib/event-status";
 
 function formatDateTime(date: Date | null | undefined) {
   if (!date) {
@@ -133,6 +135,13 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                 now,
               });
 
+              const regStatus = getRegistrationStatus({
+                date: event.date,
+                registrationClosesAt: event.registrationClosesAt,
+                capacity: event.capacity,
+                _count: { rsvps: 0 },
+              });
+
               return (
                 <article
                   key={event.id}
@@ -141,14 +150,13 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-[#ddcaa7] bg-[#fff8ec] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9a6500]">
-                          {event.status}
-                        </span>
-                        <span className="rounded-full border border-black/10 bg-[#f6f5f4] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#615d59]">
+                        <EventStatusBadge status={event.status} />
+                        <RegistrationStatusBadge status={regStatus} />
+                        <span className="rounded-full border border-black/10 bg-[#f6f5f4] px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#615d59]">
                           {event.club.name}
                         </span>
                         <span
-                          className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${deadlineBadge.className}`}
+                          className={`rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${deadlineBadge.className}`}
                         >
                           {deadlineBadge.label}
                         </span>
@@ -163,13 +171,33 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
 
                       <div className="flex flex-wrap items-center gap-4 text-[13px] font-medium text-[#615d59]">
                         <span>{event.capacity} seats</span>
-                        <span>Register by {formatRegistrationDeadline(event.registrationClosesAt)}</span>
                         <span>Submitted {formatDateTime(event.submittedAt ?? event.createdAt)}</span>
                         <span className="inline-flex items-center gap-1">
                           <Users className="h-4 w-4" />
                           {event.author.name ?? event.author.email ?? "Organizer"}
                         </span>
                       </div>
+
+                      {/* Registration Deadline Alert Banner */}
+                      {event.registrationClosesAt && (
+                        <div className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-[13px] font-medium leading-normal ${
+                          regStatus === "CLOSED_BY_DEADLINE"
+                            ? "border-rose-100 bg-rose-50/50 text-rose-700"
+                            : regStatus === "CLOSING_SOON"
+                            ? "border-amber-100 bg-amber-50/50 text-amber-700 animate-pulse"
+                            : "border-gray-100 bg-gray-50/50 text-gray-700"
+                        }`}>
+                          <CalendarClock className="h-4 w-4 shrink-0" />
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                            <span>
+                              Registration deadline: <strong className="font-semibold">{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
+                            </span>
+                            <span className="text-[11px] opacity-75 sm:border-l sm:border-current sm:pl-2">
+                              ({deadlineBadge.label})
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-start lg:justify-end">

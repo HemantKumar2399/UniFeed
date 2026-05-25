@@ -1,5 +1,5 @@
 # generated: 2026-05-23
-# last_updated: 2026-05-24
+# last_updated: 2026-05-25
 # project: Platform
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-23
-last_updated: 2026-05-24
+last_updated: 2026-05-25
 project: Platform
 project_key: NOKEY
 tracking_system: file-system
@@ -202,3 +202,34 @@ development_status:
   19-8-show-deadline-in-organizer-admin-dashboards-and-status-lanes: done
   19-9-define-waitlist-behavior-around-deadline: done
   epic-19-retrospective: optional
+
+  epic-20: done
+  20-1-audit-admin-layout-and-scroll-containers: done
+  20-2-normalize-admin-shell-layout: done
+  20-3-verify-admin-approval-workflow-pages: done
+  epic-20-retrospective: optional
+
+  epic-21: done
+  21-1-locate-the-placeholder-source: done
+  21-2-remove-placeholder-completely: done
+  21-3-optional-replace-with-intentional-role-aware-action: done
+  epic-21-retrospective: optional
+
+  epic-22: done
+  22-1-inventory-all-status-lane-locations: done
+  22-2-create-shared-status-badge-and-status-metadata-system: done
+  22-3-redesign-lane-headers: done
+  22-4-redesign-status-cards: done
+  22-5-add-useful-empty-states: done
+  22-6-make-status-lanes-responsive: done
+  epic-22-retrospective: optional
+
+  epic-23: done
+  23-1-add-role-and-registration-security-tests: done
+  23-2-add-college-scoping-tests: done
+  23-3-add-registration-deadline-tests: done
+  23-4-add-qr-and-rsvp-regression-tests: done
+  23-5-add-ui-smoke-regression-tests: done
+  23-6-verify-build-scripts-from-fresh-clone: done
+  23-7-update-documentation-and-release-notes: done
+  epic-23-retrospective: optional

@@ -499,8 +499,8 @@ void test("rsvpRouter.register fails if event has no registration deadline", asy
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
-      assert.equal(err.code, "PRECONDITION_FAILED");
-      assert.equal(err.message, "Event has no registration deadline");
+      assert.equal(err.code, "BAD_REQUEST");
+      assert.equal(err.message, "Registration for this event is closed.");
       return true;
     },
   );
@@ -537,8 +537,8 @@ void test("rsvpRouter.register fails if registration deadline has passed", async
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
-      assert.equal(err.code, "PRECONDITION_FAILED");
-      assert.equal(err.message, "Registration is closed for this event");
+      assert.equal(err.code, "BAD_REQUEST");
+      assert.equal(err.message, "Registration for this event is closed.");
       return true;
     },
   );

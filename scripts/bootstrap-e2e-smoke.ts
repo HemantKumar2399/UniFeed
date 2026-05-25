@@ -55,6 +55,10 @@ async function main() {
   eventDate.setDate(eventDate.getDate() + 3);
   eventDate.setHours(18, 30, 0, 0);
 
+  const registrationClosesAt = new Date();
+  registrationClosesAt.setDate(registrationClosesAt.getDate() + 2);
+  registrationClosesAt.setHours(18, 30, 0, 0);
+
   const existingEvent = await prisma.event.findFirst({
     where: {
       title: SMOKE_EVENT_TITLE,
@@ -70,6 +74,7 @@ async function main() {
         data: {
           description: SMOKE_EVENT_DESCRIPTION,
           date: eventDate,
+          registrationClosesAt,
           capacity: 120,
           location: "Innovation Lab, Block A",
           imageUrl:
@@ -94,6 +99,7 @@ async function main() {
           title: SMOKE_EVENT_TITLE,
           description: SMOKE_EVENT_DESCRIPTION,
           date: eventDate,
+          registrationClosesAt,
           capacity: 120,
           location: "Innovation Lab, Block A",
           imageUrl:
@@ -122,6 +128,10 @@ async function main() {
   realtimeEventDate.setDate(realtimeEventDate.getDate() + 4);
   realtimeEventDate.setHours(16, 0, 0, 0);
 
+  const realtimeRegistrationClosesAt = new Date();
+  realtimeRegistrationClosesAt.setDate(realtimeRegistrationClosesAt.getDate() + 3);
+  realtimeRegistrationClosesAt.setHours(16, 0, 0, 0);
+
   const existingRealtimeEvent = await prisma.event.findFirst({
     where: {
       title: REALTIME_SMOKE_EVENT_TITLE,
@@ -137,6 +147,7 @@ async function main() {
         data: {
           description: REALTIME_SMOKE_EVENT_DESCRIPTION,
           date: realtimeEventDate,
+          registrationClosesAt: realtimeRegistrationClosesAt,
           capacity: 80,
           location: "Realtime Lab, Block B",
           imageUrl:
@@ -161,6 +172,7 @@ async function main() {
           title: REALTIME_SMOKE_EVENT_TITLE,
           description: REALTIME_SMOKE_EVENT_DESCRIPTION,
           date: realtimeEventDate,
+          registrationClosesAt: realtimeRegistrationClosesAt,
           capacity: 80,
           location: "Realtime Lab, Block B",
           imageUrl:

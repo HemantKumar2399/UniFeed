@@ -624,8 +624,66 @@ void test("adminRouter.approveEvent rejects events with expired deadlines", asyn
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.match(err.message, /cannot be approved with an expired/i);
+      assert.match(err.message, /Registration deadline must be set to a future time/i);
       return true;
     },
   );
 });
+
+void test("adminRouter.getPendingEvents rejects student callers", async () => {
+  const mockedCtx = {
+    db: {} as any,
+    session: {
+      user: {
+        id: "student-user-id",
+        role: "STUDENT",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.admin.getPendingEvents();
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "UNAUTHORIZED");
+      assert.equal(err.message, "Only administrators can access this procedure.");
+      return true;
+    },
+  );
+});
+
+void test("adminRouter.approveEvent rejects student and organizer callers", async () => {
+  for (const role of ["STUDENT", "ORGANIZER"]) {
+    const mockedCtx = {
+      db: {} as any,
+      session: {
+        user: {
+          id: "unauthorized-user-id",
+          role,
+          collegeId: "college-1",
+        },
+        expires: "2026-05-23T00:00:00.000Z",
+      },
+      headers: new Headers(),
+    };
+
+    const caller = createCaller(mockedCtx as any);
+    await assert.rejects(
+      async () => {
+        await caller.admin.approveEvent({ eventId: 10 });
+      },
+      (err: any) => {
+        assert.ok(err instanceof TRPCError);
+        assert.equal(err.code, "UNAUTHORIZED");
+        return true;
+      },
+    );
+  }
+});
+

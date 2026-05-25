@@ -22,6 +22,9 @@ test.describe("Epic 17 realtime smoke coverage", () => {
     await expect(page.getByRole("button", { name: "Reserve Spot" })).toBeVisible();
     await expect(mirrorPage.getByRole("button", { name: "Reserve Spot" })).toBeVisible();
 
+    // Give SSE subscriptions on both pages a brief window to establish connections.
+    await page.waitForTimeout(2000);
+
     await page.getByRole("button", { name: "Reserve Spot" }).click();
     await expect(page.getByText(/1\s*\/\s*80/i)).toBeVisible();
     await expect(page.getByRole("button", { name: "Registered" })).toBeVisible();

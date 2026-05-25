@@ -5,8 +5,6 @@ import Link from "next/link";
 import { EmptyState } from "@/components/EmptyState";
 import {
   formatRegistrationDeadline,
-  getRegistrationAvailability,
-  getRegistrationAvailabilityLabel,
   getOrganizerDeadlineState,
 } from "@/lib/event-registration";
 import { auth } from "@/server/auth";
@@ -16,6 +14,8 @@ import {
   isAdminUserRole,
 } from "@/server/permissions/club-management";
 import { EventActions } from "./EventActions";
+import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
+import { getRegistrationStatus } from "@/lib/event-status";
 
 const manageableClubRoles = ["OWNER", "EDITOR"] as const;
 const eventTabs = [
@@ -196,6 +196,26 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
         orderBy: activeTab === "past" ? [{ date: "desc" }, { createdAt: "desc" }] : [{ date: "asc" }, { createdAt: "desc" }],
       });
 
+  const tabCounts = !baseWhere
+    ? {}
+    : {
+        draft: await db.event.count({ where: { ...baseWhere, status: "DRAFT", date: { gte: now } } }),
+        submitted: await db.event.count({ where: { ...baseWhere, status: "SUBMITTED", date: { gte: now } } }),
+        approved: await db.event.count({ where: { ...baseWhere, status: "APPROVED", date: { gte: now } } }),
+        published: await db.event.count({ where: { ...baseWhere, status: "PUBLISHED", date: { gte: now } } }),
+        rejected: await db.event.count({ where: { ...baseWhere, status: "REJECTED", date: { gte: now } } }),
+        cancelled: await db.event.count({ where: { ...baseWhere, status: "CANCELLED" } }),
+        past: await db.event.count({
+          where: {
+            ...baseWhere,
+            date: { lt: now },
+            NOT: {
+              status: "CANCELLED",
+            },
+          },
+        }),
+      };
+
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="flex flex-col justify-between gap-4 px-1 md:flex-row md:items-end md:px-0">
@@ -220,20 +240,39 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
         <div className="flex flex-wrap gap-2">
           {eventTabs.map((tab) => {
             const isActive = tab.key === activeTab;
+            const count = tabCounts[tab.key] ?? 0;
             return (
               <Link
                 key={tab.key}
                 href={buildTabHref(tab.key, query, selectedClubId)}
-                className={`rounded-pill px-4 py-2 text-sm font-semibold transition-colors active:scale-95 ${
+                className={`rounded-pill px-4 py-2 text-sm font-semibold transition-colors active:scale-95 flex items-center gap-2 ${
                   isActive
                     ? "bg-notion-blue text-white"
-                    : "bg-warm-white text-warm-gray hover:bg-white hover:text-notion-black"
+                    : "bg-warm-white text-warm-gray hover:bg-white hover:text-notion-black border border-black/5"
                 }`}
               >
-                {tab.label}
+                <span>{tab.label}</span>
+                <span className={`text-[11px] font-bold rounded-full px-2 py-0.5 ${
+                  isActive ? "bg-white/20 text-white" : "bg-black/5 text-warm-gray"
+                }`}>
+                  {count}
+                </span>
               </Link>
             );
           })}
+        </div>
+
+        <div className="mt-3 text-xs text-warm-gray font-medium px-1 flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-notion-blue"></span>
+          <span>
+            {activeTab === "draft" && "Draft: Prepare event details. These are not visible to admins or students."}
+            {activeTab === "submitted" && "Submitted: Waiting for college admin approval. You cannot edit submitted events."}
+            {activeTab === "approved" && "Approved: Approved by college admin. Click 'Publish Event' to make it live for students!"}
+            {activeTab === "published" && "Published: Live on the campus feed. Students can register and RSVP."}
+            {activeTab === "rejected" && "Needs Changes: Admin requested updates. Check feedback below and resubmit."}
+            {activeTab === "cancelled" && "Cancelled: Event is cancelled. Students are notified and RSVP is closed."}
+            {activeTab === "past" && "Past: Historical events that have already started or completed."}
+          </span>
         </div>
 
         <form className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]" method="get">
@@ -293,6 +332,13 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                 now,
               });
 
+              const regStatus = getRegistrationStatus({
+                date: event.date,
+                registrationClosesAt: event.registrationClosesAt,
+                capacity: event.capacity,
+                _count: event._count,
+              });
+
               return (
                 <article
                   key={event.id}
@@ -301,9 +347,8 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0 space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-pill bg-warm-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-notion-black">
-                          {event.status}
-                        </span>
+                        <EventStatusBadge status={event.status} />
+                        <RegistrationStatusBadge status={regStatus} />
                         {isPast ? (
                           <span className="rounded-pill border border-[var(--border-whisper)] bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-warm-gray">
                             Past
@@ -328,16 +373,49 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                         {event.description}
                       </p>
 
-                      <div className="flex flex-wrap gap-4 text-[13px] font-medium text-warm-gray">
-                        <span>{event.capacity} seats</span>
-                        <span>{event._count.rsvps} RSVPs</span>
+                      <div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px] font-medium text-warm-gray">
+                        <span className="flex items-center gap-1">
+                          <strong>Capacity:</strong> {event.capacity} seats
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <strong>RSVPs:</strong> {event._count.rsvps} joined
+                        </span>
+                        <span>•</span>
                         <span>{event.category ?? "Uncategorized"}</span>
+                        <span>•</span>
                         <span>{event.domain ?? "General"}</span>
-                        <span>Register by {formatRegistrationDeadline(event.registrationClosesAt)}</span>
-                        <span>{registrationLabel}</span>
-                        {event.submittedAt ? <span>Submitted {formatEventDate(event.submittedAt)}</span> : null}
-                        {event.cancelledAt ? <span>Cancelled {formatEventDate(event.cancelledAt)}</span> : null}
+                        {event.submittedAt ? (
+                          <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100">
+                            Submitted {formatEventDate(event.submittedAt)}
+                          </span>
+                        ) : null}
+                        {event.cancelledAt ? (
+                          <span className="text-red-700 bg-red-50 px-2 py-0.5 rounded-md border border-red-100">
+                            Cancelled {formatEventDate(event.cancelledAt)}
+                          </span>
+                        ) : null}
                       </div>
+
+                      {/* Registration Deadline Alert Banner */}
+                      {event.registrationClosesAt && (
+                        <div className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-[13px] font-medium leading-normal ${
+                          regStatus === "CLOSED_BY_DEADLINE"
+                            ? "border-rose-100 bg-rose-50/50 text-rose-700"
+                            : regStatus === "CLOSING_SOON"
+                            ? "border-amber-100 bg-amber-50/50 text-amber-700 animate-pulse"
+                            : "border-gray-100 bg-gray-50/50 text-gray-700"
+                        }`}>
+                          <CalendarClock className="h-4 w-4 shrink-0" />
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                            <span>
+                              Registration deadline: <strong className="font-semibold">{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
+                            </span>
+                            <span className="text-[11px] opacity-75 sm:border-l sm:border-current sm:pl-2">
+                              ({registrationLabel})
+                            </span>
+                          </div>
+                        </div>
+                      )}
 
                       {event.tags.length > 0 ? (
                         <div className="flex flex-wrap gap-2">

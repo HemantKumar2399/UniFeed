@@ -32,11 +32,11 @@ export async function getClubManagementRole(
   club: { id: number; collegeId: string },
   options?: { requireOwner?: boolean },
 ): Promise<ClubManagementRole | null> {
-  if (isAdminUserRole(ctx.session.user.role)) {
-    if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
-      return null;
-    }
+  if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
+    return null;
+  }
 
+  if (isAdminUserRole(ctx.session.user.role)) {
     return ctx.session.user.role;
   }
 

@@ -143,8 +143,8 @@ void test("eventRouter.create rejects clubs from another college", async () => {
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
-      assert.equal(err.code, "BAD_REQUEST");
-      assert.equal(err.message, "User session is not associated with the selected club's college.");
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "You can only create events for clubs you manage.");
       return true;
     },
   );
@@ -2075,7 +2075,7 @@ void test("eventRouter.submitForReview rejects events with invalid or expired de
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.equal(err.message, "The registration deadline must be before the event starts.");
+      assert.equal(err.message, "Registration deadline must be set to a future time before the event starts.");
       return true;
     },
   );
@@ -2122,7 +2122,7 @@ void test("eventRouter.publishApproved rejects events with expired deadlines", a
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.match(err.message, /registration deadline has passed|cannot be in the past/i);
+      assert.match(err.message, /Registration deadline must be set to a future time/i);
       return true;
     },
   );
@@ -2148,10 +2148,14 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a managed organiz
           registrationClosesAt: new Date("2030-05-12T16:45:00.000Z"),
         }),
         update: async (args: any) => {
+          const typedArgs = args as {
+            where: { id: number };
+            data: { registrationClosesAt: Date };
+          };
           updatedToNewDeadline = true;
-          assert.equal(args.where.id, 401);
-          assert.equal(args.data.registrationClosesAt.getTime(), newDeadline.getTime());
-          return { id: 401, title: "Published Event", status: "PUBLISHED", registrationClosesAt: args.data.registrationClosesAt };
+          assert.equal(typedArgs.where.id, 401);
+          assert.equal(typedArgs.data.registrationClosesAt.getTime(), newDeadline.getTime());
+          return { id: 401, title: "Published Event", status: "PUBLISHED", registrationClosesAt: typedArgs.data.registrationClosesAt };
         },
       },
       club: {
@@ -2183,10 +2187,11 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a managed organiz
   };
 
   const caller = createCaller(mockedCtx as any);
-  const result = await caller.event.extendRegistrationDeadline({ id: 401, newDeadline });
+  const result = await caller.event.extendRegistrationDeadline({ id: 401, registrationClosesAt: newDeadline });
 
   assert.ok(updatedToNewDeadline);
   assert.ok(loggedExtension);
+  assert.ok(result.registrationClosesAt);
   assert.equal(result.registrationClosesAt.getTime(), newDeadline.getTime());
 });
 
@@ -2237,7 +2242,7 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a same-college ad
   };
 
   const caller = createCaller(mockedCtx as any);
-  await caller.event.extendRegistrationDeadline({ id: 402, newDeadline });
+  await caller.event.extendRegistrationDeadline({ id: 402, registrationClosesAt: newDeadline });
 
   assert.ok(updatedToNewDeadline);
 });
@@ -2277,7 +2282,7 @@ void test("eventRouter.extendRegistrationDeadline rejects unmanaged access", asy
   const caller = createCaller(mockedCtx as any);
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 403, newDeadline });
+      await caller.event.extendRegistrationDeadline({ id: 403, registrationClosesAt: newDeadline });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2322,12 +2327,12 @@ void test("eventRouter.extendRegistrationDeadline rejects non-reopenable events"
   const caller = createCaller(mockedCtx as any);
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 404, newDeadline });
+      await caller.event.extendRegistrationDeadline({ id: 404, registrationClosesAt: newDeadline });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.match(err.message, /only be reopened/i);
+      assert.match(err.message, /extend registration/i);
       return true;
     },
   );
@@ -2368,7 +2373,7 @@ void test("eventRouter.extendRegistrationDeadline rejects invalid deadlines", as
   // After event start
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 405, newDeadline: new Date("2030-05-15T10:00:00.000Z") });
+      await caller.event.extendRegistrationDeadline({ id: 405, registrationClosesAt: new Date("2030-05-15T10:00:00.000Z") });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2380,7 +2385,7 @@ void test("eventRouter.extendRegistrationDeadline rejects invalid deadlines", as
   // Past deadline
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 405, newDeadline: new Date("2020-01-01T10:00:00.000Z") });
+      await caller.event.extendRegistrationDeadline({ id: 405, registrationClosesAt: new Date("2020-01-01T10:00:00.000Z") });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2389,3 +2394,199 @@ void test("eventRouter.extendRegistrationDeadline rejects invalid deadlines", as
     },
   );
 });
+
+void test("eventRouter.update rejects clubs from another college", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 501,
+          clubId: 10,
+          authorId: "organizer-user-id",
+          collegeId: "college-1",
+          title: "Draft Event",
+          status: "DRAFT",
+        }),
+      },
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-2" }), // Different college!
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.update({
+        id: 501,
+        data: validCreateInput,
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Unauthorized for this event");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.cancel rejects events from another college", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 502,
+          clubId: 10,
+          authorId: "organizer-user-id",
+          collegeId: "college-2", // Different college!
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-2" }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.cancel({
+        id: 502,
+        reason: "Cancelled due to emergency closure",
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      assert.equal(err.message, "Unauthorized for this event");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.extendRegistrationDeadline rejects cross-college organizer", async () => {
+  const mockedCtx = {
+    db: {
+      event: {
+        findUnique: async () => ({
+          id: 503,
+          clubId: 10,
+          authorId: "organizer-user-id",
+          collegeId: "college-2", // Different college!
+          title: "Published Event",
+          status: "PUBLISHED",
+        }),
+      },
+      club: {
+        findUnique: async () => ({ id: 10, collegeId: "college-2" }),
+      },
+      clubMembership: {
+        findUnique: async () => ({ role: "OWNER" }),
+      },
+    } as any,
+    session: {
+      user: {
+        id: "organizer-user-id",
+        role: "ORGANIZER",
+        collegeId: "college-1",
+      },
+      expires: "2026-05-23T00:00:00.000Z",
+    },
+    headers: new Headers(),
+  };
+
+  const caller = createCaller(mockedCtx as any);
+  await assert.rejects(
+    async () => {
+      await caller.event.extendRegistrationDeadline({
+        id: 503,
+        registrationClosesAt: new Date("2030-05-15T12:00:00.000Z"),
+      });
+    },
+    (err: any) => {
+      assert.ok(err instanceof TRPCError);
+      assert.equal(err.code, "FORBIDDEN");
+      return true;
+    },
+  );
+});
+
+void test("eventRouter.extendRegistrationDeadline rejects past or cancelled events", async () => {
+  for (const status of ["CANCELLED", "DRAFT", "SUBMITTED"]) {
+    const mockedCtx = {
+      db: {
+        event: {
+          findUnique: async () => ({
+            id: 504,
+            clubId: 10,
+            authorId: "organizer-user-id",
+            collegeId: "college-1",
+            title: "Reopen Event Test",
+            status,
+            date: new Date("2030-05-15T18:00:00.000Z"),
+            registrationClosesAt: new Date("2030-05-14T18:00:00.000Z"),
+          }),
+        },
+        club: {
+          findUnique: async () => ({ id: 10, collegeId: "college-1" }),
+        },
+        clubMembership: {
+          findUnique: async () => ({ role: "OWNER" }),
+        },
+      } as any,
+      session: {
+        user: {
+          id: "organizer-user-id",
+          role: "ORGANIZER",
+          collegeId: "college-1",
+        },
+        expires: "2026-05-23T00:00:00.000Z",
+      },
+      headers: new Headers(),
+    };
+
+    const caller = createCaller(mockedCtx as any);
+    await assert.rejects(
+      async () => {
+        await caller.event.extendRegistrationDeadline({
+          id: 504,
+          registrationClosesAt: new Date("2030-05-15T12:00:00.000Z"),
+        });
+      },
+      (err: any) => {
+        assert.ok(err instanceof TRPCError);
+        assert.equal(err.code, "BAD_REQUEST");
+        assert.equal(err.message, "Only approved or published upcoming events can extend registration.");
+        return true;
+      },
+    );
+  }
+});
+
