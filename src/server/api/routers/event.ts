@@ -15,12 +15,8 @@ import { resolveDiscussionDisplayName } from "@/lib/discussion";
 import { isRegistrationReopenable } from "@/lib/event-registration";
 import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
 import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
-import { deriveFeedPreferenceSignals } from "@/server/services/feed-preferences";
-import { buildPublishedFeedQuery, selectTopPersonalizedFeedEvents } from "@/server/services/feed-query";
 import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-week-query";
-import {
-  buildStudentRelevanceProfile,
-} from "@/server/services/feed-ranking";
+import { getPersonalizedFeed } from "@/server/domain/feed-engine";
 import { emitAttendanceChange, getAttendanceLatestActivity } from "@/server/services/attendance-realtime";
 import type { db as prismaDb } from "@/server/db";
 import { ee } from "@/server/events";
@@ -398,7 +394,10 @@ export const eventRouter = createTRPCRouter({
         });
       }
       
-      return ctx.db.event.delete({ where: { id: input.id } });
+      return ctx.db.event.update({
+        where: { id: input.id },
+        data: { deletedAt: new Date() },
+      });
     }),
 
   update: protectedOrganizerProcedure
@@ -734,8 +733,9 @@ export const eventRouter = createTRPCRouter({
   getOrganizerDrafts: protectedOrganizerProcedure.query(async ({ ctx }) => {    
     const where =
       isAdminUserRole(ctx.session.user.role) && ctx.session.user.collegeId
-        ? { collegeId: ctx.session.user.collegeId }
+        ? { collegeId: ctx.session.user.collegeId, deletedAt: null }
         : {
+            deletedAt: null,
             club: {
               is: {
                 members: {
@@ -783,47 +783,7 @@ export const eventRouter = createTRPCRouter({
       });
     }
 
-    const events = await ctx.db.event.findMany(buildPublishedFeedQuery(collegeId, userId));
-
-    const followedRows = await ctx.db.hubFollow.findMany({
-      where: { userId: userId },
-      select: {
-        clubId: true,
-      },
-    });
-
-    const followedClubIds = followedRows.map((row) => row.clubId);
-    
-    const { courseKeywords: headerCourses, selectedDomains: headerDomains } = deriveFeedPreferenceSignals(ctx.headers);
-
-    // Fetch database profile and preferences
-    const [studentProfile, userPrefs] = await Promise.all([
-      ctx.db.studentProfile.findUnique({
-        where: { userId },
-        select: { course: true, branch: true },
-      }),
-      ctx.db.userPreference.findUnique({
-        where: { userId },
-        select: { preferredCategories: true },
-      }),
-    ]);
-
-    const dbCourses = studentProfile
-      ? [studentProfile.course, studentProfile.branch]
-      : [];
-    const dbDomains = userPrefs?.preferredCategories ?? [];
-
-    // Merge database-persisted preferences with any headers
-    const courseKeywords = Array.from(new Set([...headerCourses, ...dbCourses]));
-    const selectedDomains = Array.from(new Set([...headerDomains, ...dbDomains]));
-
-    const profile = buildStudentRelevanceProfile({
-      courseKeywords,
-      selectedDomains,
-      followedClubIds,
-    });
-
-    return selectTopPersonalizedFeedEvents(events, profile);
+    return getPersonalizedFeed({ db: ctx.db, headers: ctx.headers }, userId, collegeId);
   }),
 
   getHappeningThisWeek: protectedProcedure.query(async ({ ctx }) => {
@@ -1230,6 +1190,7 @@ export const eventRouter = createTRPCRouter({
   getMyCalendar: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.event.findMany({
       where: {
+        deletedAt: null,
         rsvps: {
           some: {
             userId: ctx.session.user.id,

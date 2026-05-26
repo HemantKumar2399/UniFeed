@@ -233,25 +233,25 @@ development_status:
   23-6-verify-build-scripts-from-fresh-clone: done
   23-7-update-documentation-and-release-notes: done
   epic-23-retrospective: optional
-  
-  epic-24: backlog
-  24-1-wrap-organizer-dashboard-metrics-in-suspense: backlog
-  24-2-nextauth-hydration-and-session-error-boundaries: backlog
-  24-3-enforce-design-system-aliases-in-tailwind-v4-and-shadcn-css-variables: backlog
+
+  epic-24: done
+  24-1-wrap-organizer-dashboard-metrics-in-suspense: done
+  24-2-nextauth-hydration-and-session-error-boundaries: done
+  24-3-enforce-design-system-aliases-in-tailwind-v4-and-shadcn-css-variables: done
   epic-24-retrospective: optional
 
-  epic-25: backlog
-  25-1-integrate-software-fallback-qr-scanner-for-ios-safari: backlog
-  25-2-auto-focus-and-touch-optimization-for-manual-check-in: backlog
-  25-3-add-wake-lock-status-indicators-and-warnings: backlog
-  25-4-offline-scan-queue-and-synchronization: backlog
+  epic-25: done
+  25-1-integrate-software-fallback-qr-scanner-for-ios-safari: done
+  25-2-auto-focus-and-touch-optimization-for-manual-check-in: done
+  25-3-add-wake-lock-status-indicators-and-warnings: done
+  25-4-offline-scan-queue-and-synchronization: done
   epic-25-retrospective: optional
 
-  epic-26: backlog
-  26-1-extract-feed-ranking-engine-from-trpc-router: backlog
-  26-2-ensure-prisma-concurrency-locking-for-rsvp-capacity: backlog
-  26-3-implement-soft-deletes-for-events-and-clubs: backlog
-  26-4-add-denormalized-counters-and-index-tuning: backlog
+  epic-26: done
+  26-1-extract-feed-ranking-engine-from-trpc-router: done
+  26-2-ensure-prisma-concurrency-locking-for-rsvp-capacity: done
+  26-3-implement-soft-deletes-for-events-and-clubs: done
+  26-4-add-denormalized-counters-and-index-tuning: done
   epic-26-retrospective: optional
 
   epic-27: backlog

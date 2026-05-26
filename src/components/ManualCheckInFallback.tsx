@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Search, UserCheck, X } from "lucide-react";
 
 import { api } from "@/trpc/react";
@@ -33,6 +33,14 @@ export function ManualCheckInFallback({
   const [query, setQuery] = useState("");
   const [confirmingRsvpId, setConfirmingRsvpId] = useState<number | null>(null);
   const normalizedQuery = useMemo(() => query.trim(), [query]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const utils = api.useUtils();
   const { data: results, isFetching } = api.event.searchAttendees.useQuery(
@@ -68,10 +76,15 @@ export function ManualCheckInFallback({
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
+            ref={inputRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search name, email, or PRN"
-            className="h-10 w-full rounded-[12px] border border-input bg-card-bg pl-9 pr-3 text-sm text-foreground outline-none focus-visible:border-[var(--color-focus-blue)] transition-colors"
+            inputMode="text"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            className="h-11 w-full rounded-[12px] border border-input bg-card-bg pl-10 pr-3 text-base text-foreground outline-none focus-visible:border-[var(--color-focus-blue)] transition-colors shadow-sm"
           />
         </div>
       </div>
@@ -105,13 +118,13 @@ export function ManualCheckInFallback({
               return (
                 <div
                   key={attendee.rsvpId}
-                  className="flex items-center justify-between gap-3 rounded-[12px] border border-whisper px-3 py-2 transition-colors"
+                  className="flex items-center justify-between gap-3 rounded-[12px] border border-whisper px-3 py-3 transition-colors hover:bg-muted/10 bg-app-bg/50"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">
                       {attendee.name ?? attendee.email ?? "Unknown"}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground truncate">
                       {attendee.email ?? "No email"}
                       {attendee.prn ? ` • ${attendee.prn}` : " • Profile missing"}
                     </p>
@@ -120,7 +133,7 @@ export function ManualCheckInFallback({
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     {isConfirming ? (
                       <>
                         <button
@@ -129,7 +142,7 @@ export function ManualCheckInFallback({
                           onClick={() => {
                             forceCheckIn.mutate({ eventId, userId: attendee.userId });
                           }}
-                          className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-foreground px-3 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex h-10 items-center gap-1 rounded-[10px] bg-foreground px-4 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                         >
                           <UserCheck className="h-3.5 w-3.5" />
                           {forceCheckIn.isPending ? "Saving..." : "Confirm"}
@@ -138,7 +151,7 @@ export function ManualCheckInFallback({
                           type="button"
                           disabled={forceCheckIn.isPending}
                           onClick={() => setConfirmingRsvpId(null)}
-                          className="inline-flex h-9 items-center gap-1 rounded-[10px] border border-input px-3 text-xs font-semibold text-foreground transition-all hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex h-10 items-center gap-1 rounded-[10px] border border-input px-4 text-xs font-semibold text-foreground transition-all hover:bg-muted disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                         >
                           <X className="h-3.5 w-3.5" />
                           Cancel
@@ -149,7 +162,7 @@ export function ManualCheckInFallback({
                         type="button"
                         disabled={!canCheckIn || forceCheckIn.isPending}
                         onClick={() => setConfirmingRsvpId(attendee.rsvpId)}
-                        className="inline-flex h-9 items-center gap-1 rounded-[10px] bg-foreground px-3 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="inline-flex h-10 items-center gap-1 rounded-[10px] bg-foreground px-4 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                       >
                         <UserCheck className="h-3.5 w-3.5" />
                         {alreadyCheckedIn

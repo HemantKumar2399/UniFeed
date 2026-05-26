@@ -182,7 +182,7 @@ void test("discoveryRouter.getDiscover applies category and collection filters s
   assert.equal(capturedEventWhere.category, "Academic");
   assert.equal(capturedEventWhere.isFreeFood, true);
   assert.ok(capturedEventWhere.date.gte instanceof Date);
-  assert.deepEqual(capturedCommunityWhere, { collegeId: "college-1" });
+  assert.deepEqual(capturedCommunityWhere, { collegeId: "college-1", deletedAt: null });
   assert.equal(result.events.length, 0);
   assert.equal(result.communities.length, 0);
 });

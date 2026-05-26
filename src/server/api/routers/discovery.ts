@@ -73,6 +73,7 @@ export const discoveryRouter = createTRPCRouter({
     const [events, communities] = await Promise.all([
       ctx.db.event.findMany({
         where: {
+          deletedAt: null,
           status: "PUBLISHED",
           collegeId,
           date: {
@@ -119,6 +120,7 @@ export const discoveryRouter = createTRPCRouter({
       }),
       ctx.db.club.findMany({
         where: {
+          deletedAt: null,
           collegeId,
           name: {
             contains: query,
@@ -130,6 +132,7 @@ export const discoveryRouter = createTRPCRouter({
           name: true,
           events: {
             where: {
+              deletedAt: null,
               status: "PUBLISHED",
               date: {
                 gte: new Date(),
@@ -226,6 +229,7 @@ export const discoveryRouter = createTRPCRouter({
 
       const events = await ctx.db.event.findMany({
         where: {
+          deletedAt: null,
           status: "PUBLISHED",
           collegeId,
           date: {
@@ -269,6 +273,7 @@ export const discoveryRouter = createTRPCRouter({
 
       const communities = await ctx.db.club.findMany({
         where: {
+          deletedAt: null,
           collegeId,
         },
         select: {
@@ -277,6 +282,7 @@ export const discoveryRouter = createTRPCRouter({
           updatedAt: true,
           events: {
             where: {
+              deletedAt: null,
               status: "PUBLISHED",
               date: {
                 gte: new Date(),

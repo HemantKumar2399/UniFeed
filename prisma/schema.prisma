@@ -37,8 +37,12 @@ model Club {
   blocks    HubBlock[]
   members   ClubMembership[]
   isActive  Boolean  @default(true)
+  deletedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@index([collegeId, deletedAt])
 }
 
 model Event {
@@ -64,6 +68,8 @@ model Event {
   discussionThreads EventDiscussionThread[]
   approvalLogs EventApprovalLog[]
   savedBy     SavedEvent[]
+  deletedAt   DateTime?
+  attendeeCount Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -79,6 +85,8 @@ model Event {
   @@index([date])
   @@index([clubId])
   @@index([collegeId, status, submittedAt])
+  @@index([deletedAt])
+  @@index([collegeId, status, deletedAt])
 }
 
 // Necessary for Next auth

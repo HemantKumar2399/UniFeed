@@ -7,6 +7,10 @@ export function buildPublishedFeedQuery(collegeId?: string, userId?: string) {
   return {
     where: {
       status: "PUBLISHED" as const,
+      deletedAt: null,
+      club: {
+        deletedAt: null,
+      },
       ...(collegeId ? { collegeId } : {}),
       date: {
         gte: new Date(),

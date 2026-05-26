@@ -77,10 +77,11 @@ export async function assertCanManageClub(
       name: true,
       logoUrl: true,
       collegeId: true,
+      deletedAt: true,
     },
   });
 
-  if (!club) {
+  if (!club || club.deletedAt) {
     throw new TRPCError({
       code: "NOT_FOUND",
       message: options?.notFoundMessage ?? "Club not found",
@@ -120,10 +121,11 @@ export async function assertCanManageEvent(
       collegeId: true,
       title: true,
       status: true,
+      deletedAt: true,
     },
   });
 
-  if (!event) {
+  if (!event || event.deletedAt) {
     throw new TRPCError({
       code: "NOT_FOUND",
       message: options?.notFoundMessage ?? "Event not found",
@@ -149,7 +151,10 @@ export async function getManageableClubsForUser(ctx: ClubManagementCtx) {
     }
 
     const clubs = await ctx.db.club.findMany({
-      where: { collegeId: ctx.session.user.collegeId },
+      where: {
+        collegeId: ctx.session.user.collegeId,
+        deletedAt: null,
+      },
       orderBy: { name: "asc" },
       select: {
         id: true,
@@ -175,6 +180,9 @@ export async function getManageableClubsForUser(ctx: ClubManagementCtx) {
       userId: ctx.session.user.id,
       role: {
         in: ["OWNER", "EDITOR"],
+      },
+      club: {
+        deletedAt: null,
       },
     },
     orderBy: {

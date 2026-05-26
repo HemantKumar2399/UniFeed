@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Camera, AlertCircle } from "lucide-react";
+import jsQR from "jsqr";
 
 type ScannerProps = {
   onDetected: (token: string) => void;
@@ -18,6 +19,11 @@ type BarcodeDetectorLike = {
 
 type BarcodeDetectorCtor = new (options?: { formats?: string[] }) => BarcodeDetectorLike;
 
+interface WakeLockSentinelLike {
+  release: () => Promise<void>;
+  addEventListener: (type: string, listener: () => void) => void;
+}
+
 export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastTokenRef = useRef("");
@@ -27,18 +33,45 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
   const [unsupported, setUnsupported] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [manualToken, setManualToken] = useState("");
+  const [wakeLockActive, setWakeLockActive] = useState(false);
+  const [wakeLockWarning, setWakeLockWarning] = useState(false);
 
   useEffect(() => {
     let stream: MediaStream | null = null;
     let intervalId: number | null = null;
     let cancelled = false;
     let detecting = false;
+    let wakeLock: WakeLockSentinelLike | null = null;
+
+    const requestWakeLock = async () => {
+      if (typeof navigator !== "undefined" && "wakeLock" in navigator) {
+        try {
+          const nav = navigator as unknown as {
+            wakeLock: { request: (type: string) => Promise<WakeLockSentinelLike> };
+          };
+          const sentinel = await nav.wakeLock.request("screen");
+          wakeLock = sentinel;
+          setWakeLockActive(true);
+          sentinel.addEventListener("release", () => {
+            setWakeLockActive(false);
+          });
+        } catch (err) {
+          console.warn("Wake lock failed:", err);
+          setWakeLockWarning(true);
+        }
+      }
+    };
 
     const start = async () => {
+      await requestWakeLock();
+
       const detectorApi = (window as unknown as { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector;
+      let useSoftwareFallback = false;
+      let detector: BarcodeDetectorLike | null = null;
+
       if (!detectorApi) {
-        setUnsupported(true);
-        return;
+        console.info("Native BarcodeDetector not found. Falling back to software QR scanner.");
+        useSoftwareFallback = true;
       }
 
       if (!navigator.mediaDevices?.getUserMedia) {
@@ -60,7 +93,16 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
         await videoRef.current.play();
         setCameraReady(true);
 
-        const detector = new detectorApi({ formats: ["qr_code"] });
+        if (!useSoftwareFallback && detectorApi) {
+          try {
+            detector = new detectorApi({ formats: ["qr_code"] });
+          } catch (e) {
+            console.warn("Failed to construct native BarcodeDetector, using software fallback:", e);
+            useSoftwareFallback = true;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
 
         const scanFrame = async () => {
           if (cancelled || !videoRef.current || isBusy || detecting) {
@@ -69,8 +111,26 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
 
           detecting = true;
           try {
-            const detected = await detector.detect(videoRef.current);
-            const token = detected[0]?.rawValue?.trim();
+            let token: string | undefined;
+
+            if (useSoftwareFallback) {
+              const video = videoRef.current;
+              if (video.videoWidth > 0 && video.videoHeight > 0) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext("2d");
+                if (ctx) {
+                  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const code = jsQR(imageData.data, imageData.width, imageData.height);
+                  token = code?.data?.trim();
+                }
+              }
+            } else if (detector) {
+              const detected = await detector.detect(videoRef.current);
+              token = detected[0]?.rawValue?.trim();
+            }
+
             if (!token) {
               return;
             }
@@ -85,7 +145,7 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
             lastDetectedAtRef.current = now;
             onDetected(token);
           } catch {
-            // Scanner frames can fail intermittently while camera warms up; keep looping.
+            // Frame analysis error, bypass and retry
           } finally {
             detecting = false;
           }
@@ -109,6 +169,11 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }
+      if (wakeLock) {
+        void wakeLock.release().catch((e) => {
+          console.error("Release wake lock failed", e);
+        });
+      }
     };
   }, [isBusy, onDetected]);
 
@@ -117,7 +182,7 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-notion-black">Camera Scanner</h2>
         <span className={`rounded-pill px-3 py-1 text-xs font-semibold ${cameraReady ? "bg-green-50 text-green-700" : "bg-warm-white text-warm-gray-500"}`}>
-          {cameraReady ? "Live" : "Booting"}
+          {cameraReady ? (wakeLockActive ? "Live (Wake-Locked)" : "Live") : "Booting"}
         </span>
       </div>
 
@@ -128,9 +193,21 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
         </div>
       ) : null}
 
+      {wakeLockWarning ? (
+        <div className="mb-4 flex items-start gap-2 rounded-[12px] border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
+          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+          <div>
+            <p className="font-semibold text-amber-950">Low Power Mode Notice</p>
+            <p className="mt-0.5 text-xs text-amber-700">
+              Low Power Mode blocks screen wake locks. Your screen may dim. Disable battery saver or charge your device for the best scanning experience.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       {unsupported ? (
         <div className="mb-4 rounded-[12px] border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm font-medium text-yellow-800">
-          Native QR scanning is unavailable in this browser. Use manual token fallback below.
+          Camera scanning is unavailable in this browser. Use manual token fallback below.
         </div>
       ) : null}
 
@@ -172,7 +249,7 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
               setManualToken("");
             }}
             disabled={isBusy}
-            className="h-10 rounded-[12px] bg-notion-black px-4 text-sm font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:opacity-60"
+            className="h-10 rounded-[12px] bg-notion-black px-4 text-sm font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:opacity-60 cursor-pointer"
           >
             Verify
           </button>

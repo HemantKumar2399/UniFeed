@@ -9,6 +9,10 @@ export function buildHappeningThisWeekQuery(collegeId: string, referenceDate: Da
     where: {
       collegeId,
       status: "PUBLISHED" as const,
+      deletedAt: null,
+      club: {
+        deletedAt: null,
+      },
       date: {
         gte: start,
         lt: endExclusive,

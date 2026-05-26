@@ -86,6 +86,16 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border-whisper-color);
   --color-ring: var(--color-focus-blue);
+  --color-primary: var(--color-notion-blue);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-accent: var(--muted);
+  --color-accent-foreground: var(--foreground);
+  --color-card: var(--card-bg);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--card-bg);
+  --color-popover-foreground: var(--foreground);
 
   /* --- SEMANTIC ACCENT COLORS --- */
   --color-teal: #2a9d99; /* Success / positive */

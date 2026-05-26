@@ -11,8 +11,9 @@ export class CapacityError extends Error {
 export async function createRsvpPessimistic(userId: string, eventId: number) {
   return await db.$transaction(
     async (tx: Prisma.TransactionClient) => {
-      // Fetch event capacity — no raw FOR UPDATE lock needed; REPEATABLE READ
-      // isolation on the transaction prevents phantom reads at the count level.
+      // Enforce pessimistic locking on the target event to serialize concurrent checks
+      await tx.$executeRaw`SELECT id FROM "Event" WHERE id = ${eventId} FOR UPDATE`;
+
       const event = await tx.event.findUnique({
         where: { id: eventId },
         select: { id: true, capacity: true },
@@ -49,6 +50,13 @@ export async function createRsvpPessimistic(userId: string, eventId: number) {
       const targetStatus = hasSeat ? "GOING" : "WAITLISTED";
       const remainingCapacity = hasSeat ? event.capacity - activeCount - 1 : 0;
 
+      if (targetStatus === "GOING") {
+        await tx.event.update({
+          where: { id: eventId },
+          data: { attendeeCount: { increment: 1 } },
+        });
+      }
+
       if (existingRsvp) {
         // Re-activate a previously cancelled RSVP
         const rsvp = await tx.rSVP.update({
@@ -63,11 +71,6 @@ export async function createRsvpPessimistic(userId: string, eventId: number) {
         data: { userId, eventId, status: targetStatus },
       });
       return { rsvp, remainingCapacity };
-    },
-    {
-      // REPEATABLE READ prevents a concurrent transaction from inserting an RSVP
-      // between our count check and our create, without requiring explicit row locks.
-      isolationLevel: "RepeatableRead",
-    },
+    }
   );
 }

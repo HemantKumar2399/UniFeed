@@ -195,6 +195,9 @@ export const rsvpRouter = createTRPCRouter({
       const eventId = input.eventId;
 
       const result = await ctx.db.$transaction(async (tx: Prisma.TransactionClient) => {
+        // Enforce pessimistic locking on the event to serialize waitlist promotions
+        await tx.$executeRaw`SELECT id FROM "Event" WHERE id = ${eventId} FOR UPDATE`;
+
         const event = await tx.event.findUnique({
           where: { id: eventId },
           select: {
@@ -252,6 +255,14 @@ export const rsvpRouter = createTRPCRouter({
           },
         });
 
+        // Decrement attendeeCount if student was active (GOING)
+        if (originalStatus === "GOING") {
+          await tx.event.update({
+            where: { id: eventId },
+            data: { attendeeCount: { decrement: 1 } },
+          });
+        }
+
         let promotedRsvpId: number | null = null;
 
         const canPromoteWaitlist =
@@ -274,6 +285,11 @@ export const rsvpRouter = createTRPCRouter({
               data: {
                 status: "GOING",
               },
+            });
+            // Increment attendeeCount since waitlisted user is promoted to GOING
+            await tx.event.update({
+              where: { id: eventId },
+              data: { attendeeCount: { increment: 1 } },
             });
             promotedRsvpId = nextWaitlist.id;
             // Notify waitlist promoted student

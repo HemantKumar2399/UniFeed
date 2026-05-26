@@ -58,7 +58,12 @@ void test("getAdminDashboardMetrics returns college-scoped workflow and RSVP tot
 
   assert.deepEqual(activeCommunityWhere, {
     collegeId: "college-1",
-    OR: [{ events: { some: {} } }, { members: { some: {} } }, { followers: { some: {} } }],
+    deletedAt: null,
+    OR: [
+      { events: { some: { deletedAt: null } } },
+      { members: { some: {} } },
+      { followers: { some: {} } },
+    ],
   });
   assert.deepEqual(upcomingEventWhere, {
     collegeId: "college-1",
@@ -66,13 +71,16 @@ void test("getAdminDashboardMetrics returns college-scoped workflow and RSVP tot
     date: {
       gte: now,
     },
+    deletedAt: null,
   });
   assert.deepEqual(rsvpWhere, {
     event: {
       collegeId: "college-1",
+      deletedAt: null,
     },
   });
   assert.equal((approvalWhere as any).event.collegeId, "college-1");
+  assert.equal((approvalWhere as any).event.deletedAt, null);
   assert.equal((approvalWhere as any).createdAt.gte.toISOString(), "2030-04-24T10:00:00.000Z");
   assert.equal(metrics.pendingApprovals, 3);
   assert.equal(metrics.activeCommunities, 6);
@@ -163,12 +171,14 @@ void test("getOrganizerDashboardMetrics scopes organizer metrics to managed club
     clubId: {
       in: [4, 9],
     },
+    deletedAt: null,
   });
   assert.deepEqual(rsvpStatusWhere, {
     event: {
       clubId: {
         in: [4, 9],
       },
+      deletedAt: null,
     },
   });
   assert.deepEqual(recentActivityWhere, {
@@ -176,6 +186,7 @@ void test("getOrganizerDashboardMetrics scopes organizer metrics to managed club
       clubId: {
         in: [4, 9],
       },
+      deletedAt: null,
     },
   });
   assert.equal(metrics.eventCount, 6);

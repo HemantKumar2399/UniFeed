@@ -102,12 +102,18 @@ export async function getAdminDashboardMetrics(
         where: {
           collegeId,
           status: "SUBMITTED",
+          deletedAt: null,
         },
       }),
       db.club.count({
         where: {
           collegeId,
-          OR: [{ events: { some: {} } }, { members: { some: {} } }, { followers: { some: {} } }],
+          deletedAt: null,
+          OR: [
+            { events: { some: { deletedAt: null } } },
+            { members: { some: {} } },
+            { followers: { some: {} } },
+          ],
         },
       }),
       db.event.count({
@@ -117,12 +123,14 @@ export async function getAdminDashboardMetrics(
           date: {
             gte: now,
           },
+          deletedAt: null,
         },
       }),
       db.eventApprovalLog.findMany({
         where: {
           event: {
             collegeId,
+            deletedAt: null,
           },
           action: {
             in: ["APPROVED", "REJECTED"],
@@ -139,6 +147,7 @@ export async function getAdminDashboardMetrics(
         where: {
           event: {
             collegeId,
+            deletedAt: null,
           },
         },
         select: {
@@ -171,10 +180,10 @@ export async function getOrganizerDashboardMetrics(
 
   const eventScope = isAdminUserRole(user.role)
     ? user.collegeId
-      ? { collegeId: user.collegeId }
+      ? { collegeId: user.collegeId, deletedAt: null }
       : null
     : managedClubIds && managedClubIds.length > 0
-      ? { clubId: { in: managedClubIds } }
+      ? { clubId: { in: managedClubIds }, deletedAt: null }
       : null;
 
   if (!eventScope) {

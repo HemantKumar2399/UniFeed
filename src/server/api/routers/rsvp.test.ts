@@ -292,15 +292,17 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
   const eventDate = new Date(Date.now() + 86400000);
 
   const mockTx = {
-      event: {
-        findUnique: async () => ({
-          id: 15,
-          title: "Campus Mixer",
-          capacity: 2,
-          date: eventDate,
-          registrationClosesAt: new Date(Date.now() + 43200000),
-        }),
-      },
+    $executeRaw: async () => 1,
+    event: {
+      findUnique: async () => ({
+        id: 15,
+        title: "Campus Mixer",
+        capacity: 2,
+        date: eventDate,
+        registrationClosesAt: new Date(Date.now() + 43200000),
+      }),
+      update: async () => ({ id: 15 }),
+    },
     rSVP: {
       findUnique: async () => ({
         id: 101,
@@ -429,6 +431,7 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
 
 void test("rsvpRouter.cancel blocks past events", async () => {
   const mockTx = {
+    $executeRaw: async () => 1,
     event: {
       findUnique: async () => ({
         id: 15,
@@ -549,6 +552,7 @@ void test("rsvpRouter.cancel successfully cancels but does not promote waitlist 
   const eventDate = new Date(Date.now() + 86400000);
 
   const mockTx = {
+    $executeRaw: async () => 1,
     event: {
       findUnique: async () => ({
         id: 15,
@@ -557,6 +561,7 @@ void test("rsvpRouter.cancel successfully cancels but does not promote waitlist 
         date: eventDate,
         registrationClosesAt: new Date(Date.now() - 43200000), // passed deadline
       }),
+      update: async () => ({ id: 15 }),
     },
     rSVP: {
       findUnique: async () => ({
