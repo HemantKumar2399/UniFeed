@@ -100,6 +100,7 @@ void test("getAdminDashboardMetrics returns college-scoped workflow and RSVP tot
 void test("getOrganizerDashboardMetrics scopes organizer metrics to managed clubs and recent activity", async () => {
   let membershipWhere: unknown;
   let eventWhere: unknown;
+  let conversionWhere: unknown;
   let rsvpStatusWhere: unknown;
   let recentActivityWhere: unknown;
 
@@ -114,6 +115,22 @@ void test("getOrganizerDashboardMetrics scopes organizer metrics to managed club
       },
       event: {
         findMany: async (args: any) => {
+          if (args.select?.rsvps) {
+            conversionWhere = args.where;
+            return [
+              {
+                id: 7,
+                title: "Past Workshop",
+                date: new Date("2030-05-20T10:00:00.000Z"),
+                rsvps: [
+                  { status: "ATTENDED" },
+                  { status: "GOING" },
+                  { status: "WAITLISTED" },
+                ],
+              },
+            ];
+          }
+
           eventWhere = args.where;
           return [
             { id: 1, status: "DRAFT", date: new Date("2030-05-30T10:00:00.000Z") },
@@ -189,6 +206,18 @@ void test("getOrganizerDashboardMetrics scopes organizer metrics to managed club
       deletedAt: null,
     },
   });
+  assert.deepEqual(conversionWhere, {
+    clubId: {
+      in: [4, 9],
+    },
+    deletedAt: null,
+    date: {
+      lt: now,
+    },
+    status: {
+      in: ["PUBLISHED", "CANCELLED"],
+    },
+  });
   assert.equal(metrics.eventCount, 6);
   assert.equal(metrics.rsvpCount, 3);
   assert.equal(metrics.upcomingEventCount, 1);
@@ -200,6 +229,8 @@ void test("getOrganizerDashboardMetrics scopes organizer metrics to managed club
   assert.equal(metrics.rsvpTotals.attended, 2);
   assert.equal(metrics.recentActivity[0]?.attendeeName, "Aarav Sharma");
   assert.equal(metrics.recentActivity[0]?.status, "ATTENDED");
+  assert.equal(metrics.conversionRows[0]?.eventId, 7);
+  assert.equal(metrics.conversionRows[0]?.conversionPercentage, 50);
 });
 
 void test("getOrganizerDashboardMetrics returns an empty state when an organizer manages no clubs", async () => {
@@ -228,4 +259,5 @@ void test("getOrganizerDashboardMetrics returns an empty state when an organizer
   assert.equal(metrics.eventCount, 0);
   assert.equal(metrics.rsvpCount, 0);
   assert.equal(metrics.recentActivity.length, 0);
+  assert.equal(metrics.conversionRows.length, 0);
 });

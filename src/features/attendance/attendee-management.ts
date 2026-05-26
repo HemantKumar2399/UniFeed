@@ -34,6 +34,7 @@ export type AttendeeRow = {
   course: string | null;
   graduationYear: number | null;
   status: RSVPStatus;
+  checkedInAt: Date | null;
   registeredAt: Date;
 };
 
@@ -70,6 +71,7 @@ type AttendeeRecord = {
   id: number;
   userId: string;
   status: RSVPStatus;
+  checkedInAt?: Date | null;
   createdAt: Date;
   user: {
     id: string;
@@ -138,6 +140,7 @@ export function mapAttendeeRow(record: AttendeeRecord): AttendeeRow {
     course: record.user.studentProfile?.course ?? null,
     graduationYear: record.user.studentProfile?.graduationYear ?? null,
     status: record.status,
+    checkedInAt: record.checkedInAt ?? null,
     registeredAt: record.createdAt,
   };
 }
@@ -265,6 +268,7 @@ export function buildAttendeeCsv(params: {
     "Graduation Year",
     "RSVP Status",
     "Checked In",
+    "Checked In At",
     "Registered At",
   ];
 
@@ -282,6 +286,7 @@ export function buildAttendeeCsv(params: {
       sanitizeCsvField(attendee.graduationYear),
       sanitizeCsvField(attendee.status),
       sanitizeCsvField(attendee.status === "ATTENDED"),
+      sanitizeCsvField(attendee.checkedInAt),
       sanitizeCsvField(attendee.registeredAt),
     ].join(","),
   );

@@ -20,6 +20,7 @@ const baseAttendees: AttendeeRow[] = [
     course: "BTech",
     graduationYear: 2026,
     status: "GOING",
+    checkedInAt: null,
     registeredAt: new Date("2030-05-01T10:00:00.000Z"),
   },
   {
@@ -32,6 +33,7 @@ const baseAttendees: AttendeeRow[] = [
     course: "BTech",
     graduationYear: 2026,
     status: "ATTENDED",
+    checkedInAt: new Date("2030-05-01T12:00:00.000Z"),
     registeredAt: new Date("2030-05-01T11:00:00.000Z"),
   },
   {
@@ -44,6 +46,7 @@ const baseAttendees: AttendeeRow[] = [
     course: "BTech",
     graduationYear: 2027,
     status: "WAITLISTED",
+    checkedInAt: null,
     registeredAt: new Date("2030-05-01T12:00:00.000Z"),
   },
   {
@@ -56,6 +59,7 @@ const baseAttendees: AttendeeRow[] = [
     course: "BTech",
     graduationYear: 2027,
     status: "CANCELLED",
+    checkedInAt: null,
     registeredAt: new Date("2030-05-01T13:00:00.000Z"),
   },
 ];

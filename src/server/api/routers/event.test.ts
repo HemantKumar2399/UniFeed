@@ -353,6 +353,7 @@ void test("eventRouter.getAttendees allows club editors to manage event attendan
   assert.equal(result.counts.all, 1);
   assert.equal(result.attendees.length, 1);
   assert.equal(result.attendees[0]?.status, "GOING");
+  assert.equal(result.attendees[0]?.checkedInAt, null);
   assert.equal(result.attendees[0]?.prn, "PRN-2026-001");
   assert.equal(result.attendees[0]?.branch, "Computer Science");
 });
@@ -434,6 +435,7 @@ void test("eventRouter.getAttendees allows same-college admins without club memb
                   id: 5,
                   userId: "student-2",
                   status: "ATTENDED",
+                  checkedInAt: new Date("2030-05-12T12:00:00.000Z"),
                   createdAt: new Date("2030-05-12T10:00:00.000Z"),
                   user: {
                     id: "student-2",
@@ -488,6 +490,7 @@ void test("eventRouter.getAttendees allows same-college admins without club memb
   const result = await caller.event.getAttendees({ eventId: 73 });
 
   assert.equal(result.attendees[0]?.status, "ATTENDED");
+  assert.equal(result.attendees[0]?.checkedInAt?.toISOString(), "2030-05-12T12:00:00.000Z");
   assert.equal(result.attendees[0]?.course, "BTech");
 });
 
@@ -1198,6 +1201,7 @@ void test("eventRouter.searchAttendees matches real PRN values without fabricati
 void test("eventRouter.forceCheckIn persists attended state and is idempotent for repeated scans", async () => {
   let currentStatus = "GOING";
   let updateCount = 0;
+  let firstCheckedInAt: unknown = null;
 
   const mockedCtx = {
     db: {
@@ -1237,14 +1241,18 @@ void test("eventRouter.forceCheckIn persists attended state and is idempotent fo
             email: "student@example.com",
           },
         }),
-        update: async () => {
+        update: async (args: any) => {
           updateCount += 1;
           currentStatus = "ATTENDED";
+          assert.equal(args.data.status, "ATTENDED");
+          assert.ok(args.data.checkedInAt instanceof Date);
+          firstCheckedInAt = args.data.checkedInAt;
           return {
             id: 77,
             eventId: 88,
             userId: "student-1",
             status: "ATTENDED",
+            checkedInAt: firstCheckedInAt,
             user: {
               id: "student-1",
               name: "Student One",
@@ -1278,6 +1286,7 @@ void test("eventRouter.forceCheckIn persists attended state and is idempotent fo
   assert.equal(firstResult.status, "ATTENDED");
   assert.equal(secondResult.status, "ATTENDED");
   assert.equal(updateCount, 1);
+  assert.ok(firstCheckedInAt instanceof Date);
 });
 
 void test("eventRouter.forceCheckIn rejects waitlisted attendees", async () => {
@@ -1471,10 +1480,12 @@ void test("eventRouter.verifyStudentQrForEvent checks in a registered student", 
           updated = true;
           assert.equal(args.where.id, 301);
           assert.equal(args.data.status, "ATTENDED");
+          assert.ok(args.data.checkedInAt instanceof Date);
           return {
             id: 301,
             userId: "student-1",
             status: "ATTENDED",
+            checkedInAt: args.data.checkedInAt,
             user: {
               id: "student-1",
               name: "Student One",
@@ -2589,4 +2600,3 @@ void test("eventRouter.extendRegistrationDeadline rejects past or cancelled even
     );
   }
 });
-

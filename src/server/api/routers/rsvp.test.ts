@@ -288,6 +288,8 @@ void test("rsvpRouter.register fails if college mismatch", async () => {
 
 void test("rsvpRouter.cancel successfully cancels and promotes waitlist in transaction", async () => {
   let rsvpUpdatedCount = 0;
+  let attendeeCountDecremented = false;
+  let attendeeCountIncremented = false;
   let promotedRsvpId = 0;
   const eventDate = new Date(Date.now() + 86400000);
 
@@ -301,7 +303,17 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
         date: eventDate,
         registrationClosesAt: new Date(Date.now() + 43200000),
       }),
-      update: async () => ({ id: 15 }),
+      update: async (args: any) => {
+        if (args.data.attendeeCount?.decrement === 1) {
+          attendeeCountDecremented = true;
+        }
+
+        if (args.data.attendeeCount?.increment === 1) {
+          attendeeCountIncremented = true;
+        }
+
+        return { id: 15 };
+      },
     },
     rSVP: {
       findUnique: async () => ({
@@ -326,6 +338,7 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
       findFirst: async (args: any) => {
         assert.equal(args.where.eventId, 15);
         assert.equal(args.where.status, "WAITLISTED");
+        assert.deepEqual(args.orderBy, { createdAt: "asc" });
         return { id: 202, userId: "student-waitlisted", eventId: 15, status: "WAITLISTED" };
       },
     },
@@ -427,6 +440,8 @@ void test("rsvpRouter.cancel successfully cancels and promotes waitlist in trans
   assert.equal(result.status, "CANCELLED");
   assert.equal(rsvpUpdatedCount, 2); // 1 for cancelling, 1 for waitlist promotion
   assert.equal(promotedRsvpId, 202);
+  assert.equal(attendeeCountDecremented, true);
+  assert.equal(attendeeCountIncremented, true);
 });
 
 void test("rsvpRouter.cancel blocks past events", async () => {

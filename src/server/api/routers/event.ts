@@ -92,6 +92,7 @@ async function getEventAttendanceSnapshot(ctx: OrganizerCtx, eventId: number) {
           id: true,
           userId: true,
           status: true,
+          checkedInAt: true,
           createdAt: true,
           user: {
             select: {
@@ -189,7 +190,7 @@ async function markAttendedRsvp(
 
   const updatedRsvp = await ctx.db.rSVP.update({
     where: { id: rsvp.id },
-    data: { status: "ATTENDED" },
+    data: { status: "ATTENDED", checkedInAt: new Date() },
     include: {
       user: {
         select: { id: true, name: true, email: true },
@@ -1100,7 +1101,7 @@ export const eventRouter = createTRPCRouter({
 
       const updated = await ctx.db.rSVP.update({
         where: { id: rsvp.id },
-        data: { status: "ATTENDED" },
+        data: { status: "ATTENDED", checkedInAt: new Date() },
         include: {
           user: {
             select: {

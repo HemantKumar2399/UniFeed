@@ -1,7 +1,8 @@
 "use client";
 
 import type { RSVPStatus } from "@prisma/client";
-import { Bookmark, Pin, PinOff } from "lucide-react";
+import { Bookmark, CalendarPlus, Pin, PinOff } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -329,6 +330,17 @@ export function EventDetailContent({
                     isSaved ? "fill-blue-600 text-blue-600" : "text-muted-foreground"
                   }`}
                 />
+              </Button>
+
+              <Button
+                asChild
+                className="h-12 w-full rounded-xl border-whisper px-6 text-[14px] font-semibold transition-all hover:bg-muted active:scale-95 sm:w-auto"
+                variant="outline"
+              >
+                <Link href={`/api/events/${event.id}/calendar`}>
+                  <CalendarPlus className="h-4 w-4" />
+                  Add to Calendar
+                </Link>
               </Button>
 
               {canCancel ? (

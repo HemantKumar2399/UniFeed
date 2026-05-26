@@ -19,6 +19,7 @@ const attendees = [
     course: "BTech",
     graduationYear: 2026,
     status: "GOING" as const,
+    checkedInAt: null,
     registeredAt: new Date("2026-05-20T09:00:00.000Z"),
   },
   {
@@ -31,6 +32,7 @@ const attendees = [
     course: "BTech",
     graduationYear: 2026,
     status: "ATTENDED" as const,
+    checkedInAt: new Date("2026-05-22T12:30:00.000Z"),
     registeredAt: new Date("2026-05-22T09:00:00.000Z"),
   },
   {
@@ -43,6 +45,7 @@ const attendees = [
     course: null,
     graduationYear: null,
     status: "WAITLISTED" as const,
+    checkedInAt: null,
     registeredAt: new Date("2026-05-21T09:00:00.000Z"),
   },
 ];
@@ -107,9 +110,26 @@ void test("buildAttendeeCsv sanitizes spreadsheet formulas and exports event met
     attendees: [attendees[0]!],
   });
 
-  assert.match(csv, /^Event Title,Event Date,Community,College,Name,Email,PRN,Branch,Course,Graduation Year,RSVP Status,Checked In,Registered At/m);
+  assert.match(csv, /^Event Title,Event Date,Community,College,Name,Email,PRN,Branch,Course,Graduation Year,RSVP Status,Checked In,Checked In At,Registered At/m);
   assert.match(csv, /"'=Campus Fest"/);
   assert.match(csv, /"Coding Club"/);
   assert.match(csv, /"PRN-2026-001"/);
   assert.match(csv, /"false"/);
+  assert.match(csv, /"N\/A"/);
+});
+
+void test("buildAttendeeCsv exports real check-in timestamps for attended rows", () => {
+  const csv = buildAttendeeCsv({
+    event: {
+      id: 88,
+      title: "Campus Fest",
+      date: new Date("2030-05-14T18:45:00.000Z"),
+      capacity: 180,
+      clubName: "Coding Club",
+      collegeName: "North Campus",
+    },
+    attendees: [attendees[1]!],
+  });
+
+  assert.match(csv, /"true","2026-05-22T12:30:00.000Z","2026-05-22T09:00:00.000Z"/);
 });

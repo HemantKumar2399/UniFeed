@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildRsvpConversionRows,
   buildOrganizerStatusCards,
+  calculateRsvpConversionPercentage,
   getRsvpActivityLabel,
   summarizeRsvpStatuses,
 } from "./dashboard-metrics";
@@ -53,4 +55,43 @@ void test("getRsvpActivityLabel maps attendance states to honest dashboard copy"
   assert.equal(getRsvpActivityLabel("ATTENDED"), "Checked in");
   assert.equal(getRsvpActivityLabel("WAITLISTED"), "Waitlisted");
   assert.equal(getRsvpActivityLabel("CANCELLED"), "Cancelled RSVP");
+});
+
+void test("buildRsvpConversionRows calculates attendance conversion without divide-by-zero drift", () => {
+  const rows = buildRsvpConversionRows([
+    {
+      id: 88,
+      title: "Robotics Workshop",
+      date: new Date("2030-05-20T10:00:00.000Z"),
+      rsvps: [
+        { status: "ATTENDED" },
+        { status: "ATTENDED" },
+        { status: "GOING" },
+        { status: "WAITLISTED" },
+        { status: "CANCELLED" },
+      ],
+    },
+    {
+      id: 89,
+      title: "Empty Event",
+      date: new Date("2030-05-21T10:00:00.000Z"),
+      rsvps: [{ status: "WAITLISTED" }, { status: "CANCELLED" }],
+    },
+  ]);
+
+  assert.equal(calculateRsvpConversionPercentage(2, 3), 67);
+  assert.equal(calculateRsvpConversionPercentage(2, 0), 0);
+  assert.deepEqual(rows[0], {
+    eventId: 88,
+    title: "Robotics Workshop",
+    date: new Date("2030-05-20T10:00:00.000Z"),
+    rsvpTotal: 5,
+    confirmedCount: 3,
+    attendedCount: 2,
+    waitlistedCount: 1,
+    cancelledCount: 1,
+    conversionPercentage: 67,
+  });
+  assert.equal(rows[1]?.confirmedCount, 0);
+  assert.equal(rows[1]?.conversionPercentage, 0);
 });

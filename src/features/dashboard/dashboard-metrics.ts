@@ -27,6 +27,27 @@ export type RsvpStatusTotals = {
   cancelled: number;
 };
 
+export type RsvpConversionEventInput = {
+  id: number;
+  title: string;
+  date: Date;
+  rsvps: Array<{
+    status: RSVPStatus;
+  }>;
+};
+
+export type RsvpConversionRow = {
+  eventId: number;
+  title: string;
+  date: Date;
+  rsvpTotal: number;
+  confirmedCount: number;
+  attendedCount: number;
+  waitlistedCount: number;
+  cancelledCount: number;
+  conversionPercentage: number;
+};
+
 const statusCardCopy: Record<
   OrganizerStatusCardStatus,
   { title: string; href: string; ctaLabel: string; description: string }
@@ -121,6 +142,41 @@ export function summarizeRsvpStatuses(statuses: RSVPStatus[]): RsvpStatusTotals 
       cancelled: 0,
     },
   );
+}
+
+export function calculateRsvpConversionPercentage(
+  attendedCount: number,
+  confirmedCount: number,
+): number {
+  if (confirmedCount <= 0) {
+    return 0;
+  }
+
+  return Math.round((attendedCount / confirmedCount) * 100);
+}
+
+export function buildRsvpConversionRows(
+  events: RsvpConversionEventInput[],
+): RsvpConversionRow[] {
+  return events.map((event) => {
+    const totals = summarizeRsvpStatuses(event.rsvps.map((rsvp) => rsvp.status));
+    const confirmedCount = totals.going + totals.attended;
+
+    return {
+      eventId: event.id,
+      title: event.title,
+      date: event.date,
+      rsvpTotal: totals.total,
+      confirmedCount,
+      attendedCount: totals.attended,
+      waitlistedCount: totals.waitlisted,
+      cancelledCount: totals.cancelled,
+      conversionPercentage: calculateRsvpConversionPercentage(
+        totals.attended,
+        confirmedCount,
+      ),
+    };
+  });
 }
 
 export function formatDashboardDate(date: Date): string {

@@ -16,10 +16,10 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Profile | `/profile` | `real` | Shows real session identity and wired saved/preference flows. |
 | Organizer overview | `/dashboard` | `real` | Shows live organizer/admin workflow metrics, RSVP totals, and attendance activity for the viewer's managed scope. |
 | Organizer events list | `/dashboard/events` | `real` | URL-driven tabs, filters, and real lifecycle actions now use managed-club event data. |
-| Organizer metrics | `/dashboard/metrics` | `real` | Real reporting implemented in Epic 11. |
+| Organizer metrics | `/dashboard/metrics` | `real` | Real reporting implemented in Epic 11, with Epic 27 RSVP-to-attendance conversion charts. |
 | Event creation | `/dashboard/events/new` | `real` | Shared event editor supports full metadata, draft saving, submission, and upload/manual image flows. |
 | Event edit | `/dashboard/events/[id]/edit` | `real` | Shared event editor now loads existing events with status-aware locking and actions. |
-| Event attendees | `/dashboard/events/[id]` | `real` | Real attendee list, CSV export, filtering, check-in state, and StudentProfile identity fields are wired. |
+| Event attendees | `/dashboard/events/[id]` | `real` | Real attendee list, CSV export with checked-in timestamps, filtering, check-in state, and StudentProfile identity fields are wired. |
 | Event scanner | `/dashboard/events/[id]/scan` | `real` | Scanner verifies the permanent student passport QR against the selected event and keeps the manual fallback path. |
 | Hub public pages | `/hubs/[clubId]` | `real` | Club pages feature college scoping and moderation controls. |
 | Organizer hubs | `/dashboard/hubs` | `real` | Hub editor and membership-based management with moderation workflows are fully implemented. |
@@ -35,6 +35,7 @@ This document is the Epic 0 route-and-system baseline. It records what is curren
 | Upload pipeline | `real` | Production upload pipeline implemented with real bucket credentials configuration support. |
 | Organizer event authorization | `real` | Organizer mutations use reusable club membership and same-college admin permission checks. |
 | Attendee identity data | `real` | PRN, branch, course, graduation year, and permanent student QR state come from StudentProfile records. |
+| Calendar exports and analytics | `real` | Epic 27 adds authenticated event `.ics` downloads, durable RSVP check-in timestamps, waitlist promotion regression coverage, and organizer conversion analytics. |
 
 ## `_bmad-output` Cross-Check
 

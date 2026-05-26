@@ -254,11 +254,11 @@ development_status:
   26-4-add-denormalized-counters-and-index-tuning: done
   epic-26-retrospective: optional
 
-  epic-27: backlog
-  27-1-attendee-excel-csv-export-for-organizers: backlog
-  27-2-automated-waitlist-promotion-on-cancellation: backlog
-  27-3-google-apple-calendar-ics-export: backlog
-  27-4-organizer-analytics-dashboard-and-rsvp-conversion-charts: backlog
+  epic-27: done
+  27-1-attendee-excel-csv-export-for-organizers: done
+  27-2-automated-waitlist-promotion-on-cancellation: done
+  27-3-google-apple-calendar-ics-export: done
+  27-4-organizer-analytics-dashboard-and-rsvp-conversion-charts: done
   epic-27-retrospective: optional
 
   epic-28: backlog
@@ -288,5 +288,4 @@ development_status:
   31-3-event-creation-form-auto-save-indicator-and-form-validation: backlog
   31-4-reusable-empty-state-and-loader-skeletons: backlog
   epic-31-retrospective: optional
-
 

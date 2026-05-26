@@ -2,7 +2,9 @@ import type { EventStatus, RSVPStatus } from "@prisma/client";
 
 import {
   createEmptyEventStatusCounts,
+  buildRsvpConversionRows,
   summarizeRsvpStatuses,
+  type RsvpConversionRow,
   type RsvpStatusTotals,
 } from "@/features/dashboard/dashboard-metrics";
 import type { db as prismaDb } from "@/server/db";
@@ -11,6 +13,7 @@ import { isAdminUserRole } from "@/server/permissions/club-management";
 const MANAGEABLE_CLUB_ROLES = ["OWNER", "EDITOR"] as const;
 export const ADMIN_DECISION_WINDOW_DAYS = 30;
 const RECENT_ACTIVITY_LIMIT = 8;
+const CONVERSION_ROW_LIMIT = 8;
 
 type DashboardUser = {
   id: string;
@@ -50,6 +53,7 @@ export type OrganizerDashboardMetrics = {
   statusCounts: Record<EventStatus, number>;
   rsvpTotals: RsvpStatusTotals;
   recentActivity: OrganizerRecentActivity[];
+  conversionRows: RsvpConversionRow[];
 };
 
 type DashboardDb = typeof prismaDb;
@@ -197,10 +201,11 @@ export async function getOrganizerDashboardMetrics(
       statusCounts: createEmptyEventStatusCounts(),
       rsvpTotals: summarizeRsvpStatuses([]),
       recentActivity: [],
+      conversionRows: [],
     };
   }
 
-  const [events, rsvpRows, recentActivityRows] = await Promise.all([
+  const [events, rsvpRows, recentActivityRows, conversionEventRows] = await Promise.all([
     db.event.findMany({
       where: eventScope,
       select: {
@@ -245,6 +250,31 @@ export async function getOrganizerDashboardMetrics(
         },
       },
     }),
+    db.event.findMany({
+      where: {
+        ...eventScope,
+        date: {
+          lt: now,
+        },
+        status: {
+          in: ["PUBLISHED", "CANCELLED"],
+        },
+      },
+      orderBy: {
+        date: "desc",
+      },
+      take: CONVERSION_ROW_LIMIT,
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        rsvps: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    }),
   ]);
 
   const statusCounts = reduceEventStatuses(events);
@@ -272,5 +302,6 @@ export async function getOrganizerDashboardMetrics(
       status: row.status,
       registeredAt: row.createdAt,
     })),
+    conversionRows: buildRsvpConversionRows(conversionEventRows),
   };
 }
