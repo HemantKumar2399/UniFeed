@@ -1,5 +1,5 @@
 # generated: 2026-05-23
-# last_updated: 2026-05-25
+# last_updated: 2026-05-26
 # project: Platform
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-23
-last_updated: 2026-05-25
+last_updated: 2026-05-26
 project: Platform
 project_key: NOKEY
 tracking_system: file-system
@@ -233,3 +233,60 @@ development_status:
   23-6-verify-build-scripts-from-fresh-clone: done
   23-7-update-documentation-and-release-notes: done
   epic-23-retrospective: optional
+  
+  epic-24: backlog
+  24-1-wrap-organizer-dashboard-metrics-in-suspense: backlog
+  24-2-nextauth-hydration-and-session-error-boundaries: backlog
+  24-3-enforce-design-system-aliases-in-tailwind-v4-and-shadcn-css-variables: backlog
+  epic-24-retrospective: optional
+
+  epic-25: backlog
+  25-1-integrate-software-fallback-qr-scanner-for-ios-safari: backlog
+  25-2-auto-focus-and-touch-optimization-for-manual-check-in: backlog
+  25-3-add-wake-lock-status-indicators-and-warnings: backlog
+  25-4-offline-scan-queue-and-synchronization: backlog
+  epic-25-retrospective: optional
+
+  epic-26: backlog
+  26-1-extract-feed-ranking-engine-from-trpc-router: backlog
+  26-2-ensure-prisma-concurrency-locking-for-rsvp-capacity: backlog
+  26-3-implement-soft-deletes-for-events-and-clubs: backlog
+  26-4-add-denormalized-counters-and-index-tuning: backlog
+  epic-26-retrospective: optional
+
+  epic-27: backlog
+  27-1-attendee-excel-csv-export-for-organizers: backlog
+  27-2-automated-waitlist-promotion-on-cancellation: backlog
+  27-3-google-apple-calendar-ics-export: backlog
+  27-4-organizer-analytics-dashboard-and-rsvp-conversion-charts: backlog
+  epic-27-retrospective: optional
+
+  epic-28: backlog
+  28-1-eliminate-hardcoded-css-colors-and-align-with-notion-variables: backlog
+  28-2-standardize-typography-classes-and-headings: backlog
+  28-3-consolidate-shadow-tokens-and-card-borders: backlog
+  28-4-standardize-rsvp-status-badges-and-colors: backlog
+  epic-28-retrospective: optional
+
+  epic-29: backlog
+  29-1-home-feed-spacing-and-icon-rhythm-normalization: backlog
+  29-2-navigation-context-switcher-and-shell-segmentation: backlog
+  29-3-organizer-dashboard-layout-polish: backlog
+  29-4-standardize-vertical-and-horizontal-layout-spacing: backlog
+  epic-29-retrospective: optional
+
+  epic-30: backlog
+  30-1-qr-scan-status-micro-interactions-flashes-and-haptics: backlog
+  30-2-touch-optimized-touchpad-for-manual-entry-fallback: backlog
+  30-3-scanner-non-blocking-toast-warnings: backlog
+  30-4-wake-lock-and-battery-warning-for-student-passports: backlog
+  epic-30-retrospective: optional
+
+  epic-31: backlog
+  31-1-split-pane-approval-layout: backlog
+  31-2-inline-rejection-reason-modal-or-drawer: backlog
+  31-3-event-creation-form-auto-save-indicator-and-form-validation: backlog
+  31-4-reusable-empty-state-and-loader-skeletons: backlog
+  epic-31-retrospective: optional
+
+

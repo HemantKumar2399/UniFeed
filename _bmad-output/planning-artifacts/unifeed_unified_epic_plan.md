@@ -1511,7 +1511,7 @@ The project already has many of these concepts implemented. The goal of these ne
 
 ---
 
-# Epic 18 â€” Security, College Scoping, and Production Hardening Hotfix
+# Epic 18 — Security, College Scoping, and Production Hardening Hotfix
 
 ## Epic goal
 
@@ -1523,25 +1523,25 @@ The latest project version implemented multi-college support and college-specifi
 
 ## Problems to fix
 
-### Problem 1 â€” Unsafe public role assignment
+### Problem 1 — Unsafe public role assignment
 
 The current registration logic appears to infer elevated roles from email prefixes such as `admin...` or `organizer...`.
 
 This is dangerous because a user with a valid college email can potentially create an admin or organizer account just by choosing a matching email local part.
 
-### Problem 2 â€” Happening This Week is not college scoped
+### Problem 2 — Happening This Week is not college scoped
 
 The home feed is college-scoped, but the weekly carousel/query may return all published events for the week without filtering by the logged-in userâ€™s college.
 
-### Problem 3 â€” Public capacity subscription
+### Problem 3 — Public capacity subscription
 
 A realtime capacity subscription is currently public or insufficiently visibility-checked. This can leak event activity/capacity data.
 
-### Problem 4 â€” Remote image wildcard
+### Problem 4 — Remote image wildcard
 
 `next.config.js` allows remote image hosts using a wildcard such as `hostname: "**"`. This should not be used in production.
 
-### Problem 5 â€” Documentation drift
+### Problem 5 — Documentation drift
 
 Some docs still describe old placeholder states even though the code now has many implemented features.
 
@@ -1557,7 +1557,7 @@ This epic should be done before Epic 19.
 
 ## Implementation stories
 
-### Story 18.1 â€” Force public registration to create only STUDENT users
+### Story 18.1 — Force public registration to create only STUDENT users
 
 #### Target behavior
 
@@ -1614,7 +1614,7 @@ If demo users need admin/organizer roles, create them through seed scripts only,
 
 ---
 
-### Story 18.2 â€” Verify role promotion is admin-controlled
+### Story 18.2 — Verify role promotion is admin-controlled
 
 #### Target behavior
 
@@ -1659,7 +1659,7 @@ Use these helpers in all role or membership mutations.
 
 ---
 
-### Story 18.3 â€” College-scope Happening This Week
+### Story 18.3 — College-scope Happening This Week
 
 #### Target behavior
 
@@ -1717,7 +1717,7 @@ Adapt this to the projectâ€™s actual helper/service style.
 
 ---
 
-### Story 18.4 â€” Protect RSVP/capacity realtime subscription
+### Story 18.4 — Protect RSVP/capacity realtime subscription
 
 #### Target behavior
 
@@ -1776,7 +1776,7 @@ async function assertCanViewEvent(ctx, eventId: string) {
 
 ---
 
-### Story 18.5 â€” Restrict `next/image` remote hosts
+### Story 18.5 — Restrict `next/image` remote hosts
 
 #### Target behavior
 
@@ -1826,7 +1826,7 @@ hostname: "**"
 
 ---
 
-### Story 18.6 â€” Update stale docs after security fixes
+### Story 18.6 — Update stale docs after security fixes
 
 #### Target docs
 
@@ -1869,7 +1869,7 @@ Docs must accurately reflect:
 
 ---
 
-# Epic 19 â€” Event Registration Deadline and Reopen Flow
+# Epic 19 — Event Registration Deadline and Reopen Flow
 
 ## Epic goal
 
@@ -1963,7 +1963,7 @@ Adapt naming to existing code style.
 
 ## Implementation stories
 
-### Story 19.1 â€” Add registration deadline to schema and migration
+### Story 19.1 — Add registration deadline to schema and migration
 
 #### Tasks
 
@@ -1992,7 +1992,7 @@ For seed/demo events, explicitly set valid deadlines.
 
 ---
 
-### Story 19.2 â€” Validate deadline in event creation
+### Story 19.2 — Validate deadline in event creation
 
 #### Target behavior
 
@@ -2031,7 +2031,7 @@ Use clear messages:
 
 ---
 
-### Story 19.3 â€” Add deadline field to event create/edit UI
+### Story 19.3 — Add deadline field to event create/edit UI
 
 #### Target UI
 
@@ -2074,7 +2074,7 @@ Use either:
 
 ---
 
-### Story 19.4 â€” Block RSVP after deadline
+### Story 19.4 — Block RSVP after deadline
 
 #### Target behavior
 
@@ -2117,7 +2117,7 @@ Registration closed on 24 Aug, 6:00 PM.
 
 ---
 
-### Story 19.5 â€” Allow organizer/admin to extend deadline and reopen registration
+### Story 19.5 — Allow organizer/admin to extend deadline and reopen registration
 
 #### Target behavior
 
@@ -2151,7 +2151,7 @@ Registration deadline extended from [old] to [new] by [user]
 
 ---
 
-### Story 19.6 â€” Integrate deadline with admin approval
+### Story 19.6 — Integrate deadline with admin approval
 
 #### Target behavior
 
@@ -2183,7 +2183,7 @@ Preferred rule is to block approval to prevent broken UX.
 
 ---
 
-### Story 19.7 â€” Show deadline and registration state in student UI
+### Story 19.7 — Show deadline and registration state in student UI
 
 #### Target surfaces
 
@@ -2225,7 +2225,7 @@ CTA states:
 
 ---
 
-### Story 19.8 â€” Show deadline in organizer/admin dashboards and status lanes
+### Story 19.8 — Show deadline in organizer/admin dashboards and status lanes
 
 #### Target surfaces
 
@@ -2251,7 +2251,7 @@ CTA states:
 
 ---
 
-### Story 19.9 â€” Define waitlist behavior around deadline
+### Story 19.9 — Define waitlist behavior around deadline
 
 #### Recommended MVP rule
 
@@ -2289,7 +2289,7 @@ If organizer extends/reopens deadline:
 
 ---
 
-# Epic 20 â€” Admin Route Layout and Scrolling UX Fix
+# Epic 20 — Admin Route Layout and Scrolling UX Fix
 
 ## Epic goal
 
@@ -2321,7 +2321,7 @@ Can run in parallel with:
 
 ## Implementation stories
 
-### Story 20.1 â€” Audit admin layout and scroll containers
+### Story 20.1 — Audit admin layout and scroll containers
 
 #### Likely files to inspect
 
@@ -2377,7 +2377,7 @@ Good pattern:
 
 ---
 
-### Story 20.2 â€” Normalize admin shell layout
+### Story 20.2 — Normalize admin shell layout
 
 #### Target structure
 
@@ -2415,7 +2415,7 @@ Avoid setting `overflow-hidden` on the main root unless there is a clear reason.
 
 ---
 
-### Story 20.3 â€” Verify admin approval workflow pages
+### Story 20.3 — Verify admin approval workflow pages
 
 #### Pages to manually test
 
@@ -2452,7 +2452,7 @@ Avoid setting `overflow-hidden` on the main root unless there is a clear reason.
 
 ---
 
-# Epic 21 â€” Remove or Replace Bottom-Left Placeholder Across Role Layouts
+# Epic 21 — Remove or Replace Bottom-Left Placeholder Across Role Layouts
 
 ## Epic goal
 
@@ -2480,7 +2480,7 @@ Can run in parallel with:
 
 ## Implementation stories
 
-### Story 21.1 â€” Locate the placeholder source
+### Story 21.1 — Locate the placeholder source
 
 #### Search terms
 
@@ -2514,7 +2514,7 @@ quick action
 
 ---
 
-### Story 21.2 â€” Remove placeholder completely
+### Story 21.2 — Remove placeholder completely
 
 #### Tasks
 
@@ -2533,7 +2533,7 @@ quick action
 
 ---
 
-### Story 21.3 â€” Optional: replace with intentional role-aware action
+### Story 21.3 — Optional: replace with intentional role-aware action
 
 Only implement this story if product explicitly wants a floating control.
 
@@ -2591,7 +2591,7 @@ Example:
 
 ---
 
-# Epic 22 â€” Status Lane UI Improvement
+# Epic 22 — Status Lane UI Improvement
 
 ## Epic goal
 
@@ -2632,7 +2632,7 @@ Can run in parallel with:
 
 ## Implementation stories
 
-### Story 22.1 â€” Inventory all status lane locations
+### Story 22.1 — Inventory all status lane locations
 
 #### Find every status-lane-like UI
 
@@ -2666,7 +2666,7 @@ Likely surfaces:
 
 ---
 
-### Story 22.2 â€” Create shared status badge and status metadata system
+### Story 22.2 — Create shared status badge and status metadata system
 
 #### Goal
 
@@ -2735,7 +2735,7 @@ const REGISTRATION_STATUS_META = {
 
 ---
 
-### Story 22.3 â€” Redesign lane headers
+### Story 22.3 — Redesign lane headers
 
 Each lane header should show:
 
@@ -2764,7 +2764,7 @@ Organizer must update and resubmit
 
 ---
 
-### Story 22.4 â€” Redesign status cards
+### Story 22.4 — Redesign status cards
 
 Each status lane card should include:
 
@@ -2805,7 +2805,7 @@ Admin card actions:
 
 ---
 
-### Story 22.5 â€” Add useful empty states
+### Story 22.5 — Add useful empty states
 
 Examples:
 
@@ -2828,7 +2828,7 @@ No published events yet. Publish an approved event to make it visible to student
 
 ---
 
-### Story 22.6 â€” Make status lanes responsive
+### Story 22.6 — Make status lanes responsive
 
 #### Desktop behavior
 
@@ -2864,7 +2864,7 @@ No published events yet. Publish an approved event to make it visible to student
 
 ---
 
-# Epic 23 â€” Regression Tests, Documentation, and Final Stabilization
+# Epic 23 — Regression Tests, Documentation, and Final Stabilization
 
 ## Epic goal
 
@@ -2884,7 +2884,7 @@ Some test work can be started earlier, but final completion comes last.
 
 ## Implementation stories
 
-### Story 23.1 â€” Add role and registration security tests
+### Story 23.1 — Add role and registration security tests
 
 #### Test cases
 
@@ -2901,7 +2901,7 @@ Some test work can be started earlier, but final completion comes last.
 
 ---
 
-### Story 23.2 â€” Add college scoping tests
+### Story 23.2 — Add college scoping tests
 
 #### Test cases
 
@@ -2917,7 +2917,7 @@ Some test work can be started earlier, but final completion comes last.
 
 ---
 
-### Story 23.3 â€” Add registration deadline tests
+### Story 23.3 — Add registration deadline tests
 
 #### Test cases
 
@@ -2938,7 +2938,7 @@ Some test work can be started earlier, but final completion comes last.
 
 ---
 
-### Story 23.4 â€” Add QR and RSVP regression tests
+### Story 23.4 — Add QR and RSVP regression tests
 
 #### Test cases
 
@@ -2955,7 +2955,7 @@ Some test work can be started earlier, but final completion comes last.
 
 ---
 
-### Story 23.5 â€” Add UI smoke/regression tests
+### Story 23.5 — Add UI smoke/regression tests
 
 #### Test cases
 
@@ -2972,7 +2972,7 @@ Some test work can be started earlier, but final completion comes last.
 
 ---
 
-### Story 23.6 â€” Verify build scripts from fresh clone
+### Story 23.6 — Verify build scripts from fresh clone
 
 Run or add scripts:
 
@@ -2996,7 +2996,7 @@ If a script is missing, add it to `package.json` with the projectâ€™s chose
 
 ---
 
-### Story 23.7 â€” Update documentation and release notes
+### Story 23.7 — Update documentation and release notes
 
 #### Docs to update
 
@@ -3045,7 +3045,7 @@ If a script is missing, add it to `package.json` with the projectâ€™s chose
 
 # Recommended Chronological Build Order
 
-## Phase 1 â€” Safety first
+## Phase 1 — Safety first
 
 1. Epic 18.1 Remove self-admin/self-organizer registration.
 2. Epic 18.2 Verify/admin-lock role promotion.
@@ -3055,7 +3055,7 @@ If a script is missing, add it to `package.json` with the projectâ€™s chose
 
 This phase should be completed before adding the deadline feature.
 
-## Phase 2 â€” Registration deadline foundation
+## Phase 2 — Registration deadline foundation
 
 1. Epic 19.1 Schema/migration.
 2. Epic 19.2 Backend validation in event create/update.
@@ -3065,14 +3065,14 @@ This phase should be completed before adding the deadline feature.
 
 This phase creates correct backend behavior.
 
-## Phase 3 â€” Registration deadline UI
+## Phase 3 — Registration deadline UI
 
 1. Epic 19.3 Form fields.
 2. Epic 19.7 Student UI deadline display and CTA states.
 3. Epic 19.8 Organizer/admin dashboard deadline display.
 4. Epic 19.9 Waitlist behavior documentation/tests.
 
-## Phase 4 â€” UI polish fixes
+## Phase 4 — UI polish fixes
 
 These can be done by another teammate in parallel with Phase 2/3:
 
@@ -3080,7 +3080,7 @@ These can be done by another teammate in parallel with Phase 2/3:
 2. Epic 21 Bottom-left placeholder removal/replacement.
 3. Epic 22 Status lane UI improvement.
 
-## Phase 5 â€” Stabilization
+## Phase 5 — Stabilization
 
 1. Epic 23 tests.
 2. Epic 23 docs.
@@ -3090,7 +3090,7 @@ These can be done by another teammate in parallel with Phase 2/3:
 
 # Parallel Work Plan for Two Developers
 
-## Developer A â€” Backend/security/data
+## Developer A — Backend/security/data
 
 Start with:
 
@@ -3100,7 +3100,7 @@ Start with:
 4. Epic 19 reopen logic
 5. Epic 23 backend tests
 
-## Developer B â€” UI/product/dashboard
+## Developer B — UI/product/dashboard
 
 Start with:
 
@@ -3194,3 +3194,429 @@ This section contains developer documentation of the behavior, rules, and archit
 * Run unit tests: `npm run test:unit`
 * Run Playwright E2E tests: `npx playwright test tests/e2e/epic23-regression.spec.ts --project=chromium`
 * Compile and lint verification: `npm run check`
+# Epic 24: Next.js Architecture and SSR Optimization
+
+## Goal
+Resolve critical blocking server-side rendering (SSR) behavior on the organizer dashboard, establish robust hydration/session error boundaries, and align Shadcn UI primitives with the custom Notion design system.
+
+## Why this comes now
+These architectural and design system alignments are fundamental to the overall performance, stability, and visual identity of the platform, resolving key gaps identified during the code audit.
+
+## Stories
+
+### Story 24.1: Wrap Organizer Dashboard Metrics in Suspense
+**Tasks**
+- Extract direct metrics fetching (e.g., `getOrganizerDashboardMetrics`) from `src/app/dashboard/page.tsx` into a dedicated asynchronous server component `DashboardMetricsWrapper`.
+- Wrap `DashboardMetricsWrapper` inside a `<Suspense>` boundary in `page.tsx`.
+- Create a visual `DashboardSkeleton` matching the metrics grid to prevent layout shift.
+- Ensure that organizers on slower network connections get an immediate layout skeleton instead of a blank screen.
+
+**Acceptance criteria**
+- Accessing `/dashboard` renders page frame and shell immediately.
+- A styled loading skeleton is shown while database queries are resolved.
+- No blocking server-side fetch occurs at the top-level Page render.
+
+---
+
+### Story 24.2: NextAuth Hydration and Session Error Boundaries
+**Tasks**
+- Add aggressive ErrorBoundary boundaries around the custom `SessionProvider` or root layouts.
+- Capture and log NextAuth session validation failures or hydration mismatches gracefully.
+- Prevent application crash or infinite reload loops if a NextAuth session fails or throws hydration errors.
+
+**Acceptance criteria**
+- Authentication initialization errors or hydration mismatches do not crash the client application.
+- Fallback UI shows clean login recovery option if auth session becomes corrupted.
+
+---
+
+### Story 24.3: Enforce Design System Aliases in Tailwind v4 and Shadcn CSS Variables
+**Tasks**
+- Update `globals.css` base layer to map Shadcn's semantic CSS variables (such as `--primary`, `--border`, `--input`, etc.) directly to custom design system HSL tokens (`--color-notion-blue`, `--border-whisper-color`, etc.).
+- Audit standard input/dialog components in `src/components/ui/` to ensure they use design system variables.
+- Eliminate raw, generic colors from Shadcn default styles to match the premium design guidelines.
+
+**Acceptance criteria**
+- UI controls (Inputs, Buttons, Dialogs, etc.) consistently render with Notion-inspired variables.
+- Standard default Shadcn visual elements are fully customized.
+
+---
+
+# Epic 25: QR Scanner Browser Compatibility and Offline Resilience
+
+## Goal
+Establish robust mobile browser support for the event check-in scanner and introduce offline scanning queues to handle degraded campus network conditions.
+
+## Why this comes now
+The current scanner relies exclusively on experimental native APIs not supported on iOS Safari by default, causing a failure rate for the majority of student devices.
+
+## Stories
+
+### Story 25.1: Integrate Software Fallback QR Scanner for iOS Safari
+**Tasks**
+- Add a software scanning library (such as `@zxing/browser` or `html5-qrcode`) as a project dependency.
+- Modify `src/components/Scanner.tsx` to detect native `window.BarcodeDetector` support.
+- If native scanner is unsupported, initialize the software-based scanner fallback.
+
+**Acceptance criteria**
+- Physical check-in scanner is fully operational on iOS Safari (iPhone) out of the box.
+- Frame rates and scan performance remain smooth.
+
+---
+
+### Story 25.2: Auto-focus and Touch Optimization for Manual Check-In
+**Tasks**
+- Redesign the manual token entry interface to be auto-focused.
+- Ensure the input uses touch-optimized attributes (e.g. `inputmode="text"` or auto-capitalization disabled) to ease manual typing.
+- Style the manual input fallback container to match high-pressure line scenarios.
+
+**Acceptance criteria**
+- Organizers can quickly and easily trigger manual check-in when QR scan fails.
+
+---
+
+### Story 25.3: Add Wake Lock Status Indicators and Warnings
+**Tasks**
+- Detect when `navigator.wakeLock.request("screen")` fails or is rejected.
+- Render a clear, non-intrusive warning notice: *"Low Power Mode may affect screen brightness and scanning speed."*
+- Advise user to disable battery saver for optimal scan performance.
+
+**Acceptance criteria**
+- User has context if screen dimming or wake lock failure occurs due to battery settings.
+
+---
+
+### Story 25.4: Offline Scan Queue and Synchronization
+**Tasks**
+- Implement local client-side queue storage (IndexedDB or LocalStorage) in the scanner interface.
+- Store scanned tickets with timestamp offline when server-side mutations fail.
+- Build a persistent sync indicator and trigger automated retry logic when connection returns.
+
+**Acceptance criteria**
+- Check-ins are recorded offline during connection drops and successfully synced back to the database.
+
+---
+
+# Epic 26: tRPC Refactoring and Scalability Hardening
+
+## Goal
+Improve codebase modularity by extracting domain algorithms from routers, protect high-concurrency RSVP database updates, and optimize indexing and soft deletion structures.
+
+## Why this comes now
+The transport layer contains complex personalization algorithms making maintenance difficult, and concurrency concerns on RSVPs could lead to database integrity issues.
+
+## Stories
+
+### Story 26.1: Extract Feed Ranking Engine from tRPC Router
+**Tasks**
+- Create `src/server/domain/feed-engine.ts`.
+- Extract personalization calculations (`deriveFeedPreferenceSignals`, `buildStudentRelevanceProfile`, scoring formulas) out of `src/server/api/routers/event.ts`.
+- Expose a clean domain interface called from the tRPC handler.
+
+**Acceptance criteria**
+- Event router code is reduced and clean.
+- Feed engine tests can be written independently of tRPC transport contexts.
+
+---
+
+### Story 26.2: Ensure Prisma Concurrency Locking for RSVP Capacity
+**Tasks**
+- Implement Prisma transaction blocks (`db.$transaction`) for RSVP operations.
+- Enforce Pessimistic locking (e.g. `SELECT ... FOR UPDATE` via raw SQL or query locks) on event capacity.
+- Prevent race conditions during concurrent seat reservation requests.
+
+**Acceptance criteria**
+- High-concurrency event registration does not exceed specified capacity limits.
+
+---
+
+### Story 26.3: Implement Soft Deletes for Events and Clubs
+**Tasks**
+- Add `deletedAt` field to database models in Prisma schema.
+- Update query routines to ignore soft-deleted events/clubs.
+- Implement soft deletion mutations that set `deletedAt` instead of calling `db.delete()`.
+
+**Acceptance criteria**
+- Analytics data and audit logs are preserved even when events/clubs are deleted.
+
+---
+
+### Story 26.4: Add Denormalized Counters and Index Tuning
+**Tasks**
+- Add `attendeeCount` field to the `Event` schema.
+- Update the counter atomically on RSVP changes.
+- Add database indexes for query fields like `collegeId`, `status`, and `deletedAt`.
+
+**Acceptance criteria**
+- Queries for event RSVP counts do not require repeating SQL count queries.
+
+---
+
+# Epic 27: Feature Enhancements and Analytics
+
+## Goal
+Deliver attendee data exports, automated waitlist transitions, calendar integrations, and dashboards.
+
+## Why this comes now
+These improvements add essential value for club organizers and student engagement post-MVP.
+
+## Stories
+
+### Story 27.1: Attendee Excel/CSV Export for Organizers
+**Tasks**
+- Build an export endpoint or utility that fetches real check-in details (PRN, branch, course, checked-in timestamp) for an event.
+- Format and download it as CSV.
+
+**Acceptance criteria**
+- Organizers can download lists of actual attendees.
+
+---
+
+### Story 27.2: Automated Waitlist Promotion on Cancellation
+**Tasks**
+- Add logic to the RSVP cancellation mutation to check if there is an active waitlist.
+- Promote the oldest waitlisted attendee to `GOING`.
+- Trigger a notification to the newly promoted attendee.
+
+**Acceptance criteria**
+- Cancellations automatically release seats to waitlisted students.
+
+---
+
+### Story 27.3: Google/Apple Calendar ICS Export
+**Tasks**
+- Add a helper to generate standard `.ics` formatting for event data.
+- Place an "Add to Calendar" button on the Event detail page.
+
+**Acceptance criteria**
+- Clicking the button downloads or opens a valid calendar entry.
+
+---
+
+### Story 27.4: Organizer Analytics Dashboard and RSVP Conversion Charts
+**Tasks**
+- Query historical RSVP vs attendance data.
+- Render a chart showing conversion percentages.
+
+**Acceptance criteria**
+- Organizers can analyze attendee drop-off and conversion rates.
+
+---
+
+# Epic 28: Design System Foundations & Typography Refactor
+
+## Goal
+Establish strict design system token compliance across all components, eliminate inline/arbitrary colors and fonts, and ensure consistent RSVP badge aesthetics.
+
+## Why this comes now
+The UI/UX audit identified several layout files containing hardcoded colors (e.g., `#0f172a`, `#0075de`), inconsistent typography scales, and custom styled buttons bypassing Shadcn design tokens. Standardizing this foundation makes the app cohesive and easily themeable.
+
+## Stories
+
+### Story 28.1: Eliminate Hardcoded CSS Colors & Align with Notion Variables
+**Tasks**
+- Audit all files in `src/app/` and `src/components/` for arbitrary color values (e.g., `#0075de`, `bg-[#0f172a]`, `border-emerald-400/50`).
+- Replace these instances with appropriate design system CSS variables (e.g., `var(--color-notion-blue)`, theme semantic border variables).
+- Audit standard input/dialog components in `src/components/ui/` to ensure they use variables rather than Tailwind default slate/neutral colors.
+
+**Acceptance criteria**
+- No hardcoded color codes (like `#0075de` or `#0f172a`) remain in implementation files.
+- Modifying HSL variables in `globals.css` changes all buttons and accents correctly.
+
+---
+
+### Story 28.2: Standardize Typography Classes & Headings
+**Tasks**
+- Extract arbitrary text sizing classes (e.g., `text-[40px] md:text-[48px]`) into semantic classes in `globals.css` or Tailwind theme config (e.g., `.text-display-lg`, `.text-display-md`).
+- Update home headers, passport metadata typography, and event details to use these display classes.
+- Ensure proper page heading hierarchies (single `<h1>` per page, followed by sequential `<h2>` and `<h3>`).
+
+**Acceptance criteria**
+- Font sizes are standardized, resolving arbitrary scale values.
+- Typography across all pages obeys the defined visual hierarchy.
+
+---
+
+### Story 28.3: Consolidate Shadow Tokens & Card Borders
+**Tasks**
+- Identify cards using arbitrary shadows (e.g., `shadow-[0_2px_4px_rgba(0,0,0,0.1)]`) or different elevation scales (`shadow-sm`, `shadow-md`).
+- Standardize all visual containers and cards to use the defined Notion `shadow-card` or standard `shadow-sm` variables consistently.
+- Clean up card borders, ensuring they utilize the uniform `--border-whisper-color` variable.
+
+**Acceptance criteria**
+- UI depth hierarchy is consistent across home feed, organizer dashboard, and admin queues.
+- Cards maintain cohesive styling without visual discrepancy.
+
+---
+
+### Story 28.4: Standardize RSVP Status Badges & Colors
+**Tasks**
+- Unify RSVP badges (e.g., "Going", "Waitlisted", "Cancelled", "Attended") across home feed card lists, event detail pages, and attendee lists.
+- Create a shared status indicator/badge component or map states to a unified palette (e.g., emerald for GOING/ATTENDED, amber for WAITLISTED, red/slate for CANCELLED).
+
+**Acceptance criteria**
+- Users see identical colors and layout styles for the same RSVP status regardless of which screen they are viewing.
+
+---
+
+# Epic 29: Layout Spacing, Dashboard Polish, and Navigation Switcher
+
+## Goal
+Improve vertical visual rhythm, simplify organizer dashboard layouts by removing onboarding clutter, and implement a context switcher to separate user roles.
+
+## Why this comes now
+The current organizer dashboard mixes admin and organizer views on the same page, causing confusion. Standardizing margins, removing repetitive text blocks, and implementing a role-based navigator helps streamline layout navigation.
+
+## Stories
+
+### Story 29.1: Home Feed Spacing & Icon Rhythm Normalization
+**Tasks**
+- Fix the alignment of the Calendar icon button in `/home` to align properly with the "For You" feed header.
+- Enforce standard vertical spacing (e.g., `mb-8` or `mb-12`) between sections: Carousel → Feed Header → Event Grid.
+- Remove visual clutter such as the redundant "Command Center" sublabel above "Overview" headings.
+
+**Acceptance criteria**
+- Home feed layout has clean, consistent spacing and aligned action buttons.
+- Duplicate visual labels are eliminated.
+
+---
+
+### Story 29.2: Navigation Context Switcher & Shell Segmentation
+**Tasks**
+- Design and build a dropdown Context Switcher in the global navigation bar.
+- Allow users with multiple roles (e.g., Student, Organizer, Admin) to explicitly switch their active view.
+- Filter navigation links and shells based on the active role, completely separating organizer and admin panels.
+
+**Acceptance criteria**
+- A user can toggle their context between Student, Organizer, and Admin.
+- The UI hides irrelevant links and actions of other roles based on the active selection.
+
+---
+
+### Story 29.3: Organizer Dashboard Layout Polish
+**Tasks**
+- Remove the long onboarding/greeting paragraph ("this view now reflects your live event pipeline...") from `/dashboard`.
+- Replace it with a minimal, elegant header (e.g., "Good morning, [Name]").
+- Move the "Create Event" CTA to a sticky header block or action bar.
+- Adjust the styles of Admin Route shortcuts so they do not look identical to data status cards.
+
+**Acceptance criteria**
+- Organizer dashboard looks clean, uncluttered, and focuses on actionable information.
+- Navigation shortcuts and data status lanes are visually distinct.
+
+---
+
+### Story 29.4: Standardize Vertical & Horizontal Layout Spacing
+**Tasks**
+- Audit root layouts and page containers to standardize spacing gaps (e.g., `gap-10` vs `gap-16`).
+- Group pages into layout templates that enforce consistent max-widths and responsive padding scales.
+
+**Acceptance criteria**
+- Page margins feel uniform across the entire app as the user navigates between routes.
+
+---
+
+# Epic 30: QR Scanner Interaction & Mobile Resilience
+
+## Goal
+Enhance the scanner experience with immediate feedback (flashes/haptics), optimize manual checking queues, and add device power/brightness checks to student passports.
+
+## Why this comes now
+Real-world usage of campus events requires high-speed scanner throughput. Immediate feedback prevents line backups, and alert prompts help students keep their screens legible.
+
+## Stories
+
+### Story 30.1: QR Scan Status Micro-Interactions (Flashes & Haptics)
+**Tasks**
+- Implement overlay visual flashes when scanning a student QR code on `/dashboard/scanner`: full-screen green flash for success, red shake/flash for rejection/error.
+- Trigger haptic vibration on mobile devices via `navigator.vibrate([100])` for success and `navigator.vibrate([100, 50, 100])` for errors.
+
+**Acceptance criteria**
+- Organizer knows the scan result via sound, haptics, and visual flash without needing to look at small text overlays.
+
+---
+
+### Story 30.2: Touch-Optimized Touchpad for Manual Entry Fallback
+**Tasks**
+- Redesign the manual entry fallback container on `/dashboard/scanner`.
+- Set the input field to auto-focus when opened.
+- Configure keyboard attributes (`inputmode="numeric"` or text pad optimizations) to make entering IDs fast on mobile screens.
+
+**Acceptance criteria**
+- Organizers can quickly access and type ID fallbacks in high-pressure lines with one hand.
+
+---
+
+### Story 30.3: Scanner Non-Blocking Toast Warnings
+**Tasks**
+- Replace the static native-scanner-unsupported banner on `/dashboard/scanner` with a floating, dismissible toast.
+- Ensure the toast does not push down or resize the active camera viewfinder.
+
+**Acceptance criteria**
+- Scanner warning does not cause layout shifts on load.
+
+---
+
+### Story 30.4: Wake Lock & Battery Warning for Student Passports
+**Tasks**
+- Add checks on `/passport` to detect if the Wake Lock API request is rejected (often due to Low Power Mode or low battery saver).
+- Display a dismissible visual warning: *"Low Power Mode may affect screen brightness and scanning readability. Please increase brightness manually."*
+- Ensure the QR code itself is centered in a high-contrast container.
+
+**Acceptance criteria**
+- Students are prompted to optimize screen settings for scanners when necessary.
+
+---
+
+# Epic 31: Admin Experience & Page Loading Enhancements
+
+## Goal
+Upgrade the college admin approval view to a desktop-friendly split-pane experience, implement inline validation for event creation, and eliminate layout shift via loaders.
+
+## Why this comes now
+Pogo-sticking between list and details pages in `/admin` makes event approval tedious. Reusable components for empty states and skeleton loaders improve loading user experience.
+
+## Stories
+
+### Story 31.1: Split-Pane Approval Layout
+**Tasks**
+- Redesign `/admin` queue into a split-pane layout.
+- Render the pending event cards on the left pane and the full details of the selected event in a sticky preview pane on the right.
+- Ensure the layout degrades gracefully to a single list on mobile screens.
+
+**Acceptance criteria**
+- Admins can browse and review multiple submissions side-by-side on desktop without page reloads.
+
+---
+
+### Story 31.2: Inline Rejection Reason Modal/Drawer
+**Tasks**
+- Implement an inline modal or slide-out sheet on the approval details panel to input the rejection reason.
+- Eliminate the need to navigate to a separate page to submit rejection notes.
+
+**Acceptance criteria**
+- Rejecting an event triggers a modal, saves the reason to the DB, and refreshes the pane state immediately.
+
+---
+
+### Story 31.3: Event Creation Form Auto-Save Indicator & Form Validation
+**Tasks**
+- Integrate client-side validation to warn organizers immediately if dates or fields are invalid before submitting.
+- Implement an auto-save indicator showing "Draft saved locally" or "Saved" to give organizers confidence that their progress is safe.
+
+**Acceptance criteria**
+- Event wizard highlights form errors inline.
+- Active drafts display saving status.
+
+---
+
+### Story 31.4: Reusable `<EmptyState />` and Loader Skeletons
+**Tasks**
+- Create a standardized, designed `<EmptyState />` component featuring custom illustrations, friendly copy, and relevant CTAs.
+- Apply this component to empty event feeds and empty organizer dashboards.
+- Build skeleton cards that strictly match the layout size of event cards and metric blocks to prevent hydration layout shifts.
+
+**Acceptance criteria**
+- Empty feeds look polished and encourage user interaction.
+- Page load transition is smooth and layout shifts are resolved.
+
