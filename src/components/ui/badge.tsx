@@ -30,16 +30,19 @@ const badgeVariants = cva(
     variants: {
       variant: {
         // DEFAULT: Notion Blue tint — status/category labels
-        default: "bg-[#f2f9ff] text-[#097fe8]",
+        default: "bg-brand-surface text-notion-blue",
 
         // SUCCESS: Confirmed / Attended / Completed
-        success: "bg-[rgba(26,174,57,0.1)] text-[#1aae39]",
+        success: "bg-status-success-surface text-green",
 
         // WARNING: Capacity > 75%, approaching deadline
-        warning: "bg-[rgba(221,91,0,0.1)] text-[#dd5b00]",
+        warning: "bg-status-warning-surface text-orange",
 
         // CRITICAL: Capacity > 95%, urgent
-        critical: "bg-[rgba(255,100,200,0.12)] text-[#cc44a0]",
+        critical: "bg-[rgba(255,100,200,0.12)] text-critical-pink",
+
+        // DANGER: Cancelled / destructive state
+        danger: "bg-status-danger-surface text-danger",
 
         // NEUTRAL: Muted label, inactive state
         neutral: "bg-muted text-muted-foreground",

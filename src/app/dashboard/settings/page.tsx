@@ -12,17 +12,17 @@ export default async function DashboardSettingsPage() {
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12 max-w-4xl transition-colors duration-300">
       <header className="px-1 md:px-0">
-        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px] mb-8">
+        <h1 className="text-page-title mb-8 text-foreground">
           Settings
         </h1>
         
         <div className="w-full bg-app-bg rounded-[24px] p-6 border border-whisper flex items-center gap-6 transition-colors">
-          <div className="w-20 h-20 rounded-full bg-[#0075de] text-white flex items-center justify-center text-[28px] font-bold shadow-[0_4px_18px_rgba(0,117,222,0.2)]">
+          <div className="w-20 h-20 rounded-full bg-notion-blue text-white flex items-center justify-center text-entity-title shadow-card">
             {userInitial}
           </div>
           <div>
-            <h2 className="text-[24px] font-bold text-foreground tracking-tight">{userName}</h2>
-            <p className="text-[15px] font-medium text-muted-foreground mt-1">{session?.user?.email}</p>
+            <h2 className="text-panel-title text-foreground">{userName}</h2>
+            <p className="text-nav mt-1 text-muted-foreground">{session?.user?.email}</p>
           </div>
         </div>
       </header>
@@ -31,10 +31,10 @@ export default async function DashboardSettingsPage() {
         <section className="px-1 md:px-0">
           <Link
             href="/admin"
-            className="flex items-center justify-between gap-4 rounded-[24px] border border-whisper bg-card-bg p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_32px_rgba(0,0,0,0.06)]"
+            className="card-surface flex items-center justify-between gap-4 rounded-[24px] p-5 transition-all hover:-translate-y-0.5 hover:shadow-deep"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f2f9ff] dark:bg-blue-950/40 text-[#097fe8]">
+              <div className="surface-brand-subtle flex h-12 w-12 items-center justify-center rounded-2xl border">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
@@ -45,7 +45,7 @@ export default async function DashboardSettingsPage() {
                 </p>
               </div>
             </div>
-            <ArrowUpRight className="h-5 w-5 shrink-0 text-[#097fe8]" />
+            <ArrowUpRight className="text-link-accent h-5 w-5 shrink-0" />
           </Link>
         </section>
       )}

@@ -37,17 +37,17 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="flex flex-col justify-between gap-4 px-1 md:flex-row md:items-end md:px-0">
         <div>
-          <p className="mb-1 text-[14px] font-semibold uppercase tracking-wider text-muted-foreground">Command Center</p>
-          <h1 className="text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-foreground md:text-[48px]">
+          <p className="text-eyebrow mb-1 text-muted-foreground">Command Center</p>
+          <h1 className="text-page-title text-foreground">
             Overview
           </h1>
-          <p className="mt-2 max-w-3xl text-[16px] font-medium leading-relaxed text-muted-foreground">
+          <p className="text-page-lead mt-2 max-w-3xl text-muted-foreground">
             {organizerName}, this view now reflects your live event pipeline, RSVP volume, and the attendee activity that needs attention next.
           </p>
         </div>
         <Link
           href="/dashboard/events/new"
-          className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#0075de] px-5 py-3 text-[15px] font-semibold text-white shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all hover:bg-[#005bab] active:scale-95"
+          className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-notion-blue px-5 py-3 text-[15px] font-semibold text-white shadow-card transition-all hover:bg-[var(--color-notion-blue-hover)] active:scale-95"
         >
           <Plus className="h-5 w-5" />
           Create Event
@@ -60,13 +60,13 @@ export default async function DashboardPage() {
             <Link
               key={card.href}
               href={card.href}
-              className="rounded-[24px] border-whisper bg-card-bg p-5 shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-deep"
+              className="card-surface rounded-[24px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-deep"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-notion-blue dark:text-blue-400">
+              <div className="surface-brand-subtle flex h-12 w-12 items-center justify-center rounded-2xl border">
                 <card.icon className="h-5 w-5" />
               </div>
-              <h2 className="mt-5 text-[20px] font-bold tracking-tight text-foreground">{card.title}</h2>
-              <p className="mt-2 text-[14px] font-medium leading-relaxed text-muted-foreground">{card.description}</p>
+              <h2 className="text-panel-title mt-5 text-foreground">{card.title}</h2>
+              <p className="text-caption mt-2 leading-relaxed text-muted-foreground">{card.description}</p>
             </Link>
           ))}
         </section>

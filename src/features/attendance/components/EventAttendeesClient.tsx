@@ -8,6 +8,7 @@ import {
   filterAndSortAttendees,
   type AttendeeFilters,
 } from "@/features/attendance/attendee-management";
+import { RsvpStatusBadge } from "@/features/rsvp/RsvpStatusBadge";
 import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import { api } from "@/trpc/react";
 
@@ -22,21 +23,6 @@ function sanitizeFilenamePart(value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 50);
-}
-
-function getStatusBadgeClass(status: string): string {
-  switch (status) {
-    case "ATTENDED":
-      return "bg-notion-blue text-white";
-    case "GOING":
-      return "bg-green-500/10 text-green-600 dark:text-green-400";
-    case "WAITLISTED":
-      return "bg-amber-500/10 text-amber-600 dark:text-amber-400";
-    case "CANCELLED":
-      return "bg-rose-500/10 text-rose-600 dark:text-rose-400";
-    default:
-      return "bg-muted text-muted-foreground";
-  }
 }
 
 function formatAcademicProfile(attendee: {
@@ -160,7 +146,7 @@ export function EventAttendeesClient({
         </div>
 
         <button
-          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-white shadow-none transition-all hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50 active:scale-95"
+          className="inline-flex h-10 items-center justify-center rounded-[var(--radius-micro)] bg-notion-blue px-4 py-2 text-sm font-medium text-white shadow-card transition-all hover:bg-focus-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)] disabled:pointer-events-none disabled:opacity-50 active:scale-95"
           disabled={attendees.length === 0}
           onClick={handleExportCsv}
           type="button"
@@ -228,13 +214,7 @@ export function EventAttendeesClient({
                         {formatAcademicProfile(attendee)}
                       </td>
                       <td className="px-6 py-4 align-middle">
-                        <span
-                          className={`inline-flex items-center rounded-pill px-2.5 py-0.5 text-xs font-semibold uppercase tracking-badge ${getStatusBadgeClass(
-                            attendee.status,
-                          )}`}
-                        >
-                          {attendee.status}
-                        </span>
+                        <RsvpStatusBadge status={attendee.status} />
                       </td>
                       <td className="px-6 py-4 align-middle text-center">
                         <span

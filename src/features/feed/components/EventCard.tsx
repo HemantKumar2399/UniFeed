@@ -19,6 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { RsvpStatusBadge } from "@/features/rsvp/RsvpStatusBadge";
 import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import type { RouterOutputs } from "@/trpc/react";
 
@@ -103,30 +104,13 @@ export function EventCard({ event }: { event: EventFeedItem }) {
 
               {viewerRsvpStatus ? (
                 <div className="absolute top-3 left-3 z-10">
-                  <Badge
-                    variant={
-                      viewerRsvpStatus === "GOING" ||
-                      viewerRsvpStatus === "ATTENDED"
-                        ? "success"
-                        : viewerRsvpStatus === "WAITLISTED"
-                          ? "warning"
-                          : "neutral"
-                    }
-                  >
-                    {viewerRsvpStatus === "GOING"
-                      ? "Secured"
-                      : viewerRsvpStatus === "ATTENDED"
-                        ? "Attended"
-                        : viewerRsvpStatus === "WAITLISTED"
-                          ? "Waitlisted"
-                          : viewerRsvpStatus}
-                  </Badge>
+                  <RsvpStatusBadge status={viewerRsvpStatus} />
                 </div>
               ) : null}
             </div>
 
             <div className="relative bg-card-bg p-5 transition-colors duration-300">
-              <h2 className="mb-1 line-clamp-2 text-[22px] leading-[1.2] font-bold tracking-tight text-foreground">
+              <h2 className="text-section-title mb-1 line-clamp-2 text-foreground">
                 {event.title}
               </h2>
               <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -141,7 +125,7 @@ export function EventCard({ event }: { event: EventFeedItem }) {
 
               <div className="mt-4 mb-5 flex flex-col gap-2">
                 <div className="flex items-center gap-2.5 text-[14px] font-medium text-muted-foreground">
-                  <Calendar className="h-4 w-4 shrink-0 text-blue-600" />
+                  <Calendar className="text-link-accent h-4 w-4 shrink-0" />
                   <span>{formatEventDateMeta(event.date)}</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-[14px] text-muted-foreground">
@@ -172,7 +156,7 @@ export function EventCard({ event }: { event: EventFeedItem }) {
       {isDetailsOpen ? (
         <DrawerContent className="max-h-[88vh] rounded-t-[24px] border-whisper bg-card-bg transition-colors duration-300">
           <DrawerHeader className="text-left">
-            <DrawerTitle className="text-[22px] font-bold tracking-tight text-foreground">
+            <DrawerTitle className="text-section-title text-foreground">
               {event.title}
             </DrawerTitle>
             <DrawerDescription className="text-[14px] font-medium text-muted-foreground">

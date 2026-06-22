@@ -17,10 +17,10 @@ export default function PersonalInfoPage() {
           <ChevronLeft className="w-4 h-4" />
           Back to Profile
         </Link>
-        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px]">
+        <h1 className="text-page-title text-foreground">
           Personal Info
         </h1>
-        <p className="text-[15px] font-medium text-muted-foreground mt-2">
+        <p className="text-page-lead mt-2 text-muted-foreground">
           Your verified student identity details.
         </p>
       </header>
@@ -32,7 +32,7 @@ export default function PersonalInfoPage() {
           ))}
         </div>
       ) : isError || !profile ? (
-        <div className="rounded-[16px] border border-red-200 bg-red-50 p-4 text-[14px] text-red-700">
+        <div className="alert-panel surface-status-danger p-4 text-[14px]">
           Could not load your student profile details. Please complete onboarding.
         </div>
       ) : (

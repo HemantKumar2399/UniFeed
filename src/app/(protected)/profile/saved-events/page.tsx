@@ -20,7 +20,7 @@ export default function SavedEventsPage() {
           <ChevronLeft className="w-4 h-4" />
           Back to Profile
         </Link>
-        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px]">
+        <h1 className="text-page-title text-foreground">
           Saved Events
         </h1>
       </header>
@@ -29,7 +29,7 @@ export default function SavedEventsPage() {
         <FeedSkeleton />
       ) : isError ? (
         <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
-          <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700">
+          <div className="alert-panel surface-status-danger px-4 py-3 text-[14px]">
             <p>Could not load saved events: {error?.message ?? "An unexpected error occurred."}</p>
             <button
               type="button"

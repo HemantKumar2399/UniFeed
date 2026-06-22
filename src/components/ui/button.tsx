@@ -17,7 +17,7 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-muted hover:text-foreground text-foreground/80",
         destructive:
-          "bg-red-500/10 text-red-600 hover:bg-red-500/20",
+          "border border-status-danger-border bg-status-danger-surface text-danger hover:bg-status-danger-surface/80",
         link: "text-[var(--color-notion-blue)] underline-offset-4 hover:underline",
       },
       size: {

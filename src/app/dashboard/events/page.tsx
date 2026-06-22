@@ -3,19 +3,13 @@ import { CalendarClock, Filter, Plus, Search, Tag } from "lucide-react";
 import Link from "next/link";
 
 import { EmptyState } from "@/components/EmptyState";
-import {
-  formatRegistrationDeadline,
-  getOrganizerDeadlineState,
-} from "@/lib/event-registration";
+import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
+import { formatRegistrationDeadline, getOrganizerDeadlineState } from "@/lib/event-registration";
+import { getRegistrationStatus } from "@/lib/event-status";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import {
-  getManageableClubsForUser,
-  isAdminUserRole,
-} from "@/server/permissions/club-management";
+import { getManageableClubsForUser, isAdminUserRole } from "@/server/permissions/club-management";
 import { EventActions } from "./EventActions";
-import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
-import { getRegistrationStatus } from "@/lib/event-status";
 
 const manageableClubRoles = ["OWNER", "EDITOR"] as const;
 const eventTabs = [
@@ -39,8 +33,6 @@ function formatEventDate(date: Date) {
     minute: "2-digit",
   }).format(date);
 }
-
-
 
 function parseActiveTab(rawTab: string | undefined): EventTabKey {
   return eventTabs.some((tab) => tab.key === rawTab) ? (rawTab as EventTabKey) : "draft";
@@ -193,7 +185,10 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
             },
           },
         },
-        orderBy: activeTab === "past" ? [{ date: "desc" }, { createdAt: "desc" }] : [{ date: "asc" }, { createdAt: "desc" }],
+        orderBy:
+          activeTab === "past"
+            ? [{ date: "desc" }, { createdAt: "desc" }]
+            : [{ date: "asc" }, { createdAt: "desc" }],
       });
 
   const tabCounts = !baseWhere
@@ -220,11 +215,10 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="flex flex-col justify-between gap-4 px-1 md:flex-row md:items-end md:px-0">
         <div>
-          <h1 className="mb-2 text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-foreground md:text-[48px]">
-            Events
-          </h1>
-          <p className="text-[16px] font-medium leading-relaxed text-muted-foreground">
-            Track every event through draft, review, approval, publication, and cancellation without leaving your dashboard.
+          <h1 className="text-page-title mb-2 text-foreground">Events</h1>
+          <p className="text-page-lead text-muted-foreground">
+            Track every event through draft, review, approval, publication, and cancellation without leaving your
+            dashboard.
           </p>
         </div>
         <Link
@@ -245,16 +239,14 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
               <Link
                 key={tab.key}
                 href={buildTabHref(tab.key, query, selectedClubId)}
-                className={`rounded-pill px-4 py-2 text-sm font-semibold transition-colors active:scale-95 flex items-center gap-2 ${
+                className={`rounded-pill flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-colors active:scale-95 ${
                   isActive
                     ? "bg-notion-blue text-white"
-                    : "bg-app-bg text-muted-foreground hover:bg-card-bg hover:text-foreground border border-whisper"
+                    : "border border-whisper bg-app-bg text-muted-foreground hover:bg-card-bg hover:text-foreground"
                 }`}
               >
                 <span>{tab.label}</span>
-                <span className={`text-[11px] font-bold rounded-full px-2 py-0.5 ${
-                  isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
-                }`}>
+                <span className={`text-badge rounded-full px-2 py-0.5 ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
                   {count}
                 </span>
               </Link>
@@ -262,8 +254,8 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
           })}
         </div>
 
-        <div className="mt-3 text-xs text-muted-foreground font-medium px-1 flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-notion-blue"></span>
+        <div className="text-micro mt-3 flex items-center gap-1.5 px-1 text-muted-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-notion-blue"></span>
           <span>
             {activeTab === "draft" && "Draft: Prepare event details. These are not visible to admins or students."}
             {activeTab === "submitted" && "Submitted: Waiting for college admin approval. You cannot edit submitted events."}
@@ -340,77 +332,71 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
               });
 
               return (
-                <article
-                  key={event.id}
-                  className="rounded-[18px] border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300"
-                >
+                <article key={event.id} className="card-surface p-5 transition-colors duration-300">
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0 space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <EventStatusBadge status={event.status} />
                         <RegistrationStatusBadge status={regStatus} />
                         {isPast ? (
-                          <span className="rounded-pill border-whisper bg-app-bg px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-colors">
+                          <span className="text-badge rounded-pill border-whisper bg-app-bg px-3 py-1 uppercase text-muted-foreground transition-colors">
                             Past
                           </span>
                         ) : null}
-                        <span className="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                        <span className="text-badge inline-flex items-center gap-1 uppercase text-muted-foreground">
                           <Tag className="h-3.5 w-3.5" />
                           {event.club.name}
                         </span>
                       </div>
 
                       <div>
-                        <h2 className="text-[24px] font-bold leading-tight tracking-[-0.02em] text-foreground">
-                          {event.title}
-                        </h2>
-                        <p className="mt-1 text-[14px] text-warm-gray">
-                          {event.location} • {formatEventDate(event.date)}
+                        <h2 className="text-panel-title text-foreground">{event.title}</h2>
+                        <p className="text-caption mt-1 text-warm-gray">
+                          {event.location} - {formatEventDate(event.date)}
                         </p>
                       </div>
 
-                      <p className="line-clamp-2 max-w-3xl text-[14px] leading-relaxed text-warm-gray">
-                        {event.description}
-                      </p>
+                      <p className="text-caption-light line-clamp-2 max-w-3xl text-warm-gray">{event.description}</p>
 
-                      <div className="flex flex-wrap gap-x-4 gap-y-2 text-[13px] font-medium text-warm-gray">
+                      <div className="text-caption flex flex-wrap gap-x-4 gap-y-2 text-warm-gray">
                         <span className="flex items-center gap-1">
                           <strong>Capacity:</strong> {event.capacity} seats
                         </span>
                         <span className="flex items-center gap-1">
                           <strong>RSVPs:</strong> {event._count.rsvps} joined
                         </span>
-                        <span>•</span>
+                        <span>-</span>
                         <span>{event.category ?? "Uncategorized"}</span>
-                        <span>•</span>
+                        <span>-</span>
                         <span>{event.domain ?? "General"}</span>
                         {event.submittedAt ? (
-                          <span className="text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                          <span className="rounded-md border border-status-warning-border bg-status-warning-surface px-2 py-0.5 text-orange">
                             Submitted {formatEventDate(event.submittedAt)}
                           </span>
                         ) : null}
                         {event.cancelledAt ? (
-                          <span className="text-red-600 bg-red-500/10 px-2 py-0.5 rounded-md border border-red-500/20">
+                          <span className="rounded-md border border-status-danger-border bg-status-danger-surface px-2 py-0.5 text-danger">
                             Cancelled {formatEventDate(event.cancelledAt)}
                           </span>
                         ) : null}
                       </div>
 
-                      {/* Registration Deadline Alert Banner */}
                       {event.registrationClosesAt && (
-                        <div className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-[13px] font-medium leading-normal ${
-                          regStatus === "CLOSED_BY_DEADLINE"
-                            ? "border-rose-500/20 bg-rose-500/10 text-rose-500"
-                            : regStatus === "CLOSING_SOON"
-                            ? "border-amber-500/20 bg-amber-500/10 text-amber-500 animate-pulse"
-                            : "border-whisper bg-muted text-muted-foreground"
-                        }`}>
+                        <div
+                          className={`text-caption mt-3 flex items-center gap-2 rounded-xl border p-3 leading-normal ${
+                            regStatus === "CLOSED_BY_DEADLINE"
+                              ? "border-status-danger-border bg-status-danger-surface text-danger"
+                              : regStatus === "CLOSING_SOON"
+                                ? "border-status-warning-border bg-status-warning-surface text-orange motion-safe:animate-pulse"
+                                : "border-whisper bg-muted text-muted-foreground"
+                          }`}
+                        >
                           <CalendarClock className="h-4 w-4 shrink-0" />
                           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                             <span>
-                              Registration deadline: <strong className="font-semibold">{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
+                              Registration deadline: <strong>{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
                             </span>
-                            <span className="text-[11px] opacity-75 sm:border-l sm:border-current sm:pl-2">
+                            <span className="text-micro opacity-75 sm:border-l sm:border-current sm:pl-2">
                               ({registrationLabel})
                             </span>
                           </div>
@@ -422,7 +408,7 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                           {event.tags.slice(0, 4).map((tag) => (
                             <span
                               key={`${event.id}-${tag}`}
-                              className="rounded-pill border-whisper bg-app-bg px-3 py-1 text-xs font-medium text-muted-foreground transition-colors"
+                              className="text-badge rounded-pill border-whisper bg-app-bg px-3 py-1 text-muted-foreground transition-colors"
                             >
                               #{tag}
                             </span>
@@ -431,14 +417,14 @@ export default async function DashboardEventsPage({ searchParams }: DashboardEve
                       ) : null}
 
                       {event.status === "REJECTED" && event.approvalLogs[0]?.reason ? (
-                        <div className="max-w-3xl rounded-[16px] border border-[var(--border-whisper)] bg-warm-white px-4 py-3 text-[13px] leading-relaxed text-warm-gray">
-                          <span className="font-semibold text-notion-black">Admin feedback:</span> {event.approvalLogs[0].reason}
+                        <div className="max-w-3xl rounded-[16px] border border-status-warning-border bg-status-warning-surface px-4 py-3 text-[13px] leading-relaxed text-warm-gray">
+                          <span className="font-semibold text-foreground">Admin feedback:</span> {event.approvalLogs[0].reason}
                         </div>
                       ) : null}
 
                       {event.cancellationReason ? (
-                        <div className="max-w-3xl rounded-[16px] border border-[var(--border-whisper)] bg-warm-white px-4 py-3 text-[13px] leading-relaxed text-warm-gray">
-                          <span className="font-semibold text-notion-black">Cancellation reason:</span> {event.cancellationReason}
+                        <div className="max-w-3xl rounded-[16px] border border-status-danger-border bg-status-danger-surface px-4 py-3 text-[13px] leading-relaxed text-warm-gray">
+                          <span className="font-semibold text-foreground">Cancellation reason:</span> {event.cancellationReason}
                         </div>
                       ) : null}
                     </div>

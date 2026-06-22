@@ -26,14 +26,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      // Surface: dynamic card background
-      "bg-card-bg",
-      // Whisper border: the Notion aesthetic class
-      "border-whisper",
-      // Radius: 12px standard, 16px featured
-      variant === "featured" ? "rounded-[16px]" : "rounded-[12px]",
-      // Shadow: semantic multi-layer stack mapped to globals.css utilities
-      variant === "featured" ? "shadow-deep" : "shadow-card",
+      variant === "featured" ? "card-surface-featured" : "card-surface",
       // Subtle shadow intensification on hover
       "transition-shadow duration-200",
       className
@@ -65,8 +58,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-[1.375rem] font-bold leading-[1.27] tracking-[-0.25px]",
-      "text-foreground",
+      "text-card-title text-foreground",
       className
     )}
     {...props}

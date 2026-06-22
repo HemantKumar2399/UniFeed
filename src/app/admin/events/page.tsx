@@ -1,15 +1,15 @@
+import { CalendarClock, Filter, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CalendarClock, Filter, Search, Users } from "lucide-react";
 
 import { EmptyState } from "@/components/EmptyState";
+import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
 import { formatRegistrationDeadline, getAdminDeadlineState } from "@/lib/event-registration";
+import { getRegistrationStatus } from "@/lib/event-status";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
 import { type RouterOutputs } from "@/trpc/react";
-import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
-import { getRegistrationStatus } from "@/lib/event-status";
 
 function formatDateTime(date: Date | null | undefined) {
   if (!date) {
@@ -24,8 +24,6 @@ function formatDateTime(date: Date | null | undefined) {
     minute: "2-digit",
   }).format(date);
 }
-
-
 
 type AdminEventsPageProps = {
   searchParams: Promise<{
@@ -69,35 +67,34 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
         <div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Approval Queue</p>
-          <h2 className="mt-1 text-[34px] font-bold tracking-[-1px] text-black/95 md:text-[40px]">
-            Pending event reviews
-          </h2>
-          <p className="mt-2 max-w-3xl text-[15px] font-medium leading-relaxed text-[#615d59]">
-            Review submitted community events for your college, inspect organizer context, and decide whether each event moves to approved status.
+          <p className="text-eyebrow text-muted-foreground">Approval Queue</p>
+          <h1 className="text-page-title mt-1 text-foreground">Pending event reviews</h1>
+          <p className="text-page-lead mt-2 max-w-3xl text-muted-foreground">
+            Review submitted community events for your college, inspect organizer context, and decide whether each
+            event moves to approved status.
           </p>
         </div>
       </header>
 
-      <section className="rounded-[28px] border border-black/10 bg-white p-5 shadow-[0_12px_30px_rgba(0,0,0,0.04)]">
+      <section className="card-surface p-5">
         <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px_auto]">
-          <label className="flex items-center gap-3 rounded-2xl border border-black/10 bg-[#f6f5f4] px-4 py-3">
-            <Search className="h-4 w-4 text-[#8a847d]" />
+          <label className="flex items-center gap-3 rounded-2xl border border-input bg-app-bg px-4 py-3">
+            <Search className="h-4 w-4 text-muted-foreground" />
             <input
               type="search"
               name="q"
               defaultValue={q ?? ""}
               placeholder="Search by event title or organizer"
-              className="w-full bg-transparent text-[14px] font-medium text-black/90 outline-none placeholder:text-[#8a847d]"
+              className="w-full bg-transparent text-[14px] font-medium text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
 
-          <label className="flex items-center gap-3 rounded-2xl border border-black/10 bg-[#f6f5f4] px-4 py-3">
-            <Filter className="h-4 w-4 text-[#8a847d]" />
+          <label className="flex items-center gap-3 rounded-2xl border border-input bg-app-bg px-4 py-3">
+            <Filter className="h-4 w-4 text-muted-foreground" />
             <select
               name="clubId"
               defaultValue={clubId ?? ""}
-              className="w-full bg-transparent text-[14px] font-medium text-black/90 outline-none"
+              className="w-full bg-transparent text-[14px] font-medium text-foreground outline-none"
             >
               <option value="">All communities</option>
               {clubs.map((club: CommunityItem) => (
@@ -110,7 +107,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
 
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-2xl bg-[#097fe8] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#086dc6]"
+            className="inline-flex items-center justify-center rounded-2xl bg-notion-blue px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--color-notion-blue-hover)]"
           >
             Apply Filters
           </button>
@@ -143,33 +140,28 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
               });
 
               return (
-                <article
-                  key={event.id}
-                  className="rounded-[24px] border border-black/10 bg-white p-5 shadow-[0_12px_30px_rgba(0,0,0,0.04)]"
-                >
+                <article key={event.id} className="card-surface p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="space-y-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <EventStatusBadge status={event.status} />
                         <RegistrationStatusBadge status={regStatus} />
-                        <span className="rounded-full border border-black/10 bg-[#f6f5f4] px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#615d59]">
+                        <span className="text-badge rounded-full border border-whisper bg-app-bg px-3.5 py-1 uppercase text-muted-foreground">
                           {event.club.name}
                         </span>
-                        <span
-                          className={`rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${deadlineBadge.className}`}
-                        >
+                        <span className={`text-badge rounded-full border px-3.5 py-1 uppercase ${deadlineBadge.className}`}>
                           {deadlineBadge.label}
                         </span>
                       </div>
 
                       <div>
-                        <h3 className="text-[24px] font-bold tracking-tight text-black/95">{event.title}</h3>
-                        <p className="mt-1 text-[14px] font-medium text-[#615d59]">
-                          {event.location} • {formatDateTime(event.date)}
+                        <h2 className="text-panel-title text-foreground">{event.title}</h2>
+                        <p className="text-caption mt-1 text-muted-foreground">
+                          {event.location} - {formatDateTime(event.date)}
                         </p>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-4 text-[13px] font-medium text-[#615d59]">
+                      <div className="text-caption flex flex-wrap items-center gap-4 text-muted-foreground">
                         <span>{event.capacity} seats</span>
                         <span>Submitted {formatDateTime(event.submittedAt ?? event.createdAt)}</span>
                         <span className="inline-flex items-center gap-1">
@@ -178,21 +170,22 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                         </span>
                       </div>
 
-                      {/* Registration Deadline Alert Banner */}
                       {event.registrationClosesAt && (
-                        <div className={`mt-3 flex items-center gap-2 rounded-xl border p-3 text-[13px] font-medium leading-normal ${
-                          regStatus === "CLOSED_BY_DEADLINE"
-                            ? "border-rose-100 bg-rose-50/50 text-rose-700"
-                            : regStatus === "CLOSING_SOON"
-                            ? "border-amber-100 bg-amber-50/50 text-amber-700 animate-pulse"
-                            : "border-gray-100 bg-gray-50/50 text-gray-700"
-                        }`}>
+                        <div
+                          className={`text-caption mt-3 flex items-center gap-2 rounded-xl border p-3 leading-normal ${
+                            regStatus === "CLOSED_BY_DEADLINE"
+                              ? "border-status-danger-border bg-status-danger-surface text-danger"
+                              : regStatus === "CLOSING_SOON"
+                                ? "border-status-warning-border bg-status-warning-surface text-orange motion-safe:animate-pulse"
+                                : "border-whisper bg-app-bg text-muted-foreground"
+                          }`}
+                        >
                           <CalendarClock className="h-4 w-4 shrink-0" />
                           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                             <span>
-                              Registration deadline: <strong className="font-semibold">{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
+                              Registration deadline: <strong>{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
                             </span>
-                            <span className="text-[11px] opacity-75 sm:border-l sm:border-current sm:pl-2">
+                            <span className="text-micro opacity-75 sm:border-l sm:border-current sm:pl-2">
                               ({deadlineBadge.label})
                             </span>
                           </div>
@@ -203,7 +196,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                     <div className="flex items-center justify-start lg:justify-end">
                       <Link
                         href={`/admin/events/${event.id}`}
-                        className="inline-flex items-center justify-center rounded-2xl bg-[#097fe8] px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#086dc6]"
+                        className="inline-flex items-center justify-center rounded-2xl bg-notion-blue px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--color-notion-blue-hover)]"
                       >
                         Review Event
                       </Link>

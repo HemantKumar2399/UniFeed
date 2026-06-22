@@ -38,10 +38,10 @@ export default async function DiscoverPage({ searchParams }: DiscoverPageProps) 
         </div>
 
         <div>
-          <h1 className="mb-2 text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-notion-black md:text-[48px]">
+          <h1 className="text-page-title mb-2 text-notion-black">
             Discover
           </h1>
-          <p className="max-w-2xl text-sm text-warm-gray-500">
+          <p className="text-caption max-w-2xl text-warm-gray-500">
             Explore published events and active student communities for your college using real categories and curated collections.
           </p>
         </div>

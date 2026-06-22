@@ -71,8 +71,8 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
           College-scoped discovery
         </div>
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-notion-black">Search</h1>
-          <p className="mt-2 text-sm text-warm-gray-500">
+          <h1 className="text-page-title text-notion-black">Search</h1>
+          <p className="text-caption mt-2 text-warm-gray-500">
             Find upcoming events and active communities for your college.
           </p>
         </div>
@@ -107,7 +107,7 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
       ) : null}
 
       {error ? (
-        <div className="rounded-[18px] border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="alert-panel surface-status-danger rounded-[18px] p-4 text-sm">
           Could not load search results: {error.message}
         </div>
       ) : null}

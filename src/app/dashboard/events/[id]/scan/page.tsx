@@ -197,7 +197,7 @@ export default function EventScanModePage({
 
   if (!isValidEventId) {
     return (
-      <div className="rounded-[20px] border border-red-200 bg-red-50 p-6 text-red-700">
+      <div className="alert-panel surface-status-danger rounded-[20px] p-6">
         Invalid event ID.
       </div>
     );
@@ -209,10 +209,10 @@ export default function EventScanModePage({
         <div
           className={`pointer-events-none fixed inset-0 z-50 ${
             flash === "success"
-              ? "bg-green-500/50"
+              ? "bg-status-success-surface"
               : flash === "warning"
-                ? "bg-amber-400/40"
-                : "bg-red-500/45"
+                ? "bg-status-warning-surface"
+                : "bg-status-danger-surface"
           }`}
         />
       ) : null}
@@ -220,7 +220,7 @@ export default function EventScanModePage({
       <header className="flex flex-col gap-2">
         <Link
           href={`/dashboard/events/${eventId}`}
-          className="inline-flex w-fit items-center text-sm font-semibold uppercase tracking-badge text-warm-gray-500 transition-colors hover:text-notion-black"
+          className="text-badge inline-flex w-fit items-center uppercase text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
           Back to Attendees
@@ -228,33 +228,33 @@ export default function EventScanModePage({
 
         <div className="flex items-end justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h1 className="inline-flex items-center gap-2 text-3xl font-bold tracking-tight text-notion-black">
+            <h1 className="text-panel-title inline-flex items-center gap-2 text-foreground">
               <ScanLine className="h-7 w-7" />
               Scan Mode
             </h1>
-            <p aria-live="polite" className="mt-1 text-sm text-warm-gray-500 truncate">
+            <p aria-live="polite" className="text-caption mt-1 truncate text-muted-foreground">
               {feedbackMessage}
             </p>
-            <p className="mt-1 text-xs font-medium uppercase tracking-badge text-warm-gray-500">
+            <p className="text-badge mt-1 uppercase text-muted-foreground">
               Scan the student&apos;s permanent passport QR for this event.
             </p>
           </div>
           <div className="flex gap-2 shrink-0">
             {offlineQueue.length > 0 ? (
-              <div className="rounded-[14px] border border-amber-200 bg-amber-50 px-4 py-2 text-right shadow-sm animate-pulse">
-                <p className="text-xs uppercase tracking-badge text-amber-600 font-semibold">Queued</p>
-                <p className="text-lg font-bold text-amber-700">{offlineQueue.length}</p>
+              <div className="rounded-[14px] border border-status-warning-border bg-status-warning-surface px-4 py-2 text-right shadow-sm motion-safe:animate-pulse">
+                <p className="text-badge uppercase text-orange">Queued</p>
+                <p className="text-lg font-bold text-orange">{offlineQueue.length}</p>
               </div>
             ) : null}
             {isSyncing ? (
-              <div className="rounded-[14px] border border-blue-200 bg-blue-50 px-4 py-2 text-right shadow-sm flex flex-col justify-center items-center">
-                <p className="text-xs uppercase tracking-badge text-blue-600 font-semibold">Syncing</p>
-                <Loader2 className="h-4 w-4 animate-spin mt-1 text-blue-600" />
+              <div className="rounded-[14px] border border-brand-border bg-brand-surface px-4 py-2 text-right shadow-sm flex flex-col items-center justify-center">
+                <p className="text-badge uppercase text-notion-blue">Syncing</p>
+                <Loader2 className="mt-1 h-4 w-4 animate-spin text-notion-blue" />
               </div>
             ) : null}
-            <div className="rounded-[14px] border border-[var(--border-whisper)] bg-pure-white px-4 py-2 text-right shadow-sm">
-              <p className="text-xs uppercase tracking-badge text-warm-gray-500">Checked-In</p>
-              <p className="text-lg font-semibold text-notion-black">{checkedInCount}</p>
+            <div className="rounded-[14px] border border-whisper bg-card-bg px-4 py-2 text-right shadow-sm">
+              <p className="text-badge uppercase text-muted-foreground">Checked-In</p>
+              <p className="text-lg font-semibold text-foreground">{checkedInCount}</p>
             </div>
           </div>
         </div>
@@ -263,7 +263,7 @@ export default function EventScanModePage({
       {attendeesError ? (
         <div
           aria-live="polite"
-          className="flex items-start gap-3 rounded-[20px] border border-red-200 bg-red-50 p-4 text-red-800 shadow-sm"
+          className="alert-panel surface-status-danger flex items-start gap-3 rounded-[20px] shadow-sm"
         >
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
           <div>

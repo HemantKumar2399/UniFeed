@@ -50,7 +50,7 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
 
   if (error) {
     return (
-      <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+      <div className="alert-panel surface-status-danger rounded-[20px] p-5 text-sm">
         Could not load discover results: {error.message}
       </div>
     );
@@ -64,7 +64,7 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
       {collection !== "communities" ? (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-[22px] font-bold tracking-tight text-notion-black">
+            <h2 className="text-section-title text-notion-black">
               Events to explore
             </h2>
             <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
@@ -82,7 +82,7 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
                 <Link
                   key={event.id}
                   href={event.href}
-                  className="rounded-[20px] border border-[var(--border-whisper)] bg-pure-white p-5 shadow-sm transition-colors hover:bg-warm-white active:scale-[0.99]"
+                  className="card-surface rounded-[20px] p-5 transition-colors hover:bg-warm-white active:scale-[0.99]"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="rounded-full bg-warm-white px-3 py-1 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
@@ -95,7 +95,7 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
                       </span>
                     ) : null}
                   </div>
-                  <h3 className="mt-4 text-xl font-bold tracking-tight text-notion-black">
+                  <h3 className="text-panel-title mt-4 text-notion-black">
                     {event.title}
                   </h3>
                   <p className="mt-2 text-sm font-medium text-warm-gray-500">{event.clubName}</p>
@@ -159,7 +159,7 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-[22px] font-bold tracking-tight text-notion-black">
+          <h2 className="text-section-title text-notion-black">
             Communities
           </h2>
           <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
@@ -177,7 +177,7 @@ export function DiscoverResults({ category, collection }: DiscoverResultsProps) 
               <Link
                 key={community.id}
                 href={community.href}
-                className="rounded-[20px] border border-[var(--border-whisper)] bg-pure-white p-5 shadow-sm transition-colors hover:bg-warm-white active:scale-[0.99]"
+                className="card-surface rounded-[20px] p-5 transition-colors hover:bg-warm-white active:scale-[0.99]"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-warm-white text-notion-black">

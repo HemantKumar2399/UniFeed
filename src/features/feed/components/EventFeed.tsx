@@ -16,7 +16,7 @@ export function EventFeed() {
   if (isError) {
     return (
       <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
-        <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700">
+        <div className="alert-panel surface-status-danger px-4 py-3 text-[14px]">
           <p>Could not load home feed: {error?.message ?? "An unexpected error occurred."}</p>
           <button
             type="button"

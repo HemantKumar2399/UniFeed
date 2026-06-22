@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Users } from "lucide-react";
 import { TRPCError } from "@trpc/server";
 
+import { EventStatusBadge } from "@/components/EventStatusBadge";
 import { formatRegistrationDeadline, getApprovalBlockedReason } from "@/lib/event-registration";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
@@ -81,7 +82,7 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
       <header className="space-y-4">
         <Link
           href="/admin/events"
-          className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#615d59] transition-colors hover:text-black/90"
+          className="text-link-accent text-caption inline-flex items-center gap-2 transition-colors hover:opacity-80"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to pending reviews
@@ -90,16 +91,14 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-[#ddcaa7] bg-[#fff8ec] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#9a6500]">
-                {event.status}
-              </span>
-              <span className="rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#615d59]">
+              <EventStatusBadge status={event.status} />
+              <span className="text-badge rounded-full border border-whisper bg-card-bg px-3 py-1 uppercase text-muted-foreground">
                 {event.club.name}
               </span>
             </div>
             <div>
-              <h2 className="text-[34px] font-bold tracking-[-1px] text-black/95 md:text-[40px]">{event.title}</h2>
-              <p className="mt-2 max-w-3xl text-[15px] font-medium leading-relaxed text-[#615d59]">
+              <h1 className="text-page-title text-foreground">{event.title}</h1>
+              <p className="text-page-lead mt-2 max-w-3xl text-muted-foreground">
                 Review the full event details, check organizer and community context, and decide whether this event should move into the approved state.
               </p>
             </div>
@@ -109,8 +108,8 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
 
       <section className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
         <div className="space-y-6">
-          <div className="overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.04)]">
-            <div className="relative aspect-[16/8] w-full bg-[#f6f5f4]">
+          <div className="card-surface-featured overflow-hidden">
+            <div className="relative aspect-[16/8] w-full bg-app-bg">
               <Image
                 src={event.imageUrl}
                 alt={event.title}
@@ -121,86 +120,86 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
             </div>
             <div className="p-6">
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Schedule</p>
-                  <p className="mt-2 inline-flex items-center gap-2 text-[14px] font-semibold text-black/90">
-                    <CalendarDays className="h-4 w-4 text-[#097fe8]" />
+                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                  <p className="text-eyebrow text-muted-foreground">Schedule</p>
+                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                    <CalendarDays className="text-link-accent h-4 w-4" />
                     {formatDateTime(event.date)}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Capacity</p>
-                  <p className="mt-2 inline-flex items-center gap-2 text-[14px] font-semibold text-black/90">
-                    <Users className="h-4 w-4 text-[#097fe8]" />
+                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                  <p className="text-eyebrow text-muted-foreground">Capacity</p>
+                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                    <Users className="text-link-accent h-4 w-4" />
                     {event.capacity} seats
                   </p>
                 </div>
-                <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Location</p>
-                  <p className="mt-2 inline-flex items-center gap-2 text-[14px] font-semibold text-black/90">
-                    <MapPin className="h-4 w-4 text-[#097fe8]" />
+                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                  <p className="text-eyebrow text-muted-foreground">Location</p>
+                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                    <MapPin className="text-link-accent h-4 w-4" />
                     {event.location}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Submitted</p>
-                  <p className="mt-2 inline-flex items-center gap-2 text-[14px] font-semibold text-black/90">
-                    <Clock3 className="h-4 w-4 text-[#097fe8]" />
+                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                  <p className="text-eyebrow text-muted-foreground">Submitted</p>
+                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                    <Clock3 className="text-link-accent h-4 w-4" />
                     {formatDateTime(event.submittedAt ?? event.createdAt)}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4 md:col-span-2">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Registration closes</p>
-                  <p className="mt-2 text-[14px] font-semibold text-black/90">
+                <div className="rounded-[16px] border border-whisper bg-app-bg p-4 md:col-span-2">
+                  <p className="text-eyebrow text-muted-foreground">Registration closes</p>
+                  <p className="text-caption mt-2 text-foreground">
                     {formatRegistrationDeadline(event.registrationClosesAt)}
                   </p>
                 </div>
               </div>
 
               <div className="mt-6">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#8a847d]">Description</p>
-                <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-[#615d59]">{event.description}</p>
+                <p className="text-eyebrow text-muted-foreground">Description</p>
+                <p className="text-page-lead mt-3 whitespace-pre-wrap text-muted-foreground">{event.description}</p>
               </div>
 
               {approvalBlockedReason ? (
-                <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-red-700">Approval blocked</p>
-                  <p className="mt-2 text-[14px] font-medium leading-relaxed text-red-800">{approvalBlockedReason}</p>
+                <div className="alert-panel surface-status-danger mt-6">
+                  <p className="text-eyebrow">Approval blocked</p>
+                  <p className="text-caption mt-2">{approvalBlockedReason}</p>
                 </div>
               ) : null}
 
               {latestRejection?.reason ? (
-                <div className="mt-6 rounded-2xl border border-[#e8503a]/15 bg-[#fff4f2] p-4">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#e8503a]">Latest rejection reason</p>
-                  <p className="mt-2 text-[14px] font-medium leading-relaxed text-[#8c372a]">{latestRejection.reason}</p>
+                <div className="alert-panel surface-status-warning mt-6">
+                  <p className="text-eyebrow">Latest rejection reason</p>
+                  <p className="text-caption mt-2">{latestRejection.reason}</p>
                 </div>
               ) : null}
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_12px_30px_rgba(0,0,0,0.04)]">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Approval History</p>
+          <div className="card-surface p-6">
+            <p className="text-eyebrow text-muted-foreground">Approval History</p>
             <div className="mt-4 space-y-4">
               {event.approvalLogs.length === 0 ? (
-                <p className="text-[14px] font-medium text-[#615d59]">
+                <p className="text-caption text-muted-foreground">
                   No approval actions have been recorded for this event yet.
                 </p>
               ) : (
                 event.approvalLogs.map((log) => (
-                  <div key={log.id} className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
+                  <div key={log.id} className="rounded-[16px] border border-whisper bg-app-bg p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="text-[14px] font-semibold text-black/90">{log.action}</p>
-                        <p className="mt-1 text-[13px] font-medium text-[#615d59]">
+                        <p className="text-nav text-foreground">{log.action}</p>
+                        <p className="text-caption mt-1 text-muted-foreground">
                           {log.actor.name ?? log.actor.email ?? "Administrator"}
                         </p>
                       </div>
-                      <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">
+                      <p className="text-eyebrow text-muted-foreground">
                         {formatDateTime(log.createdAt)}
                       </p>
                     </div>
                     {log.reason ? (
-                      <p className="mt-3 text-[14px] leading-relaxed text-[#615d59]">{log.reason}</p>
+                      <p className="text-caption mt-3 text-muted-foreground">{log.reason}</p>
                     ) : null}
                   </div>
                 ))
@@ -210,17 +209,17 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-[28px] border border-black/10 bg-white p-6 shadow-[0_12px_30px_rgba(0,0,0,0.04)]">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#a39e98]">Organizer Context</p>
+          <div className="card-surface p-6">
+            <p className="text-eyebrow text-muted-foreground">Organizer Context</p>
             <div className="mt-4 space-y-3">
-              <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Organizer</p>
-                <p className="mt-2 text-[15px] font-semibold text-black/90">{event.author.name ?? "Unnamed organizer"}</p>
-                <p className="mt-1 text-[13px] font-medium text-[#615d59]">{event.author.email}</p>
+              <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                <p className="text-eyebrow text-muted-foreground">Organizer</p>
+                <p className="text-nav mt-2 text-foreground">{event.author.name ?? "Unnamed organizer"}</p>
+                <p className="text-caption mt-1 text-muted-foreground">{event.author.email}</p>
               </div>
-              <div className="rounded-2xl border border-black/10 bg-[#f6f5f4] p-4">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#8a847d]">Community</p>
-                <p className="mt-2 text-[15px] font-semibold text-black/90">{event.club.name}</p>
+              <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                <p className="text-eyebrow text-muted-foreground">Community</p>
+                <p className="text-nav mt-2 text-foreground">{event.club.name}</p>
               </div>
             </div>
           </div>

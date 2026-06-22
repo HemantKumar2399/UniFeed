@@ -1,6 +1,7 @@
-import { CalendarClock, ShieldAlert, ShieldCheck, Ticket } from "lucide-react";
+import { ShieldAlert, ShieldCheck, Ticket } from "lucide-react";
 
 import { StudentQrCard } from "@/components/StudentQrCard";
+import { RsvpStatusBadge } from "@/features/rsvp/RsvpStatusBadge";
 import { createStudentQrToken, getStudentQrSecret } from "@/lib/student-qr";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -70,25 +71,25 @@ export default async function PassportPage() {
   return (
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="px-1 md:px-0">
-        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px] mb-2">
+        <h1 className="text-page-title mb-2 text-foreground">
           Student Passport
         </h1>
-        <p className="text-[16px] text-muted-foreground font-medium leading-relaxed">
+        <p className="text-page-lead text-muted-foreground">
           Your persistent campus identity and secured event access.
         </p>
       </header>
 
       <section className="px-1 md:px-0">
-        <article className="w-full rounded-[24px] border border-black/5 bg-[#0075de] p-6 text-white shadow-[0_23px_52px_rgba(0,0,0,0.1)]">
+        <article className="card-surface-brand w-full p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-white/80 text-[13px] font-semibold uppercase tracking-wider mb-2">
+              <p className="text-eyebrow text-white/80 mb-2">
                 Verified Identity
               </p>
-              <h2 className="text-[28px] md:text-[34px] font-bold leading-[1.1] tracking-tight">
+              <h2 className="text-entity-title">
                 {session.user.name ?? session.user.email ?? "Student"}
               </h2>
-              <p className="text-[14px] text-white/80 mt-2">
+              <p className="text-caption mt-2 text-white/80">
                 {session.user.email ?? "No email on file"}
               </p>
             </div>
@@ -140,9 +141,9 @@ export default async function PassportPage() {
 
       <section className="px-1 md:px-0">
         {!studentProfile ? (
-          <div className="rounded-[20px] border border-yellow-200 bg-yellow-50 p-5 shadow-sm">
-            <h3 className="text-[17px] font-bold tracking-tight text-yellow-900">Complete your student profile first</h3>
-            <p className="mt-1 text-[14px] font-medium text-yellow-800">
+          <div className="alert-panel surface-status-caution p-5 shadow-card">
+            <h3 className="text-section-title">Complete your student profile first</h3>
+            <p className="text-caption mt-1">
               Your permanent passport QR appears once your profile details are available.
             </p>
           </div>
@@ -154,16 +155,16 @@ export default async function PassportPage() {
             token={qrPayload}
           />
         ) : qrRevoked ? (
-          <div className="rounded-[20px] border border-amber-200 bg-amber-50 p-5 shadow-sm">
-            <h3 className="text-[17px] font-bold tracking-tight text-amber-900">Passport QR revoked</h3>
-            <p className="mt-1 text-[14px] font-medium text-amber-800">
+          <div className="alert-panel surface-status-warning p-5 shadow-card">
+            <h3 className="text-section-title">Passport QR revoked</h3>
+            <p className="text-caption mt-1">
               An administrator needs to regenerate your permanent QR before it can be scanned again.
             </p>
           </div>
         ) : tokenUnavailable ? (
-          <div className="rounded-[20px] border border-red-200 bg-red-50 p-5 shadow-sm">
-            <h3 className="text-[17px] font-bold tracking-tight text-red-800">Passport QR is temporarily unavailable</h3>
-            <p className="mt-1 text-[14px] font-medium text-red-700">
+          <div className="alert-panel surface-status-danger p-5 shadow-card">
+            <h3 className="text-section-title">Passport QR is temporarily unavailable</h3>
+            <p className="text-caption mt-1">
               Passport QR generation is disabled until a secure student QR secret is configured.
             </p>
           </div>
@@ -174,8 +175,8 @@ export default async function PassportPage() {
                 <Ticket className="w-5 h-5 text-muted-foreground" />
               </div>
               <div>
-                <h3 className="text-[17px] font-bold tracking-tight text-foreground">Passport QR not ready yet</h3>
-                <p className="text-[14px] text-muted-foreground font-medium">
+                <h3 className="text-section-title text-foreground">Passport QR not ready yet</h3>
+                <p className="text-caption text-muted-foreground">
                   Your profile exists, but an active student passport QR has not been issued yet.
                 </p>
               </div>
@@ -189,8 +190,8 @@ export default async function PassportPage() {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">My Registrations</p>
-              <h3 className="mt-2 text-[22px] font-bold tracking-tight text-foreground">Active event access</h3>
-              <p className="mt-1 text-[14px] font-medium text-muted-foreground">
+              <h3 className="text-section-title mt-2 text-foreground">Active event access</h3>
+              <p className="text-caption mt-1 text-muted-foreground">
                 These registrations use your permanent passport QR at the venue.
               </p>
             </div>
@@ -224,10 +225,10 @@ export default async function PassportPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-primary">
-                      <CalendarClock className="h-3.5 w-3.5" />
-                      {registration.status}
-                    </span>
+                    <RsvpStatusBadge
+                      className="gap-1 uppercase"
+                      status={registration.status}
+                    />
                     <span className="inline-flex rounded-full border border-whisper bg-card-bg px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                       {registration.event.status}
                     </span>

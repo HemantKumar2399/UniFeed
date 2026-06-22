@@ -17,9 +17,9 @@ function MetricBlock(props: {
 }) {
   return (
     <div className="rounded-[24px] border-whisper bg-card-bg p-5 shadow-card transition-colors duration-300">
-      <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{props.label}</p>
+      <p className="text-eyebrow text-muted-foreground">{props.label}</p>
       <p className="mt-3 text-[32px] font-bold tracking-tight text-foreground">{props.value}</p>
-      <p className="mt-2 text-[13px] font-medium leading-relaxed text-muted-foreground">{props.detail}</p>
+      <p className="text-caption mt-2 leading-relaxed text-muted-foreground">{props.detail}</p>
     </div>
   );
 }
@@ -31,8 +31,8 @@ export function MetricsConversionSection(props: {
     <section className="rounded-[28px] border-whisper bg-card-bg p-6 shadow-card transition-colors duration-300">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">RSVP Conversion</p>
-          <h2 className="mt-2 text-[24px] font-bold tracking-tight text-foreground">Attendance drop-off by event</h2>
+          <p className="text-eyebrow text-muted-foreground">RSVP Conversion</p>
+          <h2 className="text-panel-title mt-2 text-foreground">Attendance drop-off by event</h2>
         </div>
         <TrendingUp className="h-5 w-5 text-notion-blue" />
       </div>
@@ -95,14 +95,14 @@ export function MetricsPageView(props: {
     <div className="flex flex-col gap-8 pb-32 md:pb-12">
       <header className="px-1 md:px-0">
         <div className="flex items-center gap-3">
-          <div className="rounded-2xl bg-blue-500/10 p-3 text-notion-blue dark:text-blue-400">
+          <div className="surface-brand-subtle rounded-2xl border p-3">
             <BarChart3 className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-[40px] font-bold leading-[1.1] tracking-[-1.5px] text-foreground md:text-[48px]">
+            <h1 className="text-page-title text-foreground">
               Metrics
             </h1>
-            <p className="mt-1 text-[16px] font-medium leading-relaxed text-muted-foreground">
+            <p className="text-page-lead mt-1 text-muted-foreground">
               Real organizer reporting for event volume, RSVP health, and attendance activity.
             </p>
           </div>
@@ -170,7 +170,7 @@ export function MetricsPageView(props: {
 
         <aside className="rounded-[28px] border-whisper bg-card-bg p-6 shadow-card transition-colors duration-300">
           <div className="flex items-center gap-3">
-            <div className="rounded-2xl bg-blue-500/10 p-3 text-notion-blue dark:text-blue-400">
+            <div className="rounded-2xl border border-brand-border bg-brand-surface p-3 text-notion-blue">
               <Users className="h-5 w-5" />
             </div>
             <div>

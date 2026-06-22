@@ -22,6 +22,23 @@
   
   --app-bg: #f6f5f4;
   --warm-white-dynamic: #f6f5f4;
+  --status-success-surface: rgba(26, 174, 57, 0.1);
+  --status-success-border: rgba(26, 174, 57, 0.22);
+  --status-warning-surface: rgba(221, 91, 0, 0.1);
+  --status-warning-border: rgba(221, 91, 0, 0.2);
+  --status-danger-surface: rgba(232, 80, 58, 0.1);
+  --status-danger-border: rgba(232, 80, 58, 0.2);
+  --status-caution-surface: rgba(212, 167, 44, 0.12);
+  --status-caution-border: rgba(212, 167, 44, 0.24);
+  --brand-surface: #f2f9ff;
+  --brand-border: rgba(9, 127, 232, 0.18);
+  --brand-surface-strong: #0075de;
+  --inverse-surface: #18181b;
+  --inverse-border: rgba(255, 255, 255, 0.12);
+  --inverse-foreground-muted: rgba(255, 255, 255, 0.78);
+  --scan-overlay: #0f172a;
+  --scan-frame: rgba(52, 211, 153, 0.5);
+  --scan-label-bg: rgba(0, 0, 0, 0.4);
 }
 
 .dark {
@@ -39,6 +56,23 @@
   
   --app-bg: #121212;
   --warm-white-dynamic: #1a1a19;
+  --status-success-surface: rgba(26, 174, 57, 0.16);
+  --status-success-border: rgba(26, 174, 57, 0.28);
+  --status-warning-surface: rgba(221, 91, 0, 0.16);
+  --status-warning-border: rgba(221, 91, 0, 0.3);
+  --status-danger-surface: rgba(232, 80, 58, 0.16);
+  --status-danger-border: rgba(232, 80, 58, 0.3);
+  --status-caution-surface: rgba(212, 167, 44, 0.18);
+  --status-caution-border: rgba(212, 167, 44, 0.3);
+  --brand-surface: rgba(9, 127, 232, 0.18);
+  --brand-border: rgba(9, 127, 232, 0.3);
+  --brand-surface-strong: #097fe8;
+  --inverse-surface: #202020;
+  --inverse-border: rgba(255, 255, 255, 0.12);
+  --inverse-foreground-muted: rgba(255, 255, 255, 0.78);
+  --scan-overlay: #0f172a;
+  --scan-frame: rgba(52, 211, 153, 0.55);
+  --scan-label-bg: rgba(0, 0, 0, 0.45);
 }
 
 /* -----------------------------------------------------------------------
@@ -101,6 +135,8 @@
   --color-teal: #2a9d99; /* Success / positive */
   --color-green: #1aae39; /* Confirmation / completion */
   --color-orange: #dd5b00; /* Warning (capacity > 75%) */
+  --color-danger: #e8503a; /* Destructive / cancelled */
+  --color-caution: #8a6a00; /* Informational warning */
   --color-critical-pink: #ff64c8; /* Critical (capacity > 95%) */
   --color-purple: #391c57; /* Premium features */
   --color-brown: #523410; /* Earthy accent */
@@ -108,6 +144,23 @@
   /* --- NEW DYNAMIC THEME ALIASES --- */
   --color-app-bg: var(--app-bg);
   --color-card-bg: var(--card-bg);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-border: var(--brand-border);
+  --color-brand-surface-strong: var(--brand-surface-strong);
+  --color-status-success-surface: var(--status-success-surface);
+  --color-status-success-border: var(--status-success-border);
+  --color-status-warning-surface: var(--status-warning-surface);
+  --color-status-warning-border: var(--status-warning-border);
+  --color-status-danger-surface: var(--status-danger-surface);
+  --color-status-danger-border: var(--status-danger-border);
+  --color-status-caution-surface: var(--status-caution-surface);
+  --color-status-caution-border: var(--status-caution-border);
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-border: var(--inverse-border);
+  --color-inverse-foreground-muted: var(--inverse-foreground-muted);
+  --color-scan-overlay: var(--scan-overlay);
+  --color-scan-frame: var(--scan-frame);
+  --color-scan-label-bg: var(--scan-label-bg);
 
   /* --- BORDER TOKENS --- */
   /* "Whisper Border" — the defining Notion aesthetic element */
@@ -302,6 +355,75 @@
     letter-spacing: var(--tracking-badge);
   }
 
+  .text-page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: var(--tracking-section);
+  }
+
+  .text-page-title-compact {
+    font-size: 2.125rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+
+  .text-page-lead {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .text-panel-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: var(--tracking-card-title);
+  }
+
+  .text-section-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.27;
+    letter-spacing: var(--tracking-card-title);
+  }
+
+  .text-entity-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.625px;
+  }
+
+  .text-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.33;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .text-meta-strong {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.43;
+  }
+
+  @media (min-width: 768px) {
+    .text-page-title {
+      font-size: 3rem;
+    }
+
+    .text-page-title-compact {
+      font-size: 2.5rem;
+    }
+
+    .text-entity-title {
+      font-size: 2.125rem;
+    }
+  }
+
   /* ---- FOCUS SYSTEM ---- */
   /* WCAG AA: all interactive elements must have visible focus ring */
   :focus-visible {
@@ -368,6 +490,22 @@
     box-shadow: var(--shadow-deep);
   }
 
+  .card-surface-inverse {
+    background-color: var(--color-inverse-surface);
+    color: #ffffff;
+    border: 1px solid var(--color-inverse-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card-surface-brand {
+    background-color: var(--color-brand-surface-strong);
+    color: #ffffff;
+    border: 1px solid var(--color-brand-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-deep);
+  }
+
   /* Dark warm surface (footer, feature sections) */
   .surface-warm-dark {
     background-color: var(--color-warm-dark);
@@ -408,6 +546,42 @@
   .badge-pill-critical {
     background-color: rgba(255, 100, 200, 0.12);
     color: var(--color-critical-pink);
+  }
+
+  .surface-brand-subtle {
+    background-color: var(--color-brand-surface);
+    border-color: var(--color-brand-border);
+    color: var(--color-notion-blue);
+  }
+
+  .surface-status-success {
+    background-color: var(--color-status-success-surface);
+    border-color: var(--color-status-success-border);
+    color: var(--color-green);
+  }
+
+  .surface-status-warning {
+    background-color: var(--color-status-warning-surface);
+    border-color: var(--color-status-warning-border);
+    color: var(--color-orange);
+  }
+
+  .surface-status-danger {
+    background-color: var(--color-status-danger-surface);
+    border-color: var(--color-status-danger-border);
+    color: var(--color-danger);
+  }
+
+  .surface-status-caution {
+    background-color: var(--color-status-caution-surface);
+    border-color: var(--color-status-caution-border);
+    color: var(--color-caution);
+  }
+
+  .alert-panel {
+    border-width: 1px;
+    border-radius: var(--radius-comfortable);
+    padding: 1rem;
   }
 
   /* ---- SECTION LAYOUT ---- */
@@ -471,6 +645,14 @@
 
   .text-warm-gray-muted {
     color: var(--color-warm-gray-300);
+  }
+
+  .text-link-accent {
+    color: var(--color-notion-blue);
+  }
+
+  .text-inverse-muted {
+    color: var(--color-inverse-foreground-muted);
   }
 
   /* Shadow utility classes */

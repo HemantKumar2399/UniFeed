@@ -61,10 +61,10 @@ export default function PreferencesPage() {
           <ChevronLeft className="w-4 h-4" />
           Back to Profile
         </Link>
-        <h1 className="text-[40px] md:text-[48px] font-bold text-foreground leading-[1.1] tracking-[-1.5px]">
+        <h1 className="text-page-title text-foreground">
           Preferences
         </h1>
-        <p className="text-[15px] font-medium text-muted-foreground mt-2">
+        <p className="text-page-lead mt-2 text-muted-foreground">
           Tailor your event suggestions and notification alerts.
         </p>
       </header>
@@ -75,7 +75,7 @@ export default function PreferencesPage() {
           <div className="h-64 w-full animate-pulse rounded-[24px] bg-app-bg" />
         </div>
       ) : isError ? (
-        <div className="rounded-[16px] border border-red-200 bg-red-50 p-4 text-[14px] text-red-700">
+        <div className="alert-panel surface-status-danger p-4 text-[14px]">
           Could not load your preference settings. Please refresh.
         </div>
       ) : (

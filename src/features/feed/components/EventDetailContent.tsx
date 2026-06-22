@@ -327,7 +327,7 @@ export function EventDetailContent({
               >
                 <Bookmark
                   className={`h-5 w-5 ${
-                    isSaved ? "fill-blue-600 text-blue-600" : "text-muted-foreground"
+                    isSaved ? "fill-notion-blue text-notion-blue" : "text-muted-foreground"
                   }`}
                 />
               </Button>
@@ -345,18 +345,18 @@ export function EventDetailContent({
 
               {canCancel ? (
                 <Button
-                  className="h-12 w-full rounded-xl border-red-200 px-6 text-[14px] font-semibold text-red-600 transition-all hover:bg-red-50 hover:text-red-700 active:scale-95 sm:w-auto"
+                  className="h-12 w-full rounded-xl px-6 text-[14px] font-semibold sm:w-auto"
                   disabled={isCancelPending}
                   onClick={() => cancelRsvp({ eventId: event.id })}
                   type="button"
-                  variant="outline"
+                  variant="destructive"
                 >
                   {isCancelPending ? "Cancelling..." : "Cancel RSVP"}
                 </Button>
               ) : null}
 
               <Button
-                className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl bg-blue-600 px-8 text-[15px] font-semibold text-white transition-all hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
+                className="flex h-12 w-full items-center justify-center whitespace-nowrap rounded-xl px-8 text-[15px] font-semibold disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 sm:w-auto"
                 disabled={isRegistering || canCancel || !canRegister}
                 onClick={handleRegister}
                 type="button"
@@ -423,7 +423,7 @@ export function EventDetailContent({
                 Loading discussions...
               </div>
             ) : isDiscussionError ? (
-              <div className="rounded-[14px] border border-red-200 bg-red-50 px-4 py-3 text-[14px] text-red-700">
+              <div className="alert-panel surface-status-danger px-4 py-3 text-[14px]">
                 <p>{discussionErrorMessage}</p>
                 <div className="mt-2">
                   <Button onClick={() => void refetchDiscussions()} size="sm" type="button" variant="outline">

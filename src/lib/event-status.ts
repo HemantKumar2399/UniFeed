@@ -5,7 +5,7 @@ export type EventStatusType = EventStatus;
 export interface StatusMeta {
   label: string;
   description: string;
-  colorClass: string; // Tailwind bg/text classes for consistent visuals
+  colorClass: string;
   bgClass: string;
   textClass: string;
   icon?: string; // name of a lucide icon or similar if needed
@@ -15,44 +15,44 @@ export const EVENT_STATUS_META: Record<EventStatusType, StatusMeta> = {
   DRAFT: {
     label: "Draft",
     description: "Not submitted yet",
-    colorClass: "bg-gray-100 text-gray-700 border-gray-200",
-    bgClass: "bg-gray-50",
-    textClass: "text-gray-600",
+    colorClass: "border-whisper bg-app-bg text-muted-foreground",
+    bgClass: "bg-app-bg",
+    textClass: "text-muted-foreground",
   },
   SUBMITTED: {
     label: "Pending Review",
     description: "Waiting for college admin review",
-    colorClass: "bg-amber-100 text-amber-800 border-amber-200",
-    bgClass: "bg-amber-50/50",
-    textClass: "text-amber-700",
+    colorClass: "border-status-warning-border bg-status-warning-surface text-orange",
+    bgClass: "bg-status-warning-surface",
+    textClass: "text-orange",
   },
   APPROVED: {
     label: "Approved",
     description: "Approved by admin, ready to publish",
-    colorClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    bgClass: "bg-emerald-50/50",
-    textClass: "text-emerald-700",
+    colorClass: "border-status-success-border bg-status-success-surface text-green",
+    bgClass: "bg-status-success-surface",
+    textClass: "text-green",
   },
   REJECTED: {
     label: "Needs Changes",
     description: "Admin requested changes",
-    colorClass: "bg-rose-100 text-rose-800 border-rose-200",
-    bgClass: "bg-rose-50/50",
-    textClass: "text-rose-700",
+    colorClass: "border-status-danger-border bg-status-danger-surface text-danger",
+    bgClass: "bg-status-danger-surface",
+    textClass: "text-danger",
   },
   PUBLISHED: {
     label: "Published",
     description: "Visible to students",
-    colorClass: "bg-blue-100 text-blue-800 border-blue-200",
-    bgClass: "bg-blue-50/50",
-    textClass: "text-blue-700",
+    colorClass: "border-brand-border bg-brand-surface text-notion-blue",
+    bgClass: "bg-brand-surface",
+    textClass: "text-notion-blue",
   },
   CANCELLED: {
     label: "Cancelled",
     description: "No longer active",
-    colorClass: "bg-red-100 text-red-800 border-red-200",
-    bgClass: "bg-red-50/50",
-    textClass: "text-red-700",
+    colorClass: "border-status-danger-border bg-status-danger-surface text-danger",
+    bgClass: "bg-status-danger-surface",
+    textClass: "text-danger",
   },
 };
 
@@ -73,33 +73,33 @@ export interface RegistrationStatusMeta {
 export const REGISTRATION_STATUS_META: Record<RegistrationStatus, RegistrationStatusMeta> = {
   OPEN: {
     label: "Registration Open",
-    colorClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    bgClass: "bg-emerald-50/50",
-    textClass: "text-emerald-700",
+    colorClass: "border-status-success-border bg-status-success-surface text-green",
+    bgClass: "bg-status-success-surface",
+    textClass: "text-green",
   },
   CLOSING_SOON: {
     label: "Closing Soon",
-    colorClass: "bg-amber-100 text-amber-800 border-amber-200 animate-pulse",
-    bgClass: "bg-amber-50/50",
-    textClass: "text-amber-700",
+    colorClass: "border-status-warning-border bg-status-warning-surface text-orange motion-safe:animate-pulse",
+    bgClass: "bg-status-warning-surface",
+    textClass: "text-orange",
   },
   CLOSED_BY_DEADLINE: {
     label: "Registration Closed",
-    colorClass: "bg-gray-100 text-gray-800 border-gray-200",
-    bgClass: "bg-gray-50",
-    textClass: "text-gray-600",
+    colorClass: "border-whisper bg-app-bg text-muted-foreground",
+    bgClass: "bg-app-bg",
+    textClass: "text-muted-foreground",
   },
   FULL: {
     label: "Full",
-    colorClass: "bg-rose-100 text-rose-800 border-rose-200",
-    bgClass: "bg-rose-50/50",
-    textClass: "text-rose-700",
+    colorClass: "border-status-danger-border bg-status-danger-surface text-danger",
+    bgClass: "bg-status-danger-surface",
+    textClass: "text-danger",
   },
   EVENT_STARTED: {
     label: "Event Started",
-    colorClass: "bg-indigo-100 text-indigo-800 border-indigo-200",
-    bgClass: "bg-indigo-50/50",
-    textClass: "text-indigo-700",
+    colorClass: "border-brand-border bg-brand-surface text-notion-blue",
+    bgClass: "bg-brand-surface",
+    textClass: "text-notion-blue",
   },
 };
 

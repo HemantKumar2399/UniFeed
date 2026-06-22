@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { formatRegistrationDeadline, isRegistrationReopenable } from "@/lib/event-registration";
 import { api } from "@/trpc/react";
 
@@ -150,49 +152,36 @@ export function EventActions({
 
   return (
     <div className="flex flex-col items-stretch gap-2 md:items-end">
-      <Link
-        href={`/dashboard/events/${eventId}/edit`}
-        className="inline-flex items-center justify-center rounded-xl border border-input bg-card-bg px-4 py-2 text-sm font-semibold text-foreground/85 transition-colors hover:bg-muted"
-      >
-        {getEditLabel(status)}
-      </Link>
+      <Button asChild variant="outline">
+        <Link href={`/dashboard/events/${eventId}/edit`}>{getEditLabel(status)}</Link>
+      </Button>
 
       {canSubmit ? (
-        <button
-          type="button"
-          onClick={() => submitForReview.mutate({ id: eventId })}
-          disabled={isBusy}
-          className="inline-flex items-center justify-center rounded-xl bg-[#097fe8] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#086dc6] disabled:opacity-60"
-        >
+        <Button onClick={() => submitForReview.mutate({ id: eventId })} disabled={isBusy}>
           {submitForReview.isPending
             ? "Submitting..."
             : status === "REJECTED"
               ? "Resubmit for Review"
               : "Submit for Review"}
-        </button>
+        </Button>
       ) : null}
 
       {status === "SUBMITTED" ? (
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-600">
+        <div className="alert-panel surface-status-warning text-caption">
           Waiting for college admin review
         </div>
       ) : null}
 
       {canPublish ? (
-        <button
-          type="button"
-          onClick={() => publishApproved.mutate({ id: eventId })}
-          disabled={isBusy}
-          className="inline-flex items-center justify-center rounded-xl bg-[#097fe8] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#086dc6] disabled:opacity-60"
-        >
+        <Button onClick={() => publishApproved.mutate({ id: eventId })} disabled={isBusy}>
           {publishApproved.isPending ? "Publishing..." : "Publish Event"}
-        </button>
+        </Button>
       ) : null}
 
       {canExtendRegistration ? (
         showExtendForm ? (
-          <div className="w-full space-y-2 rounded-xl border border-blue-500/20 bg-blue-500/10 p-3 text-left">
-            <p className="text-sm font-medium text-blue-500">
+          <div className="w-full space-y-2 rounded-[16px] border border-brand-border bg-brand-surface p-3 text-left">
+            <p className="text-caption text-notion-blue">
               Current deadline: {formatRegistrationDeadline(registrationClosesAt)}
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -200,46 +189,37 @@ export function EventActions({
                 value={registrationCloseDate}
                 onChange={(event) => setRegistrationCloseDate(event.target.value)}
                 type="date"
-                className="w-full rounded-lg border border-blue-500/20 bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:border-blue-400"
+                className="w-full rounded-[12px] border border-input bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)]"
               />
               <input
                 value={registrationCloseTime}
                 onChange={(event) => setRegistrationCloseTime(event.target.value)}
                 type="time"
-                className="w-full rounded-lg border border-blue-500/20 bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:border-blue-400"
+                className="w-full rounded-[12px] border border-input bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)]"
               />
             </div>
             <div className="flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setShowExtendForm(false)}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-foreground/75 transition-colors hover:bg-muted"
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={() => setShowExtendForm(false)}>
                 Keep Current
-              </button>
-              <button
-                type="button"
-                disabled={isBusy}
-                onClick={handleExtendRegistration}
-                className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
-              >
+              </Button>
+              <Button type="button" size="sm" disabled={isBusy} onClick={handleExtendRegistration}>
                 {extendRegistrationDeadline.isPending ? "Updating..." : "Extend Registration"}
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
-          <button
-            type="button"
+          <Button
             onClick={() => setShowExtendForm(true)}
-            className="inline-flex items-center justify-center rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-500 transition-colors hover:bg-blue-500/20"
+            variant="outline"
+            className="border-brand-border bg-brand-surface text-notion-blue hover:bg-brand-surface/80"
           >
             Reopen / Extend Registration
-          </button>
+          </Button>
         )
       ) : null}
 
       {status === "REJECTED" ? (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-500">
+        <div className="alert-panel surface-status-danger text-caption">
           {rejectionReason ? "Review admin feedback before recreating or replacing this event." : "This event was rejected by college admin review."}
         </div>
       ) : null}
@@ -247,37 +227,37 @@ export function EventActions({
       {status === "PUBLISHED" ? (
         <>
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <span className="rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-semibold text-green-500">
+            <span
+              className={`inline-flex items-center justify-center rounded-[12px] border px-4 py-2 text-sm font-semibold ${
+                isPast
+                  ? "border-whisper bg-app-bg text-muted-foreground"
+                  : "border-status-success-border bg-status-success-surface text-green"
+              }`}
+            >
               {isPast ? "Past Event" : "Live for students"}
             </span>
-            <Link
-              href={`/dashboard/events/${eventId}`}
-              className="inline-flex items-center justify-center rounded-xl border border-input bg-card-bg px-4 py-2 text-sm font-semibold text-foreground/85 transition-colors hover:bg-muted"
-            >
-              View Attendees
-            </Link>
+            <Button asChild variant="outline">
+              <Link href={`/dashboard/events/${eventId}`}>View Attendees</Link>
+            </Button>
           </div>
           {canCancel ? (
             showCancelForm ? (
-              <div className="w-full space-y-2 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-left">
-                <textarea
+              <div className="w-full space-y-2 rounded-[16px] border border-status-danger-border bg-status-danger-surface p-3 text-left">
+                <Textarea
                   value={cancelReason}
                   onChange={(event) => setCancelReason(event.target.value)}
                   rows={3}
-                  className="w-full rounded-lg border border-red-500/20 bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:border-red-400"
+                  className="bg-card-bg text-foreground"
                   placeholder="Explain why this event is being cancelled."
                 />
                 <div className="flex items-center justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowCancelForm(false)}
-                    className="rounded-lg px-3 py-2 text-sm font-medium text-foreground/75 transition-colors hover:bg-muted"
-                  >
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setShowCancelForm(false)}>
                     Keep Live
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
                     disabled={isBusy}
+                    size="sm"
+                    variant="destructive"
                     onClick={() => {
                       const trimmed = cancelReason.trim();
                       if (trimmed.length < CANCEL_REASON_MIN_LENGTH) {
@@ -286,20 +266,15 @@ export function EventActions({
                       }
                       cancelEvent.mutate({ id: eventId, reason: trimmed });
                     }}
-                    className="rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-60"
                   >
                     {cancelEvent.isPending ? "Cancelling..." : "Confirm Cancel"}
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={() => setShowCancelForm(true)}
-                className="inline-flex items-center justify-center rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-500 transition-colors hover:bg-red-500/20"
-              >
+              <Button type="button" onClick={() => setShowCancelForm(true)} variant="destructive">
                 Cancel Event
-              </button>
+              </Button>
             )
           ) : null}
         </>
@@ -307,15 +282,12 @@ export function EventActions({
 
       {status === "CANCELLED" ? (
         <>
-          <div className="rounded-xl border border-whisper bg-muted px-4 py-3 text-sm font-medium text-muted-foreground">
+          <div className="rounded-[12px] border border-whisper bg-app-bg px-4 py-3 text-sm font-medium text-muted-foreground">
             {cancellationReason ? `Cancelled: ${cancellationReason}` : "This event has been cancelled."}
           </div>
-          <Link
-            href={`/dashboard/events/${eventId}`}
-            className="inline-flex items-center justify-center rounded-xl border border-input bg-card-bg px-4 py-2 text-sm font-semibold text-foreground/85 transition-colors hover:bg-muted"
-          >
-            View Attendees
-          </Link>
+          <Button asChild variant="outline">
+            <Link href={`/dashboard/events/${eventId}`}>View Attendees</Link>
+          </Button>
         </>
       ) : null}
 
@@ -327,7 +299,7 @@ export function EventActions({
               deleteEvent.mutate({ id: eventId });
             }
           }}
-          className="text-sm font-medium text-rose-600 hover:text-rose-900 disabled:opacity-60"
+          className="text-sm font-medium text-danger transition-colors hover:text-danger/80 disabled:opacity-60"
           disabled={isBusy}
         >
           {deleteEvent.isPending ? "Deleting..." : "Delete Event"}
