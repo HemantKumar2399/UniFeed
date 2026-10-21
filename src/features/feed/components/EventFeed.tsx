@@ -7,7 +7,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { Calendar } from "lucide-react";
 
 export function EventFeed() {
-  const { data, isLoading, isError, error, refetch } = api.event.getFeed.useQuery();
+  const { data, isLoading, isError, error, refetch } =
+    api.event.getFeed.useQuery();
 
   if (isLoading) {
     return <FeedSkeleton />;
@@ -15,9 +16,12 @@ export function EventFeed() {
 
   if (isError) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
+      <div className="w-full py-8">
         <div className="alert-panel surface-status-danger px-4 py-3 text-[14px]">
-          <p>Could not load home feed: {error?.message ?? "An unexpected error occurred."}</p>
+          <p>
+            Could not load home feed:{" "}
+            {error?.message ?? "An unexpected error occurred."}
+          </p>
           <button
             type="button"
             onClick={() => void refetch()}
@@ -32,12 +36,12 @@ export function EventFeed() {
 
   if (!data || data.length === 0) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-8">
+      <div className="w-full py-8">
         <EmptyState
           title="No upcoming events"
           description="There are no published events for your college at the moment. Check back later or discover active student communities."
           actionLabel="Discover Communities"
-          actionHref="/discover"
+          actionHref="/hubs"
           icon={<Calendar className="h-7 w-7" />}
         />
       </div>
@@ -45,8 +49,8 @@ export function EventFeed() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 md:px-8 pb-24 md:pb-8">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="w-full">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {data.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}

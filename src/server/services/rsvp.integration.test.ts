@@ -5,33 +5,25 @@ import { createRsvpPessimistic } from "./rsvp";
 import type { User } from "@prisma/client";
 
 void test("createRsvpPessimistic handles concurrent RSVPs and respects capacity", async () => {
-  // 1. Create a test college (or find one)
-  let college = await db.college.findFirst();
-  college ??= await db.college.create({
+  const college = await db.college.create({
     data: {
-      name: "Test College",
-      slug: `test-college-${Date.now()}`,
+      name: "RSVP test",
+      slug: `rsvp-${Date.now()}`,
       emailDomains: ["test.edu"],
       logoUrl: "https://example.com/logo.png",
     },
   });
-
-  // 2. Create a test user as author
-  let author = await db.user.findFirst({ where: { role: "ORGANIZER" } });
-  author ??= await db.user.create({
+  const author = await db.user.create({
     data: {
-      email: `organizer-${Date.now()}@test.edu`,
-      name: "Organizer User",
+      email: `organizer-${college.id}@test.edu`,
+      name: "Test organizer",
       role: "ORGANIZER",
       collegeId: college.id,
     },
   });
-
-  // 3. Create a test club
-  let club = await db.club.findFirst({ where: { collegeId: college.id } });
-  club ??= await db.club.create({
+  const club = await db.club.create({
     data: {
-      name: `Test Club ${Date.now()}`,
+      name: "Test club",
       logoUrl: "https://example.com/logo.png",
       collegeId: college.id,
     },
@@ -66,13 +58,13 @@ void test("createRsvpPessimistic handles concurrent RSVPs and respects capacity"
             role: "STUDENT",
             collegeId: college.id,
           },
-        })
-      )
+        }),
+      ),
     );
 
     // 6. Concurrently call createRsvpPessimistic for all 5 users
     await Promise.all(
-      users.map((user) => createRsvpPessimistic(user.id, event.id))
+      users.map((user) => createRsvpPessimistic(user.id, event.id)),
     );
 
     // 7. Verify status distributions
@@ -100,7 +92,12 @@ void test("createRsvpPessimistic handles concurrent RSVPs and respects capacity"
       await db.event.delete({ where: { id: event.id } });
     }
     if (users.length > 0) {
-      await db.user.deleteMany({ where: { id: { in: users.map((u) => u.id) } } });
+      await db.user.deleteMany({
+        where: { id: { in: users.map((u) => u.id) } },
+      });
     }
+    await db.club.delete({ where: { id: club.id } });
+    await db.user.delete({ where: { id: author.id } });
+    await db.college.delete({ where: { id: college.id } });
   }
 });

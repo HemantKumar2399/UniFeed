@@ -1,10 +1,20 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { TRPCError } from "@trpc/server";
+
+function visibleEvents(collegeId: string) {
+  return {
+    collegeId,
+    status: "PUBLISHED" as const,
+    deletedAt: null,
+    club: { isActive: true, deletedAt: null },
+  };
+}
 
 export const profileRouter = createTRPCRouter({
   getPreferences: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;
-    
+
     const prefs = await ctx.db.userPreference.findUnique({
       where: { userId },
     });
@@ -26,7 +36,7 @@ export const profileRouter = createTRPCRouter({
         marketingEmails: z.boolean(),
         eventReminders: z.boolean(),
         preferredCategories: z.array(z.string()),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
@@ -53,14 +63,11 @@ export const profileRouter = createTRPCRouter({
     // Fetch the events directly for ease of rendering
     return ctx.db.event.findMany({
       where: {
+        ...visibleEvents(ctx.session.user.collegeId),
         savedBy: {
           some: {
             userId,
           },
-        },
-        // Only show events that are not draft/rejected to prevent viewing unpublished items
-        status: {
-          in: ["APPROVED", "PUBLISHED"],
         },
       },
       include: {
@@ -98,9 +105,18 @@ export const profileRouter = createTRPCRouter({
   }),
 
   checkSavedStatus: protectedProcedure
-    .input(z.object({ eventId: z.number().int() }))
+    .input(z.object({ eventId: z.number().int().positive() }))
     .query(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
+
+      const visible = await ctx.db.event.findFirst({
+        where: {
+          id: input.eventId,
+          ...visibleEvents(ctx.session.user.collegeId),
+        },
+        select: { id: true },
+      });
+      if (!visible) return false;
 
       const bookmark = await ctx.db.savedEvent.findUnique({
         where: {
@@ -115,9 +131,19 @@ export const profileRouter = createTRPCRouter({
     }),
 
   toggleSavedEvent: protectedProcedure
-    .input(z.object({ eventId: z.number().int() }))
+    .input(z.object({ eventId: z.number().int().positive() }))
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
+
+      const visible = await ctx.db.event.findFirst({
+        where: {
+          id: input.eventId,
+          ...visibleEvents(ctx.session.user.collegeId),
+        },
+        select: { id: true },
+      });
+      if (!visible)
+        throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
       const existing = await ctx.db.savedEvent.findUnique({
         where: {

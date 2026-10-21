@@ -9,7 +9,10 @@ import {
 } from "./feed-query";
 
 void test("buildPublishedFeedQuery keeps full candidate set before ranking", () => {
-  const query = buildPublishedFeedQuery() as { take?: number; orderBy?: unknown };
+  const query = buildPublishedFeedQuery() as {
+    take?: number;
+    orderBy?: unknown;
+  };
 
   assert.equal(query.take, undefined);
   assert.deepEqual(query.orderBy, [{ date: "asc" }, { id: "asc" }]);
@@ -44,7 +47,10 @@ void test("buildPublishedFeedQuery filters by collegeId and upcoming date when p
 });
 
 void test("buildPublishedFeedQuery includes user RSVP relation when userId is provided", () => {
-  const query = buildPublishedFeedQuery(undefined, "user-456") as unknown as FeedQuery;
+  const query = buildPublishedFeedQuery(
+    undefined,
+    "user-456",
+  ) as unknown as FeedQuery;
 
   assert.equal(query.include.rsvps.where.userId, "user-456");
   assert.equal(query.include.rsvps.select.status, true);
@@ -56,8 +62,10 @@ void test("selectTopPersonalizedFeedEvents can surface relevant events beyond th
     id: index + 1,
     clubId: 100 + index,
     date: new Date(base.getTime() + index * 60 * 60 * 1000),
-    title: index === 34 ? "Advanced Robotics Seminar" : `General Event ${index + 1}`,
-    description: index === 34 ? "Robotics systems deep dive" : "Community session",
+    title:
+      index === 34 ? "Advanced Robotics Seminar" : `General Event ${index + 1}`,
+    description:
+      index === 34 ? "Robotics systems deep dive" : "Community session",
     club: { name: index === 34 ? "Robotics Guild" : "General Club" },
   }));
 

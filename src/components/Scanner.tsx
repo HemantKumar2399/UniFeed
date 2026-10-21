@@ -17,7 +17,9 @@ type BarcodeDetectorLike = {
   detect: (source: ImageBitmapSource) => Promise<DetectedBarcode[]>;
 };
 
-type BarcodeDetectorCtor = new (options?: { formats?: string[] }) => BarcodeDetectorLike;
+type BarcodeDetectorCtor = new (options?: {
+  formats?: string[];
+}) => BarcodeDetectorLike;
 
 interface WakeLockSentinelLike {
   release: () => Promise<void>;
@@ -25,6 +27,10 @@ interface WakeLockSentinelLike {
 }
 
 export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
+  const busyRef = useRef(isBusy);
+  const callbackRef = useRef(onDetected);
+  busyRef.current = isBusy;
+  callbackRef.current = onDetected;
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastTokenRef = useRef("");
   const lastDetectedAtRef = useRef(0);
@@ -47,9 +53,15 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
       if (typeof navigator !== "undefined" && "wakeLock" in navigator) {
         try {
           const nav = navigator as unknown as {
-            wakeLock: { request: (type: string) => Promise<WakeLockSentinelLike> };
+            wakeLock: {
+              request: (type: string) => Promise<WakeLockSentinelLike>;
+            };
           };
           const sentinel = await nav.wakeLock.request("screen");
+          if (cancelled) {
+            await sentinel.release();
+            return;
+          }
           wakeLock = sentinel;
           setWakeLockActive(true);
           sentinel.addEventListener("release", () => {
@@ -64,13 +76,18 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
 
     const start = async () => {
       await requestWakeLock();
+      if (cancelled) return;
 
-      const detectorApi = (window as unknown as { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector;
+      const detectorApi = (
+        window as unknown as { BarcodeDetector?: BarcodeDetectorCtor }
+      ).BarcodeDetector;
       let useSoftwareFallback = false;
       let detector: BarcodeDetectorLike | null = null;
 
       if (!detectorApi) {
-        console.info("Native BarcodeDetector not found. Falling back to software QR scanner.");
+        console.info(
+          "Native BarcodeDetector not found. Falling back to software QR scanner.",
+        );
         useSoftwareFallback = true;
       }
 
@@ -85,19 +102,24 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
           audio: false,
         });
 
-        if (!videoRef.current) {
+        if (cancelled || !videoRef.current) {
+          stream.getTracks().forEach((track) => track.stop());
           return;
         }
 
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
+        if (cancelled) return;
         setCameraReady(true);
 
         if (!useSoftwareFallback && detectorApi) {
           try {
             detector = new detectorApi({ formats: ["qr_code"] });
           } catch (e) {
-            console.warn("Failed to construct native BarcodeDetector, using software fallback:", e);
+            console.warn(
+              "Failed to construct native BarcodeDetector, using software fallback:",
+              e,
+            );
             useSoftwareFallback = true;
           }
         }
@@ -105,7 +127,7 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
         const canvas = document.createElement("canvas");
 
         const scanFrame = async () => {
-          if (cancelled || !videoRef.current || isBusy || detecting) {
+          if (cancelled || !videoRef.current || busyRef.current || detecting) {
             return;
           }
 
@@ -121,8 +143,17 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
                 const ctx = canvas.getContext("2d");
                 if (ctx) {
                   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                  const code = jsQR(imageData.data, imageData.width, imageData.height);
+                  const imageData = ctx.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height,
+                  );
+                  const code = jsQR(
+                    imageData.data,
+                    imageData.width,
+                    imageData.height,
+                  );
                   token = code?.data?.trim();
                 }
               }
@@ -136,14 +167,16 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
             }
 
             const now = Date.now();
-            const duplicatedRapidScan = token === lastTokenRef.current && now - lastDetectedAtRef.current < 1200;
+            const duplicatedRapidScan =
+              token === lastTokenRef.current &&
+              now - lastDetectedAtRef.current < 1200;
             if (duplicatedRapidScan) {
               return;
             }
 
             lastTokenRef.current = token;
             lastDetectedAtRef.current = now;
-            onDetected(token);
+            callbackRef.current(token);
           } catch {
             // Frame analysis error, bypass and retry
           } finally {
@@ -155,7 +188,11 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
           void scanFrame();
         }, 320);
       } catch {
-        setError("Camera permission is required for scan mode.");
+        stream?.getTracks().forEach((track) => track.stop());
+        if (!cancelled)
+          setError(
+            "Camera access is unavailable. Allow camera permission or use manual check-in below.",
+          );
       }
     };
 
@@ -175,14 +212,22 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
         });
       }
     };
-  }, [isBusy, onDetected]);
+  }, []);
 
   return (
-    <section className="rounded-[20px] border border-whisper bg-pure-white p-5 shadow-card">
+    <section className="border-whisper bg-pure-white shadow-card rounded-[20px] border p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-notion-black">Camera Scanner</h2>
-        <span className={`rounded-pill px-3 py-1 text-xs font-semibold ${cameraReady ? "bg-status-success-surface text-green" : "bg-warm-white text-warm-gray-500"}`}>
-          {cameraReady ? (wakeLockActive ? "Live (Wake-Locked)" : "Live") : "Booting"}
+        <h2 className="text-notion-black text-lg font-semibold">
+          Camera Scanner
+        </h2>
+        <span
+          className={`rounded-pill px-3 py-1 text-xs font-semibold ${cameraReady ? "bg-status-success-surface text-green" : "bg-warm-white text-warm-gray-500"}`}
+        >
+          {cameraReady
+            ? wakeLockActive
+              ? "Live (Wake-Locked)"
+              : "Live"
+            : "Booting"}
         </span>
       </div>
 
@@ -195,11 +240,13 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
 
       {wakeLockWarning ? (
         <div className="surface-status-warning mb-4 flex items-start gap-2 rounded-[12px] border px-3 py-2 text-sm font-medium">
-          <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <div>
             <p className="font-semibold">Low Power Mode Notice</p>
             <p className="mt-0.5 text-xs">
-              Low Power Mode blocks screen wake locks. Your screen may dim. Disable battery saver or charge your device for the best scanning experience.
+              Low Power Mode blocks screen wake locks. Your screen may dim.
+              Disable battery saver or charge your device for the best scanning
+              experience.
             </p>
           </div>
         </div>
@@ -207,7 +254,8 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
 
       {unsupported ? (
         <div className="surface-status-caution mb-4 rounded-[12px] border px-3 py-2 text-sm font-medium">
-          Camera scanning is unavailable in this browser. Use manual token fallback below.
+          Camera scanning is unavailable in this browser. Use manual token
+          fallback below.
         </div>
       ) : null}
 
@@ -219,14 +267,17 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
           playsInline
           autoPlay
         />
-        <div className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1 rounded-[8px] bg-[var(--color-scan-label-bg)] px-2 py-1 text-xs font-semibold text-white">
+        <div className="pointer-events-none absolute top-3 left-3 inline-flex items-center gap-1 rounded-[8px] bg-[var(--color-scan-label-bg)] px-2 py-1 text-xs font-semibold text-white">
           <Camera className="h-3.5 w-3.5" />
           Align QR in frame
         </div>
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
-        <label htmlFor="manual-token" className="text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+        <label
+          htmlFor="manual-token"
+          className="tracking-badge text-warm-gray-500 text-xs font-semibold uppercase"
+        >
           Manual Passport Fallback
         </label>
         <div className="flex gap-2">
@@ -248,7 +299,7 @@ export function Scanner({ onDetected, isBusy = false }: ScannerProps) {
               setManualToken("");
             }}
             disabled={isBusy}
-            className="h-10 rounded-[12px] bg-notion-black px-4 text-sm font-semibold text-pure-white transition-colors hover:bg-notion-black/90 disabled:opacity-60 cursor-pointer"
+            className="bg-notion-black text-pure-white hover:bg-notion-black/90 h-10 cursor-pointer rounded-[12px] px-4 text-sm font-semibold transition-colors disabled:opacity-60"
           >
             Verify
           </button>

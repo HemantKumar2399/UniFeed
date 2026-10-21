@@ -1,9 +1,28 @@
-import { buildEventAttendanceRealtimePayload, type AttendanceLatestActivity, type EventAttendanceRealtimePayload } from "@/features/attendance/realtime-attendance";
+import {
+  buildEventAttendanceRealtimePayload,
+  type AttendanceLatestActivity,
+  type EventAttendanceRealtimePayload,
+} from "@/features/attendance/realtime-attendance";
 import { mapAttendeeRow } from "@/features/attendance/attendee-management";
 import { ee } from "@/server/events";
 import type { db as prismaDb } from "@/server/db";
 
 type AttendanceDb = typeof prismaDb;
+
+// Realtime delivery must never turn an already committed check-in into a failed
+// response. A reconnect/refetch recovers the durable database state.
+export async function publishAttendanceUpdate(
+  db: AttendanceDb,
+  eventId: number,
+  rsvpId: number,
+) {
+  try {
+    const activity = await getAttendanceLatestActivity(db, rsvpId);
+    await emitAttendanceChange(db, eventId, activity);
+  } catch (error) {
+    console.error("[attendance] Live update failed after commit", error);
+  }
+}
 
 export async function getAttendanceLatestActivity(
   db: AttendanceDb,
@@ -117,7 +136,11 @@ export async function emitAttendanceChange(
   eventId: number,
   latestActivity?: AttendanceLatestActivity | null,
 ): Promise<EventAttendanceRealtimePayload | null> {
-  const payload = await getEventAttendanceRealtimePayload(db, eventId, latestActivity);
+  const payload = await getEventAttendanceRealtimePayload(
+    db,
+    eventId,
+    latestActivity,
+  );
 
   if (!payload) {
     return null;

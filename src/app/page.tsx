@@ -7,74 +7,93 @@ export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[var(--color-warm-white)] text-[var(--color-foreground)]">
       {/* Navigation Bar inside Home to keep it clean */}
-      <nav className="fixed top-0 inset-x-0 h-16 border-b border-whisper bg-card-bg/80 backdrop-blur-md z-50 flex items-center justify-between px-6 lg:px-12 transition-colors duration-300">
-        <div className="font-semibold text-lg tracking-tight">Campus Platform</div>
+      <nav className="border-whisper bg-card-bg/80 fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b px-6 backdrop-blur-md transition-colors duration-300 lg:px-12">
+        <div className="text-lg font-semibold tracking-tight">UniFeed</div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Button variant="ghost" asChild className="hidden sm:inline-flex">
-            <Link href="/login" scroll={false}>Log In</Link>
+            <Link href="/login" scroll={false}>
+              Log In
+            </Link>
           </Button>
           <Button asChild>
-            <Link href="/login" scroll={false}>Get Started</Link>
+            <Link href="/login" scroll={false}>
+              Get Started
+            </Link>
           </Button>
         </div>
       </nav>
 
-      <div className="pt-32 pb-16 px-6 lg:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
+      <div className="mx-auto flex max-w-7xl flex-col items-center px-6 pt-32 pb-16 text-center lg:px-12">
         {/* Hero Section */}
-        <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="mb-4 inline-flex items-center rounded-full border border-whisper bg-card-bg px-3 py-1 text-sm font-medium text-muted-foreground shadow-card">
-            <span className="w-2 h-2 rounded-full bg-[var(--color-notion-blue)] mr-2 animate-pulse" />
+        <div className="animate-in fade-in slide-in-from-bottom-4 mx-auto max-w-4xl space-y-6 duration-700">
+          <div className="border-whisper bg-card-bg text-muted-foreground shadow-card mb-4 inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium">
+            <span className="mr-2 h-2 w-2 animate-pulse rounded-full bg-[var(--color-notion-blue)]" />
             The Modern College Experience
           </div>
-          
-          <h1 className="text-display text-balance leading-[1.1] md:text-6xl lg:text-[72px]">
+
+          <h1 className="text-display leading-[1.1] text-balance md:text-6xl lg:text-[72px]">
             Your Campus, Simplified.
           </h1>
-          
-          <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto text-balance leading-relaxed">
-            Discover events, skip the lines, and connect with your campus in one tap. Everything you need, beautifully designed.
+
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed font-medium text-balance md:text-xl">
+            Discover events, skip the lines, and connect with your campus in one
+            tap. Everything you need, beautifully designed.
           </p>
-          
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="h-14 w-full px-8 text-base font-semibold shadow-card sm:w-auto" asChild>
+
+          <div className="flex flex-col items-center justify-center gap-4 pt-8 sm:flex-row">
+            <Button
+              size="lg"
+              className="shadow-card h-14 w-full px-8 text-base font-semibold sm:w-auto"
+              asChild
+            >
               <Link href="/login" scroll={false}>
-                Get Started <ArrowRight className="ml-2 w-5 h-5" />
+                Get Started <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button size="lg" variant="ghost" className="w-full sm:w-auto h-14 px-8 text-base font-semibold" asChild>
+            <Button
+              size="lg"
+              variant="ghost"
+              className="h-14 w-full px-8 text-base font-semibold sm:w-auto"
+              asChild
+            >
               <Link href="#features">Explore Campus</Link>
             </Button>
           </div>
         </div>
 
         {/* Bento Grid Features */}
-        <div id="features" className="w-full mt-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          
+        <div
+          id="features"
+          className="mt-32 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+        >
           {/* Card 1 */}
-          <div className="card-surface col-span-1 rounded-3xl p-8 text-left relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-deep group md:col-span-2 lg:p-12 flex flex-col justify-between">
-            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
-              <Rss className="w-48 h-48" />
+          <div className="card-surface hover:shadow-deep group relative col-span-1 flex flex-col justify-between overflow-hidden rounded-3xl p-8 text-left transition-all duration-300 hover:-translate-y-1 md:col-span-2 lg:p-12">
+            <div className="absolute top-0 right-0 p-8 opacity-[0.03] transition-all duration-500 group-hover:scale-110 group-hover:opacity-10">
+              <Rss className="h-48 w-48" />
             </div>
             <div className="relative z-10">
-              <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mb-6">
-                <Rss className="w-6 h-6 text-foreground" />
+              <div className="bg-muted mb-6 flex h-12 w-12 items-center justify-center rounded-2xl">
+                <Rss className="text-foreground h-6 w-6" />
               </div>
-              <h3 className="mb-3 text-panel-title lg:text-3xl">The Campus Pulse</h3>
-              <p className="text-muted-foreground text-lg leading-relaxed max-w-md">
-                Never miss out. Real-time updates on what&apos;s happening right now, curated specifically for you.
+              <h3 className="text-panel-title mb-3 lg:text-3xl">
+                The Campus Pulse
+              </h3>
+              <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
+                Never miss out. Real-time updates on what&apos;s happening right
+                now, curated specifically for you.
               </p>
             </div>
           </div>
 
           {/* Card 2 */}
-          <div className="card-surface col-span-1 rounded-3xl p-8 text-left relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-deep group lg:p-12 flex flex-col justify-between">
-            <div className="absolute bottom-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 group-hover:scale-110 transition-all duration-500">
-              <Ticket className="w-32 h-32" />
+          <div className="card-surface hover:shadow-deep group relative col-span-1 flex flex-col justify-between overflow-hidden rounded-3xl p-8 text-left transition-all duration-300 hover:-translate-y-1 lg:p-12">
+            <div className="absolute right-0 bottom-0 p-4 opacity-[0.03] transition-all duration-500 group-hover:scale-110 group-hover:opacity-10">
+              <Ticket className="h-32 w-32" />
             </div>
             <div className="relative z-10">
-              <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mb-6">
-                <Ticket className="w-6 h-6 text-foreground" />
+              <div className="bg-muted mb-6 flex h-12 w-12 items-center justify-center rounded-2xl">
+                <Ticket className="text-foreground h-6 w-6" />
               </div>
               <h3 className="text-panel-title mb-2">1-Tap RSVP</h3>
               <p className="text-muted-foreground text-lg leading-relaxed">
@@ -84,46 +103,52 @@ export default function Home() {
           </div>
 
           {/* Card 3 - Digital Profile (New) */}
-          <div className="card-surface-brand col-span-1 rounded-3xl p-8 text-left relative overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-deep group lg:p-12 flex flex-col justify-between">
-            <div className="absolute -bottom-8 -right-8 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500">
-              <GraduationCap className="w-48 h-48" />
+          <div className="card-surface-brand hover:shadow-deep group relative col-span-1 flex flex-col justify-between overflow-hidden rounded-3xl p-8 text-left transition-transform duration-300 hover:-translate-y-1 lg:p-12">
+            <div className="absolute -right-8 -bottom-8 opacity-20 transition-all duration-500 group-hover:scale-110 group-hover:opacity-40">
+              <GraduationCap className="h-48 w-48" />
             </div>
             <div className="relative z-10">
-              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
-                <GraduationCap className="w-6 h-6 text-white" />
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+                <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <h3 className="text-panel-title mb-2">Digital Profile</h3>
               <p className="text-inverse-muted text-lg leading-relaxed">
-                Showcase your skills. Build a verified portfolio of your involvement and achievements to stand out to employers.
+                Keep your campus profile, saved events, and participation
+                details together.
               </p>
             </div>
           </div>
 
           {/* Card 4 - Digital Passport */}
-          <div className="card-surface-inverse col-span-1 rounded-3xl p-8 text-left relative overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-deep group md:col-span-2 lg:p-12 flex flex-col md:flex-row items-start md:items-center justify-between">
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.03] group-hover:opacity-10 group-hover:scale-110 transition-all duration-500 pr-12 hidden md:block">
-              <QrCode className="w-56 h-56" />
+          <div className="card-surface-inverse hover:shadow-deep group relative col-span-1 flex flex-col items-start justify-between overflow-hidden rounded-3xl p-8 text-left transition-transform duration-300 hover:-translate-y-1 md:col-span-2 md:flex-row md:items-center lg:p-12">
+            <div className="absolute top-1/2 right-0 hidden -translate-y-1/2 pr-12 opacity-[0.03] transition-all duration-500 group-hover:scale-110 group-hover:opacity-10 md:block">
+              <QrCode className="h-56 w-56" />
             </div>
             <div className="relative z-10 max-w-xl">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6">
-                <QrCode className="w-6 h-6 text-white" />
+              <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+                <QrCode className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-display-secondary mb-3 text-3xl">Digital Passport</h3>
+              <h3 className="text-display-secondary mb-3 text-3xl">
+                Digital Passport
+              </h3>
               <p className="text-inverse-muted text-xl leading-relaxed">
-                Your ticket. Your identity. Fast QR entry for all events. All securely stored on your device.
+                Your ticket. Your identity. Fast QR entry for all events. Access
+                your signed passport from your account.
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      <footer className="w-full border-t border-whisper bg-card-bg/50 mt-24 py-12 px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground transition-colors duration-300">
-        <div>&copy; 2026 Campus Platform Inc. All rights reserved.</div>
-        <div className="flex gap-6 mt-4 md:mt-0">
-          <Link href="#" className="hover:text-foreground transition-colors">About</Link>
-          <Link href="#" className="hover:text-foreground transition-colors">Terms</Link>
-          <Link href="#" className="hover:text-foreground transition-colors">Privacy</Link>
-          <Link href="#" className="hover:text-foreground transition-colors">Contact</Link>
+      <footer className="border-whisper bg-card-bg/50 text-muted-foreground mt-24 flex w-full flex-col items-center justify-between border-t px-6 py-12 text-sm transition-colors duration-300 md:flex-row lg:px-12">
+        <div>&copy; 2026 UniFeed</div>
+        <div className="mt-4 flex gap-6 md:mt-0">
+          <Link
+            href="/login"
+            className="hover:text-foreground transition-colors"
+          >
+            Sign in to UniFeed
+          </Link>
         </div>
       </footer>
     </main>

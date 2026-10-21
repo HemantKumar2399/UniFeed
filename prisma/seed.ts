@@ -11,14 +11,18 @@ function createSeedStudentQrId() {
 const SEED_TEST_PASSWORD = "Test@1234";
 const SALT_ROUNDS = 12;
 const SEED_EMAIL_DOMAIN =
-  process.env.ALLOWED_DOMAINS
-    ?.split(",")
+  process.env.ALLOWED_DOMAINS?.split(",")
     .map((domain) => domain.trim().toLowerCase())
     .find(Boolean) ?? "students.college.edu";
 const SEED_RESOURCE_BASE_URL = "https://campus.example";
 
-const isLocalDatabase = /localhost|127\.0\.0\.1/.test(
-  process.env.DATABASE_URL ?? "",
+if (!process.argv.includes("--reset-demo")) {
+  throw new Error(
+    "Demo seed deletes existing data. Pass --reset-demo explicitly to continue.",
+  );
+}
+const isLocalDatabase = ["localhost", "127.0.0.1", "[::1]"].includes(
+  new URL(process.env.DATABASE_URL ?? "postgresql://invalid/").hostname,
 );
 
 if (process.env.NODE_ENV === "production" || !isLocalDatabase) {
@@ -143,8 +147,7 @@ const eventDrafts: SeedEventDraft[] = [
   {
     clubName: "Robotics Society",
     title: "Line Follower Bot Challenge",
-    description:
-      "Design and race autonomous bots on a timed obstacle track.",
+    description: "Design and race autonomous bots on a timed obstacle track.",
     dateOffsetDays: 8,
     registrationCloseOffsetHours: 30,
     capacity: 90,
@@ -202,13 +205,15 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
     {
       type: "RESOURCE",
       title: "Starter Kit",
-      content: "Roadmap, templates, and weekly challenge sheet for new members.",
+      content:
+        "Roadmap, templates, and weekly challenge sheet for new members.",
       linkUrl: buildSeedResourceUrl("coding-club/starter-kit"),
     },
     {
       type: "FAQ",
       title: "Who can join?",
-      content: "Any JECRC student can join. No prior coding background is required.",
+      content:
+        "Any JECRC student can join. No prior coding background is required.",
       linkUrl: null,
     },
   ],
@@ -229,7 +234,8 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
     {
       type: "FAQ",
       title: "Do volunteers get certificates?",
-      content: "Yes, certificates are issued based on event participation and contribution hours.",
+      content:
+        "Yes, certificates are issued based on event participation and contribution hours.",
       linkUrl: null,
     },
   ],
@@ -250,7 +256,8 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
     {
       type: "FAQ",
       title: "Do I need my own hardware?",
-      content: "No. Club labs provide starter kits for core projects and workshops.",
+      content:
+        "No. Club labs provide starter kits for core projects and workshops.",
       linkUrl: null,
     },
   ],
@@ -271,7 +278,8 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
     {
       type: "FAQ",
       title: "Can first-year students pitch?",
-      content: "Absolutely. We encourage all students to pitch ideas and get mentor feedback.",
+      content:
+        "Absolutely. We encourage all students to pitch ideas and get mentor feedback.",
       linkUrl: null,
     },
   ],
@@ -292,7 +300,8 @@ const clubBlocks: Record<string, SeedHubBlock[]> = {
     {
       type: "FAQ",
       title: "Can we perform as a team?",
-      content: "Yes, both solo and team performances are welcome for all major showcases.",
+      content:
+        "Yes, both solo and team performances are welcome for all major showcases.",
       linkUrl: null,
     },
   ],
@@ -327,6 +336,7 @@ async function main() {
   const passwordHash = await bcrypt.hash(SEED_TEST_PASSWORD, SALT_ROUNDS);
 
   // Clean existing records in correct order to avoid FK constraints
+  await prisma.post.deleteMany(); // Legacy starter records may still reference users.
   await prisma.rSVP.deleteMany();
   await prisma.eventApprovalLog.deleteMany();
   await prisma.hubFollow.deleteMany();
@@ -346,7 +356,8 @@ async function main() {
       name: "JECRC University",
       slug: "jecrc",
       emailDomains: ["jecrc.edu.in", "students.college.edu", SEED_EMAIL_DOMAIN],
-      logoUrl: "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=256&q=80",
+      logoUrl:
+        "https://images.unsplash.com/photo-1592280771190-3e2e4d571952?auto=format&fit=crop&w=256&q=80",
     },
   });
 
@@ -355,7 +366,8 @@ async function main() {
       name: "Sankalchand Patel University",
       slug: "spu",
       emailDomains: ["spu.ac.in"],
-      logoUrl: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=256&q=80",
+      logoUrl:
+        "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=256&q=80",
     },
   });
 
@@ -399,8 +411,8 @@ async function main() {
           isVerified: true,
           studentQrId: createSeedStudentQrId(),
         },
-      })
-    )
+      }),
+    ),
   );
 
   // Seed Admin and Super Admin users
@@ -414,12 +426,14 @@ async function main() {
 
   await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const createdClubs = await Promise.all(
-      clubs.map((club) => tx.club.create({
-        data: {
-          ...club,
-          collegeId: jecrcCollege.id,
-        }
-      })),
+      clubs.map((club) =>
+        tx.club.create({
+          data: {
+            ...club,
+            collegeId: jecrcCollege.id,
+          },
+        }),
+      ),
     );
 
     const clubByName = new Map(createdClubs.map((club) => [club.name, club]));
@@ -447,10 +461,14 @@ async function main() {
       eventDrafts.map((eventDraft, index) => {
         const club = clubByName.get(eventDraft.clubName);
         if (!club) {
-          throw new Error(`Missing seeded club for event draft: ${eventDraft.clubName}`);
+          throw new Error(
+            `Missing seeded club for event draft: ${eventDraft.clubName}`,
+          );
         }
 
-        const ownerMembershipIndex = createdClubs.findIndex((item) => item.id === club.id);
+        const ownerMembershipIndex = createdClubs.findIndex(
+          (item) => item.id === club.id,
+        );
         const author = organizerUsers[ownerMembershipIndex];
         if (!author) {
           throw new Error(`Missing organizer for club: ${eventDraft.clubName}`);
@@ -460,7 +478,8 @@ async function main() {
         date.setDate(date.getDate() + eventDraft.dateOffsetDays);
         date.setHours(17 + (index % 3), 30, 0, 0);
         const registrationClosesAt = new Date(
-          date.getTime() - eventDraft.registrationCloseOffsetHours * 60 * 60 * 1000,
+          date.getTime() -
+            eventDraft.registrationCloseOffsetHours * 60 * 60 * 1000,
         );
 
         const isEven = index % 2 === 0;
@@ -548,7 +567,25 @@ async function main() {
     );
   });
 
-  const [totalClubs, totalEvents, totalBlocks, totalMemberships, totalFollows, totalRsvps, totalColleges, totalProfiles] = await Promise.all([
+  // Seed fixtures use bulk RSVP inserts rather than the registration service.
+  // Bring their denormalized counters into the same state as real workflows.
+  await prisma.$executeRaw`
+    UPDATE "Event" AS e SET "attendeeCount" = (
+      SELECT COUNT(*)::INTEGER FROM "RSVP" AS r
+      WHERE r."eventId" = e.id AND r.status IN ('GOING', 'ATTENDED')
+    )
+  `;
+
+  const [
+    totalClubs,
+    totalEvents,
+    totalBlocks,
+    totalMemberships,
+    totalFollows,
+    totalRsvps,
+    totalColleges,
+    totalProfiles,
+  ] = await Promise.all([
     prisma.club.count(),
     prisma.event.count(),
     prisma.hubBlock.count(),
@@ -562,7 +599,9 @@ async function main() {
   console.log(
     `Seed completed: colleges=${totalColleges}, studentProfiles=${totalProfiles}, clubs=${totalClubs}, events=${totalEvents}, hubBlocks=${totalBlocks}, memberships=${totalMemberships}, follows=${totalFollows}, rsvps=${totalRsvps}`,
   );
-  console.log(`Seed login password for all seeded users: ${SEED_TEST_PASSWORD}`);
+  console.log(
+    `Seed login password for all seeded users: ${SEED_TEST_PASSWORD}`,
+  );
 }
 
 main()

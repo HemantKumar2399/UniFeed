@@ -2,7 +2,6 @@ import { discoveryRouter } from "@/server/api/routers/discovery";
 import { eventRouter } from "@/server/api/routers/event";
 import { clubRouter } from "@/server/api/routers/club";
 import { hubRouter } from "@/server/api/routers/hub";
-import { postRouter } from "@/server/api/routers/post";
 import { rsvpRouter } from "@/server/api/routers/rsvp";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
@@ -23,7 +22,6 @@ export const appRouter = createTRPCRouter({
   discovery: discoveryRouter,
   event: eventRouter,
   hub: hubRouter,
-  post: postRouter,
   rsvp: rsvpRouter,
   upload: uploadRouter,
   student: studentRouter,
@@ -39,8 +37,7 @@ export type AppRouter = typeof appRouter;
 /**
  * Create a server-side caller for the tRPC API.
  * @example
- * const trpc = createCaller(createContext);
- * const res = await trpc.post.all();
- *       ^? Post[]
+ * const caller = createCaller(context);
+ * const events = await caller.event.getFeed();
  */
 export const createCaller = createCallerFactory(appRouter);

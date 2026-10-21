@@ -1,36 +1,49 @@
-import { Calendar } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { HappeningThisWeekCarousel } from "@/features/feed/components/HappeningThisWeekCarousel";
 import { EventFeed } from "@/features/feed/components/EventFeed";
 
 export default function HomePage() {
-  const formattedDate = new Intl.DateTimeFormat("en-IN", {
+  const date = new Intl.DateTimeFormat("en-IN", {
     weekday: "long",
     month: "long",
     day: "numeric",
+    timeZone: "Asia/Kolkata",
   }).format(new Date());
-
   return (
-    <div className="flex flex-col gap-10 lg:gap-16 pb-32 md:pb-12">
-      {/* Curation Carousel at top */}
-      <HappeningThisWeekCarousel />
-
-      {/* Dynamic Header */}
-      <header className="px-4 md:px-8 flex justify-between items-end">
+    <div className="space-y-9">
+      <header className="border-border flex flex-wrap items-end justify-between gap-5 border-b pb-7">
         <div>
-          <p className="text-eyebrow mb-1 text-muted-foreground">
-            {formattedDate}
+          <p className="text-muted-foreground mb-3 text-xs font-semibold tracking-widest uppercase">
+            {date}
           </p>
-          <h1 className="text-page-title text-foreground">
+          <h1 className="font-display text-foreground text-4xl font-bold tracking-tight sm:text-5xl">
             For You
           </h1>
+          <p className="text-muted-foreground mt-3 max-w-lg text-base leading-relaxed">
+            A good reason to step outside your routine. Find your next campus
+            event.
+          </p>
         </div>
-        <div className="w-10 h-10 rounded-full bg-black/5 flex justify-center items-center cursor-pointer active:scale-95 transition-transform">
-          <Calendar className="w-5 h-5 text-foreground/80" />
-        </div>
+        <Link
+          href="/discover"
+          className="bg-primary text-primary-foreground inline-flex min-h-11 items-center gap-3 rounded-xl px-5 text-sm font-semibold"
+        >
+          Explore events <ArrowUpRight className="h-4 w-4" />
+        </Link>
       </header>
-
-      {/* Live Event Feed Grid */}
-      <EventFeed />
+      <HappeningThisWeekCarousel />
+      <section aria-labelledby="upcoming-heading">
+        <div className="mb-5 flex items-baseline justify-between">
+          <h2 id="upcoming-heading" className="font-display text-xl font-bold">
+            Worth showing up for
+          </h2>
+          <span className="text-muted-foreground text-xs">
+            From your campus
+          </span>
+        </div>
+        <EventFeed />
+      </section>
     </div>
   );
 }

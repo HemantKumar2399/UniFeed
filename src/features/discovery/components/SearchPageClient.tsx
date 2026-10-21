@@ -2,11 +2,20 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { startTransition, useDeferredValue, useEffect, useMemo, useState } from "react";
+import {
+  startTransition,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Building2, Search, Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { buildSearchHref, normalizeDiscoveryQuery } from "@/features/discovery/discovery";
+import {
+  buildSearchHref,
+  normalizeDiscoveryQuery,
+} from "@/features/discovery/discovery";
 import { formatEventDateMeta } from "@/features/feed/components/event-card.utils";
 import {
   formatRegistrationDeadline,
@@ -66,31 +75,32 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
   return (
     <div className="space-y-6">
       <header className="space-y-3">
-        <div className="inline-flex items-center gap-2 rounded-full bg-warm-white px-3 py-1 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+        <div className="bg-warm-white tracking-badge text-warm-gray-500 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase">
           <Sparkles className="h-3.5 w-3.5" />
           College-scoped discovery
         </div>
         <div>
           <h1 className="text-page-title text-notion-black">Search</h1>
-          <p className="text-caption mt-2 text-warm-gray-500">
+          <p className="text-caption text-warm-gray-500 mt-2">
             Find upcoming events and active communities for your college.
           </p>
         </div>
       </header>
 
-      <label className="flex min-h-[52px] items-center rounded-[18px] border border-input bg-pure-white px-4 shadow-sm">
-        <Search className="h-4 w-4 text-warm-gray-500" />
+      <label className="border-input bg-pure-white flex min-h-[52px] items-center rounded-[18px] border px-4 shadow-sm">
+        <Search className="text-warm-gray-500 h-4 w-4" />
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
+          aria-label="Search events and communities"
           placeholder="Search by title, club, category, location, or tag"
-          className="w-full bg-transparent px-3 py-2 text-sm text-notion-black outline-none placeholder:text-warm-gray-muted"
+          className="text-notion-black placeholder:text-warm-gray-muted w-full bg-transparent px-3 py-2 text-sm outline-none"
         />
       </label>
 
       {normalizedQuery.length < 2 ? (
-        <div className="rounded-[18px] border border-[var(--border-whisper)] bg-warm-white p-6 text-sm text-warm-gray-500">
+        <div className="bg-warm-white text-warm-gray-500 rounded-[18px] border border-[var(--border-whisper)] p-6 text-sm">
           Type at least 2 characters to search events and communities.
         </div>
       ) : null}
@@ -100,7 +110,7 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={`search-skeleton-${index}`}
-              className="h-24 animate-pulse rounded-[18px] border border-[var(--border-whisper)] bg-muted/20"
+              className="bg-muted/20 h-24 animate-pulse rounded-[18px] border border-[var(--border-whisper)]"
             />
           ))}
         </div>
@@ -116,14 +126,14 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
         <div className="space-y-8">
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-notion-black">Events</h2>
-              <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+              <h2 className="text-notion-black text-lg font-bold">Events</h2>
+              <span className="tracking-badge text-warm-gray-500 text-xs font-semibold uppercase">
                 {groupedResults.events.length} found
               </span>
             </div>
 
             {groupedResults.events.length === 0 ? (
-              <div className="rounded-[18px] border border-[var(--border-whisper)] bg-pure-white p-5 text-sm text-warm-gray-500">
+              <div className="bg-pure-white text-warm-gray-500 rounded-[18px] border border-[var(--border-whisper)] p-5 text-sm">
                 No upcoming published events match this search.
               </div>
             ) : (
@@ -142,24 +152,36 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
                     <Link
                       key={`event-${result.id}`}
                       href={result.href}
-                      className="rounded-[18px] border border-[var(--border-whisper)] bg-pure-white p-4 shadow-sm transition-colors hover:bg-warm-white active:scale-[0.99]"
+                      className="bg-pure-white hover:bg-warm-white rounded-[18px] border border-[var(--border-whisper)] p-4 shadow-sm transition-colors active:scale-[0.99]"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-lg font-bold text-notion-black">{result.title}</p>
-                          <p className="mt-1 text-sm text-warm-gray-500">
-                            {result.clubName} • {formatEventDateMeta(result.date)}
+                          <p className="text-notion-black text-lg font-bold">
+                            {result.title}
                           </p>
-                          <p className="mt-2 text-sm text-warm-gray-500">{result.location}</p>
-                          <p className="mt-2 text-sm text-warm-gray-500">
-                            Register by: {formatRegistrationDeadline(result.registrationClosesAt)}
+                          <p className="text-warm-gray-500 mt-1 text-sm">
+                            {result.clubName} •{" "}
+                            {formatEventDateMeta(result.date)}
+                          </p>
+                          <p className="text-warm-gray-500 mt-2 text-sm">
+                            {result.location}
+                          </p>
+                          <p className="text-warm-gray-500 mt-2 text-sm">
+                            Register by:{" "}
+                            {formatRegistrationDeadline(
+                              result.registrationClosesAt,
+                            )}
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
-                          <div className="rounded-full bg-warm-white px-3 py-1 text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+                          <div className="bg-warm-white tracking-badge text-warm-gray-500 rounded-full px-3 py-1 text-xs font-semibold uppercase">
                             {result.category ?? "General"}
                           </div>
-                          <Badge variant={getRegistrationAvailabilityBadgeVariant(availability)}>
+                          <Badge
+                            variant={getRegistrationAvailabilityBadgeVariant(
+                              availability,
+                            )}
+                          >
                             {getRegistrationAvailabilityLabel(availability)}
                           </Badge>
                         </div>
@@ -173,14 +195,16 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
 
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-notion-black">Communities</h2>
-              <span className="text-xs font-semibold uppercase tracking-badge text-warm-gray-500">
+              <h2 className="text-notion-black text-lg font-bold">
+                Communities
+              </h2>
+              <span className="tracking-badge text-warm-gray-500 text-xs font-semibold uppercase">
                 {groupedResults.communities.length} found
               </span>
             </div>
 
             {groupedResults.communities.length === 0 ? (
-              <div className="rounded-[18px] border border-[var(--border-whisper)] bg-pure-white p-5 text-sm text-warm-gray-500">
+              <div className="bg-pure-white text-warm-gray-500 rounded-[18px] border border-[var(--border-whisper)] p-5 text-sm">
                 No communities match this search yet.
               </div>
             ) : (
@@ -189,18 +213,21 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
                   <Link
                     key={`community-${result.id}`}
                     href={result.href}
-                    className="rounded-[18px] border border-[var(--border-whisper)] bg-pure-white p-4 shadow-sm transition-colors hover:bg-warm-white active:scale-[0.99]"
+                    className="bg-pure-white hover:bg-warm-white rounded-[18px] border border-[var(--border-whisper)] p-4 shadow-sm transition-colors active:scale-[0.99]"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-warm-white text-notion-black">
+                      <div className="bg-warm-white text-notion-black flex h-10 w-10 items-center justify-center rounded-[12px]">
                         <Building2 className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-notion-black">{result.title}</p>
-                        <p className="mt-1 text-sm text-warm-gray-500">
-                          {result.followerCount} followers • {result.eventCount} events
+                        <p className="text-notion-black font-bold">
+                          {result.title}
                         </p>
-                        <p className="mt-2 text-sm text-warm-gray-500">
+                        <p className="text-warm-gray-500 mt-1 text-sm">
+                          {result.followerCount} followers • {result.eventCount}{" "}
+                          events
+                        </p>
+                        <p className="text-warm-gray-500 mt-2 text-sm">
                           {result.nextEventTitle ?? "Active student community"}
                         </p>
                       </div>

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedOrganizerProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedOrganizerProcedure,
+} from "@/server/api/trpc";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "@/env";
@@ -11,12 +14,28 @@ import { TRPCError } from "@trpc/server";
  * do not contain the placeholder "test" values from .env.example.
  */
 function isRealS3Configured(): boolean {
-  const { UPLOAD_BUCKET_NAME, UPLOAD_REGION, UPLOAD_ACCESS_KEY_ID, UPLOAD_SECRET_ACCESS_KEY } = env;
-  if (!UPLOAD_BUCKET_NAME || !UPLOAD_REGION || !UPLOAD_ACCESS_KEY_ID || !UPLOAD_SECRET_ACCESS_KEY) {
+  const {
+    UPLOAD_BUCKET_NAME,
+    UPLOAD_REGION,
+    UPLOAD_ACCESS_KEY_ID,
+    UPLOAD_SECRET_ACCESS_KEY,
+  } = env;
+  if (
+    !UPLOAD_BUCKET_NAME ||
+    !UPLOAD_REGION ||
+    !UPLOAD_ACCESS_KEY_ID ||
+    !UPLOAD_SECRET_ACCESS_KEY
+  ) {
     return false;
   }
   // Reject obvious placeholder values
-  const placeholders = new Set(["test", "placeholder", "changeme", "your-key", "your-secret"]);
+  const placeholders = new Set([
+    "test",
+    "placeholder",
+    "changeme",
+    "your-key",
+    "your-secret",
+  ]);
   if (
     placeholders.has(UPLOAD_ACCESS_KEY_ID.toLowerCase()) ||
     placeholders.has(UPLOAD_SECRET_ACCESS_KEY.toLowerCase())
@@ -38,13 +57,29 @@ export const uploadRouter = createTRPCRouter({
     .input(
       z.object({
         filename: z.string(),
-        contentType: z.string().regex(/^image\//, "Only images are allowed"),
-        size: z.number().max(5 * 1024 * 1024, "Image must be less than 5MB"),
-      })
+        contentType: z
+          .string()
+          .refine(
+            (value) =>
+              ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(
+                value,
+              ),
+            "Only JPEG, PNG, WebP, and GIF images are allowed",
+          ),
+        size: z
+          .number()
+          .positive()
+          .max(5 * 1024 * 1024, "Image must be less than 5MB"),
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       // --- Local dev fallback ---
       if (!isRealS3Configured()) {
+        if (process.env.NODE_ENV !== "development")
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "Image storage is not configured. Use a hosted image URL.",
+          });
         // Signal the client to use the /api/upload route directly.
         return {
           url: LOCAL_UPLOAD_TOKEN,
@@ -64,7 +99,13 @@ export const uploadRouter = createTRPCRouter({
           },
         });
 
-        const safeFilename = input.filename.replace(/[^a-zA-Z0-9.-]/g, "") || "image";
+        const extensions: Record<string, string> = {
+          "image/jpeg": "jpg",
+          "image/png": "png",
+          "image/webp": "webp",
+          "image/gif": "gif",
+        };
+        const safeFilename = `image.${extensions[input.contentType]}`;
         const key = `events/${ctx.session.user.id}/${Date.now()}-${safeFilename}`;
 
         const command = new PutObjectCommand({
@@ -74,7 +115,9 @@ export const uploadRouter = createTRPCRouter({
           ContentLength: input.size,
         });
 
-        const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 });
+        const presignedUrl = await getSignedUrl(s3Client, command, {
+          expiresIn: 60,
+        });
 
         return {
           url: presignedUrl,

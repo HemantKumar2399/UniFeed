@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 process.env.SKIP_ENV_VALIDATION = "1";
 process.env.STUDENT_QR_SECRET = "student-qr-unit-test-secret";
 
@@ -11,7 +11,12 @@ import { appRouter } from "@/server/api/root";
 import { createCallerFactory } from "@/server/api/trpc";
 import { createStudentQrToken } from "@/lib/student-qr";
 
-const createCaller = createCallerFactory(appRouter);
+const rawCreateCaller = createCallerFactory(appRouter);
+const createCaller = (ctx: any) => {
+  ctx.db.$transaction ??= async (fn: any) =>
+    fn({ ...ctx.db, $executeRaw: async () => 1 });
+  return rawCreateCaller(ctx);
+};
 
 const validCreateInput = {
   clubId: 10,
@@ -57,7 +62,10 @@ void test("eventRouter.create succeeds for a managed club", async () => {
           assert.equal(args.data.isFreeFood, true);
           assert.equal(args.data.hasCertificate, true);
           assert.equal(args.data.isPaid, false);
-          assert.deepEqual(args.data.targetBranches, ["Computer Science", "Information Technology"]);
+          assert.deepEqual(args.data.targetBranches, [
+            "Computer Science",
+            "Information Technology",
+          ]);
           return { id: 55, ...args.data };
         },
       },
@@ -109,7 +117,10 @@ void test("eventRouter.create rejects unmanaged clubs", async () => {
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "FORBIDDEN");
-      assert.equal(err.message, "You can only create events for clubs you manage.");
+      assert.equal(
+        err.message,
+        "You can only create events for clubs you manage.",
+      );
       return true;
     },
   );
@@ -144,7 +155,10 @@ void test("eventRouter.create rejects clubs from another college", async () => {
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "FORBIDDEN");
-      assert.equal(err.message, "You can only create events for clubs you manage.");
+      assert.equal(
+        err.message,
+        "You can only create events for clubs you manage.",
+      );
       return true;
     },
   );
@@ -241,7 +255,10 @@ void test("eventRouter.getFeed rejects authenticated users without a college sco
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "PRECONDITION_FAILED");
-      assert.equal(err.message, "User session is missing a college association.");
+      assert.equal(
+        err.message,
+        "User session is missing a college association.",
+      );
       return true;
     },
   );
@@ -412,7 +429,10 @@ void test("eventRouter.getAttendees rejects unrelated organizers", async () => {
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "FORBIDDEN");
-      assert.equal(err.message, "Unauthorized to view attendees for this event");
+      assert.equal(
+        err.message,
+        "Unauthorized to view attendees for this event",
+      );
       return true;
     },
   );
@@ -490,7 +510,10 @@ void test("eventRouter.getAttendees allows same-college admins without club memb
   const result = await caller.event.getAttendees({ eventId: 73 });
 
   assert.equal(result.attendees[0]?.status, "ATTENDED");
-  assert.equal(result.attendees[0]?.checkedInAt?.toISOString(), "2030-05-12T12:00:00.000Z");
+  assert.equal(
+    result.attendees[0]?.checkedInAt?.toISOString(),
+    "2030-05-12T12:00:00.000Z",
+  );
   assert.equal(result.attendees[0]?.course, "BTech");
 });
 
@@ -613,7 +636,12 @@ void test("eventRouter.submitForReview moves a draft into submitted status and r
           updatedToSubmitted = true;
           assert.equal(args.where.id, 91);
           assert.equal(args.data.status, "SUBMITTED");
-          return { id: 91, title: "Hack Night", status: "SUBMITTED", submittedAt: args.data.submittedAt };
+          return {
+            id: 91,
+            title: "Hack Night",
+            status: "SUBMITTED",
+            submittedAt: args.data.submittedAt,
+          };
         },
       },
       club: {
@@ -701,7 +729,10 @@ void test("eventRouter.submitForReview rejects non-editable events", async () =>
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.equal(err.message, "Only draft or rejected events can be submitted for review.");
+      assert.equal(
+        err.message,
+        "Only draft or rejected events can be submitted for review.",
+      );
       return true;
     },
   );
@@ -727,7 +758,12 @@ void test("eventRouter.submitForReview allows rejected events to be resubmitted"
           updatedToSubmitted = true;
           assert.equal(args.where.id, 92);
           assert.equal(args.data.status, "SUBMITTED");
-          return { id: 92, title: "Rejected Event", status: "SUBMITTED", submittedAt: args.data.submittedAt };
+          return {
+            id: 92,
+            title: "Rejected Event",
+            status: "SUBMITTED",
+            submittedAt: args.data.submittedAt,
+          };
         },
       },
       club: {
@@ -889,7 +925,12 @@ void test("eventRouter.update saves metadata changes for editable events", async
           assert.equal(args.where.id, 205);
           assert.equal(args.data.category, "Technical");
           assert.deepEqual(args.data.tags, ["coding", "workshop"]);
-          return { id: 205, title: args.data.title, status: "DRAFT", updatedAt: new Date("2030-05-10T00:00:00.000Z") };
+          return {
+            id: 205,
+            title: args.data.title,
+            status: "DRAFT",
+            updatedAt: new Date("2030-05-10T00:00:00.000Z"),
+          };
         },
       },
       club: {
@@ -1036,7 +1077,10 @@ void test("eventRouter.cancel marks a published event as cancelled and writes au
           cancelled = true;
           assert.equal(args.where.id, 301);
           assert.equal(args.data.status, "CANCELLED");
-          assert.equal(args.data.cancellationReason, "Venue maintenance requires cancellation.");
+          assert.equal(
+            args.data.cancellationReason,
+            "Venue maintenance requires cancellation.",
+          );
           return {
             id: 301,
             title: "Published Event",
@@ -1061,7 +1105,10 @@ void test("eventRouter.cancel marks a published event as cancelled and writes au
         create: async (args: any) => {
           loggedCancellation = true;
           assert.equal(args.data.action, "CANCELLED");
-          assert.equal(args.data.reason, "Venue maintenance requires cancellation.");
+          assert.equal(
+            args.data.reason,
+            "Venue maintenance requires cancellation.",
+          );
           return { id: 15, ...args.data };
         },
       },
@@ -1456,6 +1503,7 @@ void test("eventRouter.verifyStudentQrForEvent checks in a registered student", 
             studentQrId: "sqr_active_student",
             studentQrSecretVersion: 2,
             qrRevokedAt: null,
+            isVerified: true,
             user: {
               id: "student-1",
               name: "Student One",
@@ -1558,6 +1606,7 @@ void test("eventRouter.verifyStudentQrForEvent returns already checked in for at
           studentQrId: "sqr_attended_student",
           studentQrSecretVersion: 1,
           qrRevokedAt: null,
+          isVerified: true,
           user: {
             id: "student-2",
             name: "Student Two",
@@ -1685,6 +1734,7 @@ void test("eventRouter.verifyStudentQrForEvent returns revoked qr when the store
           studentQrId: "sqr_rotated_student",
           studentQrSecretVersion: 2,
           qrRevokedAt: null,
+          isVerified: true,
           user: {
             id: "student-3",
             name: "Student Three",
@@ -1754,6 +1804,7 @@ void test("eventRouter.verifyStudentQrForEvent returns wrong college when passpo
           studentQrId: "sqr_other_college",
           studentQrSecretVersion: 1,
           qrRevokedAt: null,
+          isVerified: true,
           user: {
             id: "student-4",
             name: "Student Four",
@@ -1823,6 +1874,7 @@ void test("eventRouter.verifyStudentQrForEvent returns not registered when no va
           studentQrId: "sqr_no_rsvp",
           studentQrSecretVersion: 1,
           qrRevokedAt: null,
+          isVerified: true,
           user: {
             id: "student-5",
             name: "Student Five",
@@ -1895,6 +1947,7 @@ void test("eventRouter.verifyStudentQrForEvent returns not registered when the s
           studentQrId: "sqr_other_event",
           studentQrSecretVersion: 1,
           qrRevokedAt: null,
+          isVerified: true,
           user: {
             id: "student-6",
             name: "Student Six",
@@ -2086,7 +2139,10 @@ void test("eventRouter.submitForReview rejects events with invalid or expired de
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.equal(err.message, "Registration deadline must be set to a future time before the event starts.");
+      assert.equal(
+        err.message,
+        "Registration deadline must be set to a future time before the event starts.",
+      );
       return true;
     },
   );
@@ -2133,7 +2189,10 @@ void test("eventRouter.publishApproved rejects events with expired deadlines", a
     (err: any) => {
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "BAD_REQUEST");
-      assert.match(err.message, /Registration deadline must be set to a future time/i);
+      assert.match(
+        err.message,
+        /Registration deadline must be set to a future time/i,
+      );
       return true;
     },
   );
@@ -2165,8 +2224,16 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a managed organiz
           };
           updatedToNewDeadline = true;
           assert.equal(typedArgs.where.id, 401);
-          assert.equal(typedArgs.data.registrationClosesAt.getTime(), newDeadline.getTime());
-          return { id: 401, title: "Published Event", status: "PUBLISHED", registrationClosesAt: typedArgs.data.registrationClosesAt };
+          assert.equal(
+            typedArgs.data.registrationClosesAt.getTime(),
+            newDeadline.getTime(),
+          );
+          return {
+            id: 401,
+            title: "Published Event",
+            status: "PUBLISHED",
+            registrationClosesAt: typedArgs.data.registrationClosesAt,
+          };
         },
       },
       club: {
@@ -2198,7 +2265,10 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a managed organiz
   };
 
   const caller = createCaller(mockedCtx as any);
-  const result = await caller.event.extendRegistrationDeadline({ id: 401, registrationClosesAt: newDeadline });
+  const result = await caller.event.extendRegistrationDeadline({
+    id: 401,
+    registrationClosesAt: newDeadline,
+  });
 
   assert.ok(updatedToNewDeadline);
   assert.ok(loggedExtension);
@@ -2227,7 +2297,12 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a same-college ad
         update: async (args: any) => {
           updatedToNewDeadline = true;
           assert.equal(args.where.id, 402);
-          return { id: 402, title: "Published Event", status: "PUBLISHED", registrationClosesAt: args.data.registrationClosesAt };
+          return {
+            id: 402,
+            title: "Published Event",
+            status: "PUBLISHED",
+            registrationClosesAt: args.data.registrationClosesAt,
+          };
         },
       },
       club: {
@@ -2253,7 +2328,10 @@ void test("eventRouter.extendRegistrationDeadline succeeds for a same-college ad
   };
 
   const caller = createCaller(mockedCtx as any);
-  await caller.event.extendRegistrationDeadline({ id: 402, registrationClosesAt: newDeadline });
+  await caller.event.extendRegistrationDeadline({
+    id: 402,
+    registrationClosesAt: newDeadline,
+  });
 
   assert.ok(updatedToNewDeadline);
 });
@@ -2293,7 +2371,10 @@ void test("eventRouter.extendRegistrationDeadline rejects unmanaged access", asy
   const caller = createCaller(mockedCtx as any);
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 403, registrationClosesAt: newDeadline });
+      await caller.event.extendRegistrationDeadline({
+        id: 403,
+        registrationClosesAt: newDeadline,
+      });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2338,7 +2419,10 @@ void test("eventRouter.extendRegistrationDeadline rejects non-reopenable events"
   const caller = createCaller(mockedCtx as any);
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 404, registrationClosesAt: newDeadline });
+      await caller.event.extendRegistrationDeadline({
+        id: 404,
+        registrationClosesAt: newDeadline,
+      });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2380,11 +2464,14 @@ void test("eventRouter.extendRegistrationDeadline rejects invalid deadlines", as
   };
 
   const caller = createCaller(mockedCtx as any);
-  
+
   // After event start
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 405, registrationClosesAt: new Date("2030-05-15T10:00:00.000Z") });
+      await caller.event.extendRegistrationDeadline({
+        id: 405,
+        registrationClosesAt: new Date("2030-05-15T10:00:00.000Z"),
+      });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2392,11 +2479,14 @@ void test("eventRouter.extendRegistrationDeadline rejects invalid deadlines", as
       return true;
     },
   );
-  
+
   // Past deadline
   await assert.rejects(
     async () => {
-      await caller.event.extendRegistrationDeadline({ id: 405, registrationClosesAt: new Date("2020-01-01T10:00:00.000Z") });
+      await caller.event.extendRegistrationDeadline({
+        id: 405,
+        registrationClosesAt: new Date("2020-01-01T10:00:00.000Z"),
+      });
     },
     (err: any) => {
       assert.ok(err instanceof TRPCError);
@@ -2594,7 +2684,10 @@ void test("eventRouter.extendRegistrationDeadline rejects past or cancelled even
       (err: any) => {
         assert.ok(err instanceof TRPCError);
         assert.equal(err.code, "BAD_REQUEST");
-        assert.equal(err.message, "Only approved or published upcoming events can extend registration.");
+        assert.equal(
+          err.message,
+          "Only approved or published upcoming events can extend registration.",
+        );
         return true;
       },
     );

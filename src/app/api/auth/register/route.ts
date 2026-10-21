@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { z } from "zod";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/server/db";
@@ -13,35 +14,33 @@ const NAME_MAX_LENGTH = 100;
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as {
-      email?: string;
-      password?: string;
-      name?: string;
-    };
-
-    const { email, password, name } = body;
-
-    if (typeof email !== "string" || typeof password !== "string") {
+    const body: unknown = await req.json().catch(() => null);
+    const parsed = z
+      .object({
+        email: z
+          .string()
+          .trim()
+          .toLowerCase()
+          .email("Enter a valid email address."),
+        password: z
+          .string()
+          .min(8, "Password must be at least 8 characters.")
+          .refine(
+            (value) => Buffer.byteLength(value, "utf8") <= BCRYPT_MAX_BYTES,
+            "Password must not exceed 72 bytes.",
+          ),
+        name: z.string().trim().max(NAME_MAX_LENGTH).optional(),
+      })
+      .safeParse(body);
+    if (!parsed.success)
       return NextResponse.json(
-        { error: "Email and password are required." },
+        {
+          error:
+            parsed.error.issues[0]?.message ?? "Invalid registration details.",
+        },
         { status: 400 },
       );
-    }
-
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: "Password must be at least 8 characters." },
-        { status: 400 },
-      );
-    }
-
-    // Guard against bcrypt's 72-byte silent truncation.
-    if (Buffer.byteLength(password, "utf8") > BCRYPT_MAX_BYTES) {
-      return NextResponse.json(
-        { error: "Password must not exceed 72 characters." },
-        { status: 400 },
-      );
-    }
+    const { email, password, name } = parsed.data;
 
     // AC-1: Domain check — reject non-university emails at registration too.
     const college = await getCollegeForEmail(email);

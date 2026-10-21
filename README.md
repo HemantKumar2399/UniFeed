@@ -1,164 +1,88 @@
-<div align="center">
-  <img src="https://via.placeholder.com/150/000000/FFFFFF?text=UniFeed" alt="UniFeed Logo" width="120" />
-  <h1>UniFeed</h1>
-  <p><strong>A campus event platform built for university communities.</strong></p>
+# UniFeed
 
-  <p>
-    <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-App_Router-black?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
-    <a href="https://tailwindcss.com"><img src="https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" /></a>
-    <a href="https://prisma.io"><img src="https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" /></a>
-    <a href="https://trpc.io"><img src="https://img.shields.io/badge/tRPC-Endpoints-2596be?style=for-the-badge&logo=typescript" alt="tRPC" /></a>
-  </p>
-</div>
+A campus event platform for students, organizers, and college administrators.
 
----
+Students discover events, reserve seats or join waitlists, save events, follow communities, and use a permanent passport QR. Organizers publish events, manage attendees, check students in, and view attendance metrics. College admins approve events, manage roles, and verify student identities.
 
-## About
+## Start locally
 
-UniFeed bridges the gap between noisy chat groups and formal campus announcements. Students can discover events, RSVP, and access event identity flows, while organizers manage publishing, attendance, and community pages.
+Use **Node 24**, npm, and either local PostgreSQL or Docker/Podman. The database starter uses PostgreSQL 17 when creating a container.
 
-## Tech Stack
-
-Built on the T3-style stack:
-
-| Layer | Technology | Purpose |
-| --- | --- | --- |
-| Framework | Next.js 15 App Router | SSR, routing, and server components |
-| Styles | Tailwind CSS and shadcn/ui | Accessible UI primitives |
-| Database | PostgreSQL | Relational data store |
-| ORM | Prisma | Typed database access |
-| API | tRPC | End-to-end typed APIs |
-| Auth | NextAuth v5 | Session and credentials auth |
-
-## Documentation
-
-- [Product Requirements Document](./docs/product/prd.md)
-- [Technical Architecture](./docs/architecture/architecture.md)
-- [UX and Design Specifications](./docs/design/ux-design-specification.md)
-- [Implementation Status](./docs/implementation-status.md)
-- [Placeholder Backlog](./docs/placeholder-backlog.md)
-
-## Quick Start
-
-1. Install dependencies
-2. Copy `.env`
-3. Start the local database
-4. Generate Prisma client
-5. Push the Prisma schema
-6. Seed test data
-7. Run the dev server
-
-### Windows PowerShell
-
-Preferred path:
-
-```powershell
-npm run setup:windows
-npm run dev
-```
-
-Manual path:
-
-```powershell
-Copy-Item .env.example .env
-npm run db:start:windows
-npm install
-npm run db:generate
-npm run db:push
-npm run db:seed
-npm run dev
-```
-
-### WSL, macOS, or Linux
-
-Preferred path:
-
-```bash
+```sh
 npm run setup
 npm run dev
 ```
 
-Manual path:
+The same commands work in PowerShell, macOS and Linux. Setup copies the environment example if needed, generates missing signing secrets, installs the lockfile, starts or detects the local database, and applies migrations. It stops on failure and preserves existing data.
 
-```bash
-cp .env.example .env
-npm run db:start
-npm install
-npm run db:generate
-npm run db:push
-npm run db:seed
-npm run dev
+Configure the connection in `.env` before setup when using your own local PostgreSQL installation. Existing databases previously created with `db:push` may need Prisma migration baselining; setup intentionally does not reset them.
+
+## Optional demo data
+
+**This explicitly replaces existing application data in the configured local database.** Run it only for a disposable demo database:
+
+```sh
+npm run db:seed -- --reset-demo
 ```
 
-### Environment Values
+The first domain in `ALLOWED_DOMAINS` determines demo email addresses. Password: `Test@1234`.
 
-Set these required values in `.env`:
+| Role      | Email                       |
+| --------- | --------------------------- |
+| Student   | `student.1@<domain>`        |
+| Organizer | `organizer.coding@<domain>` |
+| Admin     | `admin.jecrc@<domain>`      |
 
-```env
-AUTH_SECRET=""
-DATABASE_URL="postgresql://postgres:password@localhost:5432/Platform"
-ALLOWED_DOMAINS="students.college.edu"
-STUDENT_QR_SECRET=""
+Fresh registrations receive STUDENT access. Profile completion stays pending until a college administrator verifies identity against college records in the admin QR controls. Seeded demo profiles are verified. Email domain eligibility alone is not proof of mailbox ownership; email verification/delivery is not implemented.
+
+## Environment
+
+| Variable                                                                                  | Purpose                                                                                          |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `DATABASE_URL`                                                                            | PostgreSQL connection URL                                                                        |
+| `AUTH_SECRET`                                                                             | Session signing secret                                                                           |
+| `ALLOWED_DOMAINS`                                                                         | Seed email-domain configuration; existing College.emailDomains records govern login/registration |
+| `STUDENT_QR_SECRET`                                                                       | Separate passport signing secret, at least 16 characters                                         |
+| `NEXT_PUBLIC_APP_URL`                                                                     | Optional deployed origin                                                                         |
+| `UPLOAD_BUCKET_NAME`, `UPLOAD_REGION`, `UPLOAD_ACCESS_KEY_ID`, `UPLOAD_SECRET_ACCESS_KEY` | Optional object storage                                                                          |
+| `UPLOAD_PUBLIC_BASE_URL`                                                                  | Uploaded media origin, also allowlisted for next/image                                           |
+
+Development uploads are decoded and re-encoded to WebP. Local file uploads are disabled in production; configure storage or use a supported hosted image URL. The presigned storage path restricts image MIME types, but deployment should also enforce object-storage/CDN content policy.
+
+## Verification
+
+```sh
+npm run check
+npm run test:unit
+npm run build
 ```
 
-- `AUTH_SECRET`: NextAuth signing secret for session security.
-- `DATABASE_URL`: PostgreSQL connection string for the app database.
-- `ALLOWED_DOMAINS`: comma-separated university domains used for registration and seed email generation.
-- `STUDENT_QR_SECRET`: dedicated signing secret for permanent student QR tokens. Keep this different from `AUTH_SECRET`.
+Unit tests use isolated defaults and do not need `.env` or a database. Database integration tests require a dedicated **local database with test in its name**:
 
-Optional Google sign-in values:
-
-```env
-AUTH_GOOGLE_ID=""
-AUTH_GOOGLE_SECRET=""
+```powershell
+$env:TEST_DATABASE_URL = "postgresql://postgres:password@localhost:5432/unifeed_test"
+$env:DATABASE_URL = $env:TEST_DATABASE_URL
+npm run db:migrate
+npm run test:integration
 ```
 
-Optional deployment values:
+For browser tests, migrate and explicitly seed that disposable database first, then:
 
-```env
-NEXT_PUBLIC_APP_URL=""
-UPLOAD_BUCKET_NAME=""
-UPLOAD_REGION=""
-UPLOAD_ACCESS_KEY_ID=""
-UPLOAD_SECRET_ACCESS_KEY=""
-UPLOAD_PUBLIC_BASE_URL=""
+```sh
+npx playwright install chromium
+npm run test:e2e:smoke
 ```
 
-Optional upload values stay blank for local/manual image URL workflows. Configure them in deployed environments when organizers should upload directly to object storage. `UPLOAD_PUBLIC_BASE_URL` is also used by `next/image` as the explicit production image host for uploaded event media.
+Set `BASE_URL` and explicitly set `REUSE_TEST_SERVER=1` only when attaching to a server already configured with the disposable test database. Browser/database tests write fixtures; keep them away from a personal or production database. Run type generation and production builds sequentially because both write Next.js generated files.
 
-When the upload variables are not configured, organizer image uploads use the local development upload endpoint and return `/uploads/...` URLs. In deployed environments, set the upload variables and `UPLOAD_PUBLIC_BASE_URL` to the public CDN or object-storage origin that should serve organizer images.
+## Current docs
 
-### Seed Setup
+- [Implementation and feature status](docs/implementation-status.md)
+- [Verification record and release limits](docs/production-readiness.md)
+- [UX direction](docs/ux-refresh.md)
+- [Original audit](docs/codebase-audit-2026-10-21.md)
+- [Contributing](CONTRIBUTING.md)
 
-The seed script reads the first domain from `ALLOWED_DOMAINS` and uses it to generate the local campus accounts. All seeded users share the password `Test@1234`.
+The historical [PRD](docs/product/prd.md), [architecture](docs/architecture/architecture.md), and archived BMAD epics describe original intent. Current implementation status and verification records take precedence over old completion labels.
 
-- Student: `student.1@<your allowed domain>`
-- Organizer: `organizer.coding@<your allowed domain>`
-- Admin: `admin.jecrc@<your allowed domain>`
-
-Seeded data includes:
-
-- one JECRC college scope and one secondary college for isolation checks
-- student, organizer, and admin roles
-- published student-visible events plus hub content
-- verified student profiles with permanent QR IDs
-
-### Seed Credentials
-
-- Email: `student.1@<your allowed domain>`
-- Password: `Test@1234`
-
-## Security and Scoping Rules
-
-UniFeed enforces strict isolation and role-based access controls to maintain campus trust:
-
-- **Public Registration:** All open registrations automatically create base `STUDENT` accounts.
-- **Role Promotion:** The `ORGANIZER` and `ADMIN` roles cannot be self-assigned. Role promotion is strictly admin-controlled and college-scoped (an admin can only promote users within their own college).
-- **College Isolation:** Content is siloed by the user's `collegeId`. "Happening This Week", discovery feeds, and search results only return entities matching the viewer's college.
-- **Realtime Protections:** Capacity subscriptions and realtime RSVP fan-out are protected—students cannot subscribe to or receive updates for events outside their college.
-- **Image Security:** Uploaded media must use explicit image hosts defined in `UPLOAD_PUBLIC_BASE_URL` to prevent arbitrary asset embedding.
-- **Event Deadlines (Epic 19):** Registration deadlines are strictly enforced. Organizers can reopen cancelled events or extend deadlines if managed, and same-college admins have override privileges.
-
-## Contributing
-
-Read [CONTRIBUTING.md](./CONTRIBUTING.md) before changing code.
+Realtime updates currently require a single app process. Reminder emails, digests, Google login, payments, and employer portfolios are not shipped features.

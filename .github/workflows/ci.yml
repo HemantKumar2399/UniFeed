@@ -1,42 +1,50 @@
 name: CI
-
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
-
+    branches: [main]
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test-password
+          POSTGRES_DB: unifeed_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d unifeed_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
     env:
-      ALLOWED_DOMAINS: students.edu.in
-      DATABASE_URL: postgresql://postgres:password@localhost:5432/Platform
-      UPLOAD_BUCKET_NAME: test-bucket
-      UPLOAD_REGION: us-east-1
-      UPLOAD_ACCESS_KEY_ID: test
-      UPLOAD_SECRET_ACCESS_KEY: test
-
+      AUTH_SECRET: ci-auth-secret-for-disposable-tests
+      STUDENT_QR_SECRET: ci-student-qr-secret-for-disposable-tests
+      ALLOWED_DOMAINS: students.example.edu
+      DATABASE_URL: postgresql://postgres:test-password@localhost:5432/unifeed_test
+      TEST_DATABASE_URL: postgresql://postgres:test-password@localhost:5432/unifeed_test
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Run Lint
-      run: npm run lint
-
-    - name: Run Typecheck
-      run: npm run typecheck
-
-    - name: Run Build
-      run: npm run build
-
-    - name: Run Unit Tests
-      run: npm run test:unit
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run test:unit
+      - run: npm run db:migrate
+      - run: npm run test:integration
+      - run: npm run build
+      - name: Prepare disposable demo data
+        run: node --import tsx prisma/seed.ts --reset-demo
+      - run: npx playwright install --with-deps chromium
+      - name: Browser smoke
+        run: npx tsx scripts/bootstrap-e2e-smoke.ts && npx playwright test --project=chromium --workers=1 tests/e2e/epic16-smoke.spec.ts tests/e2e/epic17-realtime.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: verification-results
+          path: |
+            playwright-report/
+            test-results/

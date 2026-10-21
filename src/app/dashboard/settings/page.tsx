@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { User, Settings, CreditCard, Users, LogOut, ShieldCheck, ArrowUpRight } from "lucide-react";
+import { LogOut, ShieldCheck, ArrowUpRight } from "lucide-react";
 import { auth } from "@/server/auth";
 import { SignOutForm } from "@/components/SignOutForm";
 
@@ -10,19 +10,19 @@ export default async function DashboardSettingsPage() {
   const isAdmin = session?.user?.role === "ADMIN";
 
   return (
-    <div className="flex flex-col gap-8 pb-32 md:pb-12 max-w-4xl transition-colors duration-300">
+    <div className="flex max-w-4xl flex-col gap-8 pb-32 transition-colors duration-300 md:pb-12">
       <header className="px-1 md:px-0">
-        <h1 className="text-page-title mb-8 text-foreground">
-          Settings
-        </h1>
-        
-        <div className="w-full bg-app-bg rounded-[24px] p-6 border border-whisper flex items-center gap-6 transition-colors">
-          <div className="w-20 h-20 rounded-full bg-notion-blue text-white flex items-center justify-center text-entity-title shadow-card">
+        <h1 className="text-page-title text-foreground mb-8">Settings</h1>
+
+        <div className="bg-app-bg border-whisper flex w-full items-center gap-6 rounded-[24px] border p-6 transition-colors">
+          <div className="bg-notion-blue text-entity-title shadow-card flex h-20 w-20 items-center justify-center rounded-full text-white">
             {userInitial}
           </div>
           <div>
             <h2 className="text-panel-title text-foreground">{userName}</h2>
-            <p className="text-nav mt-1 text-muted-foreground">{session?.user?.email}</p>
+            <p className="text-nav text-muted-foreground mt-1">
+              {session?.user?.email}
+            </p>
           </div>
         </div>
       </header>
@@ -31,17 +31,22 @@ export default async function DashboardSettingsPage() {
         <section className="px-1 md:px-0">
           <Link
             href="/admin"
-            className="card-surface flex items-center justify-between gap-4 rounded-[24px] p-5 transition-all hover:-translate-y-0.5 hover:shadow-deep"
+            className="card-surface hover:shadow-deep flex items-center justify-between gap-4 rounded-[24px] p-5 transition-all hover:-translate-y-0.5"
           >
             <div className="flex items-center gap-4">
               <div className="surface-brand-subtle flex h-12 w-12 items-center justify-center rounded-2xl border">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Admin Access</p>
-                <h2 className="text-[18px] font-bold tracking-tight text-foreground">Open College Control Center</h2>
-                <p className="mt-1 text-[13px] font-medium text-muted-foreground">
-                  Jump to role management, community ownership, and route shortcuts for admin workflows.
+                <p className="text-muted-foreground text-[12px] font-semibold tracking-[0.18em] uppercase">
+                  Admin Access
+                </p>
+                <h2 className="text-foreground text-[18px] font-bold tracking-tight">
+                  Open College Control Center
+                </h2>
+                <p className="text-muted-foreground mt-1 text-[13px] font-medium">
+                  Jump to role management, community ownership, and route
+                  shortcuts for admin workflows.
                 </p>
               </div>
             </div>
@@ -50,65 +55,26 @@ export default async function DashboardSettingsPage() {
         </section>
       )}
 
-      {/* Settings Grid */}
-      <section className="px-1 md:px-0 flex flex-col gap-2">
-        <h3 className="text-[14px] font-bold uppercase tracking-wider text-muted-foreground px-2 mb-2">Organization</h3>
-        
-        <div className="flex flex-col bg-card-bg rounded-[16px] border border-input shadow-sm overflow-hidden transition-colors">
-          <div className="flex items-center gap-4 p-4 border-b border-input cursor-pointer hover:bg-muted active:bg-muted/80 transition-colors">     
-            <div className="w-8 h-8 rounded-full bg-[#f2f9ff] dark:bg-blue-950/40 flex items-center justify-center">
-              <Settings className="w-4 h-4 text-[#097fe8]" />
-            </div>
-            <div className="flex-1">
-              <span className="text-[16px] font-semibold text-foreground/90 block">General Information</span>
-              <span className="text-[13px] text-muted-foreground font-medium">Update organization name and domain</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 border-b border-input cursor-pointer hover:bg-muted active:bg-muted/80 transition-colors">     
-            <div className="w-8 h-8 rounded-full bg-[#f2f9ff] dark:bg-blue-950/40 flex items-center justify-center">
-              <Users className="w-4 h-4 text-[#097fe8]" />
-            </div>
-            <div className="flex-1">
-              <span className="text-[16px] font-semibold text-foreground/90 block">Team Members</span>
-              <span className="text-[13px] text-muted-foreground font-medium">Manage admins and access controls</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 border-b border-input cursor-pointer hover:bg-muted active:bg-muted/80 transition-colors">     
-            <div className="w-8 h-8 rounded-full bg-[#f2f9ff] dark:bg-blue-950/40 flex items-center justify-center">
-              <CreditCard className="w-4 h-4 text-[#097fe8]" />
-            </div>
-            <div className="flex-1">
-              <span className="text-[16px] font-semibold text-foreground/90 block">Billing & Payouts</span>
-              <span className="text-[13px] text-muted-foreground font-medium">Connect bank accounts and view payouts</span>
-            </div>
-          </div>
-        </div>
+      <section className="border-input bg-card-bg rounded-2xl border p-5">
+        <h2 className="font-semibold">Community settings</h2>
+        <p className="text-muted-foreground mt-2 text-sm">
+          Manage community logos, resources, and editors from the hub editor.
+        </p>
+        <Link
+          href="/dashboard/hubs"
+          className="text-link-accent mt-4 inline-flex min-h-11 items-center underline"
+        >
+          Open hub management
+        </Link>
       </section>
 
-      {/* Profile Defaults */}
-      <section className="px-1 md:px-0 flex flex-col gap-2 mt-4">
-        <h3 className="text-[14px] font-bold uppercase tracking-wider text-muted-foreground px-2 mb-2">Personal</h3>
-        
-        <div className="flex flex-col bg-card-bg rounded-[16px] border border-input shadow-sm overflow-hidden transition-colors">
-          <div className="flex items-center gap-4 p-4 border-b border-input cursor-pointer hover:bg-muted active:bg-muted/80 transition-colors">     
-            <div className="w-8 h-8 rounded-full bg-[#f2f9ff] dark:bg-blue-950/40 flex items-center justify-center">
-              <User className="w-4 h-4 text-[#097fe8]" />
-            </div>
-            <span className="text-[16px] font-semibold text-foreground/90">My Profile</span>
-          </div>
-        </div>
-      </section>
-      
       {/* Sign Out */}
-      <div className="px-1 md:px-0 mt-4">
-        <SignOutForm className="w-full flex justify-center items-center gap-2 py-4 rounded-[12px] text-[#e8503a] font-semibold hover:bg-red-50 dark:hover:bg-red-950/20 active:scale-[0.98] transition-all cursor-pointer">
-          <LogOut className="w-[18px] h-[18px]" />
+      <div className="mt-4 px-1 md:px-0">
+        <SignOutForm className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-[12px] py-4 font-semibold text-[#e8503a] transition-all hover:bg-red-50 active:scale-[0.98] dark:hover:bg-red-950/20">
+          <LogOut className="h-[18px] w-[18px]" />
           Sign Out of Command Center
         </SignOutForm>
       </div>
-
     </div>
   );
 }

@@ -27,6 +27,7 @@ const uploadRemotePattern = getUploadRemotePattern();
 
 /** @type {import("next").NextConfig} */
 const config = {
+  devIndicators: false,
   images: {
     remotePatterns: [
       ...(uploadRemotePattern ? [uploadRemotePattern] : []),

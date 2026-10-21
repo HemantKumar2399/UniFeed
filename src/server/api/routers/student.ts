@@ -28,7 +28,7 @@ export const studentRouter = createTRPCRouter({
         graduationYear: z.number().int().min(2020).max(2100),
         section: z.string().max(10).optional(),
         phone: z.string().max(20).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.session.user.id;
@@ -82,7 +82,7 @@ export const studentRouter = createTRPCRouter({
           graduationYear: input.graduationYear,
           section: input.section ?? null,
           phone: input.phone ?? null,
-          isVerified: true, // Default to true upon successful domain registration & onboarding
+          isVerified: false, // Completing a profile does not prove campus identity.
           studentQrId,
         },
       });

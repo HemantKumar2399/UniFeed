@@ -82,7 +82,7 @@ void test("studentRouter.createProfile creates a new profile successfully", asyn
           assert.equal(args.data.userId, "test-user-id");
           assert.equal(args.data.collegeId, "college-id");
           assert.equal(args.data.prn, "12345");
-          assert.equal(args.data.isVerified, true);
+          assert.equal(args.data.isVerified, false);
           return { id: "new-profile-id", ...args.data };
         },
       },
@@ -102,7 +102,7 @@ void test("studentRouter.createProfile creates a new profile successfully", asyn
   const result = await caller.student.createProfile(input);
   assert.ok(createCalled);
   assert.equal(result.id, "new-profile-id");
-  assert.equal(result.isVerified, true);
+  assert.equal(result.isVerified, false);
   assert.ok(result.studentQrId);
   assert.match(result.studentQrId, /^sqr_[A-Za-z0-9_-]+$/);
 });
@@ -153,7 +153,7 @@ void test("studentRouter.createProfile fails if PRN is already registered in the
       assert.equal(err.code, "CONFLICT");
       assert.equal(err.message, "PRN_ALREADY_REGISTERED");
       return true;
-    }
+    },
   );
 });
 
@@ -174,7 +174,7 @@ void test("studentRouter procedures throw UNAUTHORIZED if user is not logged in"
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "UNAUTHORIZED");
       return true;
-    }
+    },
   );
 
   await assert.rejects(
@@ -190,6 +190,6 @@ void test("studentRouter procedures throw UNAUTHORIZED if user is not logged in"
       assert.ok(err instanceof TRPCError);
       assert.equal(err.code, "UNAUTHORIZED");
       return true;
-    }
+    },
   );
 });

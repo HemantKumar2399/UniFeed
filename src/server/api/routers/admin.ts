@@ -1,7 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { createTRPCRouter, adminProcedure, collegeAdminProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  adminProcedure,
+  collegeAdminProcedure,
+} from "@/server/api/trpc";
 import { createStudentQrId } from "@/lib/student-qr";
 import type { db as prismaDb } from "@/server/db";
 
@@ -20,7 +24,10 @@ type AdminReviewCtx = {
 };
 
 function assertCollegeScope(
-  sessionUser: { role: "STUDENT" | "ORGANIZER" | "ADMIN"; collegeId?: string | null },
+  sessionUser: {
+    role: "STUDENT" | "ORGANIZER" | "ADMIN";
+    collegeId?: string | null;
+  },
   targetCollegeId: string,
   message: string,
 ) {
@@ -32,10 +39,7 @@ function assertCollegeScope(
   }
 }
 
-async function getScopedReviewEvent(
-  ctx: AdminReviewCtx,
-  eventId: number,
-) {
+async function getScopedReviewEvent(ctx: AdminReviewCtx, eventId: number) {
   const event = await ctx.db.event.findUnique({
     where: { id: eventId },
     include: {
@@ -77,12 +81,41 @@ async function getScopedReviewEvent(
     });
   }
 
-  assertCollegeScope(ctx.session.user, event.collegeId, "Cannot review events outside your college.");
+  assertCollegeScope(
+    ctx.session.user,
+    event.collegeId,
+    "Cannot review events outside your college.",
+  );
 
   return event;
 }
 
 export const adminRouter = createTRPCRouter({
+  setStudentVerification: collegeAdminProcedure
+    .input(z.object({ userId: z.string().min(1), verified: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const profile = await ctx.db.studentProfile.findUnique({
+        where: { userId: input.userId },
+      });
+      if (!profile)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Student profile not found.",
+        });
+      if (profile.collegeId !== ctx.collegeId)
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot verify students outside your college.",
+        });
+      return ctx.db.studentProfile.update({
+        where: { id: profile.id },
+        data: {
+          isVerified: input.verified,
+          lockedAt: input.verified ? new Date() : null,
+        },
+        include: { user: { select: { id: true, name: true, email: true } } },
+      });
+    }),
   promoteUser: adminProcedure
     .input(
       z.object({
@@ -125,6 +158,13 @@ export const adminRouter = createTRPCRouter({
       return ctx.db.user.update({
         where: { id: input.userId },
         data: { role: input.role },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          collegeId: true,
+        },
       });
     }),
 
@@ -180,7 +220,8 @@ export const adminRouter = createTRPCRouter({
       if (targetUser.role === "STUDENT") {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User must be promoted to ORGANIZER before assigning club membership.",
+          message:
+            "User must be promoted to ORGANIZER before assigning club membership.",
         });
       }
 
@@ -351,8 +392,12 @@ export const adminRouter = createTRPCRouter({
                 OR: [
                   { title: { contains: query, mode: "insensitive" } },
                   { description: { contains: query, mode: "insensitive" } },
-                  { author: { name: { contains: query, mode: "insensitive" } } },
-                  { author: { email: { contains: query, mode: "insensitive" } } },
+                  {
+                    author: { name: { contains: query, mode: "insensitive" } },
+                  },
+                  {
+                    author: { email: { contains: query, mode: "insensitive" } },
+                  },
                 ],
               }
             : {}),
@@ -464,7 +509,11 @@ export const adminRouter = createTRPCRouter({
     .input(
       z.object({
         eventId: z.number().int().positive(),
-        reason: z.string().trim().min(10, "Rejection reason must be at least 10 characters.").max(500),
+        reason: z
+          .string()
+          .trim()
+          .min(10, "Rejection reason must be at least 10 characters.")
+          .max(500),
       }),
     )
     .mutation(async ({ ctx, input }) => {

@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  datasourceUrl: process.env.TEST_DATABASE_URL,
+});
 
 const SMOKE_EVENT_TITLE = "E2E Smoke Submitted Event";
 const REALTIME_SMOKE_EVENT_TITLE = "E2E Smoke Realtime Event";
@@ -12,8 +14,7 @@ const DEFAULT_SEED_DOMAIN = "students.college.edu";
 
 function buildSeedEmail(localPart: string) {
   const primaryDomain =
-    process.env.ALLOWED_DOMAINS
-      ?.split(",")
+    process.env.ALLOWED_DOMAINS?.split(",")
       .map((domain) => domain.trim().toLowerCase())
       .find(Boolean) ?? DEFAULT_SEED_DOMAIN;
 
@@ -21,11 +22,19 @@ function buildSeedEmail(localPart: string) {
 }
 
 function assertLocalDatabase() {
-  const databaseUrl = process.env.DATABASE_URL ?? "";
-  const isLocalDatabase = /localhost|127\.0\.0\.1/.test(databaseUrl);
+  const databaseUrl = process.env.TEST_DATABASE_URL ?? "";
+  const isLocalDatabase = ["localhost", "127.0.0.1", "[::1]"].includes(
+    new URL(databaseUrl).hostname,
+  );
 
-  if (process.env.NODE_ENV === "production" || !isLocalDatabase) {
-    throw new Error("Refusing to bootstrap E2E smoke data outside a local/test database.");
+  if (
+    process.env.NODE_ENV === "production" ||
+    !isLocalDatabase ||
+    !/test/i.test(new URL(databaseUrl).pathname)
+  ) {
+    throw new Error(
+      "Refusing to bootstrap E2E smoke data outside a dedicated local TEST_DATABASE_URL.",
+    );
   }
 }
 
@@ -44,11 +53,19 @@ async function main() {
   ]);
 
   if (!organizer || !admin || !student || !club) {
-    throw new Error("Seed data is missing. Run the local seed before bootstrapping Epic 16 smoke data.");
+    throw new Error(
+      "Seed data is missing. Run the local seed before bootstrapping Epic 16 smoke data.",
+    );
   }
 
-  if (!organizer.collegeId || organizer.collegeId !== admin.collegeId || organizer.collegeId !== club.collegeId) {
-    throw new Error("Seeded organizer/admin/club college scope is inconsistent.");
+  if (
+    !organizer.collegeId ||
+    organizer.collegeId !== admin.collegeId ||
+    organizer.collegeId !== club.collegeId
+  ) {
+    throw new Error(
+      "Seeded organizer/admin/club college scope is inconsistent.",
+    );
   }
 
   const eventDate = new Date();
@@ -129,7 +146,9 @@ async function main() {
   realtimeEventDate.setHours(16, 0, 0, 0);
 
   const realtimeRegistrationClosesAt = new Date();
-  realtimeRegistrationClosesAt.setDate(realtimeRegistrationClosesAt.getDate() + 3);
+  realtimeRegistrationClosesAt.setDate(
+    realtimeRegistrationClosesAt.getDate() + 3,
+  );
   realtimeRegistrationClosesAt.setHours(16, 0, 0, 0);
 
   const existingRealtimeEvent = await prisma.event.findFirst({
@@ -205,8 +224,12 @@ async function main() {
     },
   });
 
-  console.log(`Bootstrapped Epic 16 smoke event ${event.id}: ${SMOKE_EVENT_TITLE}`);
-  console.log(`Bootstrapped Epic 17 realtime event ${realtimeEvent.id}: ${REALTIME_SMOKE_EVENT_TITLE}`);
+  console.log(
+    `Bootstrapped Epic 16 smoke event ${event.id}: ${SMOKE_EVENT_TITLE}`,
+  );
+  console.log(
+    `Bootstrapped Epic 17 realtime event ${realtimeEvent.id}: ${REALTIME_SMOKE_EVENT_TITLE}`,
+  );
 }
 
 main()

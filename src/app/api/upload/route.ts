@@ -2,9 +2,16 @@ import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth";
+import { randomUUID } from "node:crypto";
+import { encodeUploadImage } from "@/lib/upload-image";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+const ALLOWED_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
 
 /**
  * Local-dev upload endpoint.
@@ -15,6 +22,15 @@ const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"
  * Body: multipart/form-data with a "file" field
  */
 export async function POST(req: NextRequest) {
+  if (process.env.NODE_ENV !== "development") {
+    return NextResponse.json(
+      {
+        error:
+          "Local uploads are only available in development. Configure object storage.",
+      },
+      { status: 404 },
+    );
+  }
   // Require authentication
   const session = await auth();
   if (!session?.user) {
@@ -53,11 +69,18 @@ export async function POST(req: NextRequest) {
   }
 
   const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  let buffer: Buffer;
+  try {
+    buffer = await encodeUploadImage(Buffer.from(bytes));
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid or unsupported image content." },
+      { status: 400 },
+    );
+  }
 
   // Build a safe, unique filename
-  const ext = file.name.split(".").pop()?.replace(/[^a-z0-9]/gi, "") ?? "jpg";
-  const safeFilename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const safeFilename = `${randomUUID()}.webp`;
   const uploadDir = join(process.cwd(), "public", "uploads");
 
   try {

@@ -1,8 +1,19 @@
-import type { ClubRole, EventApprovalAction, EventStatus } from "@prisma/client";
+import type {
+  ClubRole,
+  EventApprovalAction,
+  EventStatus,
+} from "@prisma/client";
 import { observable } from "@trpc/server/observable";
-import { createTRPCRouter, protectedProcedure, protectedOrganizerProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedOrganizerProcedure,
+} from "@/server/api/trpc";
 import { z } from "zod";
-import { CreateEventSchema, type CreateEventInput } from "@/features/events/components/CreateEventSchema";
+import {
+  CreateEventSchema,
+  type CreateEventInput,
+} from "@/features/events/components/CreateEventSchema";
 import {
   attendeeFilterStatuses,
   attendeeSortOptions,
@@ -13,14 +24,21 @@ import {
 import { type EventAttendanceRealtimePayload } from "@/features/attendance/realtime-attendance";
 import { resolveDiscussionDisplayName } from "@/lib/discussion";
 import { isRegistrationReopenable } from "@/lib/event-registration";
-import { resolveStudentEventAccess } from "@/lib/student-event-visibility";
-import { decodeStudentQrToken, getStudentQrSecret, verifyStudentQrToken } from "@/lib/student-qr";
+import {
+  decodeStudentQrToken,
+  getStudentQrSecret,
+  verifyStudentQrToken,
+} from "@/lib/student-qr";
 import { buildHappeningThisWeekQuery } from "@/server/services/happening-this-week-query";
 import { getPersonalizedFeed } from "@/server/domain/feed-engine";
-import { emitAttendanceChange, getAttendanceLatestActivity } from "@/server/services/attendance-realtime";
+import { publishAttendanceUpdate } from "@/server/services/attendance-realtime";
 import type { db as prismaDb } from "@/server/db";
 import { ee } from "@/server/events";
-import { assertCanManageEvent, getClubManagementRole, isAdminUserRole } from "@/server/permissions/club-management";
+import {
+  assertCanManageEvent,
+  getClubManagementRole,
+  isAdminUserRole,
+} from "@/server/permissions/club-management";
 import { TRPCError } from "@trpc/server";
 
 type OrganizerCtx = {
@@ -153,55 +171,74 @@ async function markAttendedRsvp(
   ctx: OrganizerCtx,
   params: { eventId: number; rsvpId: number; expectedUserId: string },
 ) {
-  const rsvp = await ctx.db.rSVP.findUnique({
-    where: { id: params.rsvpId },
-    include: {
-      user: {
-        select: { id: true, name: true, email: true },
+  return ctx.db.$transaction(async (tx) => {
+    await tx.$executeRaw`SELECT id FROM "Event" WHERE id = ${params.eventId} FOR UPDATE`;
+    const event = await tx.event.findUnique({ where: { id: params.eventId } });
+    if (!event || event.deletedAt || event.status !== "PUBLISHED") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Event is not available for check-in.",
+      });
+    }
+    const rsvp = await tx.rSVP.findUnique({
+      where: { id: params.rsvpId },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
       },
-    },
-  });
-
-  if (!rsvp) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Attendee ticket not found" });
-  }
-
-  if (rsvp?.eventId !== params.eventId) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "Ticket does not belong to this event" });
-  }
-
-  if (rsvp.userId !== params.expectedUserId) {
-    throw new TRPCError({ code: "BAD_REQUEST", message: "Ticket ownership mismatch" });
-  }
-
-  if (rsvp.status === "ATTENDED") {
-    return {
-      changed: false,
-      rsvp,
-    };
-  }
-
-  if (rsvp.status !== "GOING") {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Only confirmed attendees can be checked in.",
     });
-  }
 
-  const updatedRsvp = await ctx.db.rSVP.update({
-    where: { id: rsvp.id },
-    data: { status: "ATTENDED", checkedInAt: new Date() },
-    include: {
-      user: {
-        select: { id: true, name: true, email: true },
+    if (!rsvp) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Attendee ticket not found",
+      });
+    }
+
+    if (rsvp?.eventId !== params.eventId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Ticket does not belong to this event",
+      });
+    }
+
+    if (rsvp.userId !== params.expectedUserId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Ticket ownership mismatch",
+      });
+    }
+
+    if (rsvp.status === "ATTENDED") {
+      return {
+        changed: false,
+        rsvp,
+      };
+    }
+
+    if (rsvp.status !== "GOING") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Only confirmed attendees can be checked in.",
+      });
+    }
+
+    const updatedRsvp = await tx.rSVP.update({
+      where: { id: rsvp.id },
+      data: { status: "ATTENDED", checkedInAt: new Date() },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true },
+        },
       },
-    },
-  });
+    });
 
-  return {
-    changed: true,
-    rsvp: updatedRsvp,
-  };
+    return {
+      changed: true,
+      rsvp: updatedRsvp,
+    };
+  });
 }
 
 function createApprovalLog(
@@ -279,10 +316,13 @@ function buildEventUpdateData(
   };
 }
 
-function getRegistrationDeadlineValidationMessage(input: {
-  date: Date;
-  registrationClosesAt: Date | null;
-}, now: Date = new Date()): string | null {
+function getRegistrationDeadlineValidationMessage(
+  input: {
+    date: Date;
+    registrationClosesAt: Date | null;
+  },
+  now: Date = new Date(),
+): string | null {
   if (!input.registrationClosesAt) {
     return REGISTRATION_DEADLINE_INVALID_MESSAGE;
   }
@@ -298,10 +338,13 @@ function getRegistrationDeadlineValidationMessage(input: {
   return null;
 }
 
-function assertValidRegistrationDeadline(input: {
-  date: Date;
-  registrationClosesAt: Date | null;
-}, now: Date = new Date()) {
+function assertValidRegistrationDeadline(
+  input: {
+    date: Date;
+    registrationClosesAt: Date | null;
+  },
+  now: Date = new Date(),
+) {
   const message = getRegistrationDeadlineValidationMessage(input, now);
 
   if (message) {
@@ -313,61 +356,17 @@ function assertValidRegistrationDeadline(input: {
 }
 
 export const eventRouter = createTRPCRouter({
-  onAttendanceChange: protectedProcedure
+  onAttendanceChange: protectedOrganizerProcedure
     .input(z.object({ eventId: z.number().int().positive() }))
     .subscription(async ({ ctx, input }) => {
-      const event = await ctx.db.event.findUnique({
-        where: { id: input.eventId },
-        select: {
-          id: true,
-          clubId: true,
-          collegeId: true,
-          status: true,
-        },
+      await assertCanManageEvent(ctx, input.eventId, {
+        forbiddenMessage: "Unauthorized for this event",
       });
 
-      if (!event) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Event not found",
-        });
-      }
-
-      if (ctx.session.user.role === "STUDENT") {
-        const accessDecision = resolveStudentEventAccess({
-          eventStatus: event.status,
-          eventCollegeId: event.collegeId,
-          userCollegeId: ctx.session.user.collegeId,
-        });
-
-        if (accessDecision !== "visible") {
-          throw new TRPCError({
-            code: accessDecision === "wrong_college" ? "FORBIDDEN" : "NOT_FOUND",
-            message:
-              accessDecision === "wrong_college"
-                ? "You cannot subscribe to another college's event."
-                : "Event not found",
-          });
-        }
-      } else {
-        await assertCanManageEvent(
-          {
-            db: ctx.db,
-            session: {
-              user: {
-                id: ctx.session.user.id,
-                role: ctx.session.user.role,
-                collegeId: ctx.session.user.collegeId,
-              },
-            },
-          },
-          input.eventId,
-          { forbiddenMessage: "Unauthorized for this event" },
-        );
-      }
-
       return observable<EventAttendanceRealtimePayload>((emit) => {
-        const onAttendanceChange = (payload: EventAttendanceRealtimePayload) => {
+        const onAttendanceChange = (
+          payload: EventAttendanceRealtimePayload,
+        ) => {
           if (payload.eventId === input.eventId) {
             emit.next(payload);
           }
@@ -394,7 +393,7 @@ export const eventRouter = createTRPCRouter({
           message: "Only draft or rejected events can be deleted.",
         });
       }
-      
+
       return ctx.db.event.update({
         where: { id: input.id },
         data: { deletedAt: new Date() },
@@ -429,12 +428,19 @@ export const eventRouter = createTRPCRouter({
 
       assertValidRegistrationDeadline(input.data);
 
-      const { club } = await assertCanManageClubForCreation(ctx, input.data.clubId);
+      const { club } = await assertCanManageClubForCreation(
+        ctx,
+        input.data.clubId,
+      );
 
-      if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
+      if (
+        !ctx.session.user.collegeId ||
+        ctx.session.user.collegeId !== club.collegeId
+      ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User session is not associated with the selected club's college.",
+          message:
+            "User session is not associated with the selected club's college.",
         });
       }
 
@@ -456,7 +462,11 @@ export const eventRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.number().int().positive(),
-        reason: z.string().trim().min(10, "Cancellation reason must be at least 10 characters.").max(500),
+        reason: z
+          .string()
+          .trim()
+          .min(10, "Cancellation reason must be at least 10 characters.")
+          .max(500),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -536,10 +546,14 @@ export const eventRouter = createTRPCRouter({
 
       const { club } = await assertCanManageClubForCreation(ctx, input.clubId);
 
-      if (!ctx.session.user.collegeId || ctx.session.user.collegeId !== club.collegeId) {
+      if (
+        !ctx.session.user.collegeId ||
+        ctx.session.user.collegeId !== club.collegeId
+      ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User session is not associated with the selected club's college.",
+          message:
+            "User session is not associated with the selected club's college.",
         });
       }
 
@@ -694,7 +708,8 @@ export const eventRouter = createTRPCRouter({
       if (!isRegistrationReopenable(currentEvent)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Only approved or published upcoming events can extend registration.",
+          message:
+            "Only approved or published upcoming events can extend registration.",
         });
       }
 
@@ -731,7 +746,7 @@ export const eventRouter = createTRPCRouter({
       return updatedEvent;
     }),
 
-  getOrganizerDrafts: protectedOrganizerProcedure.query(async ({ ctx }) => {    
+  getOrganizerDrafts: protectedOrganizerProcedure.query(async ({ ctx }) => {
     const where =
       isAdminUserRole(ctx.session.user.role) && ctx.session.user.collegeId
         ? { collegeId: ctx.session.user.collegeId, deletedAt: null }
@@ -766,8 +781,8 @@ export const eventRouter = createTRPCRouter({
           },
         },
         _count: {
-          select: { rsvps: true }
-        }
+          select: { rsvps: true },
+        },
       },
       orderBy: { date: "desc" },
     });
@@ -784,7 +799,11 @@ export const eventRouter = createTRPCRouter({
       });
     }
 
-    return getPersonalizedFeed({ db: ctx.db, headers: ctx.headers }, userId, collegeId);
+    return getPersonalizedFeed(
+      { db: ctx.db, headers: ctx.headers },
+      userId,
+      collegeId,
+    );
   }),
 
   getHappeningThisWeek: protectedProcedure.query(async ({ ctx }) => {
@@ -794,7 +813,9 @@ export const eventRouter = createTRPCRouter({
         message: "User session is missing a college association.",
       });
     }
-    return ctx.db.event.findMany(buildHappeningThisWeekQuery(ctx.session.user.collegeId));
+    return ctx.db.event.findMany(
+      buildHappeningThisWeekQuery(ctx.session.user.collegeId),
+    );
   }),
 
   getDiscussionThreads: protectedProcedure
@@ -851,7 +872,10 @@ export const eventRouter = createTRPCRouter({
         createdAt: thread.createdAt,
         author: {
           id: thread.author.id,
-          displayName: resolveDiscussionDisplayName(thread.author.name, thread.author.email),
+          displayName: resolveDiscussionDisplayName(
+            thread.author.name,
+            thread.author.email,
+          ),
         },
         replies: thread.replies.map((reply) => ({
           id: reply.id,
@@ -859,7 +883,10 @@ export const eventRouter = createTRPCRouter({
           createdAt: reply.createdAt,
           author: {
             id: reply.author.id,
-            displayName: resolveDiscussionDisplayName(reply.author.name, reply.author.email),
+            displayName: resolveDiscussionDisplayName(
+              reply.author.name,
+              reply.author.email,
+            ),
             isOrganizer: reply.authorId === event.authorId,
           },
         })),
@@ -914,7 +941,8 @@ export const eventRouter = createTRPCRouter({
       }
 
       await assertCanManageEvent(ctx, thread.eventId, {
-        forbiddenMessage: "Only club managers can reply with organizer authority",
+        forbiddenMessage:
+          "Only club managers can reply with organizer authority",
       });
 
       return ctx.db.eventDiscussionReply.create({
@@ -971,7 +999,10 @@ export const eventRouter = createTRPCRouter({
         forbiddenMessage: "Unauthorized to view attendees for this event",
       });
 
-      const { event, attendees } = await getEventAttendanceSnapshot(ctx, input.eventId);
+      const { event, attendees } = await getEventAttendanceSnapshot(
+        ctx,
+        input.eventId,
+      );
 
       return {
         event,
@@ -1010,14 +1041,20 @@ export const eventRouter = createTRPCRouter({
       }
 
       if (!verifyStudentQrToken(input.token, payloadSecret)) {
-        return buildStudentQrVerificationResult("INVALID_QR", "Invalid student passport QR.");
+        return buildStudentQrVerificationResult(
+          "INVALID_QR",
+          "Invalid student passport QR.",
+        );
       }
 
       let payload: ReturnType<typeof decodeStudentQrToken>;
       try {
         payload = decodeStudentQrToken(input.token, payloadSecret);
       } catch {
-        return buildStudentQrVerificationResult("INVALID_QR", "Invalid student passport QR.");
+        return buildStudentQrVerificationResult(
+          "INVALID_QR",
+          "Invalid student passport QR.",
+        );
       }
 
       const studentProfile = await ctx.db.studentProfile.findUnique({
@@ -1036,15 +1073,27 @@ export const eventRouter = createTRPCRouter({
       });
 
       if (!studentProfile?.studentQrId) {
-        return buildStudentQrVerificationResult("INVALID_QR", "Invalid student passport QR.");
+        return buildStudentQrVerificationResult(
+          "INVALID_QR",
+          "Invalid student passport QR.",
+        );
       }
 
       if (
         studentProfile.qrRevokedAt ||
         studentProfile.studentQrSecretVersion !== payload.studentQrSecretVersion
       ) {
-        return buildStudentQrVerificationResult("REVOKED_QR", "This student passport QR has been revoked.");
+        return buildStudentQrVerificationResult(
+          "REVOKED_QR",
+          "This student passport QR has been revoked.",
+        );
       }
+
+      if (!studentProfile.isVerified)
+        return buildStudentQrVerificationResult(
+          "INVALID_QR",
+          "Student identity is pending college verification.",
+        );
 
       if (studentProfile.collegeId !== event.collegeId) {
         return buildStudentQrVerificationResult(
@@ -1071,7 +1120,11 @@ export const eventRouter = createTRPCRouter({
         },
       });
 
-      if (!rsvp || rsvp.status === "WAITLISTED" || rsvp.status === "CANCELLED") {
+      if (
+        !rsvp ||
+        rsvp.status === "WAITLISTED" ||
+        rsvp.status === "CANCELLED"
+      ) {
         return buildStudentQrVerificationResult(
           "NOT_REGISTERED",
           "This student is not registered for this event.",
@@ -1099,22 +1152,34 @@ export const eventRouter = createTRPCRouter({
         );
       }
 
-      const updated = await ctx.db.rSVP.update({
-        where: { id: rsvp.id },
-        data: { status: "ATTENDED", checkedInAt: new Date() },
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-      });
+      let checkIn;
+      try {
+        checkIn = await markAttendedRsvp(ctx, {
+          eventId: input.eventId,
+          rsvpId: rsvp.id,
+          expectedUserId: studentProfile.userId,
+        });
+      } catch (error) {
+        if (
+          error instanceof TRPCError &&
+          (error.code === "BAD_REQUEST" || error.code === "NOT_FOUND")
+        ) {
+          return buildStudentQrVerificationResult(
+            "NOT_REGISTERED",
+            error.message,
+          );
+        }
+        throw error;
+      }
+      const updated = checkIn.rsvp;
+      if (!checkIn.changed)
+        return buildStudentQrVerificationResult(
+          "ALREADY_CHECKED_IN",
+          "This student has already been checked in.",
+          { rsvpId: updated.id, userId: updated.userId, attendeeName },
+        );
 
-      const latestActivity = await getAttendanceLatestActivity(ctx.db, updated.id);
-      await emitAttendanceChange(ctx.db, input.eventId, latestActivity);
+      await publishAttendanceUpdate(ctx.db, input.eventId, updated.id);
 
       return buildStudentQrVerificationResult(
         "CHECKED_IN",
@@ -1137,7 +1202,10 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       await assertCanCheckInToEvent(ctx, input.eventId);
 
-      const { attendees } = await getEventAttendanceSnapshot(ctx, input.eventId);
+      const { attendees } = await getEventAttendanceSnapshot(
+        ctx,
+        input.eventId,
+      );
 
       return filterAndSortAttendees(attendees, {
         q: input.query,
@@ -1166,7 +1234,10 @@ export const eventRouter = createTRPCRouter({
       });
 
       if (!rsvp) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Attendee ticket not found" });
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Attendee ticket not found",
+        });
       }
 
       const { changed, rsvp: updated } = await markAttendedRsvp(ctx, {
@@ -1176,8 +1247,7 @@ export const eventRouter = createTRPCRouter({
       });
 
       if (changed) {
-        const latestActivity = await getAttendanceLatestActivity(ctx.db, updated.id);
-        await emitAttendanceChange(ctx.db, input.eventId, latestActivity);
+        await publishAttendanceUpdate(ctx.db, input.eventId, updated.id);
       }
 
       return {
@@ -1206,7 +1276,7 @@ export const eventRouter = createTRPCRouter({
           },
           select: {
             status: true,
-          }
+          },
         },
         club: {
           select: {
@@ -1225,7 +1295,10 @@ export const eventRouter = createTRPCRouter({
   }),
 });
 
-async function assertCanManageClubForCreation(ctx: OrganizerCtx, clubId: number) {
+async function assertCanManageClubForCreation(
+  ctx: OrganizerCtx,
+  clubId: number,
+) {
   const club = await ctx.db.club.findUnique({
     where: { id: clubId },
     select: {

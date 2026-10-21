@@ -39,29 +39,37 @@ type LiveEventAttendanceState = {
   latestActivity: AttendanceLatestActivity | null;
 };
 
-function buildInitialState(options: LiveEventAttendanceOptions): LiveEventAttendanceState {
+function buildInitialState(
+  options: LiveEventAttendanceOptions,
+): LiveEventAttendanceState {
   const initialCounts =
     options.initialCounts ??
-    (options.initialAttendees ? getAttendeeCounts(options.initialAttendees) : null);
+    (options.initialAttendees
+      ? getAttendeeCounts(options.initialAttendees)
+      : null);
 
   return {
     activeCount: options.initialActiveCount,
     totalCapacity: options.totalCapacity,
-    remainingCapacity: Math.max(0, options.totalCapacity - options.initialActiveCount),
+    remainingCapacity: Math.max(
+      0,
+      options.totalCapacity - options.initialActiveCount,
+    ),
     goingCount: initialCounts?.going ?? options.initialActiveCount,
     attendedCount: initialCounts?.attended ?? 0,
     waitlistedCount: initialCounts?.waitlisted ?? 0,
     cancelledCount: initialCounts?.cancelled ?? 0,
-    viewerRsvpStatus: normalizeLiveViewerRsvpStatus(options.initialViewerRsvpStatus),
+    viewerRsvpStatus: normalizeLiveViewerRsvpStatus(
+      options.initialViewerRsvpStatus,
+    ),
     attendees: options.initialAttendees ?? [],
-    counts:
-      initialCounts ?? {
-        all: 0,
-        going: options.initialActiveCount,
-        attended: 0,
-        cancelled: 0,
-        waitlisted: 0,
-      },
+    counts: initialCounts ?? {
+      all: 0,
+      going: options.initialActiveCount,
+      attended: 0,
+      cancelled: 0,
+      waitlisted: 0,
+    },
     latestActivity: null,
   };
 }
@@ -69,6 +77,8 @@ function buildInitialState(options: LiveEventAttendanceOptions): LiveEventAttend
 export function useLiveEventAttendance(options: LiveEventAttendanceOptions) {
   const { data: session } = useSession();
   const viewerUserId = session?.user?.id ?? null;
+  const isManager =
+    session?.user?.role === "ORGANIZER" || session?.user?.role === "ADMIN";
   const {
     eventId,
     totalCapacity,
@@ -77,8 +87,14 @@ export function useLiveEventAttendance(options: LiveEventAttendanceOptions) {
     initialAttendees,
     initialCounts,
   } = options;
-  const attendeesSerialized = useMemo(() => JSON.stringify(initialAttendees), [initialAttendees]);
-  const countsSerialized = useMemo(() => JSON.stringify(initialCounts), [initialCounts]);
+  const attendeesSerialized = useMemo(
+    () => JSON.stringify(initialAttendees),
+    [initialAttendees],
+  );
+  const countsSerialized = useMemo(
+    () => JSON.stringify(initialCounts),
+    [initialCounts],
+  );
 
   const initialState = useMemo(
     () =>
@@ -109,7 +125,7 @@ export function useLiveEventAttendance(options: LiveEventAttendanceOptions) {
   api.event.onAttendanceChange.useSubscription(
     { eventId: options.eventId },
     {
-      enabled: options.enabled ?? true,
+      enabled: (options.enabled ?? true) && isManager,
       onData: (payload) => {
         const counts = getAttendeeCounts(payload.attendees);
 
@@ -131,6 +147,22 @@ export function useLiveEventAttendance(options: LiveEventAttendanceOptions) {
               : current.viewerRsvpStatus,
         }));
       },
+    },
+  );
+
+  api.rsvp.onCapacityChange.useSubscription(
+    { eventId: options.eventId },
+    {
+      enabled: (options.enabled ?? true) && session?.user?.role === "STUDENT",
+      onData: (payload) =>
+        setState((current) => ({
+          ...current,
+          remainingCapacity: payload.newCapacity,
+          activeCount: Math.max(0, current.totalCapacity - payload.newCapacity),
+          viewerRsvpStatus: normalizeLiveViewerRsvpStatus(
+            payload.viewerRsvpStatus,
+          ),
+        })),
     },
   );
 

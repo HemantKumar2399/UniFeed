@@ -9,7 +9,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { ThemeProvider } from "./ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "Campus Platform",
+  title: "UniFeed",
   description:
     "The premium, distraction-free utility for discovering university events and communities.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],

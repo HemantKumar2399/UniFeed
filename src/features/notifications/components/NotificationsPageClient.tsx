@@ -4,12 +4,19 @@ import { api } from "@/trpc/react";
 
 import { Bell, Check, CheckCheck, Inbox, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function NotificationsPageClient() {
   const utils = api.useUtils();
-  const { data: notifications, isLoading } = api.notification.getAll.useQuery();
-  
+  const {
+    data: notifications,
+    isLoading,
+    error,
+    refetch,
+  } = api.notification.getAll.useQuery(undefined, { retry: false });
+
   const markAsReadMutation = api.notification.markAsRead.useMutation({
+    onError: (error) => toast.error(error.message),
     onSuccess: async () => {
       await utils.notification.getAll.invalidate();
       await utils.notification.getUnreadCount.invalidate();
@@ -17,20 +24,21 @@ export default function NotificationsPageClient() {
   });
 
   const markAllAsReadMutation = api.notification.markAllAsRead.useMutation({
+    onError: (error) => toast.error(error.message),
     onSuccess: async () => {
       await utils.notification.getAll.invalidate();
       await utils.notification.getUnreadCount.invalidate();
     },
   });
 
-  const handleMarkAsRead = async (id: string, e: React.MouseEvent) => {
+  const handleMarkAsRead = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    await markAsReadMutation.mutateAsync({ id });
+    markAsReadMutation.mutate({ id });
   };
 
-  const handleMarkAllAsRead = async () => {
-    await markAllAsReadMutation.mutateAsync();
+  const handleMarkAllAsRead = () => {
+    markAllAsReadMutation.mutate();
   };
 
   const formatTimeAgo = (date: Date | string) => {
@@ -51,108 +59,135 @@ export default function NotificationsPageClient() {
     switch (type) {
       case "EVENT_APPROVED":
       case "RSVP_CONFIRMED":
-        return <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">✓</div>;
+        return (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/10 font-bold text-emerald-600">
+            ✓
+          </div>
+        );
       case "EVENT_REJECTED":
       case "EVENT_CANCELLED":
-        return <div className="w-8 h-8 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center font-bold">✕</div>;
+        return (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500/10 font-bold text-rose-600">
+            ✕
+          </div>
+        );
       default:
-        return <div className="w-8 h-8 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center"><Bell className="w-4 h-4" /></div>;
+        return (
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/10 text-blue-600">
+            <Bell className="h-4 w-4" />
+          </div>
+        );
     }
   };
 
   const hasUnread = notifications?.some((n) => !n.isRead);
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="mx-auto w-full max-w-2xl px-4 py-8">
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Notifications</h1>
-          <p className="text-[14px] text-muted-foreground mt-1">Stay updated on event status changes, RSVP confirmations, and waitlist activities.</p>
+          <h1 className="text-foreground text-2xl font-bold tracking-tight">
+            Notifications
+          </h1>
+          <p className="text-muted-foreground mt-1 text-[14px]">
+            Stay updated on event status changes, RSVP confirmations, and
+            waitlist activities.
+          </p>
         </div>
         {hasUnread && (
           <button
             onClick={handleMarkAllAsRead}
             disabled={markAllAsReadMutation.isPending}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-notion-blue hover:bg-notion-blue/5 rounded-lg transition-colors border border-notion-blue/20 disabled:opacity-50"
+            className="text-notion-blue hover:bg-notion-blue/5 border-notion-blue/20 flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50"
           >
-            <CheckCheck className="w-3.5 h-3.5" />
+            <CheckCheck className="h-3.5 w-3.5" />
             Mark all read
           </button>
         )}
       </div>
 
-      {isLoading ? (
+      {error ? (
+        <div role="alert" className="border-input rounded-xl border p-5">
+          <p>Unable to load notifications.</p>
+          <button
+            onClick={() => void refetch()}
+            className="mt-2 min-h-11 underline"
+          >
+            Retry
+          </button>
+        </div>
+      ) : isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-muted/40 rounded-xl animate-pulse" />
+            <div
+              key={i}
+              className="bg-muted/40 h-20 animate-pulse rounded-xl"
+            />
           ))}
         </div>
       ) : !notifications || notifications.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-input rounded-2xl bg-card-bg p-8 transition-colors">
-          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-4">
-            <Inbox className="w-6 h-6" />
+        <div className="border-input bg-card-bg flex flex-col items-center justify-center rounded-2xl border border-dashed p-8 py-16 text-center transition-colors">
+          <div className="bg-muted text-muted-foreground mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+            <Inbox className="h-6 w-6" />
           </div>
-          <h3 className="text-base font-bold text-foreground">All caught up!</h3>
-          <p className="text-[14px] text-muted-foreground mt-1">You don&apos;t have any notifications at the moment.</p>
+          <h3 className="text-foreground text-base font-bold">
+            All caught up!
+          </h3>
+          <p className="text-muted-foreground mt-1 text-[14px]">
+            You don&apos;t have any notifications at the moment.
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
           {notifications.map((notification) => {
             const cardContent = (
               <div
-                className={`group flex items-start gap-4 p-4 rounded-xl border transition-all text-left ${
+                className={`group flex items-start gap-4 rounded-xl border p-4 text-left transition-all ${
                   notification.isRead
                     ? "bg-card-bg border-whisper hover:border-input"
-                    : "bg-blue-500/5 dark:bg-blue-500/10 border-blue-200/50 dark:border-blue-500/20 hover:border-blue-300 dark:hover:border-blue-500/40 shadow-sm"
+                    : "border-blue-200/50 bg-blue-500/5 shadow-sm hover:border-blue-300 dark:border-blue-500/20 dark:bg-blue-500/10 dark:hover:border-blue-500/40"
                 }`}
               >
                 {getNotificationIcon(notification.type)}
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className={`text-[14px] leading-tight truncate ${notification.isRead ? "text-foreground/90 font-medium" : "text-foreground font-bold"}`}>
+                    <h4
+                      className={`truncate text-[14px] leading-tight ${notification.isRead ? "text-foreground/90 font-medium" : "text-foreground font-bold"}`}
+                    >
                       {notification.title}
                     </h4>
-                    <span className="text-[11px] text-muted-foreground shrink-0">{formatTimeAgo(notification.createdAt)}</span>
+                    <span className="text-muted-foreground shrink-0 text-[11px]">
+                      {formatTimeAgo(notification.createdAt)}
+                    </span>
                   </div>
-                  <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed">
+                  <p className="text-muted-foreground mt-1 text-[13px] leading-relaxed">
                     {notification.message}
                   </p>
                   {notification.linkUrl && (
-                    <div className="flex items-center gap-1 text-[12px] font-semibold text-notion-blue mt-2 group-hover:translate-x-0.5 transition-transform">
-                      View details <ArrowRight className="w-3 h-3" />
-                    </div>
+                    <Link
+                      href={notification.linkUrl}
+                      onClick={() => {
+                        if (!notification.isRead)
+                          markAsReadMutation.mutate({ id: notification.id });
+                      }}
+                      className="text-notion-blue mt-2 flex min-h-11 items-center gap-1 text-[12px] font-semibold focus-visible:outline focus-visible:outline-2"
+                    >
+                      View details <ArrowRight className="h-3 w-3" />
+                    </Link>
                   )}
                 </div>
                 {!notification.isRead && (
                   <button
                     onClick={(e) => handleMarkAsRead(notification.id, e)}
                     disabled={markAsReadMutation.isPending}
-                    className="w-6 h-6 rounded-full border border-whisper flex items-center justify-center hover:bg-muted hover:text-foreground text-muted-foreground transition-colors shrink-0"
+                    className="border-whisper hover:bg-muted hover:text-foreground text-muted-foreground flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors"
                     title="Mark as read"
                   >
-                    <Check className="w-3.5 h-3.5" />
+                    <Check className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>
             );
-
-            if (notification.linkUrl) {
-              // Automatically mark as read when clicking the link, wait, we can let user click the card to navigate
-              return (
-                <Link
-                  key={notification.id}
-                  href={notification.linkUrl}
-                  onClick={() => {
-                    if (!notification.isRead) {
-                      markAsReadMutation.mutate({ id: notification.id });
-                    }
-                  }}
-                  className="block outline-none"
-                >
-                  {cardContent}
-                </Link>
-              );
-            }
 
             return <div key={notification.id}>{cardContent}</div>;
           })}

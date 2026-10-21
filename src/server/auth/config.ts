@@ -43,12 +43,13 @@ export const authConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const email = credentials?.email;
+        const rawEmail = credentials?.email;
         const password = credentials?.password;
 
-        if (typeof email !== "string" || typeof password !== "string") {
+        if (typeof rawEmail !== "string" || typeof password !== "string") {
           return null;
         }
+        const email = rawEmail.trim().toLowerCase();
 
         // AC-1: Reject emails outside allowed university domains.
         // Throwing "AccessDenied" maps to /error?error=AccessDenied via NextAuth's
@@ -59,31 +60,9 @@ export const authConfig = {
         }
 
         // Look up the user by exact email first.
-        let user = await db.user.findUnique({ where: { email } });
+        const user = await db.user.findUnique({ where: { email } });
 
-        if (!user) {
-          // Smart fallback: if the exact email is not found, search for a user in
-          // the same college with the same local-part (prefix before the @).
-          // This allows users seeded under one domain to log in from another
-          // domain on the same college (e.g. @students.college.edu vs @students.edu.in).
-          const localPart = email.split("@")[0]?.toLowerCase();
-          if (localPart) {
-            const matchingUsers = await db.user.findMany({
-              where: {
-                collegeId: college.id,
-                email: {
-                  startsWith: `${localPart}@`,
-                  mode: "insensitive",
-                },
-              },
-            });
-            if (matchingUsers.length === 1) {
-              user = matchingUsers[0]!;
-            }
-          }
-        }
-
-        if (!user?.password) {
+        if (!user?.password || user.collegeId !== college.id) {
           return null;
         }
 
@@ -94,9 +73,9 @@ export const authConfig = {
         }
 
         // AC-2: Session will be created for valid, allowed-domain users.
-        return { 
-          id: user.id, 
-          email: user.email, 
+        return {
+          id: user.id,
+          email: user.email,
           name: user.name,
           role: user.role,
           collegeId: user.collegeId,
@@ -105,13 +84,21 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       // On first sign-in, `user` is populated — persist id into the JWT.
       if (user) {
         token.id = user.id;
-        token.role = user.role;
-        token.collegeId = user.collegeId;
       }
+      if (typeof token.id !== "string") return null;
+      // Refresh authorization on every server session read so demotions and
+      // deleted accounts take effect without waiting for the JWT to expire.
+      const currentUser = await db.user.findUnique({
+        where: { id: token.id },
+        select: { role: true, collegeId: true },
+      });
+      if (!currentUser) return null;
+      token.role = currentUser.role;
+      token.collegeId = currentUser.collegeId;
       return token;
     },
     session({ session, token }) {

@@ -30,6 +30,7 @@ import { formatEventDateMeta } from "./event-card.utils";
 export type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
 
 export function EventCard({ event }: { event: EventFeedItem }) {
+  const [imageFailed, setImageFailed] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const eventHashId = `event-${event.id}`;
   const { activeCount, totalCapacity, viewerRsvpStatus } =
@@ -83,25 +84,49 @@ export function EventCard({ event }: { event: EventFeedItem }) {
   return (
     <Drawer open={isDetailsOpen} onOpenChange={handleDrawerOpenChange}>
       <article
-        className="group w-full overflow-hidden rounded-2xl border border-whisper bg-card-bg shadow-sm transition-all duration-300 hover:shadow-md"
+        className="group border-whisper bg-card-bg w-full overflow-hidden rounded-2xl border shadow-sm transition-all duration-300 hover:shadow-md"
         id={eventHashId}
       >
         <DrawerTrigger asChild>
           <button
             aria-expanded={isDetailsOpen}
-            className="relative block w-full bg-card-bg text-left cursor-pointer"
+            className="bg-card-bg relative block w-full cursor-pointer text-left"
             type="button"
           >
-            <div className="relative aspect-[21/9] w-full overflow-hidden bg-muted">
-              <Image
-                alt={event.title}
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                fill
-                priority={false}
-                sizes="(max-width: 768px) 100vw, 600px"
-                src={event.imageUrl}
-              />
+            <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden">
+              {imageFailed ? (
+                <div className="bg-brand-surface text-primary absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <Calendar className="h-10 w-10 opacity-50" />
+                  <span className="text-sm font-semibold">
+                    {event.category ?? "Campus event"}
+                  </span>
+                </div>
+              ) : (
+                <Image
+                  onError={() => setImageFailed(true)}
+                  alt={event.title}
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  priority={false}
+                  sizes="(max-width: 768px) 100vw, 600px"
+                  src={event.imageUrl}
+                />
+              )}
 
+              <div className="border-whisper bg-card-bg absolute top-3 right-3 flex min-w-12 flex-col items-center rounded-xl border px-2.5 py-2 shadow-sm">
+                <span className="text-primary text-[10px] font-bold tracking-wider uppercase">
+                  {new Intl.DateTimeFormat("en", {
+                    month: "short",
+                    timeZone: "Asia/Kolkata",
+                  }).format(event.date)}
+                </span>
+                <span className="font-display text-foreground text-2xl leading-tight font-bold">
+                  {new Intl.DateTimeFormat("en", {
+                    day: "2-digit",
+                    timeZone: "Asia/Kolkata",
+                  }).format(event.date)}
+                </span>
+              </div>
               {viewerRsvpStatus ? (
                 <div className="absolute top-3 left-3 z-10">
                   <RsvpStatusBadge status={viewerRsvpStatus} />
@@ -109,8 +134,11 @@ export function EventCard({ event }: { event: EventFeedItem }) {
               ) : null}
             </div>
 
-            <div className="relative bg-card-bg p-5 transition-colors duration-300">
-              <h2 className="text-section-title mb-1 line-clamp-2 text-foreground">
+            <div className="bg-card-bg relative p-5 transition-colors duration-300">
+              <p className="text-muted-foreground mb-2 truncate text-xs font-medium">
+                {event.club.name}
+              </p>
+              <h2 className="text-foreground mb-1 line-clamp-2 text-xl leading-snug font-bold tracking-tight">
                 {event.title}
               </h2>
               <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -124,16 +152,16 @@ export function EventCard({ event }: { event: EventFeedItem }) {
               </div>
 
               <div className="mt-4 mb-5 flex flex-col gap-2">
-                <div className="flex items-center gap-2.5 text-[14px] font-medium text-muted-foreground">
+                <div className="text-muted-foreground flex items-center gap-2.5 text-[14px] font-medium">
                   <Calendar className="text-link-accent h-4 w-4 shrink-0" />
                   <span>{formatEventDateMeta(event.date)}</span>
                 </div>
-                <div className="flex items-center gap-2.5 text-[14px] text-muted-foreground">
-                  <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <div className="text-muted-foreground flex items-center gap-2.5 text-[14px]">
+                  <MapPin className="text-muted-foreground h-4 w-4 shrink-0" />
                   <span className="truncate">{event.location}</span>
                 </div>
-                <div className="flex items-center gap-2.5 text-[14px] text-muted-foreground">
-                  <span className="font-medium text-muted-foreground">
+                <div className="text-muted-foreground flex items-center gap-2.5 text-[14px]">
+                  <span className="text-muted-foreground font-medium">
                     Register by:
                   </span>
                   <span>
@@ -154,12 +182,12 @@ export function EventCard({ event }: { event: EventFeedItem }) {
       </article>
 
       {isDetailsOpen ? (
-        <DrawerContent className="max-h-[88vh] rounded-t-[24px] border-whisper bg-card-bg transition-colors duration-300">
+        <DrawerContent className="border-whisper bg-card-bg max-h-[88vh] rounded-t-[24px] transition-colors duration-300">
           <DrawerHeader className="text-left">
             <DrawerTitle className="text-section-title text-foreground">
               {event.title}
             </DrawerTitle>
-            <DrawerDescription className="text-[14px] font-medium text-muted-foreground">
+            <DrawerDescription className="text-muted-foreground text-[14px] font-medium">
               {formatEventDateMeta(event.date)} · {event.location}
             </DrawerDescription>
           </DrawerHeader>
