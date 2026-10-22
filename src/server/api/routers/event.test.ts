@@ -26,6 +26,11 @@ const validCreateInput = {
   registrationClosesAt: new Date("2030-05-13T16:45:00.000Z"),
   location: "Innovation Lab",
   imageUrl: "https://example.com/poster.png",
+  galleryImages: ["https://example.com/gallery.png"],
+  agenda: "18:00 Welcome\n18:30 Workshop",
+  requirements: "Bring a laptop",
+  contactEmail: "host@campus.edu",
+  venueUrl: "https://maps.example.com/hall",
   capacity: 180,
   category: "Technical" as const,
   tags: ["coding", "workshop"],
@@ -56,6 +61,14 @@ void test("eventRouter.create succeeds for a managed club", async () => {
           assert.equal(args.data.clubId, 10);
           assert.equal(args.data.collegeId, "college-1");
           assert.equal(args.data.status, "DRAFT");
+          assert.deepEqual(
+            args.data.galleryImages,
+            validCreateInput.galleryImages,
+          );
+          assert.equal(args.data.agenda, validCreateInput.agenda);
+          assert.equal(args.data.requirements, validCreateInput.requirements);
+          assert.equal(args.data.contactEmail, validCreateInput.contactEmail);
+          assert.equal(args.data.venueUrl, validCreateInput.venueUrl);
           assert.equal(args.data.category, "Technical");
           assert.deepEqual(args.data.tags, ["coding", "workshop"]);
           assert.equal(args.data.domain, "Engineering");

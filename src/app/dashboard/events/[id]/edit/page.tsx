@@ -75,10 +75,14 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     notFound();
   }
 
-  const category = EVENT_CATEGORY_OPTIONS.includes(event.category as (typeof EVENT_CATEGORY_OPTIONS)[number])
+  const category = EVENT_CATEGORY_OPTIONS.includes(
+    event.category as (typeof EVENT_CATEGORY_OPTIONS)[number],
+  )
     ? (event.category as (typeof EVENT_CATEGORY_OPTIONS)[number])
     : "Academic";
-  const domain = EVENT_DOMAIN_OPTIONS.includes(event.domain as (typeof EVENT_DOMAIN_OPTIONS)[number])
+  const domain = EVENT_DOMAIN_OPTIONS.includes(
+    event.domain as (typeof EVENT_DOMAIN_OPTIONS)[number],
+  )
     ? (event.domain as (typeof EVENT_DOMAIN_OPTIONS)[number])
     : "Campus Life";
 
@@ -90,6 +94,11 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
     registrationClosesAt: event.registrationClosesAt,
     location: event.location,
     imageUrl: event.imageUrl,
+    galleryImages: event.galleryImages,
+    agenda: event.agenda ?? undefined,
+    requirements: event.requirements ?? undefined,
+    contactEmail: event.contactEmail ?? undefined,
+    venueUrl: event.venueUrl ?? undefined,
     capacity: event.capacity,
     category,
     tags: event.tags,

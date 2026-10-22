@@ -692,11 +692,187 @@ export function EventEditor({
               <div
                 aria-label="Event cover preview"
                 role="img"
-                className="h-56 w-full bg-cover bg-center"
+                className="h-56 w-full bg-contain bg-center bg-no-repeat"
                 style={{ backgroundImage: `url(${draft.imageUrl})` }}
               />
             </div>
           ) : null}
+        </section>
+
+        <section
+          aria-labelledby="event-more-details"
+          className="border-border bg-card-bg rounded-2xl border p-5 sm:p-6"
+        >
+          <h2
+            id="event-more-details"
+            className="font-display text-xl font-bold"
+          >
+            More event details{" "}
+            <span className="text-muted-foreground text-sm font-normal">
+              (optional)
+            </span>
+          </h2>
+          <p className="text-muted-foreground mt-2 text-sm leading-6">
+            Help people plan their visit. Only completed sections appear on the
+            event page.
+          </p>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <label className="space-y-2 sm:col-span-2">
+              <span className="text-sm font-semibold">Schedule / agenda</span>
+              <textarea
+                rows={5}
+                maxLength={4000}
+                placeholder={
+                  "18:00 — Doors open\n18:30 — Workshop begins\n20:00 — Q&A"
+                }
+                value={draft.agenda ?? ""}
+                onChange={handleTextChange("agenda")}
+                disabled={!isEditable}
+                className="border-input bg-background w-full rounded-xl border p-3 text-sm leading-6"
+              />
+              {fieldErrors.agenda && (
+                <p className="text-danger text-sm">{fieldErrors.agenda}</p>
+              )}
+            </label>
+            <label className="space-y-2 sm:col-span-2">
+              <span className="text-sm font-semibold">
+                What to bring / requirements
+              </span>
+              <textarea
+                rows={4}
+                maxLength={2000}
+                placeholder="Bring your laptop, charger and student ID. Add any preparation or accessibility details."
+                value={draft.requirements ?? ""}
+                onChange={handleTextChange("requirements")}
+                disabled={!isEditable}
+                className="border-input bg-background w-full rounded-xl border p-3 text-sm leading-6"
+              />
+              {fieldErrors.requirements && (
+                <p className="text-danger text-sm">
+                  {fieldErrors.requirements}
+                </p>
+              )}
+            </label>
+            <label className="space-y-2">
+              <span className="text-sm font-semibold">
+                Organizer contact email
+              </span>
+              <input
+                type="email"
+                maxLength={254}
+                placeholder="events@your-college.edu"
+                value={draft.contactEmail ?? ""}
+                onChange={handleTextChange("contactEmail")}
+                disabled={!isEditable}
+                className="border-input bg-background min-h-11 w-full rounded-xl border px-3 text-sm"
+              />
+              {fieldErrors.contactEmail && (
+                <p className="text-danger text-sm">
+                  {fieldErrors.contactEmail}
+                </p>
+              )}
+            </label>
+            <label className="space-y-2">
+              <span className="text-sm font-semibold">
+                Venue / directions link
+              </span>
+              <input
+                type="url"
+                maxLength={2048}
+                placeholder="https://maps.example.com/your-venue"
+                value={draft.venueUrl ?? ""}
+                onChange={handleTextChange("venueUrl")}
+                disabled={!isEditable}
+                className="border-input bg-background min-h-11 w-full rounded-xl border px-3 text-sm"
+              />
+              {fieldErrors.venueUrl && (
+                <p className="text-danger text-sm">{fieldErrors.venueUrl}</p>
+              )}
+            </label>
+          </div>
+        </section>
+        <section
+          aria-labelledby="event-gallery-heading"
+          className="border-border bg-card-bg rounded-2xl border p-5 sm:p-6"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2
+                id="event-gallery-heading"
+                className="font-display text-xl font-bold"
+              >
+                Event gallery
+              </h2>
+              <p className="text-muted-foreground mt-2 text-sm">
+                Add up to six extra posters, speaker cards or venue photos.
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled={
+                !isEditable || isBusy || (draft.galleryImages?.length ?? 0) >= 6
+              }
+              onClick={() =>
+                setDraftValue("galleryImages", [
+                  ...(draft.galleryImages ?? []),
+                  "",
+                ])
+              }
+              className="border-input min-h-11 rounded-xl border px-4 text-sm font-semibold disabled:opacity-50"
+            >
+              Add gallery image
+            </button>
+          </div>
+          <div className="mt-5 space-y-5">
+            {(draft.galleryImages ?? []).map((url, index) => (
+              <fieldset
+                aria-label={`Gallery image ${index + 1}`}
+                key={index}
+                className="border-border rounded-xl border p-4"
+              >
+                <legend className="px-2 text-sm font-semibold">
+                  Gallery image {index + 1}
+                </legend>
+                <div className="mb-3 flex justify-end">
+                  <button
+                    type="button"
+                    disabled={!isEditable || isBusy}
+                    onClick={() =>
+                      setDraftValue(
+                        "galleryImages",
+                        (draft.galleryImages ?? []).filter(
+                          (_, position) => position !== index,
+                        ),
+                      )
+                    }
+                    aria-label={`Remove gallery image ${index + 1}`}
+                    className="text-danger min-h-11 px-3 text-sm font-medium"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <ImageUploader
+                  value={url}
+                  onChange={(nextUrl) =>
+                    setDraftValue(
+                      "galleryImages",
+                      (draft.galleryImages ?? []).map((current, position) =>
+                        position === index ? nextUrl : current,
+                      ),
+                    )
+                  }
+                  onUploadStateChange={setIsUploading}
+                  disabled={!isEditable || isUploading}
+                  label={`Upload gallery image ${index + 1}`}
+                />
+              </fieldset>
+            ))}
+          </div>
+          {fieldErrors.galleryImages && (
+            <p role="alert" className="text-danger mt-3 text-sm">
+              {fieldErrors.galleryImages}
+            </p>
+          )}
         </section>
 
         {fieldErrors.form ? (

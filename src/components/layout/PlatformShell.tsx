@@ -68,7 +68,12 @@ export function PlatformShell({
   const displayName =
     trimmedName.length > 0 ? trimmedName : organizer ? "Organizer" : "Student";
   const title =
-    links.find((item) => active(item.href))?.name ?? "Notifications";
+    links.find((item) => active(item.href))?.name ??
+    (pathname.startsWith("/events/")
+      ? "Event details"
+      : pathname === "/search"
+        ? "Search"
+        : "Notifications");
 
   return (
     <div className="bg-app-bg text-foreground min-h-dvh">

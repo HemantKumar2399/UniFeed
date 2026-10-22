@@ -1,5 +1,6 @@
 import { formatPlatformDate } from "@/lib/platform-date";
-import { HostedImage as Image } from "@/components/HostedImage";
+import { EventMediaGallery } from "@/features/feed/components/EventMediaGallery";
+import { EventInformation } from "@/features/feed/components/EventInformation";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Users } from "lucide-react";
@@ -120,15 +121,11 @@ export default async function AdminEventDetailPage({
       <section className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
         <div className="space-y-6">
           <div className="card-surface-featured overflow-hidden">
-            <div className="bg-app-bg relative aspect-[16/8] w-full">
-              <Image
-                src={event.imageUrl}
-                alt={event.title}
-                fill
-                className="object-cover"
-                sizes="(min-width: 1280px) 760px, 100vw"
-              />
-            </div>
+            <EventMediaGallery
+              title={event.title}
+              imageUrl={event.imageUrl}
+              galleryImages={event.galleryImages}
+            />
             <div className="p-6">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
@@ -178,6 +175,10 @@ export default async function AdminEventDetailPage({
                 <p className="text-page-lead text-muted-foreground mt-3 whitespace-pre-wrap">
                   {event.description}
                 </p>
+              </div>
+
+              <div className="mt-8">
+                <EventInformation event={event} includeDescription={false} />
               </div>
 
               {approvalBlockedReason ? (

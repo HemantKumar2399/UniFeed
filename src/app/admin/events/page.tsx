@@ -88,6 +88,12 @@ export default async function AdminEventsPage({
             status.
           </p>
         </div>
+        <Link
+          href="/dashboard/events/new"
+          className="bg-primary text-primary-foreground inline-flex min-h-11 items-center rounded-xl px-5 text-sm font-semibold"
+        >
+          Create event
+        </Link>
       </header>
 
       <section className="card-surface p-5">

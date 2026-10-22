@@ -20,6 +20,38 @@ const validPayload = {
   targetBranches: ["Computer Science"],
 };
 
+void test("rich event details survive validation without losing optional information", () => {
+  const input = {
+    ...validPayload,
+    galleryImages: ["https://example.com/gallery.png"],
+    agenda: "18:00 Welcome\n18:30 Workshop",
+    requirements: "Bring a laptop",
+    contactEmail: "host@campus.edu",
+    venueUrl: "https://maps.example.com/hall",
+  };
+  const result = CreateEventSchema.parse(input);
+  assert.deepEqual(result, input);
+});
+
+void test("rich event validation rejects unsafe links, invalid contacts and excessive images", () => {
+  for (const fields of [
+    { venueUrl: "javascript:alert(1)" },
+    { contactEmail: "not-an-email" },
+    { galleryImages: ["data:image/svg+xml,bad"] },
+    {
+      galleryImages: Array.from(
+        { length: 7 },
+        () => "https://example.com/image.png",
+      ),
+    },
+  ]) {
+    assert.equal(
+      CreateEventSchema.safeParse({ ...validPayload, ...fields }).success,
+      false,
+    );
+  }
+});
+
 void test("Zod schema rejects short title", () => {
   const result = CreateEventSchema.safeParse({
     ...validPayload,

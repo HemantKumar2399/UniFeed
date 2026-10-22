@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1200" viewBox="0 0 960 1200">
+  <rect width="960" height="1200" fill="#17243b"/>
+  <path d="M0 310H960M0 620H960M0 930H960M240 0V1200M480 0V1200M720 0V1200" stroke="#ffffff" stroke-opacity=".06"/>
+  <rect x="64" y="64" width="166" height="48" rx="24" fill="#c9f2c0"/>
+  <text x="147" y="95" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#17243b">CAMPUS DEMO</text>
+  <text x="64" y="240" font-family="Arial,sans-serif" font-size="26" fill="#a7bcdd" letter-spacing="4">MAKE SOMETHING</text>
+  <text x="54" y="390" font-family="Arial,sans-serif" font-size="148" font-weight="800" fill="#ffffff">BUILD</text>
+  <text x="54" y="540" font-family="Arial,sans-serif" font-size="148" font-weight="800" fill="#ffffff">NIGHT.</text>
+  <rect x="64" y="610" width="832" height="264" rx="24" fill="#1763dd"/>
+  <path d="M270 680l-72 62 72 62M690 680l72 62-72 62M520 662l-80 160" fill="none" stroke="#c9f2c0" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="64" y="974" font-family="Arial,sans-serif" font-size="31" font-weight="700" fill="#ffffff">Ideas. Teammates. Your next project.</text>
+  <text x="64" y="1030" font-family="Arial,sans-serif" font-size="25" fill="#a7bcdd">A hands-on evening for campus builders.</text>
+  <path d="M64 1094H896" stroke="#ffffff" stroke-opacity=".2"/>
+  <text x="64" y="1144" font-family="Arial,sans-serif" font-size="21" fill="#a7bcdd">UniFeed / Sample event artwork</text>
+  <text x="896" y="1144" text-anchor="end" font-family="Arial,sans-serif" font-size="23" font-weight="700" fill="#c9f2c0">u.</text>
+</svg>

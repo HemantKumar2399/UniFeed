@@ -57,6 +57,11 @@ model Event {
   capacity    Int
   location    String
   imageUrl    String
+    galleryImages String[] @default([])
+    agenda String?
+    requirements String?
+    contactEmail String?
+    venueUrl String?
   cancellationReason String?
   clubId      Int
   authorId    String

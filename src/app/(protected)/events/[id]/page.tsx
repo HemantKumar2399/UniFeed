@@ -92,7 +92,7 @@ export default async function EventDetailPage({ params }: PageProps) {
 
   return (
     <EventDetailPageShell event={event}>
-      <EventDetailContent event={event} renderCapacityBar />
+      <EventDetailContent event={event} />
     </EventDetailPageShell>
   );
 }

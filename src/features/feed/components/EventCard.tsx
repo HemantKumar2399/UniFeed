@@ -4,7 +4,8 @@ import { formatPlatformDate } from "@/lib/platform-date";
 
 import { HostedImage as Image } from "@/components/HostedImage";
 import { useEffect, useState } from "react";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, X, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,6 +21,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  DrawerClose,
 } from "@/components/ui/drawer";
 import { RsvpStatusBadge } from "@/features/rsvp/RsvpStatusBadge";
 import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
@@ -27,6 +29,7 @@ import type { RouterOutputs } from "@/trpc/react";
 
 import { CapacityBar } from "./CapacityBar";
 import { EventDetailContent } from "./EventDetailContent";
+import { EventMediaGallery } from "./EventMediaGallery";
 import { formatEventDateMeta } from "./event-card.utils";
 
 export type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
@@ -182,17 +185,42 @@ export function EventCard({ event }: { event: EventFeedItem }) {
       </article>
 
       {isDetailsOpen ? (
-        <DrawerContent className="border-whisper bg-card-bg max-h-[88vh] rounded-t-[24px] transition-colors duration-300">
-          <DrawerHeader className="text-left">
-            <DrawerTitle className="text-section-title text-foreground">
-              {event.title}
-            </DrawerTitle>
-            <DrawerDescription className="text-muted-foreground text-[14px] font-medium">
-              {formatEventDateMeta(event.date)} · {event.location}
-            </DrawerDescription>
+        <DrawerContent className="border-border bg-app-bg mx-auto max-w-6xl rounded-t-3xl data-[vaul-drawer-direction=bottom]:max-h-[92dvh]">
+          <DrawerHeader className="border-border shrink-0 border-b px-5 pb-4 text-left sm:px-7">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <DrawerTitle className="text-section-title text-foreground">
+                  {event.title}
+                </DrawerTitle>
+                <DrawerDescription className="text-muted-foreground text-[14px] font-medium">
+                  {formatEventDateMeta(event.date)} · {event.location}
+                </DrawerDescription>
+              </div>
+              <DrawerClose asChild>
+                <button
+                  type="button"
+                  aria-label="Close event details"
+                  className="border-border bg-card-bg hover:bg-muted flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </DrawerClose>
+            </div>
+            <Link
+              href={`/events/${event.id}`}
+              className="text-primary mt-2 inline-flex min-h-11 items-center gap-2 self-start text-sm font-semibold"
+            >
+              Open full event page <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </DrawerHeader>
 
-          <div className="space-y-4 overflow-y-auto px-4 pb-6">
+          <div className="space-y-6 overflow-y-auto overscroll-contain p-5 pb-8 sm:p-7">
+            <EventMediaGallery
+              compact
+              title={event.title}
+              imageUrl={event.imageUrl}
+              galleryImages={event.galleryImages}
+            />
             <EventDetailContent event={event} />
           </div>
         </DrawerContent>

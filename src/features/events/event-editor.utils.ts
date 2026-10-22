@@ -19,6 +19,11 @@ export type EventEditorDraft = {
   registrationCloseTime: string;
   location: string;
   imageUrl: string;
+  galleryImages?: string[];
+  agenda?: string;
+  requirements?: string;
+  contactEmail?: string;
+  venueUrl?: string;
   capacity: string;
   category: CreateEventInput["category"] | "";
   tags: string;
@@ -40,6 +45,11 @@ export function createEmptyEventEditorDraft(): EventEditorDraft {
     registrationCloseTime: "",
     location: "",
     imageUrl: "",
+    galleryImages: [],
+    agenda: "",
+    requirements: "",
+    contactEmail: "",
+    venueUrl: "",
     capacity: "100",
     category: "",
     tags: "",
@@ -74,6 +84,15 @@ export function buildEventPayload(draft: EventEditorDraft): CreateEventInput {
     ),
     location: draft.location.trim(),
     imageUrl: draft.imageUrl.trim(),
+    galleryImages: [
+      ...new Set(
+        (draft.galleryImages ?? []).map((url) => url.trim()).filter(Boolean),
+      ),
+    ],
+    agenda: draft.agenda?.trim(),
+    requirements: draft.requirements?.trim(),
+    contactEmail: draft.contactEmail?.trim(),
+    venueUrl: draft.venueUrl?.trim(),
     capacity: Number.parseInt(draft.capacity, 10),
     category: draft.category as CreateEventInput["category"],
     tags: normalizeCommaSeparatedList(draft.tags),
@@ -102,6 +121,11 @@ export function buildEventEditorDraft(
       : "",
     location: input.location,
     imageUrl: input.imageUrl,
+    galleryImages: input.galleryImages ?? [],
+    agenda: input.agenda ?? "",
+    requirements: input.requirements ?? "",
+    contactEmail: input.contactEmail ?? "",
+    venueUrl: input.venueUrl ?? "",
     capacity: String(input.capacity),
     category: input.category,
     tags: input.tags.join(", "),
