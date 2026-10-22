@@ -14,4 +14,4 @@ Unsupported settings and sign-in methods are removed from active flows. Notifica
 
 Verification must include desktop and narrow mobile views of home, discovery, event details, passport and organizer workflows. Layout and copy choices are reviewed visually; tests protect navigation, authorization, registration, reconciliation and identity behavior rather than exact class names or source order.
 
-The [event experience research and motion plan](event-experience-design.md) develops this direction for event details and the shared light/dark reveal. Dark surfaces now use midnight/slate tokens and theme-specific action text.
+The [event experience research and motion plan](event-experience-design.md) develops this direction for event details and the shared light/dark reveal. Dark surfaces now use neutral black/charcoal tokens and theme-specific action text.
