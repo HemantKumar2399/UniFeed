@@ -12,6 +12,8 @@ completedAt: '2026-04-15'
 
 # Architecture Decision Document
 
+> Historical proposal from April 2026. For implemented behavior and deployment limits, use [Current architecture](current.md) and [Implementation status](../implementation-status.md). Completion labels in this proposal do not certify shipped features.
+
 _This document builds collaboratively through step-by-step discovery. Sections are appended as we work through each architectural decision together._
 
 ## Project Context Analysis

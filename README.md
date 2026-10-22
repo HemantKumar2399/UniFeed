@@ -89,6 +89,6 @@ Set `BASE_URL` and explicitly set `REUSE_TEST_SERVER=1` only when attaching to a
 - [Original audit](docs/codebase-audit-2026-10-21.md)
 - [Contributing](CONTRIBUTING.md)
 
-The historical [PRD](docs/product/prd.md), [architecture](docs/architecture/architecture.md), and archived BMAD epics describe original intent. Current implementation status and verification records take precedence over old completion labels.
+See the [documentation index](docs/index.md) for the full guide, the [current architecture](docs/architecture/current.md) for the code map, and [repository recovery](docs/repository.md) for restoring the project on another computer. Original PRD/architecture/design proposals retain historical context; current implementation status takes precedence over old completion labels. Agent installations and generated planning artifacts are local-only.
 
 Realtime updates currently require a single app process. Reminder emails, digests, Google login, payments, and employer portfolios are not shipped features.

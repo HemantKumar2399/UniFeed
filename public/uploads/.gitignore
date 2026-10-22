@@ -1,6 +1,3 @@
-# Local dev uploaded images — do not commit real images
-*.jpg
-*.jpeg
-*.png
-*.webp
-*.gif
+# User uploads stay local or in object storage, regardless of extension.
+*
+!.gitignore

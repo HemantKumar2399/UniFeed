@@ -15,6 +15,9 @@ classification:
 lastEdited: '2026-04-15'
 ---
 
+> Historical product plan. For shipped features and known limits, use [Implementation status](../implementation-status.md) and [Remaining work](../placeholder-backlog.md).
+
+
 # Product Requirements Document - Campus Platform
 
 **Author:** Hemant & Antigravity  

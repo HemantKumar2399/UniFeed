@@ -1,65 +1,70 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-/playwright-report
-/test-results
-
-# database
-/prisma/db.sqlite
-/prisma/db.sqlite-journal
-db.sqlite
-
-# next.js
+# Dependencies and build output
+/node_modules/
+/.pnp/
+.pnp.*
 /.next/
 /out/
+/build/
+/generated/
 next-env.d.ts
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-# do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
-.env*
-!.env.example
-
-# vercel
-.vercel
-
-# typescript
 *.tsbuildinfo
 
-# idea files
-.idea
+# Test reports and caches
+/coverage/
+/playwright-report/
+/test-results/
+/.cache/
+*.log
 
-# BMAD and local agent tooling artifacts (do not publish)
-/_bmad/
+# Local configuration and credentials (commit only the blank template)
+.env*
+!.env.example
+/.aws/
+/.ssh/
+/.codex/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local databases, backups and uploaded user content
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.db
+*.dump
+*.backup
+/backups/
+/prisma/db.sqlite-journal
+/public/uploads/*
+!/public/uploads/.gitignore
+
+# Local editor, OS and hosting metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+/.idea/
+/.vscode/
+/.vercel/
+
+# Optional agent tools and generated plans: local-only, not application code
+/.agents/
 /.agent/
 /.claude/
 /.cursor/
 /.trae/
 /.windsurf/
 /.github/skills/
-/generated/
+/_bmad/
+/_bmad-output/
+/design-artifacts/
 
-# Keep generated implementation/planning outputs publishable
-!/_bmad-output/
-!/_bmad-output/**
+# Retired planning/issue-sync tools retained locally for reference
+/scripts/github-sync.cjs
+/scripts/sync-to-github.cjs
+/scripts/update-sprint-status.cjs
+/scripts/restore-stories-from-issues.sh
+/.github/ISSUE_TEMPLATE/story_template.md
 
-# Local scratch scripts (ad-hoc debug/query scripts, never commit)
+# Ad-hoc diagnostics and local verification database/runtime
 /scratch/
