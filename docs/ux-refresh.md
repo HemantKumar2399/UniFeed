@@ -13,3 +13,5 @@ Home opens with a meaningful heading and discovery action, then the week ahead a
 Unsupported settings and sign-in methods are removed from active flows. Notification failures show retry. Pending identity is distinct from verified identity. Offline scans retain rejected/unresolved records and explain the outcome.
 
 Verification must include desktop and narrow mobile views of home, discovery, event details, passport and organizer workflows. Layout and copy choices are reviewed visually; tests protect navigation, authorization, registration, reconciliation and identity behavior rather than exact class names or source order.
+
+The [event experience research and motion plan](event-experience-design.md) develops this direction for event details and the shared light/dark reveal. Dark surfaces now use midnight/slate tokens and theme-specific action text.

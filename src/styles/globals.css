@@ -8,6 +8,7 @@
    Declares variables that change values depending on the presence of .dark
    ----------------------------------------------------------------------- */
 :root {
+  --color-green: #14732c;
   --background: #ffffff;
   --foreground: #17243b;
 
@@ -42,20 +43,24 @@
 }
 
 .dark {
-  --background: #191919;
+  --color-green: #7be19a;
+  --color-notion-blue: #8dbaff;
+  --color-notion-blue-hover: #b3d0ff;
+  --color-primary-foreground: #0d1422;
+  --background: #111827;
   --foreground: rgba(255, 255, 255, 0.95);
 
-  --card-bg: #202020;
+  --card-bg: #182235;
   --card-foreground: rgba(255, 255, 255, 0.95);
 
   --muted: rgba(255, 255, 255, 0.08);
-  --muted-foreground: #a39e98; /* Warm Gray 300 */
+  --muted-foreground: #b0bed0;
 
   --border-whisper-color: rgba(255, 255, 255, 0.1);
   --border-input-color: #333333;
 
-  --app-bg: #121212;
-  --warm-white-dynamic: #1a1a19;
+  --app-bg: #0d1422;
+  --warm-white-dynamic: #152034;
   --status-success-surface: rgba(26, 174, 57, 0.16);
   --status-success-border: rgba(26, 174, 57, 0.28);
   --status-warning-surface: rgba(221, 91, 0, 0.16);
@@ -73,6 +78,22 @@
   --scan-overlay: #0f172a;
   --scan-frame: rgba(52, 211, 153, 0.55);
   --scan-label-bg: rgba(0, 0, 0, 0.45);
+}
+
+/* Only explicit theme changes use a document snapshot; navigation stays independent. */
+html[data-theme-transition="reveal"]::view-transition-old(root),
+html[data-theme-transition="reveal"]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-transition="reveal"]::view-transition-old(root) {
+  z-index: 1;
+}
+html[data-theme-transition="reveal"]::view-transition-new(root) {
+  z-index: 2;
+}
+html[data-theme-transition="reveal"]::view-transition-image-pair(root) {
+  isolation: isolate;
 }
 
 /* -----------------------------------------------------------------------

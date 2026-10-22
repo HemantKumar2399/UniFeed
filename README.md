@@ -81,6 +81,7 @@ Set `BASE_URL` and explicitly set `REUSE_TEST_SERVER=1` only when attaching to a
 ## Current docs
 
 - [Rich event creation and viewing](docs/event-details.md)
+- [Event experience design research and theme motion](docs/event-experience-design.md)
 - [Implementation and feature status](docs/implementation-status.md)
 - [Verification record and release limits](docs/production-readiness.md)
 - [UX direction](docs/ux-refresh.md)

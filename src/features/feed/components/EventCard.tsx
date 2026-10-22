@@ -185,16 +185,17 @@ export function EventCard({ event }: { event: EventFeedItem }) {
       </article>
 
       {isDetailsOpen ? (
-        <DrawerContent className="border-border bg-app-bg mx-auto max-w-6xl rounded-t-3xl data-[vaul-drawer-direction=bottom]:max-h-[92dvh]">
-          <DrawerHeader className="border-border shrink-0 border-b px-5 pb-4 text-left sm:px-7">
+        <DrawerContent className="border-border bg-card-bg mx-auto max-w-5xl rounded-t-3xl shadow-2xl data-[vaul-drawer-direction=bottom]:max-h-[92dvh] sm:rounded-3xl sm:data-[vaul-drawer-direction=bottom]:inset-x-6 sm:data-[vaul-drawer-direction=bottom]:bottom-5 sm:data-[vaul-drawer-direction=bottom]:max-h-[calc(100dvh-3rem)]">
+          <DrawerHeader className="border-border shrink-0 border-b px-5 pb-3 text-left group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left sm:px-6">
             <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <DrawerTitle className="text-section-title text-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="text-primary mb-2 text-xs font-semibold">
+                  {event.club.name}
+                  {event.category ? ` · ${event.category}` : ""}
+                </p>
+                <DrawerTitle className="font-display text-foreground text-2xl leading-tight font-bold tracking-tight sm:text-[28px]">
                   {event.title}
                 </DrawerTitle>
-                <DrawerDescription className="text-muted-foreground text-[14px] font-medium">
-                  {formatEventDateMeta(event.date)} · {event.location}
-                </DrawerDescription>
               </div>
               <DrawerClose asChild>
                 <button
@@ -206,22 +207,32 @@ export function EventCard({ event }: { event: EventFeedItem }) {
                 </button>
               </DrawerClose>
             </div>
-            <Link
-              href={`/events/${event.id}`}
-              className="text-primary mt-2 inline-flex min-h-11 items-center gap-2 self-start text-sm font-semibold"
-            >
-              Open full event page <ArrowUpRight className="h-4 w-4" />
-            </Link>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+              <DrawerDescription className="text-muted-foreground min-w-0 text-sm leading-6">
+                {formatEventDateMeta(event.date)} · {event.location}
+              </DrawerDescription>
+              <Link
+                href={`/events/${event.id}`}
+                className="text-primary inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-semibold"
+              >
+                Open full event page <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
           </DrawerHeader>
 
-          <div className="space-y-6 overflow-y-auto overscroll-contain p-5 pb-8 sm:p-7">
-            <EventMediaGallery
+          <div className="min-h-0 overflow-y-auto overscroll-contain p-5 pb-7 sm:p-6">
+            <EventDetailContent
+              event={event}
               compact
-              title={event.title}
-              imageUrl={event.imageUrl}
-              galleryImages={event.galleryImages}
+              media={
+                <EventMediaGallery
+                  compact
+                  title={event.title}
+                  imageUrl={event.imageUrl}
+                  galleryImages={event.galleryImages}
+                />
+              }
             />
-            <EventDetailContent event={event} />
           </div>
         </DrawerContent>
       ) : null}

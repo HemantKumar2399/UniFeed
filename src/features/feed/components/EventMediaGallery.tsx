@@ -27,7 +27,7 @@ export function EventMediaGallery({
       className="border-border bg-card-bg overflow-hidden rounded-2xl border"
     >
       <div
-        className={`bg-muted/60 relative flex aspect-[16/9] min-h-48 items-center justify-center ${compact ? "max-h-[300px]" : "max-h-[520px]"}`}
+        className={`bg-muted/60 relative flex aspect-[16/9] w-full items-center justify-center ${compact ? "max-h-[180px] min-h-36 sm:max-h-[300px] sm:min-h-48" : "max-h-[520px] min-h-48"}`}
       >
         {active && !failed ? (
           <HostedImage
@@ -35,8 +35,8 @@ export function EventMediaGallery({
             alt={title}
             fill
             priority
-            className="object-contain p-2 sm:p-4"
-            sizes="(max-width: 768px) 100vw, 1100px"
+            className="object-contain p-2 sm:p-3"
+            sizes="(max-width: 1023px) 100vw, 760px"
             onError={() => setFailedImages((current) => [...current, active])}
           />
         ) : (

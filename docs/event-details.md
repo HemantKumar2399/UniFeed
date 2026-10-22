@@ -26,3 +26,5 @@ Verification is deliberately focused following the user's request to avoid repea
 Completed on 22 October 2026: 56 affected tests passed, TypeScript and the production build (including lint) passed, and the focused Chromium journey passed against the final production build. Desktop and 375px mobile screenshots were inspected. No unrelated unit/browser suites were rerun. Production object storage and physical camera behavior were outside this change.
 
 The isolated local demo contains **Campus Build Night · Demo**, at `http://localhost:3100/events/42`, with two locally served sample posters and complete optional details. This is explicitly sample content, not an actual scheduled event. The original application database was not modified.
+
+The [subsequent design research and implementation](event-experience-design.md) records the revised event page, quick view, fluid theme reveal and focused verification.

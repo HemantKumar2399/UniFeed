@@ -3,7 +3,7 @@
 import type { RSVPStatus } from "@prisma/client";
 import { Bookmark, CalendarPlus, Pin, PinOff } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ import { api } from "@/trpc/react";
 import type { RouterOutputs } from "@/trpc/react";
 
 import { EventInformation } from "./EventInformation";
+import { EventMediaGallery } from "./EventMediaGallery";
 import { CapacityBar } from "./CapacityBar";
 import {
   formatDiscussionAuthorName,
@@ -56,7 +57,15 @@ function getRegisterButtonLabel(params: {
   return getRegistrationActionLabel(params.registrationAvailability);
 }
 
-export function EventDetailContent({ event }: { event: EventFeedItem }) {
+export function EventDetailContent({
+  event,
+  media,
+  compact = false,
+}: {
+  event: EventFeedItem;
+  media?: ReactNode;
+  compact?: boolean;
+}) {
   const utils = api.useUtils();
   const [activeTab, setActiveTab] = useState<"overview" | "discussions">(
     "overview",
@@ -279,14 +288,28 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
     registrationAvailability === "WAITLIST_OPEN";
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
-      <div className="min-w-0 space-y-6">
-        <div className="flex gap-2">
+    <div
+      className={`grid items-start lg:grid-cols-[minmax(0,1fr)_300px] ${compact ? "gap-6" : "gap-8"}`}
+    >
+      <div className="order-first min-w-0 lg:col-start-1 lg:row-start-1">
+        {media ?? (
+          <EventMediaGallery
+            title={event.title}
+            imageUrl={event.imageUrl}
+            galleryImages={event.galleryImages}
+          />
+        )}
+      </div>
+      <div className="order-3 min-w-0 space-y-6 lg:col-start-1 lg:row-start-2">
+        <div
+          aria-label="Event sections"
+          className="border-border flex gap-6 border-b"
+        >
           <button
-            className={`min-h-11 rounded-xl px-4 py-2 text-sm font-semibold tracking-[0.125px] transition-colors ${
+            className={`min-h-11 border-b-2 px-1 py-3 text-sm font-semibold transition-colors ${
               activeTab === "overview"
-                ? "bg-primary/10 text-primary"
-                : "bg-muted text-muted-foreground"
+                ? "border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground border-transparent"
             }`}
             aria-pressed={activeTab === "overview"}
             onClick={() => setActiveTab("overview")}
@@ -295,10 +318,10 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
             Overview
           </button>
           <button
-            className={`rounded-full px-3 py-1.5 text-[12px] font-semibold tracking-[0.125px] transition-colors ${
+            className={`min-h-11 border-b-2 px-1 py-3 text-sm font-semibold transition-colors ${
               activeTab === "discussions"
-                ? "bg-primary/10 text-primary"
-                : "bg-muted text-muted-foreground"
+                ? "border-primary text-primary"
+                : "text-muted-foreground hover:text-foreground border-transparent"
             }`}
             aria-pressed={activeTab === "discussions"}
             onClick={() => setActiveTab("discussions")}
@@ -499,10 +522,10 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
       </div>
       <aside
         aria-label="Registration"
-        className="border-border bg-card-bg order-first self-start rounded-2xl border p-5 shadow-sm lg:sticky lg:top-24 lg:order-last"
+        className={`border-primary/15 bg-card-bg order-2 self-start overflow-hidden rounded-2xl border shadow-sm lg:sticky lg:col-start-2 lg:row-span-2 lg:row-start-1 ${compact ? "p-4 lg:top-0" : "p-5 lg:top-24"}`}
       >
         <p className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
-          Your place at this event
+          Registration
         </p>
         <Badge
           variant={getRegistrationAvailabilityBadgeVariant(
@@ -511,7 +534,15 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
         >
           {getRegistrationAvailabilityLabel(registrationAvailability)}
         </Badge>
-        <div className="my-5">
+        <p className="mt-3 text-xl font-bold tracking-tight">
+          {event.isPaid ? "Paid entry" : "Free entry"}
+        </p>
+        {event.isPaid && (
+          <p className="text-muted-foreground mt-1 text-xs">
+            Contact the host for pricing details.
+          </p>
+        )}
+        <div className={compact ? "my-3" : "my-5"}>
           <CapacityBar count={activeCount} totalCapacity={totalCapacity} />
         </div>
         <p className="text-muted-foreground text-xs font-medium">
@@ -520,7 +551,7 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
         <p className="mt-1 text-sm leading-6 font-semibold">
           {formatRegistrationDeadline(event.registrationClosesAt)}
         </p>
-        <footer className="mt-5 flex flex-col gap-3">
+        <footer className="border-primary/20 mt-4 grid grid-cols-2 gap-2 border-t border-dashed pt-4">
           <Button
             className="border-whisper hover:bg-muted flex h-12 w-full items-center justify-center rounded-xl px-0 transition-all active:scale-95"
             disabled={toggleSave.isPending}
@@ -537,9 +568,7 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
                   : "text-muted-foreground"
               }`}
             />
-            <span className="ml-2">
-              {isSaved ? "Saved event" : "Save event"}
-            </span>
+            <span className="ml-2">{isSaved ? "Saved" : "Save"}</span>
           </Button>
 
           <Button
@@ -547,26 +576,29 @@ export function EventDetailContent({ event }: { event: EventFeedItem }) {
             className="border-whisper hover:bg-muted h-12 w-full rounded-xl px-6 text-[14px] font-semibold transition-all active:scale-95"
             variant="outline"
           >
-            <Link href={`/api/events/${event.id}/calendar`}>
+            <Link
+              href={`/api/events/${event.id}/calendar`}
+              aria-label="Add to Calendar"
+            >
               <CalendarPlus className="h-4 w-4" />
-              Add to Calendar
+              Calendar
             </Link>
           </Button>
 
           {canCancel ? (
             <Button
-              className="h-12 w-full rounded-xl px-6 text-[14px] font-semibold"
+              className="col-span-2 h-11 w-full rounded-xl px-6 text-sm font-semibold"
               disabled={isCancelPending}
               onClick={() => cancelRsvp({ eventId: event.id })}
               type="button"
-              variant="destructive"
+              variant="ghost"
             >
               {isCancelPending ? "Cancelling..." : "Cancel RSVP"}
             </Button>
           ) : null}
 
           <Button
-            className="order-first flex h-12 w-full items-center justify-center rounded-xl px-8 text-[15px] font-semibold whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-60"
+            className="order-first col-span-2 flex h-12 w-full items-center justify-center rounded-xl px-8 text-[15px] font-semibold whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isRegistering || canCancel || !canRegister}
             onClick={handleRegister}
             type="button"

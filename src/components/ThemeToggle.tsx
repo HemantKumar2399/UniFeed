@@ -4,6 +4,7 @@ import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { revealTheme } from "@/lib/theme-transition";
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -19,6 +20,7 @@ export function ThemeToggle() {
       <Button
         variant="ghost"
         size="icon"
+        disabled
         className="h-11 w-11 shrink-0 rounded-[var(--radius-micro)]"
       >
         <span className="sr-only">Toggle theme</span>
@@ -33,7 +35,13 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       className="h-11 w-11 shrink-0 rounded-[var(--radius-micro)] transition-transform duration-300 active:scale-95"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={(event) => {
+        // Read the committed root state so rapid input cannot use a stale render.
+        const nextTheme = document.documentElement.classList.contains("dark")
+          ? "light"
+          : "dark";
+        void revealTheme(event.currentTarget, () => setTheme(nextTheme));
+      }}
     >
       <div className="relative flex h-full w-full items-center justify-center">
         <Sun
