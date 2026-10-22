@@ -1,15 +1,16 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 export const EXPAND_ANIMATION_DURATION_MS = 300;
 
 export function formatEventDateMeta(dateInput: Date | string): string {
   const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
 
-  return new Intl.DateTimeFormat("en-US", {
+  return formatPlatformDate(date, {
     weekday: "short",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(date);
+  });
 }
 
 export function getDescriptionRevealClasses(isExpanded: boolean): string {

@@ -1,4 +1,5 @@
 "use client";
+import { formatPlatformDate, PLATFORM_TIME_ZONE } from "@/lib/platform-date";
 
 import type { ChangeEvent } from "react";
 import { useState } from "react";
@@ -56,7 +57,9 @@ function getStatusMessage(status: EventStatus | undefined) {
   }
 }
 
-function mapValidationErrors(input: ReturnType<typeof CreateEventSchema.safeParse>): FieldErrors {
+function mapValidationErrors(
+  input: ReturnType<typeof CreateEventSchema.safeParse>,
+): FieldErrors {
   if (input.success) {
     return {};
   }
@@ -84,12 +87,15 @@ export function EventEditor({
 }: EventEditorProps) {
   const router = useRouter();
   const utils = api.useUtils();
-  const [draft, setDraft] = useState<EventEditorDraft>(initialDraft ?? createEmptyEventEditorDraft());
+  const [draft, setDraft] = useState<EventEditorDraft>(
+    initialDraft ?? createEmptyEventEditorDraft(),
+  );
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isUploading, setIsUploading] = useState(false);
   const [cancelReason, setCancelReason] = useState(cancellationReason ?? "");
 
-  const { data: managedClubs, isLoading: isLoadingManagedClubs } = api.club.getMyManagedClubs.useQuery();
+  const { data: managedClubs, isLoading: isLoadingManagedClubs } =
+    api.club.getMyManagedClubs.useQuery();
 
   const createEvent = api.event.create.useMutation();
   const updateEvent = api.event.update.useMutation();
@@ -98,7 +104,10 @@ export function EventEditor({
   const cancelEvent = api.event.cancel.useMutation();
 
   const activeStatus = mode === "create" ? "DRAFT" : eventStatus;
-  const isEditable = mode === "create" || activeStatus === "DRAFT" || activeStatus === "REJECTED";
+  const isEditable =
+    mode === "create" ||
+    activeStatus === "DRAFT" ||
+    activeStatus === "REJECTED";
   const hasManagedClubs = (managedClubs?.length ?? 0) > 0;
   const isBusy =
     createEvent.isPending ||
@@ -120,13 +129,20 @@ export function EventEditor({
     });
   };
 
-  const setDraftValue = <K extends keyof EventEditorDraft>(key: K, value: EventEditorDraft[K]) => {
+  const setDraftValue = <K extends keyof EventEditorDraft>(
+    key: K,
+    value: EventEditorDraft[K],
+  ) => {
     setDraft((current) => ({ ...current, [key]: value }));
   };
 
   const handleTextChange =
     <K extends keyof EventEditorDraft>(key: K) =>
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    (
+      event: ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
       clearFieldError(key as keyof CreateEventInput);
       setDraftValue(key, event.target.value as EventEditorDraft[K]);
     };
@@ -145,8 +161,15 @@ export function EventEditor({
   };
 
   const validateDraft = () => {
-    const parsed = CreateEventSchema.safeParse(buildEventPayload(draft));
+    const payload = buildEventPayload(draft);
+    const parsed = CreateEventSchema.safeParse(payload);
     const nextErrors = mapValidationErrors(parsed);
+    if (Number.isNaN(payload.date.getTime())) {
+      nextErrors.date = `Choose a valid, unambiguous date and time in ${PLATFORM_TIME_ZONE}. Avoid daylight-saving clock changes.`;
+    }
+    if (Number.isNaN(payload.registrationClosesAt.getTime())) {
+      nextErrors.registrationClosesAt = `Choose a valid, unambiguous deadline in ${PLATFORM_TIME_ZONE}. Avoid daylight-saving clock changes.`;
+    }
     setFieldErrors(nextErrors);
 
     if (!parsed.success) {
@@ -157,11 +180,11 @@ export function EventEditor({
     return parsed.data;
   };
 
-
-
   const saveDraft = async (shouldSubmitAfterSave: boolean) => {
     if (!hasManagedClubs) {
-      toast.error("You need at least one managed community before creating events.");
+      toast.error(
+        "You need at least one managed community before creating events.",
+      );
       return;
     }
 
@@ -181,16 +204,27 @@ export function EventEditor({
 
       if (shouldSubmitAfterSave) {
         await submitForReview.mutateAsync({ id: savedEvent.id });
-        toast.success(mode === "create" ? "Draft created and submitted for review." : "Changes saved and submitted for review.");
+        toast.success(
+          mode === "create"
+            ? "Draft created and submitted for review."
+            : "Changes saved and submitted for review.",
+        );
       } else {
-        toast.success(mode === "create" ? "Draft saved successfully." : "Draft changes saved.");
+        toast.success(
+          mode === "create"
+            ? "Draft saved successfully."
+            : "Draft changes saved.",
+        );
       }
 
       await invalidateViews();
       router.push("/dashboard/events");
       router.refresh();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "We could not save this event.";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "We could not save this event.";
       setFieldErrors((current) => ({ ...current, form: message }));
       toast.error(message);
     }
@@ -208,7 +242,9 @@ export function EventEditor({
       router.push("/dashboard/events");
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Publishing failed.");
+      toast.error(
+        error instanceof Error ? error.message : "Publishing failed.",
+      );
     }
   };
 
@@ -232,7 +268,9 @@ export function EventEditor({
       router.push("/dashboard/events");
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Cancellation failed.");
+      toast.error(
+        error instanceof Error ? error.message : "Cancellation failed.",
+      );
     }
   };
 
@@ -241,39 +279,49 @@ export function EventEditor({
       <header className="px-1 md:px-0">
         <Link
           href="/dashboard/events"
-          className="mb-4 inline-flex w-fit items-center gap-2 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground mb-4 inline-flex w-fit items-center gap-2 text-[14px] font-semibold transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Events
         </Link>
-        <h1 className="mb-2 text-[32px] font-bold leading-[1.1] tracking-[-1.2px] text-foreground md:text-[40px]">
+        <h1 className="text-foreground mb-2 text-[32px] leading-[1.1] font-bold tracking-[-1.2px] md:text-[40px]">
           {mode === "create" ? "Create New Event" : "Edit Event"}
         </h1>
-        <p className="text-[16px] font-medium leading-relaxed text-muted-foreground">
-          {getStatusMessage(activeStatus)}
+        <p className="text-muted-foreground text-[16px] leading-relaxed font-medium">
+          {getStatusMessage(activeStatus)} All times in {PLATFORM_TIME_ZONE}.
         </p>
       </header>
 
       {activeStatus ? (
-        <section className="rounded-[20px] border border-whisper bg-card-bg px-5 py-4 shadow-sm transition-colors duration-300">
+        <section className="border-whisper bg-card-bg rounded-[20px] border px-5 py-4 shadow-sm transition-colors duration-300">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-pill bg-app-bg px-3 py-1 text-xs font-semibold uppercase tracking-badge text-foreground transition-colors">
+            <span className="rounded-pill bg-app-bg tracking-badge text-foreground px-3 py-1 text-xs font-semibold uppercase transition-colors">
               {activeStatus}
             </span>
             {submittedAt ? (
-              <span className="text-sm text-muted-foreground">
-                Submitted on {new Date(submittedAt).toLocaleString("en-IN")}
+              <span className="text-muted-foreground text-sm">
+                Submitted on{" "}
+                {formatPlatformDate(submittedAt, {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
               </span>
             ) : null}
           </div>
           {latestRejectionReason ? (
-            <p className="mt-3 rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-sm text-muted-foreground transition-colors">
-              <span className="font-semibold text-foreground">Admin feedback:</span> {latestRejectionReason}
+            <p className="border-whisper bg-app-bg text-muted-foreground mt-3 rounded-[14px] border px-4 py-3 text-sm transition-colors">
+              <span className="text-foreground font-semibold">
+                Admin feedback:
+              </span>{" "}
+              {latestRejectionReason}
             </p>
           ) : null}
           {cancellationReason ? (
-            <p className="mt-3 rounded-[14px] border border-whisper bg-app-bg px-4 py-3 text-sm text-muted-foreground transition-colors">
-              <span className="font-semibold text-foreground">Cancellation reason:</span> {cancellationReason}
+            <p className="border-whisper bg-app-bg text-muted-foreground mt-3 rounded-[14px] border px-4 py-3 text-sm transition-colors">
+              <span className="text-foreground font-semibold">
+                Cancellation reason:
+              </span>{" "}
+              {cancellationReason}
             </p>
           ) : null}
         </section>
@@ -281,15 +329,23 @@ export function EventEditor({
 
       <div aria-live="polite" className="sr-only">
         {isUploading ? "Uploading event image." : ""}
-        {createEvent.isPending || updateEvent.isPending ? "Saving event draft." : ""}
+        {createEvent.isPending || updateEvent.isPending
+          ? "Saving event draft."
+          : ""}
         {submitForReview.isPending ? "Submitting event for review." : ""}
         {publishApproved.isPending ? "Publishing event." : ""}
         {cancelEvent.isPending ? "Cancelling event." : ""}
       </div>
 
-      <form className="flex flex-col gap-5 px-1 md:px-0" onSubmit={(event) => event.preventDefault()}>
-        <section className="rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm transition-colors duration-300">
-          <label htmlFor="clubId" className="mb-2 block text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">
+      <form
+        className="flex flex-col gap-5 px-1 md:px-0"
+        onSubmit={(event) => event.preventDefault()}
+      >
+        <section className="border-input bg-card-bg rounded-[20px] border px-5 py-5 shadow-sm transition-colors duration-300">
+          <label
+            htmlFor="clubId"
+            className="text-muted-foreground/80 mb-2 block text-[13px] font-semibold tracking-[0.12em] uppercase"
+          >
             Community
           </label>
           <select
@@ -297,10 +353,12 @@ export function EventEditor({
             value={draft.clubId}
             onChange={handleTextChange("clubId")}
             disabled={!isEditable || isLoadingManagedClubs || !hasManagedClubs}
-            className="h-12 w-full rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+            className="border-input bg-card-bg text-foreground disabled:bg-muted h-12 w-full rounded-[14px] border px-4 text-[15px] font-medium transition-colors outline-none focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed"
           >
             <option value="">
-              {isLoadingManagedClubs ? "Loading your communities..." : "Select a community"}
+              {isLoadingManagedClubs
+                ? "Loading your communities..."
+                : "Select a community"}
             </option>
             {(managedClubs ?? []).map((club) => (
               <option key={club.id} value={club.id}>
@@ -308,16 +366,23 @@ export function EventEditor({
               </option>
             ))}
           </select>
-          {fieldErrors.clubId ? <p className="mt-2 text-sm font-medium text-red-600">{fieldErrors.clubId}</p> : null}
+          {fieldErrors.clubId ? (
+            <p className="mt-2 text-sm font-medium text-red-600">
+              {fieldErrors.clubId}
+            </p>
+          ) : null}
           {!isLoadingManagedClubs && !hasManagedClubs ? (
-            <p className="mt-3 rounded-[14px] border border-input bg-muted px-4 py-3 text-[14px] leading-relaxed text-muted-foreground transition-colors">
-              You do not manage any community yet. Ask your college admin to assign you to a club before creating events.
+            <p className="border-input bg-muted text-muted-foreground mt-3 rounded-[14px] border px-4 py-3 text-[14px] leading-relaxed transition-colors">
+              You do not manage any community yet. Ask your college admin to
+              assign you to a club before creating events.
             </p>
           ) : null}
         </section>
 
-        <section className="rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm transition-colors duration-300">
-          <label htmlFor="title" className="sr-only">Event title</label>
+        <section className="border-input bg-card-bg rounded-[20px] border px-5 py-5 shadow-sm transition-colors duration-300">
+          <label htmlFor="title" className="sr-only">
+            Event title
+          </label>
           <input
             id="title"
             value={draft.title}
@@ -325,88 +390,121 @@ export function EventEditor({
             disabled={!isEditable}
             type="text"
             placeholder="Event Title"
-            className="w-full border-none bg-transparent text-[30px] font-bold tracking-[-1px] text-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed md:text-[38px]"
+            className="text-foreground placeholder:text-muted-foreground/50 w-full border-none bg-transparent text-[30px] font-bold tracking-[-1px] outline-none disabled:cursor-not-allowed md:text-[38px]"
           />
-          {fieldErrors.title ? <p className="mt-2 text-sm font-medium text-red-600">{fieldErrors.title}</p> : null}
-          <label htmlFor="description" className="sr-only">Event description</label>
+          {fieldErrors.title ? (
+            <p className="mt-2 text-sm font-medium text-red-600">
+              {fieldErrors.title}
+            </p>
+          ) : null}
+          <label htmlFor="description" className="sr-only">
+            Event description
+          </label>
           <textarea
             id="description"
             value={draft.description}
             onChange={handleTextChange("description")}
             disabled={!isEditable}
             placeholder="Write your event description..."
-            className="mt-4 min-h-[160px] w-full resize-none border-none bg-transparent text-[17px] leading-relaxed text-muted-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed"
+            className="text-muted-foreground placeholder:text-muted-foreground/50 mt-4 min-h-[160px] w-full resize-none border-none bg-transparent text-[17px] leading-relaxed outline-none disabled:cursor-not-allowed"
           />
-          {fieldErrors.description ? <p className="mt-2 text-sm font-medium text-red-600">{fieldErrors.description}</p> : null}
+          {fieldErrors.description ? (
+            <p className="mt-2 text-sm font-medium text-red-600">
+              {fieldErrors.description}
+            </p>
+          ) : null}
         </section>
 
         <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
-            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Date</span>
+          <label className="border-input bg-card-bg flex flex-col gap-2 rounded-[16px] border px-3 py-3 shadow-sm transition-colors">
+            <span className="tracking-badge text-muted-foreground/80 text-xs font-semibold uppercase">
+              Date
+            </span>
             <input
               value={draft.date}
               onChange={handleTextChange("date")}
               disabled={!isEditable}
               type="date"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
+              className="text-foreground w-full bg-transparent text-[15px] font-semibold outline-none disabled:cursor-not-allowed"
             />
           </label>
 
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
-            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Time</span>
+          <label className="border-input bg-card-bg flex flex-col gap-2 rounded-[16px] border px-3 py-3 shadow-sm transition-colors">
+            <span className="tracking-badge text-muted-foreground/80 text-xs font-semibold uppercase">
+              Time
+            </span>
             <input
               value={draft.time}
               onChange={handleTextChange("time")}
               disabled={!isEditable}
               type="time"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
+              className="text-foreground w-full bg-transparent text-[15px] font-semibold outline-none disabled:cursor-not-allowed"
             />
           </label>
-          {fieldErrors.date ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.date}</p> : null}
+          {fieldErrors.date ? (
+            <p className="text-sm font-medium text-red-600 md:col-span-2">
+              {fieldErrors.date}
+            </p>
+          ) : null}
 
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
-            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Registration Closes On</span>
+          <label className="border-input bg-card-bg flex flex-col gap-2 rounded-[16px] border px-3 py-3 shadow-sm transition-colors">
+            <span className="tracking-badge text-muted-foreground/80 text-xs font-semibold uppercase">
+              Registration Closes On
+            </span>
             <input
               value={draft.registrationCloseDate}
               onChange={handleTextChange("registrationCloseDate")}
               disabled={!isEditable}
               type="date"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
+              className="text-foreground w-full bg-transparent text-[15px] font-semibold outline-none disabled:cursor-not-allowed"
             />
           </label>
 
-          <label className="flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
-            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Registration Close Time</span>
+          <label className="border-input bg-card-bg flex flex-col gap-2 rounded-[16px] border px-3 py-3 shadow-sm transition-colors">
+            <span className="tracking-badge text-muted-foreground/80 text-xs font-semibold uppercase">
+              Registration Close Time
+            </span>
             <input
               value={draft.registrationCloseTime}
               onChange={handleTextChange("registrationCloseTime")}
               disabled={!isEditable}
               type="time"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
+              className="text-foreground w-full bg-transparent text-[15px] font-semibold outline-none disabled:cursor-not-allowed"
             />
           </label>
-          <div className="md:col-span-2 rounded-[16px] border border-dashed border-input bg-app-bg px-4 py-3 text-[13px] leading-relaxed text-muted-foreground transition-colors">
-            Students will only be able to register before this deadline, and it must be earlier than the event start time.
+          <div className="border-input bg-app-bg text-muted-foreground rounded-[16px] border border-dashed px-4 py-3 text-[13px] leading-relaxed transition-colors md:col-span-2">
+            Students will only be able to register before this deadline, and it
+            must be earlier than the event start time.
           </div>
           {fieldErrors.registrationClosesAt ? (
-            <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.registrationClosesAt}</p>
+            <p className="text-sm font-medium text-red-600 md:col-span-2">
+              {fieldErrors.registrationClosesAt}
+            </p>
           ) : null}
 
-          <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
-            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Location</span>
+          <label className="border-input bg-card-bg flex flex-col gap-2 rounded-[16px] border px-3 py-3 shadow-sm transition-colors md:col-span-2">
+            <span className="tracking-badge text-muted-foreground/80 text-xs font-semibold uppercase">
+              Location
+            </span>
             <input
               value={draft.location}
               onChange={handleTextChange("location")}
               disabled={!isEditable}
               type="text"
               placeholder="Building 4, Room 101"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed"
+              className="text-foreground placeholder:text-muted-foreground/50 w-full bg-transparent text-[15px] font-semibold outline-none disabled:cursor-not-allowed"
             />
           </label>
-          {fieldErrors.location ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.location}</p> : null}
+          {fieldErrors.location ? (
+            <p className="text-sm font-medium text-red-600 md:col-span-2">
+              {fieldErrors.location}
+            </p>
+          ) : null}
 
-          <label className="md:col-span-2 flex flex-col gap-2 rounded-[16px] border border-input bg-card-bg px-3 py-3 shadow-sm transition-colors">
-            <span className="text-xs font-semibold uppercase tracking-badge text-muted-foreground/80">Capacity</span>
+          <label className="border-input bg-card-bg flex flex-col gap-2 rounded-[16px] border px-3 py-3 shadow-sm transition-colors md:col-span-2">
+            <span className="tracking-badge text-muted-foreground/80 text-xs font-semibold uppercase">
+              Capacity
+            </span>
             <input
               value={draft.capacity}
               onChange={handleTextChange("capacity")}
@@ -414,21 +512,30 @@ export function EventEditor({
               type="number"
               min={1}
               placeholder="100"
-              className="w-full bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-muted-foreground/50 disabled:cursor-not-allowed"
+              className="text-foreground placeholder:text-muted-foreground/50 w-full bg-transparent text-[15px] font-semibold outline-none disabled:cursor-not-allowed"
             />
           </label>
-          {fieldErrors.capacity ? <p className="md:col-span-2 text-sm font-medium text-red-600">{fieldErrors.capacity}</p> : null}
+          {fieldErrors.capacity ? (
+            <p className="text-sm font-medium text-red-600 md:col-span-2">
+              {fieldErrors.capacity}
+            </p>
+          ) : null}
         </section>
 
-        <section className="grid grid-cols-1 gap-4 rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm md:grid-cols-2 transition-colors duration-300">
+        <section className="border-input bg-card-bg grid grid-cols-1 gap-4 rounded-[20px] border px-5 py-5 shadow-sm transition-colors duration-300 md:grid-cols-2">
           <div className="flex flex-col gap-2">
-            <label htmlFor="category" className="text-sm font-semibold text-foreground">Category</label>
+            <label
+              htmlFor="category"
+              className="text-foreground text-sm font-semibold"
+            >
+              Category
+            </label>
             <select
               id="category"
               value={draft.category}
               onChange={handleTextChange("category")}
               disabled={!isEditable}
-              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="border-input bg-card-bg text-foreground disabled:bg-muted h-12 rounded-[14px] border px-4 text-[15px] font-medium transition-colors outline-none focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed"
             >
               <option value="">Select a category</option>
               {EVENT_CATEGORY_OPTIONS.map((option) => (
@@ -437,17 +544,26 @@ export function EventEditor({
                 </option>
               ))}
             </select>
-            {fieldErrors.category ? <p className="text-sm font-medium text-red-600">{fieldErrors.category}</p> : null}
+            {fieldErrors.category ? (
+              <p className="text-sm font-medium text-red-600">
+                {fieldErrors.category}
+              </p>
+            ) : null}
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="domain" className="text-sm font-semibold text-foreground">Audience Domain</label>
+            <label
+              htmlFor="domain"
+              className="text-foreground text-sm font-semibold"
+            >
+              Audience Domain
+            </label>
             <select
               id="domain"
               value={draft.domain}
               onChange={handleTextChange("domain")}
               disabled={!isEditable}
-              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="border-input bg-card-bg text-foreground disabled:bg-muted h-12 rounded-[14px] border px-4 text-[15px] font-medium transition-colors outline-none focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed"
             >
               <option value="">Select a domain</option>
               {EVENT_DOMAIN_OPTIONS.map((option) => (
@@ -456,11 +572,20 @@ export function EventEditor({
                 </option>
               ))}
             </select>
-            {fieldErrors.domain ? <p className="text-sm font-medium text-red-600">{fieldErrors.domain}</p> : null}
+            {fieldErrors.domain ? (
+              <p className="text-sm font-medium text-red-600">
+                {fieldErrors.domain}
+              </p>
+            ) : null}
           </div>
 
-          <div className="md:col-span-2 flex flex-col gap-2">
-            <label htmlFor="tags" className="text-sm font-semibold text-foreground">Tags</label>
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <label
+              htmlFor="tags"
+              className="text-foreground text-sm font-semibold"
+            >
+              Tags
+            </label>
             <input
               id="tags"
               value={draft.tags}
@@ -468,14 +593,25 @@ export function EventEditor({
               disabled={!isEditable}
               type="text"
               placeholder="coding, workshop, networking"
-              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="border-input bg-card-bg text-foreground placeholder:text-muted-foreground/50 disabled:bg-muted h-12 rounded-[14px] border px-4 text-[15px] font-medium transition-colors outline-none focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed"
             />
-            <p className="text-xs text-muted-foreground">Suggested tags: {EVENT_TAG_SUGGESTIONS.join(", ")}</p>
-            {fieldErrors.tags ? <p className="text-sm font-medium text-red-600">{fieldErrors.tags}</p> : null}
+            <p className="text-muted-foreground text-xs">
+              Suggested tags: {EVENT_TAG_SUGGESTIONS.join(", ")}
+            </p>
+            {fieldErrors.tags ? (
+              <p className="text-sm font-medium text-red-600">
+                {fieldErrors.tags}
+              </p>
+            ) : null}
           </div>
 
-          <div className="md:col-span-2 flex flex-col gap-2">
-            <label htmlFor="targetBranches" className="text-sm font-semibold text-foreground">Target Branches (Optional)</label>
+          <div className="flex flex-col gap-2 md:col-span-2">
+            <label
+              htmlFor="targetBranches"
+              className="text-foreground text-sm font-semibold"
+            >
+              Target Branches (Optional)
+            </label>
             <input
               id="targetBranches"
               value={draft.targetBranches}
@@ -483,14 +619,20 @@ export function EventEditor({
               disabled={!isEditable}
               type="text"
               placeholder="Computer Science, Information Technology"
-              className="h-12 rounded-[14px] border border-input bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-muted-foreground/50 transition-colors focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed disabled:bg-muted"
+              className="border-input bg-card-bg text-foreground placeholder:text-muted-foreground/50 disabled:bg-muted h-12 rounded-[14px] border px-4 text-[15px] font-medium transition-colors outline-none focus-visible:border-[var(--color-focus-blue)] disabled:cursor-not-allowed"
             />
-            <p className="text-xs text-muted-foreground">Suggested branches: {TARGET_BRANCH_SUGGESTIONS.join(", ")}</p>
-            {fieldErrors.targetBranches ? <p className="text-sm font-medium text-red-600">{fieldErrors.targetBranches}</p> : null}
+            <p className="text-muted-foreground text-xs">
+              Suggested branches: {TARGET_BRANCH_SUGGESTIONS.join(", ")}
+            </p>
+            {fieldErrors.targetBranches ? (
+              <p className="text-sm font-medium text-red-600">
+                {fieldErrors.targetBranches}
+              </p>
+            ) : null}
           </div>
 
-          <div className="md:col-span-2 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-app-bg px-4 py-3 text-sm font-medium text-foreground transition-colors">
+          <div className="grid grid-cols-1 gap-3 md:col-span-2 md:grid-cols-3">
+            <label className="border-input bg-app-bg text-foreground flex min-h-[44px] items-center gap-3 rounded-[16px] border px-4 py-3 text-sm font-medium transition-colors">
               <input
                 checked={draft.isFreeFood}
                 onChange={handleCheckboxChange("isFreeFood")}
@@ -500,7 +642,7 @@ export function EventEditor({
               />
               Free food available
             </label>
-            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-app-bg px-4 py-3 text-sm font-medium text-foreground transition-colors">
+            <label className="border-input bg-app-bg text-foreground flex min-h-[44px] items-center gap-3 rounded-[16px] border px-4 py-3 text-sm font-medium transition-colors">
               <input
                 checked={draft.hasCertificate}
                 onChange={handleCheckboxChange("hasCertificate")}
@@ -510,7 +652,7 @@ export function EventEditor({
               />
               Certificate included
             </label>
-            <label className="flex min-h-[44px] items-center gap-3 rounded-[16px] border border-input bg-app-bg px-4 py-3 text-sm font-medium text-foreground transition-colors">
+            <label className="border-input bg-app-bg text-foreground flex min-h-[44px] items-center gap-3 rounded-[16px] border px-4 py-3 text-sm font-medium transition-colors">
               <input
                 checked={draft.isPaid}
                 onChange={handleCheckboxChange("isPaid")}
@@ -523,8 +665,8 @@ export function EventEditor({
           </div>
         </section>
 
-        <section className="rounded-[20px] border border-input bg-card-bg px-5 py-5 shadow-sm transition-colors duration-300">
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <section className="border-input bg-card-bg rounded-[20px] border px-5 py-5 shadow-sm transition-colors duration-300">
+          <div className="text-foreground flex items-center gap-2 text-sm font-semibold">
             <ImageIcon className="h-4 w-4" />
             Event Cover
           </div>
@@ -539,10 +681,14 @@ export function EventEditor({
               disabled={!isEditable}
               label="Upload image"
             />
-            {fieldErrors.imageUrl ? <p className="text-sm font-medium text-red-600 mt-2">{fieldErrors.imageUrl}</p> : null}
+            {fieldErrors.imageUrl ? (
+              <p className="mt-2 text-sm font-medium text-red-600">
+                {fieldErrors.imageUrl}
+              </p>
+            ) : null}
           </div>
           {draft.imageUrl ? (
-            <div className="mt-4 overflow-hidden rounded-[16px] border border-whisper bg-app-bg transition-colors">
+            <div className="border-whisper bg-app-bg mt-4 overflow-hidden rounded-[16px] border transition-colors">
               <div
                 aria-label="Event cover preview"
                 role="img"
@@ -559,25 +705,29 @@ export function EventEditor({
           </p>
         ) : null}
 
-        <div className="sticky bottom-6 z-10 mt-2 flex flex-wrap items-center justify-end gap-3 rounded-[18px] border border-whisper bg-card-bg/90 p-3 backdrop-blur-xl shadow-card transition-colors duration-300">
+        <div className="border-whisper bg-card-bg/90 shadow-card sticky bottom-24 z-10 mt-2 flex flex-wrap items-center justify-end gap-3 rounded-[18px] border p-3 backdrop-blur-xl transition-colors duration-300 lg:bottom-6">
           {isEditable ? (
             <>
               <button
                 type="button"
                 onClick={() => void saveDraft(false)}
                 disabled={isBusy || !hasManagedClubs}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-[12px] border border-input bg-card-bg px-5 py-3 text-[15px] font-semibold text-foreground transition-all hover:bg-muted disabled:opacity-60"
+                className="border-input bg-card-bg text-foreground hover:bg-muted inline-flex min-h-[44px] items-center gap-2 rounded-[12px] border px-5 py-3 text-[15px] font-semibold transition-all disabled:opacity-60"
               >
-                {createEvent.isPending || updateEvent.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {createEvent.isPending || updateEvent.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : null}
                 {mode === "create" ? "Save Draft" : "Save Changes"}
               </button>
               <button
                 type="button"
                 onClick={() => void saveDraft(true)}
                 disabled={isBusy || !hasManagedClubs}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-[12px] bg-notion-blue px-5 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[var(--color-notion-blue-hover)] disabled:opacity-60"
+                className="bg-notion-blue inline-flex min-h-[44px] items-center gap-2 rounded-[12px] px-5 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[var(--color-notion-blue-hover)] disabled:opacity-60"
               >
-                {submitForReview.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {submitForReview.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : null}
                 {mode === "create"
                   ? "Submit for Approval"
                   : activeStatus === "REJECTED"
@@ -592,9 +742,11 @@ export function EventEditor({
               type="button"
               onClick={() => void handlePublish()}
               disabled={isBusy}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-[12px] bg-notion-blue px-5 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[var(--color-notion-blue-hover)] disabled:opacity-60"
+              className="bg-notion-blue inline-flex min-h-[44px] items-center gap-2 rounded-[12px] px-5 py-3 text-[15px] font-semibold text-white transition-all hover:bg-[var(--color-notion-blue-hover)] disabled:opacity-60"
             >
-              {publishApproved.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              {publishApproved.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : null}
               Publish Event
             </button>
           ) : null}
@@ -606,7 +758,7 @@ export function EventEditor({
                 onChange={(event) => setCancelReason(event.target.value)}
                 rows={3}
                 placeholder="Explain why this event is being cancelled."
-                className="w-full rounded-[14px] border border-input bg-card-bg px-4 py-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 focus-visible:border-[var(--color-focus-blue)]"
+                className="border-input bg-card-bg text-foreground placeholder:text-muted-foreground/50 w-full rounded-[14px] border px-4 py-3 text-sm outline-none focus-visible:border-[var(--color-focus-blue)]"
               />
               <button
                 type="button"
@@ -614,7 +766,9 @@ export function EventEditor({
                 disabled={isBusy}
                 className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[12px] border border-red-200 bg-red-50 px-5 py-3 text-[15px] font-semibold text-red-700 transition-all hover:bg-red-100 disabled:opacity-60"
               >
-                {cancelEvent.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {cancelEvent.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : null}
                 Cancel Event
               </button>
             </div>

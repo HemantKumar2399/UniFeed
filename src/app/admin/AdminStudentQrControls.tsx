@@ -1,4 +1,5 @@
 "use client";
+import { formatPlatformDate } from "@/lib/platform-date";
 
 import { useState } from "react";
 import {
@@ -204,7 +205,7 @@ export function AdminStudentQrControls({
                   {record.qrRevokedAt ? (
                     <p className="mt-2 text-[12px] font-medium text-amber-700">
                       Revoked on{" "}
-                      {new Date(record.qrRevokedAt).toLocaleString("en-US", {
+                      {formatPlatformDate(record.qrRevokedAt, {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}

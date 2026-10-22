@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  PLATFORM_TIME_ZONE,
+  toLocalDateTime,
+  toDateInputValue,
+  toTimeInputValue,
+} from "@/lib/platform-date";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,12 +14,21 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { formatRegistrationDeadline, isRegistrationReopenable } from "@/lib/event-registration";
+import {
+  formatRegistrationDeadline,
+  isRegistrationReopenable,
+} from "@/lib/event-registration";
 import { api } from "@/trpc/react";
 
 const CANCEL_REASON_MIN_LENGTH = 10;
 
-type EventStatus = "DRAFT" | "SUBMITTED" | "APPROVED" | "PUBLISHED" | "REJECTED" | "CANCELLED";
+type EventStatus =
+  | "DRAFT"
+  | "SUBMITTED"
+  | "APPROVED"
+  | "PUBLISHED"
+  | "REJECTED"
+  | "CANCELLED";
 
 type EventActionsProps = {
   eventId: number;
@@ -69,17 +85,18 @@ export function EventActions({
     void utils.event.getHappeningThisWeek.invalidate();
   };
 
-  const extendRegistrationDeadline = api.event.extendRegistrationDeadline.useMutation({
-    onSuccess: () => {
-      toast.success("Registration deadline updated.");
-      setShowExtendForm(false);
-      invalidateLists();
-      router.refresh();
-    },
-    onError: (err) => {
-      toast.error(err.message || "Failed to update registration deadline.");
-    },
-  });
+  const extendRegistrationDeadline =
+    api.event.extendRegistrationDeadline.useMutation({
+      onSuccess: () => {
+        toast.success("Registration deadline updated.");
+        setShowExtendForm(false);
+        invalidateLists();
+        router.refresh();
+      },
+      onError: (err) => {
+        toast.error(err.message || "Failed to update registration deadline.");
+      },
+    });
 
   const deleteEvent = api.event.delete.useMutation({
     onSuccess: () => {
@@ -137,10 +154,15 @@ export function EventActions({
   });
 
   const handleExtendRegistration = () => {
-    const nextDeadline = toLocalDateTime(registrationCloseDate, registrationCloseTime);
+    const nextDeadline = toLocalDateTime(
+      registrationCloseDate,
+      registrationCloseTime,
+    );
 
     if (Number.isNaN(nextDeadline.getTime())) {
-      toast.error("Enter a valid registration deadline.");
+      toast.error(
+        `Enter a valid, unambiguous registration deadline in ${PLATFORM_TIME_ZONE}.`,
+      );
       return;
     }
 
@@ -153,11 +175,16 @@ export function EventActions({
   return (
     <div className="flex flex-col items-stretch gap-2 md:items-end">
       <Button asChild variant="outline">
-        <Link href={`/dashboard/events/${eventId}/edit`}>{getEditLabel(status)}</Link>
+        <Link href={`/dashboard/events/${eventId}/edit`}>
+          {getEditLabel(status)}
+        </Link>
       </Button>
 
       {canSubmit ? (
-        <Button onClick={() => submitForReview.mutate({ id: eventId })} disabled={isBusy}>
+        <Button
+          onClick={() => submitForReview.mutate({ id: eventId })}
+          disabled={isBusy}
+        >
           {submitForReview.isPending
             ? "Submitting..."
             : status === "REJECTED"
@@ -173,37 +200,58 @@ export function EventActions({
       ) : null}
 
       {canPublish ? (
-        <Button onClick={() => publishApproved.mutate({ id: eventId })} disabled={isBusy}>
+        <Button
+          onClick={() => publishApproved.mutate({ id: eventId })}
+          disabled={isBusy}
+        >
           {publishApproved.isPending ? "Publishing..." : "Publish Event"}
         </Button>
       ) : null}
 
       {canExtendRegistration ? (
         showExtendForm ? (
-          <div className="w-full space-y-2 rounded-[16px] border border-brand-border bg-brand-surface p-3 text-left">
+          <div className="border-brand-border bg-brand-surface w-full space-y-2 rounded-[16px] border p-3 text-left">
             <p className="text-caption text-notion-blue">
-              Current deadline: {formatRegistrationDeadline(registrationClosesAt)}
+              Current deadline:{" "}
+              {formatRegistrationDeadline(registrationClosesAt)} (
+              {PLATFORM_TIME_ZONE})
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
               <input
                 value={registrationCloseDate}
-                onChange={(event) => setRegistrationCloseDate(event.target.value)}
+                onChange={(event) =>
+                  setRegistrationCloseDate(event.target.value)
+                }
                 type="date"
-                className="w-full rounded-[12px] border border-input bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)]"
+                className="border-input bg-card-bg text-foreground w-full rounded-[12px] border px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)]"
               />
               <input
                 value={registrationCloseTime}
-                onChange={(event) => setRegistrationCloseTime(event.target.value)}
+                onChange={(event) =>
+                  setRegistrationCloseTime(event.target.value)
+                }
                 type="time"
-                className="w-full rounded-[12px] border border-input bg-card-bg px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)]"
+                className="border-input bg-card-bg text-foreground w-full rounded-[12px] border px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus-blue)]"
               />
             </div>
             <div className="flex items-center justify-end gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setShowExtendForm(false)}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowExtendForm(false)}
+              >
                 Keep Current
               </Button>
-              <Button type="button" size="sm" disabled={isBusy} onClick={handleExtendRegistration}>
-                {extendRegistrationDeadline.isPending ? "Updating..." : "Extend Registration"}
+              <Button
+                type="button"
+                size="sm"
+                disabled={isBusy}
+                onClick={handleExtendRegistration}
+              >
+                {extendRegistrationDeadline.isPending
+                  ? "Updating..."
+                  : "Extend Registration"}
               </Button>
             </div>
           </div>
@@ -220,7 +268,9 @@ export function EventActions({
 
       {status === "REJECTED" ? (
         <div className="alert-panel surface-status-danger text-caption">
-          {rejectionReason ? "Review admin feedback before recreating or replacing this event." : "This event was rejected by college admin review."}
+          {rejectionReason
+            ? "Review admin feedback before recreating or replacing this event."
+            : "This event was rejected by college admin review."}
         </div>
       ) : null}
 
@@ -242,7 +292,7 @@ export function EventActions({
           </div>
           {canCancel ? (
             showCancelForm ? (
-              <div className="w-full space-y-2 rounded-[16px] border border-status-danger-border bg-status-danger-surface p-3 text-left">
+              <div className="border-status-danger-border bg-status-danger-surface w-full space-y-2 rounded-[16px] border p-3 text-left">
                 <Textarea
                   value={cancelReason}
                   onChange={(event) => setCancelReason(event.target.value)}
@@ -251,7 +301,12 @@ export function EventActions({
                   placeholder="Explain why this event is being cancelled."
                 />
                 <div className="flex items-center justify-end gap-2">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setShowCancelForm(false)}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowCancelForm(false)}
+                  >
                     Keep Live
                   </Button>
                   <Button
@@ -261,7 +316,9 @@ export function EventActions({
                     onClick={() => {
                       const trimmed = cancelReason.trim();
                       if (trimmed.length < CANCEL_REASON_MIN_LENGTH) {
-                        toast.error(`Please enter a cancellation reason with at least ${CANCEL_REASON_MIN_LENGTH} characters.`);
+                        toast.error(
+                          `Please enter a cancellation reason with at least ${CANCEL_REASON_MIN_LENGTH} characters.`,
+                        );
                         return;
                       }
                       cancelEvent.mutate({ id: eventId, reason: trimmed });
@@ -272,7 +329,11 @@ export function EventActions({
                 </div>
               </div>
             ) : (
-              <Button type="button" onClick={() => setShowCancelForm(true)} variant="destructive">
+              <Button
+                type="button"
+                onClick={() => setShowCancelForm(true)}
+                variant="destructive"
+              >
                 Cancel Event
               </Button>
             )
@@ -282,8 +343,10 @@ export function EventActions({
 
       {status === "CANCELLED" ? (
         <>
-          <div className="rounded-[12px] border border-whisper bg-app-bg px-4 py-3 text-sm font-medium text-muted-foreground">
-            {cancellationReason ? `Cancelled: ${cancellationReason}` : "This event has been cancelled."}
+          <div className="border-whisper bg-app-bg text-muted-foreground rounded-[12px] border px-4 py-3 text-sm font-medium">
+            {cancellationReason
+              ? `Cancelled: ${cancellationReason}`
+              : "This event has been cancelled."}
           </div>
           <Button asChild variant="outline">
             <Link href={`/dashboard/events/${eventId}`}>View Attendees</Link>
@@ -299,7 +362,7 @@ export function EventActions({
               deleteEvent.mutate({ id: eventId });
             }
           }}
-          className="text-sm font-medium text-danger transition-colors hover:text-danger/80 disabled:opacity-60"
+          className="text-danger hover:text-danger/80 text-sm font-medium transition-colors disabled:opacity-60"
           disabled={isBusy}
         >
           {deleteEvent.isPending ? "Deleting..." : "Delete Event"}
@@ -307,34 +370,4 @@ export function EventActions({
       ) : null}
     </div>
   );
-}
-
-function toDateInputValue(date: Date): string {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function toTimeInputValue(date: Date): string {
-  const hours = `${date.getHours()}`.padStart(2, "0");
-  const minutes = `${date.getMinutes()}`.padStart(2, "0");
-  return `${hours}:${minutes}`;
-}
-
-function toLocalDateTime(dateValue: string, timeValue: string): Date {
-  const [year = Number.NaN, month = Number.NaN, day = Number.NaN] = dateValue.split("-").map(Number);
-  const [hours = Number.NaN, minutes = Number.NaN] = timeValue.split(":").map(Number);
-
-  if (
-    !Number.isFinite(year) ||
-    !Number.isFinite(month) ||
-    !Number.isFinite(day) ||
-    !Number.isFinite(hours) ||
-    !Number.isFinite(minutes)
-  ) {
-    return new Date(Number.NaN);
-  }
-
-  return new Date(year, month - 1, day, hours, minutes, 0);
 }

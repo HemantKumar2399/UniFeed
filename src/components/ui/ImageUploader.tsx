@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChangeEvent } from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/trpc/react";
@@ -23,13 +23,27 @@ export function ImageUploader({
   maxSizeMB = 5,
   onUploadStateChange,
 }: ImageUploaderProps) {
+  const inputId = useId();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const getPresignedUrl = api.upload.getPresignedUrl.useMutation();
 
   const handleFileUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    // File inputs suppress change for the same selection unless cleared.
+    event.target.value = "";
     if (!file) {
+      return;
+    }
+
+    if (
+      !["image/jpeg", "image/png", "image/webp", "image/gif"].includes(
+        file.type,
+      )
+    ) {
+      const message = "Choose a JPG, PNG, WebP, or GIF image.";
+      setUploadError(message);
+      toast.error(message);
       return;
     }
 
@@ -63,11 +77,13 @@ export function ImageUploader({
         });
 
         if (!localResponse.ok) {
-          const errBody = await localResponse.json().catch(() => ({})) as { error?: string };
+          const errBody = (await localResponse.json().catch(() => ({}))) as {
+            error?: string;
+          };
           throw new Error(errBody.error ?? "Local upload failed.");
         }
 
-        const { url } = await localResponse.json() as { url: string };
+        const { url } = (await localResponse.json()) as { url: string };
         publicUrl = url;
       } else {
         const uploadResponse = await fetch(presignResult.url, {
@@ -86,7 +102,8 @@ export function ImageUploader({
       onChange(publicUrl);
       toast.success("Image uploaded successfully.");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Image upload failed.";
+      const message =
+        error instanceof Error ? error.message : "Image upload failed.";
       setUploadError(message);
       toast.error(message);
     } finally {
@@ -98,41 +115,53 @@ export function ImageUploader({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <div className="flex flex-col gap-2">
-        <label htmlFor="imageFile" className="text-sm font-semibold text-foreground">
+        <label
+          htmlFor={`${inputId}-file`}
+          className="text-foreground text-sm font-semibold"
+        >
           {label}
         </label>
         <div className="relative">
           <input
-            id="imageFile"
+            id={`${inputId}-file`}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp,image/gif"
             onChange={handleFileUpload}
             disabled={disabled || isUploading}
-            className="w-full rounded-[14px] border border-whisper bg-card-bg px-4 py-3 text-sm text-foreground file:mr-3 file:rounded-[10px] file:border-0 file:bg-app-bg file:px-3 file:py-2 file:font-semibold file:text-foreground disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
+            className="border-whisper bg-card-bg text-foreground file:bg-app-bg file:text-foreground w-full rounded-[14px] border px-4 py-3 text-sm transition-colors duration-200 file:mr-3 file:rounded-[10px] file:border-0 file:px-3 file:py-2 file:font-semibold disabled:cursor-not-allowed disabled:opacity-50"
           />
           {isUploading && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+              <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
             </div>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">Upload a JPG, PNG, or WebP file up to {maxSizeMB} MB.</p>
-        {uploadError ? <p className="text-sm font-medium text-red-600">{uploadError}</p> : null}
+        <p className="text-muted-foreground text-xs">
+          Upload a JPG, PNG, WebP, or GIF file up to {maxSizeMB} MB.
+        </p>
+        {uploadError ? (
+          <p role="alert" className="text-sm font-medium text-red-600">
+            {uploadError}
+          </p>
+        ) : null}
       </div>
       <div className="flex flex-col gap-2">
-        <label htmlFor="imageUrl" className="text-sm font-semibold text-foreground">
+        <label
+          htmlFor={`${inputId}-url`}
+          className="text-foreground text-sm font-semibold"
+        >
           Hosted image URL
         </label>
         <input
-          id="imageUrl"
+          id={`${inputId}-url`}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           disabled={disabled || isUploading}
           type="url"
           placeholder="https://cdn.example.com/logo.jpg"
-          className="h-12 rounded-[14px] border border-whisper bg-card-bg px-4 text-[15px] font-medium text-foreground outline-none placeholder:text-muted-foreground/60 transition-colors focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 duration-200"
+          className="border-whisper bg-card-bg text-foreground placeholder:text-muted-foreground/60 focus-visible:border-primary h-12 rounded-[14px] border px-4 text-[15px] font-medium transition-colors duration-200 outline-none disabled:cursor-not-allowed disabled:opacity-50"
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           If upload storage is not configured, paste a hosted URL manually.
         </p>
       </div>

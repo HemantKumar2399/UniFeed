@@ -22,6 +22,7 @@ import {
 import { api } from "@/trpc/react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SignOutForm } from "@/components/SignOutForm";
+import { PLATFORM_TIME_ZONE } from "@/lib/platform-date";
 
 const studentLinks = [
   { name: "Home", href: "/home", icon: Home },
@@ -63,7 +64,9 @@ export function PlatformShell({
     href === "/dashboard"
       ? pathname === href
       : pathname === href || pathname.startsWith(`${href}/`);
-  const displayName = userName?.trim() ?? (organizer ? "Organizer" : "Student");
+  const trimmedName = userName?.trim() ?? "";
+  const displayName =
+    trimmedName.length > 0 ? trimmedName : organizer ? "Organizer" : "Student";
   const title =
     links.find((item) => active(item.href))?.name ?? "Notifications";
 
@@ -173,6 +176,12 @@ export function PlatformShell({
             <span className="text-foreground font-medium">{title}</span>
           </p>
           <div className="flex items-center gap-2">
+            <span
+              className="text-muted-foreground hidden text-xs xl:block"
+              title="All event times use this time zone"
+            >
+              {PLATFORM_TIME_ZONE}
+            </span>
             {!organizer && (
               <Link
                 href="/search"

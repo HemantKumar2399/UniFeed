@@ -1,10 +1,17 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 import { CalendarClock, Filter, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { EmptyState } from "@/components/EmptyState";
-import { EventStatusBadge, RegistrationStatusBadge } from "@/components/EventStatusBadge";
-import { formatRegistrationDeadline, getAdminDeadlineState } from "@/lib/event-registration";
+import {
+  EventStatusBadge,
+  RegistrationStatusBadge,
+} from "@/components/EventStatusBadge";
+import {
+  formatRegistrationDeadline,
+  getAdminDeadlineState,
+} from "@/lib/event-registration";
 import { getRegistrationStatus } from "@/lib/event-status";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
@@ -16,13 +23,13 @@ function formatDateTime(date: Date | null | undefined) {
     return "Not submitted yet";
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
+  return formatPlatformDate(date, {
     day: "2-digit",
     month: "short",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(date);
+  });
 }
 
 type AdminEventsPageProps = {
@@ -35,7 +42,9 @@ type AdminEventsPageProps = {
 type CommunityItem = RouterOutputs["admin"]["getCollegeCommunities"][number];
 type PendingEventItem = RouterOutputs["admin"]["getPendingEvents"][number];
 
-export default async function AdminEventsPage({ searchParams }: AdminEventsPageProps) {
+export default async function AdminEventsPage({
+  searchParams,
+}: AdminEventsPageProps) {
   const session = await auth();
 
   if (!session?.user) {
@@ -59,7 +68,9 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
     caller.admin.getCollegeCommunities(),
     caller.admin.getPendingEvents({
       ...(q?.trim() ? { query: q.trim() } : {}),
-      ...(parsedClubId && Number.isInteger(parsedClubId) ? { clubId: parsedClubId } : {}),
+      ...(parsedClubId && Number.isInteger(parsedClubId)
+        ? { clubId: parsedClubId }
+        : {}),
     }),
   ]);
 
@@ -68,33 +79,36 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
       <header className="flex flex-col gap-3">
         <div>
           <p className="text-eyebrow text-muted-foreground">Approval Queue</p>
-          <h1 className="text-page-title mt-1 text-foreground">Pending event reviews</h1>
-          <p className="text-page-lead mt-2 max-w-3xl text-muted-foreground">
-            Review submitted community events for your college, inspect organizer context, and decide whether each
-            event moves to approved status.
+          <h1 className="text-page-title text-foreground mt-1">
+            Pending event reviews
+          </h1>
+          <p className="text-page-lead text-muted-foreground mt-2 max-w-3xl">
+            Review submitted community events for your college, inspect
+            organizer context, and decide whether each event moves to approved
+            status.
           </p>
         </div>
       </header>
 
       <section className="card-surface p-5">
         <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px_auto]">
-          <label className="flex items-center gap-3 rounded-2xl border border-input bg-app-bg px-4 py-3">
-            <Search className="h-4 w-4 text-muted-foreground" />
+          <label className="border-input bg-app-bg flex items-center gap-3 rounded-2xl border px-4 py-3">
+            <Search className="text-muted-foreground h-4 w-4" />
             <input
               type="search"
               name="q"
               defaultValue={q ?? ""}
               placeholder="Search by event title or organizer"
-              className="w-full bg-transparent text-[14px] font-medium text-foreground outline-none placeholder:text-muted-foreground"
+              className="text-foreground placeholder:text-muted-foreground w-full bg-transparent text-[14px] font-medium outline-none"
             />
           </label>
 
-          <label className="flex items-center gap-3 rounded-2xl border border-input bg-app-bg px-4 py-3">
-            <Filter className="h-4 w-4 text-muted-foreground" />
+          <label className="border-input bg-app-bg flex items-center gap-3 rounded-2xl border px-4 py-3">
+            <Filter className="text-muted-foreground h-4 w-4" />
             <select
               name="clubId"
               defaultValue={clubId ?? ""}
-              className="w-full bg-transparent text-[14px] font-medium text-foreground outline-none"
+              className="text-foreground w-full bg-transparent text-[14px] font-medium outline-none"
             >
               <option value="">All communities</option>
               {clubs.map((club: CommunityItem) => (
@@ -107,7 +121,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
 
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-2xl bg-notion-blue px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--color-notion-blue-hover)]"
+            className="bg-notion-blue inline-flex items-center justify-center rounded-2xl px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--color-notion-blue-hover)]"
           >
             Apply Filters
           </button>
@@ -146,27 +160,36 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                       <div className="flex flex-wrap items-center gap-2">
                         <EventStatusBadge status={event.status} />
                         <RegistrationStatusBadge status={regStatus} />
-                        <span className="text-badge rounded-full border border-whisper bg-app-bg px-3.5 py-1 uppercase text-muted-foreground">
+                        <span className="text-badge border-whisper bg-app-bg text-muted-foreground rounded-full border px-3.5 py-1 uppercase">
                           {event.club.name}
                         </span>
-                        <span className={`text-badge rounded-full border px-3.5 py-1 uppercase ${deadlineBadge.className}`}>
+                        <span
+                          className={`text-badge rounded-full border px-3.5 py-1 uppercase ${deadlineBadge.className}`}
+                        >
                           {deadlineBadge.label}
                         </span>
                       </div>
 
                       <div>
-                        <h2 className="text-panel-title text-foreground">{event.title}</h2>
-                        <p className="text-caption mt-1 text-muted-foreground">
+                        <h2 className="text-panel-title text-foreground">
+                          {event.title}
+                        </h2>
+                        <p className="text-caption text-muted-foreground mt-1">
                           {event.location} - {formatDateTime(event.date)}
                         </p>
                       </div>
 
-                      <div className="text-caption flex flex-wrap items-center gap-4 text-muted-foreground">
+                      <div className="text-caption text-muted-foreground flex flex-wrap items-center gap-4">
                         <span>{event.capacity} seats</span>
-                        <span>Submitted {formatDateTime(event.submittedAt ?? event.createdAt)}</span>
+                        <span>
+                          Submitted{" "}
+                          {formatDateTime(event.submittedAt ?? event.createdAt)}
+                        </span>
                         <span className="inline-flex items-center gap-1">
                           <Users className="h-4 w-4" />
-                          {event.author.name ?? event.author.email ?? "Organizer"}
+                          {event.author.name ??
+                            event.author.email ??
+                            "Organizer"}
                         </span>
                       </div>
 
@@ -183,7 +206,12 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                           <CalendarClock className="h-4 w-4 shrink-0" />
                           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                             <span>
-                              Registration deadline: <strong>{formatRegistrationDeadline(event.registrationClosesAt)}</strong>
+                              Registration deadline:{" "}
+                              <strong>
+                                {formatRegistrationDeadline(
+                                  event.registrationClosesAt,
+                                )}
+                              </strong>
                             </span>
                             <span className="text-micro opacity-75 sm:border-l sm:border-current sm:pl-2">
                               ({deadlineBadge.label})
@@ -196,7 +224,7 @@ export default async function AdminEventsPage({ searchParams }: AdminEventsPageP
                     <div className="flex items-center justify-start lg:justify-end">
                       <Link
                         href={`/admin/events/${event.id}`}
-                        className="inline-flex items-center justify-center rounded-2xl bg-notion-blue px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--color-notion-blue-hover)]"
+                        className="bg-notion-blue inline-flex items-center justify-center rounded-2xl px-5 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[var(--color-notion-blue-hover)]"
                       >
                         Review Event
                       </Link>

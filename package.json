@@ -25,7 +25,7 @@
     "setup:windows": "node scripts/setup-local.mjs",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit --incremental false",
-    "test:e2e": "playwright test",
+    "test:e2e": "node --env-file-if-exists=.env --import tsx scripts/bootstrap-e2e-smoke.ts && playwright test",
     "test:e2e:smoke": "node --env-file-if-exists=.env --import tsx scripts/bootstrap-e2e-smoke.ts && playwright test --project=chromium --workers=1 tests/e2e/epic16-smoke.spec.ts tests/e2e/epic17-realtime.spec.ts",
     "test:unit": "node scripts/run-tests.mjs",
     "test:integration": "node scripts/run-tests.mjs --integration"

@@ -4,6 +4,8 @@ Verification date: 22 October 2026. Branch: `codex/hackathon-stabilization`. Bas
 
 Current validation is recorded in [the stabilization report](stabilization-2026-10-22.md). Historical Epic 16 PASS labels were removed because they did not establish the current branch's status.
 
+The subsequent [regional configuration and UI reliability report](global-ux-reliability-2026-10-22.md) records the date, search and image fixes and their verification.
+
 ## Release checks
 
 Run `npm run check`, `npm run test:unit`, `npm run build`, migrations and integration tests on a disposable PostgreSQL database, then Chromium smoke and the affected user journeys. Run Next type generation and builds sequentially.

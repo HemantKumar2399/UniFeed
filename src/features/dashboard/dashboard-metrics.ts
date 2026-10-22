@@ -1,3 +1,4 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 import type { EventStatus, RSVPStatus } from "@prisma/client";
 
 export const ORGANIZER_STATUS_CARD_ORDER = [
@@ -8,7 +9,8 @@ export const ORGANIZER_STATUS_CARD_ORDER = [
   "CANCELLED",
 ] as const;
 
-export type OrganizerStatusCardStatus = (typeof ORGANIZER_STATUS_CARD_ORDER)[number];
+export type OrganizerStatusCardStatus =
+  (typeof ORGANIZER_STATUS_CARD_ORDER)[number];
 
 export type OrganizerStatusCard = {
   status: OrganizerStatusCardStatus;
@@ -112,7 +114,9 @@ export function buildOrganizerStatusCards(
   });
 }
 
-export function summarizeRsvpStatuses(statuses: RSVPStatus[]): RsvpStatusTotals {
+export function summarizeRsvpStatuses(
+  statuses: RSVPStatus[],
+): RsvpStatusTotals {
   return statuses.reduce<RsvpStatusTotals>(
     (totals, status) => {
       totals.total += 1;
@@ -159,7 +163,9 @@ export function buildRsvpConversionRows(
   events: RsvpConversionEventInput[],
 ): RsvpConversionRow[] {
   return events.map((event) => {
-    const totals = summarizeRsvpStatuses(event.rsvps.map((rsvp) => rsvp.status));
+    const totals = summarizeRsvpStatuses(
+      event.rsvps.map((rsvp) => rsvp.status),
+    );
     const confirmedCount = totals.going + totals.attended;
 
     return {
@@ -180,13 +186,13 @@ export function buildRsvpConversionRows(
 }
 
 export function formatDashboardDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-IN", {
+  return formatPlatformDate(date, {
     day: "2-digit",
     month: "short",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(date);
+  });
 }
 
 export function getRsvpActivityLabel(status: RSVPStatus): string {

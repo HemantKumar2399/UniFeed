@@ -44,10 +44,13 @@ Fresh registrations receive STUDENT access. Profile completion stays pending unt
 | `ALLOWED_DOMAINS`                                                                         | Seed email-domain configuration; existing College.emailDomains records govern login/registration |
 | `STUDENT_QR_SECRET`                                                                       | Separate passport signing secret, at least 16 characters                                         |
 | `NEXT_PUBLIC_APP_URL`                                                                     | Optional deployed origin                                                                         |
+| `NEXT_PUBLIC_LOCALE`, `NEXT_PUBLIC_TIME_ZONE`                                             | Shared date locale and IANA time zone, default `en` / `UTC`; rebuild after changing              |
 | `UPLOAD_BUCKET_NAME`, `UPLOAD_REGION`, `UPLOAD_ACCESS_KEY_ID`, `UPLOAD_SECRET_ACCESS_KEY` | Optional object storage                                                                          |
 | `UPLOAD_PUBLIC_BASE_URL`                                                                  | Uploaded media origin, also allowlisted for next/image                                           |
 
-Development uploads are decoded and re-encoded to WebP. Local file uploads are disabled in production; configure storage or use a supported hosted image URL. The presigned storage path restricts image MIME types, but deployment should also enforce object-storage/CDN content policy.
+All displayed event dates, event inputs and deadline changes use the configured time zone, independent of the server or browser location. For example, set `NEXT_PUBLIC_LOCALE=en-IN` and `NEXT_PUBLIC_TIME_ZONE=Asia/Kolkata` for an India deployment. Stored timestamps remain UTC. Impossible dates and ambiguous daylight-saving times are rejected; choose a time outside the clock change. This is one deployment-wide time zone, not per-college time zones or translated interface text.
+
+Development uploads are decoded and re-encoded to WebP. Local file uploads are disabled in production; configure storage or paste an HTTP(S) hosted image URL. External images load directly in the browser so new campus image hosts do not require code changes or a wider server image optimizer allowlist. The presigned storage path restricts image MIME types, but deployment should also enforce object-storage/CDN content policy.
 
 ## Verification
 
@@ -80,6 +83,7 @@ Set `BASE_URL` and explicitly set `REUSE_TEST_SERVER=1` only when attaching to a
 - [Implementation and feature status](docs/implementation-status.md)
 - [Verification record and release limits](docs/production-readiness.md)
 - [UX direction](docs/ux-refresh.md)
+- [Regional configuration and UI reliability](docs/global-ux-reliability-2026-10-22.md)
 - [Original audit](docs/codebase-audit-2026-10-21.md)
 - [Contributing](CONTRIBUTING.md)
 

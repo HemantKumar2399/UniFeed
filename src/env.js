@@ -21,6 +21,8 @@ export const env = createEnv({
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    NEXT_PUBLIC_LOCALE: z.string().optional(),
+    NEXT_PUBLIC_TIME_ZONE: z.string().optional(),
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -34,6 +36,8 @@ export const env = createEnv({
     UPLOAD_SECRET_ACCESS_KEY: process.env.UPLOAD_SECRET_ACCESS_KEY,
     UPLOAD_PUBLIC_BASE_URL: process.env.UPLOAD_PUBLIC_BASE_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,
+    NEXT_PUBLIC_TIME_ZONE: process.env.NEXT_PUBLIC_TIME_ZONE,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

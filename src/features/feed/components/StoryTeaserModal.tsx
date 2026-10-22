@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Image from "next/image";
+import { HostedImage as Image } from "@/components/HostedImage";
 import { useRouter } from "next/navigation";
 
 interface StoryTeaserModalProps {

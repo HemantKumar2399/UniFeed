@@ -1,3 +1,8 @@
+import {
+  toLocalDateTime,
+  toDateInputValue,
+  toTimeInputValue,
+} from "@/lib/platform-date";
 import type { CreateEventInput } from "./components/CreateEventSchema";
 
 type EventEditorDraftSource = Omit<CreateEventInput, "registrationClosesAt"> & {
@@ -46,38 +51,15 @@ export function createEmptyEventEditorDraft(): EventEditorDraft {
   };
 }
 
-function toLocalDateTime(dateValue: string, timeValue: string): Date {
-  const [year = Number.NaN, month = Number.NaN, day = Number.NaN] = dateValue.split("-").map(Number);
-  const [hours = Number.NaN, minutes = Number.NaN] = timeValue.split(":").map(Number);
-
-  if (
-    !Number.isFinite(year) ||
-    !Number.isFinite(month) ||
-    !Number.isFinite(day) ||
-    !Number.isFinite(hours) ||
-    !Number.isFinite(minutes)
-  ) {
-    return new Date(Number.NaN);
-  }
-
-  return new Date(year, month - 1, day, hours, minutes, 0);
-}
-
-function toDateInputValue(date: Date): string {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  const day = `${date.getDate()}`.padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function toTimeInputValue(date: Date): string {
-  const hours = `${date.getHours()}`.padStart(2, "0");
-  const minutes = `${date.getMinutes()}`.padStart(2, "0");
-  return `${hours}:${minutes}`;
-}
-
 function normalizeCommaSeparatedList(value: string): string[] {
-  return [...new Set(value.split(",").map((item) => item.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 export function buildEventPayload(draft: EventEditorDraft): CreateEventInput {
@@ -103,7 +85,9 @@ export function buildEventPayload(draft: EventEditorDraft): CreateEventInput {
   };
 }
 
-export function buildEventEditorDraft(input: EventEditorDraftSource): EventEditorDraft {
+export function buildEventEditorDraft(
+  input: EventEditorDraftSource,
+): EventEditorDraft {
   return {
     clubId: String(input.clubId),
     title: input.title,

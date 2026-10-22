@@ -1,11 +1,15 @@
-import Image from "next/image";
+import { formatPlatformDate } from "@/lib/platform-date";
+import { HostedImage as Image } from "@/components/HostedImage";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Users } from "lucide-react";
 import { TRPCError } from "@trpc/server";
 
 import { EventStatusBadge } from "@/components/EventStatusBadge";
-import { formatRegistrationDeadline, getApprovalBlockedReason } from "@/lib/event-registration";
+import {
+  formatRegistrationDeadline,
+  getApprovalBlockedReason,
+} from "@/lib/event-registration";
 import { createCaller } from "@/server/api/root";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
@@ -17,22 +21,22 @@ function formatDateTime(date: Date | null | undefined) {
     return "Not available";
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
+  return formatPlatformDate(date, {
     day: "2-digit",
     month: "short",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(date);
+  });
 }
-
-
 
 type AdminEventDetailPageProps = {
   params: Promise<{ id: string }>;
 };
 
-export default async function AdminEventDetailPage({ params }: AdminEventDetailPageProps) {
+export default async function AdminEventDetailPage({
+  params,
+}: AdminEventDetailPageProps) {
   const session = await auth();
 
   if (!session?.user) {
@@ -60,7 +64,10 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
   try {
     event = await caller.admin.getEventReviewDetail({ eventId });
   } catch (error) {
-    if (error instanceof TRPCError && (error.code === "NOT_FOUND" || error.code === "FORBIDDEN")) {
+    if (
+      error instanceof TRPCError &&
+      (error.code === "NOT_FOUND" || error.code === "FORBIDDEN")
+    ) {
       notFound();
     }
 
@@ -71,7 +78,9 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
     notFound();
   }
 
-  const latestRejection = event.approvalLogs.find((log) => log.action === "REJECTED" && log.reason);
+  const latestRejection = event.approvalLogs.find(
+    (log) => log.action === "REJECTED" && log.reason,
+  );
   const approvalBlockedReason = getApprovalBlockedReason({
     registrationClosesAt: event.registrationClosesAt,
     eventDate: event.date,
@@ -92,14 +101,16 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <EventStatusBadge status={event.status} />
-              <span className="text-badge rounded-full border border-whisper bg-card-bg px-3 py-1 uppercase text-muted-foreground">
+              <span className="text-badge border-whisper bg-card-bg text-muted-foreground rounded-full border px-3 py-1 uppercase">
                 {event.club.name}
               </span>
             </div>
             <div>
               <h1 className="text-page-title text-foreground">{event.title}</h1>
-              <p className="text-page-lead mt-2 max-w-3xl text-muted-foreground">
-                Review the full event details, check organizer and community context, and decide whether this event should move into the approved state.
+              <p className="text-page-lead text-muted-foreground mt-2 max-w-3xl">
+                Review the full event details, check organizer and community
+                context, and decide whether this event should move into the
+                approved state.
               </p>
             </div>
           </div>
@@ -109,7 +120,7 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
       <section className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
         <div className="space-y-6">
           <div className="card-surface-featured overflow-hidden">
-            <div className="relative aspect-[16/8] w-full bg-app-bg">
+            <div className="bg-app-bg relative aspect-[16/8] w-full">
               <Image
                 src={event.imageUrl}
                 alt={event.title}
@@ -120,45 +131,53 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
             </div>
             <div className="p-6">
               <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
                   <p className="text-eyebrow text-muted-foreground">Schedule</p>
-                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                  <p className="text-caption text-foreground mt-2 inline-flex items-center gap-2">
                     <CalendarDays className="text-link-accent h-4 w-4" />
                     {formatDateTime(event.date)}
                   </p>
                 </div>
-                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
                   <p className="text-eyebrow text-muted-foreground">Capacity</p>
-                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                  <p className="text-caption text-foreground mt-2 inline-flex items-center gap-2">
                     <Users className="text-link-accent h-4 w-4" />
                     {event.capacity} seats
                   </p>
                 </div>
-                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
                   <p className="text-eyebrow text-muted-foreground">Location</p>
-                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                  <p className="text-caption text-foreground mt-2 inline-flex items-center gap-2">
                     <MapPin className="text-link-accent h-4 w-4" />
                     {event.location}
                   </p>
                 </div>
-                <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
-                  <p className="text-eyebrow text-muted-foreground">Submitted</p>
-                  <p className="text-caption mt-2 inline-flex items-center gap-2 text-foreground">
+                <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
+                  <p className="text-eyebrow text-muted-foreground">
+                    Submitted
+                  </p>
+                  <p className="text-caption text-foreground mt-2 inline-flex items-center gap-2">
                     <Clock3 className="text-link-accent h-4 w-4" />
                     {formatDateTime(event.submittedAt ?? event.createdAt)}
                   </p>
                 </div>
-                <div className="rounded-[16px] border border-whisper bg-app-bg p-4 md:col-span-2">
-                  <p className="text-eyebrow text-muted-foreground">Registration closes</p>
-                  <p className="text-caption mt-2 text-foreground">
+                <div className="border-whisper bg-app-bg rounded-[16px] border p-4 md:col-span-2">
+                  <p className="text-eyebrow text-muted-foreground">
+                    Registration closes
+                  </p>
+                  <p className="text-caption text-foreground mt-2">
                     {formatRegistrationDeadline(event.registrationClosesAt)}
                   </p>
                 </div>
               </div>
 
               <div className="mt-6">
-                <p className="text-eyebrow text-muted-foreground">Description</p>
-                <p className="text-page-lead mt-3 whitespace-pre-wrap text-muted-foreground">{event.description}</p>
+                <p className="text-eyebrow text-muted-foreground">
+                  Description
+                </p>
+                <p className="text-page-lead text-muted-foreground mt-3 whitespace-pre-wrap">
+                  {event.description}
+                </p>
               </div>
 
               {approvalBlockedReason ? (
@@ -178,7 +197,9 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
           </div>
 
           <div className="card-surface p-6">
-            <p className="text-eyebrow text-muted-foreground">Approval History</p>
+            <p className="text-eyebrow text-muted-foreground">
+              Approval History
+            </p>
             <div className="mt-4 space-y-4">
               {event.approvalLogs.length === 0 ? (
                 <p className="text-caption text-muted-foreground">
@@ -186,11 +207,14 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
                 </p>
               ) : (
                 event.approvalLogs.map((log) => (
-                  <div key={log.id} className="rounded-[16px] border border-whisper bg-app-bg p-4">
+                  <div
+                    key={log.id}
+                    className="border-whisper bg-app-bg rounded-[16px] border p-4"
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
                         <p className="text-nav text-foreground">{log.action}</p>
-                        <p className="text-caption mt-1 text-muted-foreground">
+                        <p className="text-caption text-muted-foreground mt-1">
                           {log.actor.name ?? log.actor.email ?? "Administrator"}
                         </p>
                       </div>
@@ -199,7 +223,9 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
                       </p>
                     </div>
                     {log.reason ? (
-                      <p className="text-caption mt-3 text-muted-foreground">{log.reason}</p>
+                      <p className="text-caption text-muted-foreground mt-3">
+                        {log.reason}
+                      </p>
                     ) : null}
                   </div>
                 ))
@@ -210,16 +236,24 @@ export default async function AdminEventDetailPage({ params }: AdminEventDetailP
 
         <aside className="space-y-6">
           <div className="card-surface p-6">
-            <p className="text-eyebrow text-muted-foreground">Organizer Context</p>
+            <p className="text-eyebrow text-muted-foreground">
+              Organizer Context
+            </p>
             <div className="mt-4 space-y-3">
-              <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+              <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
                 <p className="text-eyebrow text-muted-foreground">Organizer</p>
-                <p className="text-nav mt-2 text-foreground">{event.author.name ?? "Unnamed organizer"}</p>
-                <p className="text-caption mt-1 text-muted-foreground">{event.author.email}</p>
+                <p className="text-nav text-foreground mt-2">
+                  {event.author.name ?? "Unnamed organizer"}
+                </p>
+                <p className="text-caption text-muted-foreground mt-1">
+                  {event.author.email}
+                </p>
               </div>
-              <div className="rounded-[16px] border border-whisper bg-app-bg p-4">
+              <div className="border-whisper bg-app-bg rounded-[16px] border p-4">
                 <p className="text-eyebrow text-muted-foreground">Community</p>
-                <p className="text-nav mt-2 text-foreground">{event.club.name}</p>
+                <p className="text-nav text-foreground mt-2">
+                  {event.club.name}
+                </p>
               </div>
             </div>
           </div>

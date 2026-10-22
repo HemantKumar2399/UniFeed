@@ -1,5 +1,5 @@
 import React, { type ReactNode } from "react";
-import Image from "next/image";
+import { HostedImage as Image } from "@/components/HostedImage";
 import Link from "next/link";
 import { ArrowLeft, Calendar, MapPin, Tag } from "lucide-react";
 

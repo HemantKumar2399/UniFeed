@@ -1,3 +1,4 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 import { ShieldAlert, ShieldCheck, Ticket } from "lucide-react";
 
 import { StudentQrCard } from "@/components/StudentQrCard";
@@ -280,10 +281,10 @@ export default async function PassportPage() {
                       {registration.event.location}
                     </p>
                     <p className="text-muted-foreground mt-1 text-[13px] font-medium">
-                      {new Intl.DateTimeFormat("en-US", {
+                      {formatPlatformDate(registration.event.date, {
                         dateStyle: "medium",
                         timeStyle: "short",
-                      }).format(registration.event.date)}
+                      })}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

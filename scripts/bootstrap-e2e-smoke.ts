@@ -45,12 +45,22 @@ async function main() {
   const adminEmail = buildSeedEmail("admin.jecrc");
   const studentEmail = buildSeedEmail("student.1");
 
-  const [organizer, admin, student, club] = await Promise.all([
+  const [organizer, admin, student] = await Promise.all([
     prisma.user.findUnique({ where: { email: organizerEmail } }),
     prisma.user.findUnique({ where: { email: adminEmail } }),
     prisma.user.findUnique({ where: { email: studentEmail } }),
-    prisma.club.findFirst({ where: { name: "JECRC Coding Club" } }),
   ]);
+  const membership = organizer
+    ? await prisma.clubMembership.findFirst({
+        where: {
+          userId: organizer.id,
+          role: "OWNER",
+          club: { collegeId: organizer.collegeId, deletedAt: null },
+        },
+        include: { club: true },
+      })
+    : null;
+  const club = membership?.club;
 
   if (!organizer || !admin || !student || !club) {
     throw new Error(

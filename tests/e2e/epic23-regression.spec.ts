@@ -1,5 +1,6 @@
 import { expect, test } from "../support/fixtures";
 import { PrismaClient } from "@prisma/client";
+import { getSeedUsers } from "../support/helpers/auth";
 
 const prisma = new PrismaClient();
 
@@ -10,14 +11,20 @@ test.describe("Epic 23 E2E Regression and UI Stabilization Tests", () => {
 
   test.beforeAll(async () => {
     // 1. Fetch seed credentials and models
-    const organizer = await prisma.user.findFirst({
-      where: { email: { startsWith: "organizer.coding" } },
+    const organizer = await prisma.user.findUnique({
+      where: { email: getSeedUsers().organizer.email },
     });
-    const club = await prisma.club.findFirst({
-      where: { name: "JECRC Coding Club" },
-    });
+    const membership = organizer
+      ? await prisma.clubMembership.findFirst({
+          where: {
+            userId: organizer.id,
+            role: "OWNER",
+            club: { collegeId: organizer.collegeId },
+          },
+        })
+      : null;
 
-    if (!organizer || !club) {
+    if (!organizer || !membership) {
       throw new Error(
         "Unable to retrieve seed organizer and club from database.",
       );
@@ -25,7 +32,7 @@ test.describe("Epic 23 E2E Regression and UI Stabilization Tests", () => {
 
     organizerId = organizer.id;
     collegeId = organizer.collegeId;
-    clubId = club.id;
+    clubId = membership.clubId;
   });
 
   test.afterAll(async () => {

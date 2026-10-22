@@ -4,7 +4,7 @@ The audience is students finding a worthwhile event and organizers running it. T
 
 The visual direction is a campus activity board: a cool paper canvas, clear blue wayfinding, and event imagery as the expressive element. Palette: paper `#f5f7fb`, ink `#17243b`, secondary ink `#536278`, action blue `#1763dd`, light blue `#edf4ff`, and white cards. Existing semantic status colors remain for actual event state. Dark mode uses the existing semantic surface system.
 
-Display typography uses a rounded Trebuchet/system stack, body text retains Inter, and dates/counts use tabular numbers. This avoids adding another font download. Event date stamps are the signature: useful calendar information, not decoration.
+Display typography uses a rounded Trebuchet/system stack; body text uses installed Inter or the system UI font, and dates/counts use tabular numbers. Builds and page loading do not require a Google font download. Event date stamps are the signature: useful calendar information, not decoration.
 
 Desktop uses a quiet 240px navigation rail and a readable main canvas. Mobile uses five consistently labeled destinations with notifications/search in the top bar. Both role shells share one implementation. Navigation no longer remounts page trees for blur animations. Visible focus, a skip link, large touch targets, motion preferences and safe-area spacing are baseline behavior.
 

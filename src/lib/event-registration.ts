@@ -1,3 +1,4 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 import type { EventStatus } from "@prisma/client";
 
 const CLOSING_SOON_WINDOW_MS = 24 * 60 * 60 * 1000;
@@ -53,7 +54,10 @@ export function getRegistrationAvailability(
     return input.waitlistEnabled ? "WAITLIST_OPEN" : "FULL";
   }
 
-  if (input.registrationClosesAt.getTime() - now.getTime() <= CLOSING_SOON_WINDOW_MS) {
+  if (
+    input.registrationClosesAt.getTime() - now.getTime() <=
+    CLOSING_SOON_WINDOW_MS
+  ) {
     return "CLOSING_SOON";
   }
 
@@ -68,7 +72,9 @@ export type OrganizerDeadlineStateInput = {
   now?: Date;
 };
 
-export function getOrganizerDeadlineState(input: OrganizerDeadlineStateInput): string {
+export function getOrganizerDeadlineState(
+  input: OrganizerDeadlineStateInput,
+): string {
   const now = input.now ?? new Date();
 
   if (!input.registrationClosesAt) {
@@ -80,7 +86,11 @@ export function getOrganizerDeadlineState(input: OrganizerDeadlineStateInput): s
   }
 
   if (input.registrationClosesAt <= now) {
-    if (input.status === "SUBMITTED" || input.status === "APPROVED" || input.status === "DRAFT") {
+    if (
+      input.status === "SUBMITTED" ||
+      input.status === "APPROVED" ||
+      input.status === "DRAFT"
+    ) {
       return "Deadline expired before approval";
     }
     return "Registration closed";
@@ -90,7 +100,10 @@ export function getOrganizerDeadlineState(input: OrganizerDeadlineStateInput): s
     if (input.isReopened) {
       return "Reopened";
     }
-    if (input.registrationClosesAt.getTime() - now.getTime() <= CLOSING_SOON_WINDOW_MS) {
+    if (
+      input.registrationClosesAt.getTime() - now.getTime() <=
+      CLOSING_SOON_WINDOW_MS
+    ) {
       return "Closing soon";
     }
     return "Registration open";
@@ -109,7 +122,9 @@ export type AdminDeadlineStateInput = {
   now?: Date;
 };
 
-export function getApprovalBlockedReason(input: AdminDeadlineStateInput): string | null {
+export function getApprovalBlockedReason(
+  input: AdminDeadlineStateInput,
+): string | null {
   const now = input.now ?? new Date();
 
   if (!input.registrationClosesAt) {
@@ -151,7 +166,10 @@ export function getAdminDeadlineState(input: AdminDeadlineStateInput) {
     };
   }
 
-  if (input.registrationClosesAt.getTime() - now.getTime() <= CLOSING_SOON_WINDOW_MS) {
+  if (
+    input.registrationClosesAt.getTime() - now.getTime() <=
+    CLOSING_SOON_WINDOW_MS
+  ) {
     return {
       label: "Closing soon",
       className: "border-amber-200 bg-amber-50 text-amber-700",
@@ -175,18 +193,20 @@ export function isRegistrationReopenable(
   );
 }
 
-export function formatRegistrationDeadline(date: Date | null | undefined): string {
+export function formatRegistrationDeadline(
+  date: Date | null | undefined,
+): string {
   if (!date) {
     return "Not set";
   }
 
-  return new Intl.DateTimeFormat("en-IN", {
+  return formatPlatformDate(date, {
     day: "2-digit",
     month: "short",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(date);
+  });
 }
 
 export function getRegistrationAvailabilityLabel(

@@ -1,6 +1,7 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Image from "next/image";
+import { HostedImage as Image } from "@/components/HostedImage";
 import { CalendarDays, MapPin, Users, Building2 } from "lucide-react";
 
 import { HubBlocksRenderer } from "@/features/hubs/components/HubBlocksRenderer";
@@ -9,12 +10,12 @@ import { auth } from "@/server/auth";
 import { HubFollowButton } from "@/features/hubs/components/HubFollowButton";
 
 function formatEventDate(value: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
+  return formatPlatformDate(value, {
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-  }).format(value);
+  });
 }
 
 type PageProps = {
@@ -75,14 +76,16 @@ export default async function HubPublicPage({ params }: PageProps) {
   if (!hub.isActive) {
     const canManage = session?.user
       ? session.user.role === "ADMIN" ||
-        (await db.clubMembership.findUnique({
-          where: {
-            userId_clubId: {
-              userId: session.user.id,
-              clubId: hub.id,
+        (await db.clubMembership
+          .findUnique({
+            where: {
+              userId_clubId: {
+                userId: session.user.id,
+                clubId: hub.id,
+              },
             },
-          },
-        }).then((m) => !!m))
+          })
+          .then((m) => !!m))
       : false;
 
     if (!canManage) {
@@ -104,33 +107,42 @@ export default async function HubPublicPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-app-bg px-4 py-8 md:px-8 md:py-12 text-foreground transition-colors duration-300">
+    <div className="bg-app-bg text-foreground min-h-screen px-4 py-8 transition-colors duration-300 md:px-8 md:py-12">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
-        <header className="rounded-[20px] border-whisper bg-card-bg px-6 py-6 flex flex-col sm:flex-row sm:items-center gap-5 transition-colors duration-300">
+        <header className="border-whisper bg-card-bg flex flex-col gap-5 rounded-[20px] px-6 py-6 transition-colors duration-300 sm:flex-row sm:items-center">
           {hub.logoUrl ? (
             <Image
               src={hub.logoUrl}
               alt={`${hub.name} Logo`}
               width={80}
               height={80}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border border-whisper shadow-sm shrink-0"
+              className="border-whisper h-16 w-16 shrink-0 rounded-2xl border object-cover shadow-sm sm:h-20 sm:w-20"
             />
           ) : (
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground border border-whisper shrink-0 transition-colors">
-              <Building2 className="w-8 h-8 sm:w-10 sm:h-10" strokeWidth={1.5} />
+            <div className="bg-muted text-muted-foreground border-whisper flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border transition-colors sm:h-20 sm:w-20">
+              <Building2
+                className="h-8 w-8 sm:h-10 sm:w-10"
+                strokeWidth={1.5}
+              />
             </div>
           )}
           <div className="flex-1">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">Campus Hub</span>
-              <span className="inline-flex items-center gap-1 text-[12px] font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full transition-colors">
-                <Users className="w-3.5 h-3.5" />
-                {hub._count.followers} {hub._count.followers === 1 ? "follower" : "followers"}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="text-muted-foreground/80 text-[12px] font-semibold tracking-[0.14em] uppercase">
+                Campus Hub
+              </span>
+              <span className="text-muted-foreground bg-muted inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[12px] font-medium transition-colors">
+                <Users className="h-3.5 w-3.5" />
+                {hub._count.followers}{" "}
+                {hub._count.followers === 1 ? "follower" : "followers"}
               </span>
             </div>
-            <h1 className="mt-1 text-[28px] sm:text-[34px] font-bold tracking-[-0.02em] text-foreground leading-tight">{hub.name}</h1>
-            <p className="mt-1 text-[14px] text-muted-foreground">
-              Community resources, links, and FAQs curated by the organizing team.
+            <h1 className="text-foreground mt-1 text-[28px] leading-tight font-bold tracking-[-0.02em] sm:text-[34px]">
+              {hub.name}
+            </h1>
+            <p className="text-muted-foreground mt-1 text-[14px]">
+              Community resources, links, and FAQs curated by the organizing
+              team.
             </p>
           </div>
           {session?.user && (
@@ -140,26 +152,34 @@ export default async function HubPublicPage({ params }: PageProps) {
           )}
         </header>
 
-        <section className="rounded-[20px] border-whisper bg-card-bg p-4 md:p-5 transition-colors duration-300">
-          <h2 className="mb-4 text-[21px] font-bold tracking-[-0.02em] text-foreground">Resources & FAQ</h2>
+        <section className="border-whisper bg-card-bg rounded-[20px] p-4 transition-colors duration-300 md:p-5">
+          <h2 className="text-foreground mb-4 text-[21px] font-bold tracking-[-0.02em]">
+            Resources & FAQ
+          </h2>
           <HubBlocksRenderer blocks={hub.blocks} />
         </section>
 
-        <section className="rounded-[20px] border-whisper bg-card-bg p-4 md:p-5 transition-colors duration-300">
-          <h2 className="mb-4 text-[21px] font-bold tracking-[-0.02em] text-foreground">Upcoming Events</h2>
+        <section className="border-whisper bg-card-bg rounded-[20px] p-4 transition-colors duration-300 md:p-5">
+          <h2 className="text-foreground mb-4 text-[21px] font-bold tracking-[-0.02em]">
+            Upcoming Events
+          </h2>
 
           {hub.events.length === 0 ? (
-            <p className="text-[14px] text-muted-foreground">No upcoming events yet.</p>
+            <p className="text-muted-foreground text-[14px]">
+              No upcoming events yet.
+            </p>
           ) : (
             <div className="flex flex-col gap-2">
               {hub.events.map((event) => (
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className="group block rounded-[14px] border-whisper bg-app-bg px-4 py-3 hover:bg-muted transition-colors"
+                  className="group border-whisper bg-app-bg hover:bg-muted block rounded-[14px] px-4 py-3 transition-colors"
                 >
-                  <h3 className="text-[16px] font-semibold tracking-tight text-foreground group-hover:text-notion-blue transition-colors">{event.title}</h3>
-                  <div className="mt-2 flex flex-wrap items-center gap-3 text-[13px] text-muted-foreground">
+                  <h3 className="text-foreground group-hover:text-notion-blue text-[16px] font-semibold tracking-tight transition-colors">
+                    {event.title}
+                  </h3>
+                  <div className="text-muted-foreground mt-2 flex flex-wrap items-center gap-3 text-[13px]">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5" />
                       {formatEventDate(event.date)}
@@ -175,7 +195,10 @@ export default async function HubPublicPage({ params }: PageProps) {
           )}
         </section>
 
-        <Link href="/discover" className="text-[14px] font-semibold text-[#0075de] hover:text-[#005cab]">
+        <Link
+          href="/discover"
+          className="text-[14px] font-semibold text-[#0075de] hover:text-[#005cab]"
+        >
           Back to Discover
         </Link>
       </div>

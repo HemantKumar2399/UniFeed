@@ -1,14 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  startTransition,
-  useDeferredValue,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useRouter } from "next/navigation";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { Building2, Search, Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -31,31 +25,15 @@ type SearchPageClientProps = {
 
 export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [query, setQuery] = useState(initialQuery);
   const deferredQuery = useDeferredValue(query);
   const normalizedQuery = normalizeDiscoveryQuery(deferredQuery);
 
   useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      const currentQuery = searchParams.get("q") ?? "";
-      if (normalizeDiscoveryQuery(currentQuery) === normalizedQuery) {
-        return;
-      }
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
-      startTransition(() => {
-        router.replace(
-          normalizedQuery ? buildSearchHref(normalizedQuery) : pathname,
-          { scroll: false },
-        );
-      });
-    }, 250);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [normalizedQuery, pathname, router, searchParams]);
-
-  const { data, isLoading, error } = api.discovery.search.useQuery(
+  const { data, isLoading, error, refetch } = api.discovery.search.useQuery(
     { query: normalizedQuery },
     {
       enabled: normalizedQuery.length >= 2,
@@ -87,7 +65,16 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
         </div>
       </header>
 
-      <label className="border-input bg-pure-white flex min-h-[52px] items-center rounded-[18px] border px-4 shadow-sm">
+      <form
+        role="search"
+        onSubmit={(event) => {
+          event.preventDefault();
+          router.push(buildSearchHref(normalizeDiscoveryQuery(query)), {
+            scroll: false,
+          });
+        }}
+        className="border-input bg-pure-white flex min-h-[52px] items-center rounded-[18px] border px-4 shadow-sm"
+      >
         <Search className="text-warm-gray-500 h-4 w-4" />
         <input
           type="search"
@@ -95,9 +82,15 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
           onChange={(event) => setQuery(event.target.value)}
           aria-label="Search events and communities"
           placeholder="Search by title, club, category, location, or tag"
-          className="text-notion-black placeholder:text-warm-gray-muted w-full bg-transparent px-3 py-2 text-sm outline-none"
+          className="text-notion-black placeholder:text-warm-gray-muted min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none"
         />
-      </label>
+        <button
+          type="submit"
+          className="bg-primary text-primary-foreground min-h-11 rounded-xl px-4 text-sm font-semibold"
+        >
+          Search
+        </button>
+      </form>
 
       {normalizedQuery.length < 2 ? (
         <div className="bg-warm-white text-warm-gray-500 rounded-[18px] border border-[var(--border-whisper)] p-6 text-sm">
@@ -119,6 +112,13 @@ export function SearchPageClient({ initialQuery }: SearchPageClientProps) {
       {error ? (
         <div className="alert-panel surface-status-danger rounded-[18px] p-4 text-sm">
           Could not load search results: {error.message}
+          <button
+            type="button"
+            className="ml-2 min-h-11 underline"
+            onClick={() => void refetch()}
+          >
+            Retry
+          </button>
         </div>
       ) : null}
 

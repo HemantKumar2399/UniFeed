@@ -37,9 +37,18 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
-    if (!prn.trim()) { setErrorMessage("PRN is required"); return; }
-    if (!branch.trim()) { setErrorMessage("Branch is required"); return; }
-    if (!course.trim()) { setErrorMessage("Course is required"); return; }
+    if (!prn.trim()) {
+      setErrorMessage("PRN is required");
+      return;
+    }
+    if (!branch.trim()) {
+      setErrorMessage("Branch is required");
+      return;
+    }
+    if (!course.trim()) {
+      setErrorMessage("Course is required");
+      return;
+    }
     createProfile.mutate({
       prn: prn.trim(),
       branch: branch.trim(),
@@ -50,7 +59,10 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
     });
   };
 
-  const years = Array.from({ length: 11 }, (_, i) => new Date().getFullYear() - 3 + i);
+  const years = Array.from(
+    { length: 11 },
+    (_, i) => new Date().getFullYear() - 3 + i,
+  );
   const isPending = createProfile.isPending;
 
   /*
@@ -75,21 +87,18 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
 
   return (
     <div className="w-full">
-
       {/* ── Header ──────────────────────────────────────────────
           Matches landing page card structure:
           icon block (w-12 h-12 bg-black/5 rounded-2xl) + bold title
       ─────────────────────────────────────────────────────────── */}
       <div className="mb-7">
         {/* Icon — identical pattern to landing page feature cards */}
-        <div
-          className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center text-2xl mb-5"
-        >
+        <div className="bg-muted mb-5 flex h-12 w-12 items-center justify-center rounded-2xl text-2xl">
           🎓
         </div>
 
         <h1
-          className="font-bold leading-tight mb-2 text-foreground"
+          className="text-foreground mb-2 leading-tight font-bold"
           style={{
             fontSize: "clamp(22px, 3vw, 28px)",
             letterSpacing: "-0.5px",
@@ -97,20 +106,20 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
         >
           Complete your profile
         </h1>
-        <p className="text-muted-foreground" style={{ fontSize: "15px", lineHeight: "1.55" }}>
-          Welcome{userName ? `, ${userName}` : ""}! Set up your student
-          passport at{" "}
-          <span className="text-foreground font-semibold">
-            {collegeName}
-          </span>
-          .
+        <p
+          className="text-muted-foreground"
+          style={{ fontSize: "15px", lineHeight: "1.55" }}
+        >
+          Welcome{userName ? `, ${userName}` : ""}! Set up your student passport
+          at{" "}
+          <span className="text-foreground font-semibold">{collegeName}</span>.
         </p>
       </div>
 
       {/* ── Error banner ─────────────────────────────────────── */}
       {errorMessage && (
         <div
-          className="mb-5 px-4 py-3 rounded-xl text-[13px] font-medium"
+          className="mb-5 rounded-xl px-4 py-3 text-[13px] font-medium"
           style={{
             backgroundColor: "rgba(220,38,38,0.05)",
             border: "1px solid rgba(220,38,38,0.15)",
@@ -123,7 +132,6 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
 
       {/* ── Form ─────────────────────────────────────────────── */}
       <form onSubmit={handleSubmit} className="space-y-4">
-
         {/* PRN */}
         <div>
           <label htmlFor="prn" className={labelCls}>
@@ -132,7 +140,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <input
             id="prn"
             type="text"
-            placeholder="e.g. 21JECRC001"
+            placeholder="Your college enrollment number"
             value={prn}
             onChange={(e) => setPrn(e.target.value)}
             className={inputCls}
@@ -172,11 +180,13 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
                 required
               >
                 {years.map((y) => (
-                  <option key={y} value={y}>{y}</option>
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground/60">
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+              <div className="text-muted-foreground/60 pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
+                <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                 </svg>
               </div>
@@ -206,7 +216,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <div>
             <label htmlFor="section" className={labelCls}>
               Section{" "}
-              <span className="font-normal normal-case text-muted-foreground/45">
+              <span className="text-muted-foreground/45 font-normal normal-case">
                 (optional)
               </span>
             </label>
@@ -223,14 +233,14 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <div>
             <label htmlFor="phone" className={labelCls}>
               Phone{" "}
-              <span className="font-normal normal-case text-muted-foreground/45">
+              <span className="text-muted-foreground/45 font-normal normal-case">
                 (optional)
               </span>
             </label>
             <input
               id="phone"
               type="tel"
-              placeholder="e.g. 9876543210"
+              placeholder="Include your country code"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className={inputCls}
@@ -245,31 +255,34 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-150 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex w-full items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             style={{
               backgroundColor: "#0075de",
               color: "#ffffff",
               padding: "13px 24px",
               fontSize: "15px",
               letterSpacing: "-0.15px",
-              boxShadow: "0 4px 14px rgba(0,117,222,0.25), 0 1px 3px rgba(0,117,222,0.15)",
+              boxShadow:
+                "0 4px 14px rgba(0,117,222,0.25), 0 1px 3px rgba(0,117,222,0.15)",
             }}
             onMouseEnter={(e) => {
               if (!isPending)
-                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#005bab";
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                  "#005bab";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#0075de";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+                "#0075de";
             }}
           >
             {isPending ? (
               <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 Creating Profile…
               </>
             ) : (
               <>
-                Verify Student Profile
+                Create Student Profile
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -290,9 +303,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
       </form>
 
       {/* ── Security note — thin separator, subtle body text ── */}
-      <div
-        className="mt-5 flex items-center gap-2 border-t border-whisper pt-4"
-      >
+      <div className="border-whisper mt-5 flex items-center gap-2 border-t pt-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="13"
@@ -308,7 +319,7 @@ export function OnboardingForm({ userName, collegeName }: OnboardingFormProps) {
           <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
-        <p className="text-[12px] font-medium text-muted-foreground/50">
+        <p className="text-muted-foreground/50 text-[12px] font-medium">
           Onboarding is required to access events securely.
         </p>
       </div>

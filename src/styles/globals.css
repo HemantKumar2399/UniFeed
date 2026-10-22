@@ -10,16 +10,16 @@
 :root {
   --background: #ffffff;
   --foreground: #17243b;
-  
+
   --card-bg: #ffffff;
   --card-foreground: rgba(0, 0, 0, 0.95);
-  
+
   --muted: rgba(0, 0, 0, 0.05);
   --muted-foreground: #536278; /* Warm Gray 500 */
-  
+
   --border-whisper-color: rgba(0, 0, 0, 0.1);
   --border-input-color: #dddddd;
-  
+
   --app-bg: #f5f7fb;
   --warm-white-dynamic: #f6f5f4;
   --status-success-surface: rgba(26, 174, 57, 0.1);
@@ -44,16 +44,16 @@
 .dark {
   --background: #191919;
   --foreground: rgba(255, 255, 255, 0.95);
-  
+
   --card-bg: #202020;
   --card-foreground: rgba(255, 255, 255, 0.95);
-  
+
   --muted: rgba(255, 255, 255, 0.08);
   --muted-foreground: #a39e98; /* Warm Gray 300 */
-  
+
   --border-whisper-color: rgba(255, 255, 255, 0.1);
   --border-input-color: #333333;
-  
+
   --app-bg: #121212;
   --warm-white-dynamic: #1a1a19;
   --status-success-surface: rgba(26, 174, 57, 0.16);
@@ -82,9 +82,11 @@
    ----------------------------------------------------------------------- */
 @theme {
   /* --- FONT FAMILIES --- */
-  --font-display: "Trebuchet MS", "Avenir Next", ui-rounded, system-ui, sans-serif;
-  --font-sans: var(--font-inter), Inter, -apple-system, system-ui, "Segoe UI",
-    Helvetica, "Apple Color Emoji", Arial, "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-display:
+    "Trebuchet MS", "Avenir Next", ui-rounded, system-ui, sans-serif;
+  --font-sans:
+    Inter, -apple-system, system-ui, "Segoe UI", Helvetica, "Apple Color Emoji",
+    Arial, "Segoe UI Emoji", "Segoe UI Symbol";
 
   /* --- WARM NEUTRAL PALETTE (Notion-inspired, yellow-brown undertones) --- */
 
@@ -99,7 +101,9 @@
   --color-warm-dark: #31302e;
 
   /* Warm gray scale */
-  --color-warm-gray-500: var(--muted-foreground); /* Secondary text, descriptions */
+  --color-warm-gray-500: var(
+    --muted-foreground
+  ); /* Secondary text, descriptions */
   --color-warm-gray-300: #a39e98; /* Placeholder, disabled, captions */
 
   /* --- BRAND: NOTION BLUE (singular saturated accent) --- */
@@ -195,15 +199,17 @@
   /* Level 1: Whisper (border only, defined above) */
 
   /* Level 2: Soft Card — 4-layer stack */
-  --shadow-card: rgba(0, 0, 0, 0.04) 0px 4px 18px,
+  --shadow-card:
+    rgba(0, 0, 0, 0.04) 0px 4px 18px,
     rgba(0, 0, 0, 0.027) 0px 2.025px 7.84688px,
     rgba(0, 0, 0, 0.02) 0px 0.8px 2.925px,
     rgba(0, 0, 0, 0.01) 0px 0.175px 1.04062px;
 
   /* Level 3: Deep Card — 5-layer stack (modals, featured panels) */
-  --shadow-deep: rgba(0, 0, 0, 0.01) 0px 1px 3px,
-    rgba(0, 0, 0, 0.02) 0px 3px 7px, rgba(0, 0, 0, 0.02) 0px 7px 15px,
-    rgba(0, 0, 0, 0.04) 0px 14px 28px, rgba(0, 0, 0, 0.05) 0px 23px 52px;
+  --shadow-deep:
+    rgba(0, 0, 0, 0.01) 0px 1px 3px, rgba(0, 0, 0, 0.02) 0px 3px 7px,
+    rgba(0, 0, 0, 0.02) 0px 7px 15px, rgba(0, 0, 0, 0.04) 0px 14px 28px,
+    rgba(0, 0, 0, 0.05) 0px 23px 52px;
 
   /* --- SPACING BASE --- */
   /* 8px base unit organic scale — referenced here for documentation */
@@ -228,7 +234,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Enable OpenType lining numerals globally */
-    font-feature-settings: "lnum" 1, "locl" 1;
+    font-feature-settings:
+      "lnum" 1,
+      "locl" 1;
   }
 
   body {
@@ -732,11 +740,36 @@
 }
 
 /* Shared navigation and interaction baseline. */
-:focus-visible { outline: 3px solid var(--color-focus-blue); outline-offset: 3px; }
-#main-content:focus { outline: none; }
-.skip-link { position: fixed; left: 1rem; top: -5rem; z-index: 200; padding: .75rem 1rem; border-radius: .5rem; background: var(--card-bg); color: var(--foreground); }
-.skip-link:focus { top: 1rem; }
-.font-display { font-family: var(--font-display); }
+:focus-visible {
+  outline: 3px solid var(--color-focus-blue);
+  outline-offset: 3px;
+}
+#main-content:focus {
+  outline: none;
+}
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: -5rem;
+  z-index: 200;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  color: var(--foreground);
+}
+.skip-link:focus {
+  top: 1rem;
+}
+.font-display {
+  font-family: var(--font-display);
+}
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

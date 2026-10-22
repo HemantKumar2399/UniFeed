@@ -163,94 +163,158 @@ void test("isRegistrationReopenable only allows approved or published future eve
 });
 
 void test("registration helper formatting and labels stay user-friendly", () => {
-  assert.match(formatRegistrationDeadline(eventDate), /14 May 2030/i);
-  assert.equal(getRegistrationAvailabilityLabel("CLOSED_BY_DEADLINE"), "Registration closed");
+  assert.match(formatRegistrationDeadline(eventDate), /May 14, 2030/i);
+  assert.equal(
+    getRegistrationAvailabilityLabel("CLOSED_BY_DEADLINE"),
+    "Registration closed",
+  );
 });
 
 void test("getOrganizerDeadlineState returns explicit state labels", () => {
-  assert.equal(getOrganizerDeadlineState({
-    status: "DRAFT",
-    date: eventDate,
-    registrationClosesAt: null,
-    now,
-  }), "Deadline missing");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "DRAFT",
+      date: eventDate,
+      registrationClosesAt: null,
+      now,
+    }),
+    "Deadline missing",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "SUBMITTED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-15T10:00:00.000Z"),
-    now,
-  }), "Deadline invalid");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "SUBMITTED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-15T10:00:00.000Z"),
+      now,
+    }),
+    "Deadline invalid",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "SUBMITTED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-09T10:00:00.000Z"),
-    now,
-  }), "Deadline expired before approval");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "SUBMITTED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-09T10:00:00.000Z"),
+      now,
+    }),
+    "Deadline expired before approval",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "PUBLISHED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-09T10:00:00.000Z"),
-    now,
-  }), "Registration closed");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "PUBLISHED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-09T10:00:00.000Z"),
+      now,
+    }),
+    "Registration closed",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "PUBLISHED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
-    isReopened: true,
-    now,
-  }), "Reopened");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "PUBLISHED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
+      isReopened: true,
+      now,
+    }),
+    "Reopened",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "PUBLISHED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-10T12:00:00.000Z"),
-    now,
-  }), "Closing soon");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "PUBLISHED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-10T12:00:00.000Z"),
+      now,
+    }),
+    "Closing soon",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "PUBLISHED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
-    now,
-  }), "Registration open");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "PUBLISHED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
+      now,
+    }),
+    "Registration open",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "APPROVED",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
-    now,
-  }), "Ready to publish");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "APPROVED",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
+      now,
+    }),
+    "Ready to publish",
+  );
 
-  assert.equal(getOrganizerDeadlineState({
-    status: "DRAFT",
-    date: eventDate,
-    registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
-    now,
-  }), "Registration scheduled");
+  assert.equal(
+    getOrganizerDeadlineState({
+      status: "DRAFT",
+      date: eventDate,
+      registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
+      now,
+    }),
+    "Registration scheduled",
+  );
 });
 
 void test("getAdminDeadlineState and getApprovalBlockedReason return correct blocking information", () => {
   const missingInput = { registrationClosesAt: null, eventDate, now };
-  assert.equal(getApprovalBlockedReason(missingInput), "This event is missing a registration deadline.");
-  assert.equal(getAdminDeadlineState(missingInput).label, "Missing deadline (Blocks approval)");
+  assert.equal(
+    getApprovalBlockedReason(missingInput),
+    "This event is missing a registration deadline.",
+  );
+  assert.equal(
+    getAdminDeadlineState(missingInput).label,
+    "Missing deadline (Blocks approval)",
+  );
 
-  const invalidInput = { registrationClosesAt: new Date("2030-05-15T10:00:00.000Z"), eventDate, now };
-  assert.equal(getApprovalBlockedReason(invalidInput), "The registration deadline must be earlier than the event start time.");
-  assert.equal(getAdminDeadlineState(invalidInput).label, "Invalid deadline (Blocks approval)");
+  const invalidInput = {
+    registrationClosesAt: new Date("2030-05-15T10:00:00.000Z"),
+    eventDate,
+    now,
+  };
+  assert.equal(
+    getApprovalBlockedReason(invalidInput),
+    "The registration deadline must be earlier than the event start time.",
+  );
+  assert.equal(
+    getAdminDeadlineState(invalidInput).label,
+    "Invalid deadline (Blocks approval)",
+  );
 
-  const expiredInput = { registrationClosesAt: new Date("2030-05-09T10:00:00.000Z"), eventDate, now };
-  assert.equal(getApprovalBlockedReason(expiredInput), "The registration deadline has already expired.");
-  assert.equal(getAdminDeadlineState(expiredInput).label, "Expired deadline (Blocks approval)");
+  const expiredInput = {
+    registrationClosesAt: new Date("2030-05-09T10:00:00.000Z"),
+    eventDate,
+    now,
+  };
+  assert.equal(
+    getApprovalBlockedReason(expiredInput),
+    "The registration deadline has already expired.",
+  );
+  assert.equal(
+    getAdminDeadlineState(expiredInput).label,
+    "Expired deadline (Blocks approval)",
+  );
 
-  const closingSoonInput = { registrationClosesAt: new Date("2030-05-10T12:00:00.000Z"), eventDate, now };
+  const closingSoonInput = {
+    registrationClosesAt: new Date("2030-05-10T12:00:00.000Z"),
+    eventDate,
+    now,
+  };
   assert.equal(getApprovalBlockedReason(closingSoonInput), null);
   assert.equal(getAdminDeadlineState(closingSoonInput).label, "Closing soon");
 
-  const validInput = { registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"), eventDate, now };
+  const validInput = {
+    registrationClosesAt: new Date("2030-05-12T10:00:00.000Z"),
+    eventDate,
+    now,
+  };
   assert.equal(getApprovalBlockedReason(validInput), null);
   assert.equal(getAdminDeadlineState(validInput).label, "Valid deadline");
 });

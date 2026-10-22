@@ -46,6 +46,8 @@ const result = spawnSync(
     env: {
       ...process.env,
       NODE_ENV: "test",
+      NEXT_PUBLIC_LOCALE: "en",
+      NEXT_PUBLIC_TIME_ZONE: "UTC",
       DATABASE_URL: integration
         ? process.env.TEST_DATABASE_URL
         : "postgresql://unit:unit@127.0.0.1:1/unifeed_unit",

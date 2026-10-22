@@ -1,6 +1,8 @@
 "use client";
 
-import Image from "next/image";
+import { formatPlatformDate } from "@/lib/platform-date";
+
+import { HostedImage as Image } from "@/components/HostedImage";
 import { useEffect, useState } from "react";
 import { Calendar, MapPin } from "lucide-react";
 
@@ -115,16 +117,14 @@ export function EventCard({ event }: { event: EventFeedItem }) {
 
               <div className="border-whisper bg-card-bg absolute top-3 right-3 flex min-w-12 flex-col items-center rounded-xl border px-2.5 py-2 shadow-sm">
                 <span className="text-primary text-[10px] font-bold tracking-wider uppercase">
-                  {new Intl.DateTimeFormat("en", {
+                  {formatPlatformDate(event.date, {
                     month: "short",
-                    timeZone: "Asia/Kolkata",
-                  }).format(event.date)}
+                  })}
                 </span>
                 <span className="font-display text-foreground text-2xl leading-tight font-bold">
-                  {new Intl.DateTimeFormat("en", {
+                  {formatPlatformDate(event.date, {
                     day: "2-digit",
-                    timeZone: "Asia/Kolkata",
-                  }).format(event.date)}
+                  })}
                 </span>
               </div>
               {viewerRsvpStatus ? (

@@ -1,15 +1,15 @@
+import { formatPlatformDate } from "@/lib/platform-date";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { HappeningThisWeekCarousel } from "@/features/feed/components/HappeningThisWeekCarousel";
 import { EventFeed } from "@/features/feed/components/EventFeed";
 
 export default function HomePage() {
-  const date = new Intl.DateTimeFormat("en-IN", {
+  const date = formatPlatformDate(new Date(), {
     weekday: "long",
     month: "long",
     day: "numeric",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date());
+  });
   return (
     <div className="space-y-9">
       <header className="border-border flex flex-wrap items-end justify-between gap-5 border-b pb-7">
