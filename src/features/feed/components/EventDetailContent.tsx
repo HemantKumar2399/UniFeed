@@ -3,7 +3,7 @@
 import type { RSVPStatus } from "@prisma/client";
 import { Bookmark, CalendarPlus, Pin, PinOff } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -57,15 +57,7 @@ function getRegisterButtonLabel(params: {
   return getRegistrationActionLabel(params.registrationAvailability);
 }
 
-export function EventDetailContent({
-  event,
-  media,
-  compact = false,
-}: {
-  event: EventFeedItem;
-  media?: ReactNode;
-  compact?: boolean;
-}) {
+export function EventDetailContent({ event }: { event: EventFeedItem }) {
   const utils = api.useUtils();
   const [activeTab, setActiveTab] = useState<"overview" | "discussions">(
     "overview",
@@ -288,17 +280,13 @@ export function EventDetailContent({
     registrationAvailability === "WAITLIST_OPEN";
 
   return (
-    <div
-      className={`grid items-start lg:grid-cols-[minmax(0,1fr)_300px] ${compact ? "gap-6" : "gap-8"}`}
-    >
+    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
       <div className="order-first min-w-0 lg:col-start-1 lg:row-start-1">
-        {media ?? (
-          <EventMediaGallery
-            title={event.title}
-            imageUrl={event.imageUrl}
-            galleryImages={event.galleryImages}
-          />
-        )}
+        <EventMediaGallery
+          title={event.title}
+          imageUrl={event.imageUrl}
+          galleryImages={event.galleryImages}
+        />
       </div>
       <div className="order-3 min-w-0 space-y-6 lg:col-start-1 lg:row-start-2">
         <div
@@ -522,7 +510,7 @@ export function EventDetailContent({
       </div>
       <aside
         aria-label="Registration"
-        className={`border-primary/15 bg-card-bg order-2 self-start overflow-hidden rounded-2xl border shadow-sm lg:sticky lg:col-start-2 lg:row-span-2 lg:row-start-1 ${compact ? "p-4 lg:top-0" : "p-5 lg:top-24"}`}
+        className="border-primary/15 bg-card-bg order-2 self-start overflow-hidden rounded-2xl border p-5 shadow-sm lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1"
       >
         <p className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
           Registration
@@ -542,7 +530,7 @@ export function EventDetailContent({
             Contact the host for pricing details.
           </p>
         )}
-        <div className={compact ? "my-3" : "my-5"}>
+        <div className="my-5">
           <CapacityBar count={activeCount} totalCapacity={totalCapacity} />
         </div>
         <p className="text-muted-foreground text-xs font-medium">

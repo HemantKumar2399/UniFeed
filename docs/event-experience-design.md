@@ -68,3 +68,11 @@ Final production build, lint and TypeScript passed. One existing heading test pa
 Visual review corrected subpixel test comparisons, crowded secondary actions and dark-mode button/status contrast. Image screenshots await decoding and repaint. The local production preview is running at http://localhost:3100; the sample event remains /events/42. No deployment, production database change or added package was needed.
 
 User correction: dark mode uses neutral black (#0a0a0a), charcoal (#111111 / #191919), neutral gray text and neutral supporting panels. This supersedes the earlier midnight/slate direction. Blue remains an interactive accent; the theme reveal is unchanged.
+
+## Compact preview refinement
+
+The user's next refinement replaces the detail-filled drawer with a non-scrolling event preview. Its purpose is to help a student decide whether to explore the event. Existing typography, neutral black/charcoal and blue action tokens remain. Desktop pairs one contained cover image with essential facts; mobile stacks them. Titles and locations have bounded visual lines, with complete information on the full page. In short viewports the image and deadline are omitted to prioritize facts and navigation. The only primary action is View full event. Registration, long descriptions, gallery selection, schedule and discussion live on the full page. Preview-only full-detail component options were removed to keep the code simpler.
+
+Acceptance: preview has no scrolling region; desktop, narrow phone and landscape sizes keep its close and full-page controls visible; opening the full page exposes complete information and registration. Verification is limited to the preview/layout check, the existing event publication/gallery journey, and the production build.
+
+Verification for the compact preview: production build (including lint and TypeScript) passed. Two focused Chromium journeys passed in 13.9 seconds. The preview was checked at 1366×768, 375×812, 320×568 and 844×390 with no scrolling region and visible close/full-page controls. Desktop/mobile screenshots were inspected. The existing create/edit/review/publish/student registration/gallery journey also passed with the new preview contract. The server is running at port 3100. No unrelated suite was run.

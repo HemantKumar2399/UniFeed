@@ -161,12 +161,14 @@ test("admin can create rich event details, review them, and publish a usable gal
     await studentPage.goto(`/home#event-${eventId}`);
     const quickView = studentPage.getByRole("dialog");
     await expect(
-      quickView.getByRole("link", { name: "Open full event page" }),
+      quickView.getByRole("link", { name: "View full event" }),
     ).toBeVisible();
-    await quickView.getByRole("button", { name: "View image 2 of 2" }).click();
     await expect(
       quickView.getByRole("img", { name: title, exact: true }),
-    ).toHaveAttribute("src", gallery);
+    ).toHaveAttribute("src", cover);
+    await expect(
+      quickView.getByRole("button", { name: "View image 2 of 2" }),
+    ).toHaveCount(0);
     await quickView
       .getByRole("button", { name: "Close event details", exact: true })
       .click();

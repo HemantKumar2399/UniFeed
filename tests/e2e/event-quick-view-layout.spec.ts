@@ -35,20 +35,13 @@ test("event details use their image area and keep registration accessible", asyn
   await page.locator(`#event-${eventId}`).getByRole("button").first().click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  const gallery = dialog.getByRole("region", { name: "Event images" });
-  const stage = gallery.locator(":scope > div").first();
-  const galleryBox = await gallery.boundingBox();
-  const stageBox = await stage.boundingBox();
-  console.log(
-    JSON.stringify({
-      galleryWidth: galleryBox?.width,
-      imageStageWidth: stageBox?.width,
-    }),
-  );
-  expect(stageBox!.width).toBeGreaterThan(galleryBox!.width - 4);
-  const primary = dialog.getByRole("button", {
-    name: /^(Reserve Spot|Registered|Waitlisted|Attended|Join Waitlist)$/,
-  });
+  await expect(
+    dialog.getByRole("button", { name: "Overview", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    dialog.getByRole("button", { name: "Discussions", exact: true }),
+  ).toHaveCount(0);
+  const primary = dialog.getByRole("link", { name: "View full event" });
   await expect(primary).toBeInViewport({ ratio: 1 });
   await expect
     .poll(async () => {
@@ -58,7 +51,7 @@ test("event details use their image area and keep registration accessible", asyn
     .toBeLessThanOrEqual(768);
   await expect
     .poll(() =>
-      gallery
+      dialog
         .locator("img")
         .first()
         .evaluate((element) => (element as HTMLImageElement).naturalWidth),
@@ -72,8 +65,28 @@ test("event details use their image area and keep registration accessible", asyn
   await dialog.getByRole("button", { name: "Close event details" }).click();
   await page.locator(`#event-${eventId}`).getByRole("button").first().click();
   await expect(dialog).toBeVisible();
-  await primary.scrollIntoViewIfNeeded();
   await expect(primary).toBeInViewport({ ratio: 1 });
+  for (const size of [
+    { width: 375, height: 812 },
+    { width: 320, height: 568 },
+    { width: 844, height: 390 },
+  ]) {
+    await page.setViewportSize(size);
+    await expect(primary).toBeInViewport({ ratio: 1 });
+    expect(
+      await dialog.evaluate((element) =>
+        [element, ...element.querySelectorAll<HTMLElement>("*")].every(
+          (node) =>
+            node.scrollHeight <= node.clientHeight + 1 ||
+            !["auto", "scroll"].includes(getComputedStyle(node).overflowY),
+        ),
+      ),
+    ).toBe(true);
+    await expect(
+      dialog.getByRole("button", { name: "Close event details" }),
+    ).toBeInViewport({ ratio: 1 });
+  }
+  await page.setViewportSize({ width: 375, height: 812 });
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -83,8 +96,8 @@ test("event details use their image area and keep registration accessible", asyn
     path: "test-results/quick-view-mobile.png",
     fullPage: false,
   });
-  await dialog.getByRole("button", { name: "Close event details" }).click();
-  await page.goto(`/events/${eventId}`);
+  await primary.click();
+  await expect(page).toHaveURL(`/events/${eventId}`);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "HackSprint",
   );

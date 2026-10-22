@@ -15,7 +15,7 @@ The editor supports the existing title, description, start time, deadline, venue
 
 Empty optional sections stay hidden. Gallery thumbnails are keyboard-accessible buttons. Missing images have a fallback, and other images remain selectable. Event description and notes render as text rather than HTML.
 
-Both the full page and feed quick view show the additional information and images. Quick view has a close button and a link to the full page. The registration panel keeps capacity, the deadline, registration, saving and calendar actions together. Admin reviewers can inspect the complete gallery and additional details before approving.
+The full page shows the complete information and gallery. Feed quick view is a compact, non-scrolling preview: cover image, host, title, date, location, availability, current RSVP status, entry type and a **View full event** action. It omits descriptions, discussions, extra images and registration controls. Short viewports hide the image and deadline so the close control and primary action remain accessible. Full-page registration keeps capacity, the deadline, registration, saving and calendar actions together. Admin reviewers can inspect the complete gallery and additional details before approving.
 
 The additive `20261022020000_rich_event_details` migration gives existing events an empty gallery and nullable optional fields. Apply migrations and regenerate Prisma before running the updated app. Upload storage requirements are unchanged: local uploads are development-only; production requires object storage or a hosted image URL.
 

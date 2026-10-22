@@ -33,3 +33,9 @@ Reviewed shared composition, no duplicate gallery on the full page, unchanged au
 ## Final result
 
 Completed: production build (including lint and TypeScript), the existing heading test, and three focused Chromium journeys passed. The final browser run completed in 19.5 seconds. Desktop/mobile event and two-direction theme screenshots were visually inspected. Both portrait and landscape media render; the corrected gallery frame uses its available width. The existing rich-event creation, approval, publication, RSVP and gallery journey passed after composition changes. Server restarted on port 3100 with the final build. No unrelated tests or extra agents were used.
+
+## Follow-up: bounded preview
+
+The user's follow-up supersedes the full-detail quick-view layout above. EventCard now renders only one cover image, bounded title/host/date/location, availability/current RSVP, deadline when space permits, entry type and View full event. It has no scrolling body, long-form information, discussion, gallery selection, save/calendar or registration mutations. Small-height screens omit the cover and deadline to keep close/navigation accessible. EventDetailContent and EventMediaGallery no longer carry unused preview-only props. The full page retains all event details and actions.
+
+Acceptance verified in two targeted browser journeys at desktop, narrow mobile and landscape sizes, plus the production build/type/lint checks. Full-page registration/gallery and the existing publication journey passed. Screenshots were visually inspected. The preview's focused test first failed against the previous implementation, confirming it detected the unwanted detail controls. Final checks passed; local server restarted.

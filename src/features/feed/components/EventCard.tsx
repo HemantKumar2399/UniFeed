@@ -28,8 +28,6 @@ import { useLiveEventAttendance } from "@/hooks/use-live-event-attendance";
 import type { RouterOutputs } from "@/trpc/react";
 
 import { CapacityBar } from "./CapacityBar";
-import { EventDetailContent } from "./EventDetailContent";
-import { EventMediaGallery } from "./EventMediaGallery";
 import { formatEventDateMeta } from "./event-card.utils";
 
 export type EventFeedItem = RouterOutputs["event"]["getFeed"][number];
@@ -185,15 +183,15 @@ export function EventCard({ event }: { event: EventFeedItem }) {
       </article>
 
       {isDetailsOpen ? (
-        <DrawerContent className="border-border bg-card-bg mx-auto max-w-5xl rounded-t-3xl shadow-2xl data-[vaul-drawer-direction=bottom]:max-h-[92dvh] sm:rounded-3xl sm:data-[vaul-drawer-direction=bottom]:inset-x-6 sm:data-[vaul-drawer-direction=bottom]:bottom-5 sm:data-[vaul-drawer-direction=bottom]:max-h-[calc(100dvh-3rem)]">
-          <DrawerHeader className="border-border shrink-0 border-b px-5 pb-3 text-left group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left sm:px-6">
-            <div className="flex items-start justify-between gap-4">
+        <DrawerContent className="border-border bg-card-bg mx-auto overflow-hidden rounded-t-3xl shadow-2xl data-[vaul-drawer-direction=bottom]:max-h-[calc(100dvh-1rem)] sm:max-w-2xl sm:rounded-3xl sm:data-[vaul-drawer-direction=bottom]:inset-x-4 sm:data-[vaul-drawer-direction=bottom]:bottom-4 sm:data-[vaul-drawer-direction=bottom]:max-h-[calc(100dvh-2rem)]">
+          <DrawerHeader className="shrink-0 px-5 pt-3 pb-4 text-left group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left sm:px-6">
+            <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <p className="text-primary mb-2 text-xs font-semibold">
+                <p className="text-primary mb-2 truncate text-xs font-semibold">
                   {event.club.name}
-                  {event.category ? ` · ${event.category}` : ""}
+                  {event.category && <> · {event.category}</>}
                 </p>
-                <DrawerTitle className="font-display text-foreground text-2xl leading-tight font-bold tracking-tight sm:text-[28px]">
+                <DrawerTitle className="font-display text-foreground line-clamp-2 text-2xl leading-tight font-bold tracking-tight [overflow-wrap:anywhere]">
                   {event.title}
                 </DrawerTitle>
               </div>
@@ -201,39 +199,86 @@ export function EventCard({ event }: { event: EventFeedItem }) {
                 <button
                   type="button"
                   aria-label="Close event details"
-                  className="border-border bg-card-bg hover:bg-muted flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
+                  className="border-border hover:bg-muted flex h-11 w-11 shrink-0 items-center justify-center rounded-full border"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </DrawerClose>
             </div>
-            <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-              <DrawerDescription className="text-muted-foreground min-w-0 text-sm leading-6">
-                {formatEventDateMeta(event.date)} · {event.location}
-              </DrawerDescription>
-              <Link
-                href={`/events/${event.id}`}
-                className="text-primary inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-semibold"
-              >
-                Open full event page <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
+            <DrawerDescription className="sr-only">
+              Event preview. Open the full event page for all details and
+              registration.
+            </DrawerDescription>
           </DrawerHeader>
-
-          <div className="min-h-0 overflow-y-auto overscroll-contain p-5 pb-7 sm:p-6">
-            <EventDetailContent
-              event={event}
-              compact
-              media={
-                <EventMediaGallery
-                  compact
-                  title={event.title}
-                  imageUrl={event.imageUrl}
-                  galleryImages={event.galleryImages}
-                />
-              }
-            />
+          <div className="min-h-0 px-5 pb-5 sm:px-6">
+            <div className="grid gap-4 sm:grid-cols-[200px_minmax(0,1fr)] [@media(max-height:600px)]:grid-cols-1">
+              <div className="bg-muted relative h-[min(22dvh,180px)] overflow-hidden rounded-xl sm:h-full sm:min-h-40 [@media(max-height:600px)]:hidden">
+                {imageFailed ? (
+                  <Calendar
+                    aria-hidden="true"
+                    className="text-muted-foreground absolute inset-0 m-auto h-10 w-10"
+                  />
+                ) : (
+                  <Image
+                    src={event.imageUrl}
+                    alt={event.title}
+                    fill
+                    sizes="(max-width:640px) 100vw, 200px"
+                    className="object-contain p-2"
+                    onError={() => setImageFailed(true)}
+                  />
+                )}
+              </div>
+              <div className="min-w-0 space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  <Badge
+                    variant={getRegistrationAvailabilityBadgeVariant(
+                      registrationAvailability,
+                    )}
+                  >
+                    {getRegistrationAvailabilityLabel(registrationAvailability)}
+                  </Badge>
+                  {viewerRsvpStatus && (
+                    <RsvpStatusBadge status={viewerRsvpStatus} />
+                  )}
+                </div>
+                <div className="text-muted-foreground flex items-start gap-2.5 text-sm leading-5">
+                  <Calendar
+                    aria-hidden="true"
+                    className="text-primary mt-0.5 h-4 w-4 shrink-0"
+                  />
+                  <p className="line-clamp-2">
+                    {formatEventDateMeta(event.date)}
+                  </p>
+                </div>
+                <div className="text-muted-foreground flex items-start gap-2.5 text-sm leading-5">
+                  <MapPin
+                    aria-hidden="true"
+                    className="text-primary mt-0.5 h-4 w-4 shrink-0"
+                  />
+                  <p className="line-clamp-2 [overflow-wrap:anywhere]">
+                    {event.location}
+                  </p>
+                </div>
+                <p className="text-muted-foreground text-xs [@media(max-height:600px)]:hidden">
+                  Register by{" "}
+                  {formatRegistrationDeadline(event.registrationClosesAt)}
+                </p>
+              </div>
+            </div>
           </div>
+          <footer className="border-border bg-muted/30 flex shrink-0 items-center justify-between gap-4 border-t px-5 py-4 sm:px-6">
+            <p className="text-foreground shrink-0 text-sm font-semibold">
+              {event.isPaid ? "Paid entry" : "Free entry"}
+            </p>
+            <Link
+              href={"/events/" + event.id}
+              className="bg-primary text-primary-foreground inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold"
+            >
+              View full event{" "}
+              <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </footer>
         </DrawerContent>
       ) : null}
     </Drawer>

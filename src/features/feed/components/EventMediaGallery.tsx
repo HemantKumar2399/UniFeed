@@ -8,12 +8,10 @@ export function EventMediaGallery({
   title,
   imageUrl,
   galleryImages = [],
-  compact = false,
 }: {
   title: string;
   imageUrl: string;
   galleryImages?: string[];
-  compact?: boolean;
 }) {
   const images = [...new Set([imageUrl, ...galleryImages].filter(Boolean))];
   const [selected, setSelected] = useState("");
@@ -26,9 +24,7 @@ export function EventMediaGallery({
       aria-label="Event images"
       className="border-border bg-card-bg overflow-hidden rounded-2xl border"
     >
-      <div
-        className={`bg-muted/60 relative flex aspect-[16/9] w-full items-center justify-center ${compact ? "max-h-[180px] min-h-36 sm:max-h-[300px] sm:min-h-48" : "max-h-[520px] min-h-48"}`}
-      >
+      <div className="bg-muted/60 relative flex aspect-[16/9] max-h-[520px] min-h-48 w-full items-center justify-center">
         {active && !failed ? (
           <HostedImage
             src={active}
